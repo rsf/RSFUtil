@@ -10,6 +10,7 @@ import java.util.Map;
 
 import uk.org.ponder.errorutil.MessageLocator;
 import uk.org.ponder.jsfutil.View;
+import uk.org.ponder.webapputil.ViewParameters;
 
 /**
  * @author Antranig Basman (antranig@caret.cam.ac.uk)

@@ -3,6 +3,7 @@ package uk.org.ponder.jsfutil;
 import javax.faces.component.UIViewRoot;
 
 import uk.org.ponder.errorutil.MessageLocator;
+import uk.org.ponder.webapputil.ViewParameters;
 
 /**
  * This interface must be implemented by classes representing a view for the
@@ -22,9 +23,9 @@ public abstract class View {
   public abstract void createView(UIViewRoot viewroot, ViewParameters origviewparams);
 
   public abstract String getViewID();
-
-  public abstract ViewParameters getDefaultParameters();
   
+  public abstract void fillDefaultParameters(ViewParameters defaultparameters);
+
   protected MessageLocator messagelocator;
   
   public void setMessageLocator(MessageLocator messagelocator) {
@@ -34,4 +35,5 @@ public abstract class View {
   public MessageLocator getMessageLocator() {
     return messagelocator;
   }
+
 }
