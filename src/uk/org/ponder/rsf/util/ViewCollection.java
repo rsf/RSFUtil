@@ -5,6 +5,7 @@ package uk.org.ponder.jsfutil;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import uk.org.ponder.jsfutil.View;
@@ -14,17 +15,23 @@ import uk.org.ponder.jsfutil.View;
  * 
  */
 public class ViewCollection {
+  private ViewParameters vpexemplar;
+  public void setViewParametersExemplar(ViewParameters vpexemplar) {
+    this.vpexemplar = vpexemplar;
+  }
+  
+  public ViewParameters createViewParameters() {
+    return vpexemplar.copyBase();
+  }
   private Map views = new HashMap();
   private View defaultview;
-  public Map getViews() {
-    return views;
-  }
-  public void setViews(Map views) {
-    this.views = views;
-    for (Iterator it = views.keySet().iterator(); it.hasNext();) {
-      String viewid = (String)it.next();
-      View view = getView(viewid);
-      view.setViewID(viewid);
+//  public Map getViews() {
+//    return views;
+//  }
+  public void setViews(List viewlist) {
+    for (Iterator it = viewlist.iterator(); it.hasNext();) {
+      View view = (View)it.next();
+      views.put(view.getViewID(), view);
     }
   }
   public View getView(String viewid) {
