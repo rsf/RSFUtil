@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import uk.org.ponder.errorutil.MessageLocator;
 import uk.org.ponder.jsfutil.View;
 
 /**
@@ -16,6 +17,7 @@ import uk.org.ponder.jsfutil.View;
  */
 public class ViewCollection {
   private ViewParameters vpexemplar;
+  private MessageLocator messagelocator;
   public void setViewParametersExemplar(ViewParameters vpexemplar) {
     this.vpexemplar = vpexemplar;
   }
@@ -23,6 +25,11 @@ public class ViewCollection {
   public ViewParameters createViewParameters() {
     return vpexemplar.copyBase();
   }
+  
+  public void setMessageLocator(MessageLocator messagelocator) {
+    this.messagelocator = messagelocator;
+  }
+  
   private Map views = new HashMap();
   private View defaultview;
 //  public Map getViews() {
@@ -31,6 +38,7 @@ public class ViewCollection {
   public void setViews(List viewlist) {
     for (Iterator it = viewlist.iterator(); it.hasNext();) {
       View view = (View)it.next();
+      view.setMessageLocator(messagelocator);
       views.put(view.getViewID(), view);
     }
   }
