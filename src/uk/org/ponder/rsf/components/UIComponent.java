@@ -3,12 +3,9 @@
  */
 package uk.org.ponder.rsf.components;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
+ * UIComponent is mutually referential with UIContainer. 
  * Components form a hierarchy ONLY to allow nested repetitive domains. 
  * The key to the child map is the ID prefix - if the ID has no suffix, the
  * value is the single component with that ID at this level. If the ID
@@ -23,7 +20,7 @@ import java.util.Map;
 public class UIComponent {
   public static final String NON_PEER_ID = "  non-peer  ";
   // splitid is used to locate a rendering peer.
-  public SplitID ID;
+  public String ID;
   // ID assigned to assure identity on this level, within repetitive domain.
   public String localID = "";
   // fullid is the full path to this component

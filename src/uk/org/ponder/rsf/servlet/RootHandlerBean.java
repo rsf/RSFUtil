@@ -5,13 +5,10 @@ package uk.org.ponder.rsf.servlet;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import uk.org.ponder.errorutil.RequestSubmittedValueCache;
 import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.rsf.processor.GetHandler;
 import uk.org.ponder.rsf.processor.PostHandler;

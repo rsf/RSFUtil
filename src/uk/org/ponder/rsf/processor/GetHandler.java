@@ -3,6 +3,8 @@
  */
 package uk.org.ponder.rsf.processor;
 
+import java.util.List;
+
 import uk.org.ponder.errorutil.ConfigurationException;
 import uk.org.ponder.errorutil.CoreMessages;
 import uk.org.ponder.errorutil.ErrorUtil;
@@ -19,10 +21,11 @@ import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.html.BasicComponentRenderer;
 import uk.org.ponder.rsf.html.ComponentRenderer;
 import uk.org.ponder.rsf.html.ViewRender;
+import uk.org.ponder.rsf.util.ComponentProducer;
 import uk.org.ponder.rsf.util.CoreRSFMessages;
 import uk.org.ponder.rsf.util.TokenStateHolder;
 import uk.org.ponder.rsf.util.ViewCollection;
-import uk.org.ponder.rsf.util.ViewProducer;
+import uk.org.ponder.rsf.util.ViewComponentProducer;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.TemplateResolver;
 import uk.org.ponder.rsf.view.View;
@@ -127,7 +130,7 @@ public class GetHandler {
   // a "Level 1" GET error simply attempts to redirect onto a default
   // view, with errors intact.
   public ViewParameters handleLevel1Error(ViewParameters viewparams, Throwable t) {
-    ViewProducer defaultview = viewcollection.getDefaultView();
+    ViewComponentProducer defaultview = viewcollection.getDefaultView();
     Logger.log.warn("Exception populating view root: ", t);
     UniversalRuntimeException invest = UniversalRuntimeException.accumulate(t);
     Throwable target = invest.getTargetException();
@@ -164,11 +167,16 @@ public class GetHandler {
    * render an error page.
    */
   public View generateView(ViewParameters viewparams, ComponentChecker checker) {
-    ViewProducer viewproducer = viewcollection.getView(viewparams.viewID);
+    View view = new View();
+    List producers = viewcollection.getProducers(viewparams.viewID);
 
-    if (viewproducer != null) {
-      View togo = viewproducer.createView(viewparams, checker);
-      return togo;
+    if (producers != null) {
+      for (int i = 0; i < producers.size(); ++ i) {
+        ComponentProducer producer = (ComponentProducer) producers.get(i);
+      
+        producer.fillComponents(view.viewroot, viewparams, checker);
+      }
+      return view;
     }
     else {
       throw new UniversalRuntimeException(
