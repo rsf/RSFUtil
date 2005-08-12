@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import uk.org.ponder.util.AssertionException;
+
 /**
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
@@ -39,13 +41,31 @@ public class UIContainer extends UIComponent {
    */
   public transient UIForm currentform;
   
+  public void startForm(String ID) {
+    if (currentform == null) {
+      // could even check parents.
+      throw new AssertionException("Error starting form - form already in progress");
+    }
+    currentform = new UIForm();
+    currentform.ID = ID;
+  }
+  
+  public void startForm() {
+    startForm(BasicComponentIDs.BASIC_FORM);
+  }
+  
+  public void endForm() {
+    currentform = null;
+  }
+  
   public void addComponent(UIComponent toadd) {
     toadd.parent = this;
     if (childmap == null) {
       childmap = new HashMap();
     }
-    String childkey = toadd.ID == null? NON_PEER_ID : toadd.ID.prefix;
-    if (toadd.ID != null && toadd.ID.suffix == null) {
+    SplitID split = toadd.ID == null? null : new SplitID(toadd.ID);
+    String childkey = toadd.ID == null? NON_PEER_ID : split.prefix;
+    if (toadd.ID != null && split.suffix == null) {
       childmap.put(childkey, toadd);
     }
     else {

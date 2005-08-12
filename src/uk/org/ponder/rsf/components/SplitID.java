@@ -31,4 +31,15 @@ public class SplitID {
     }
     return togo.toString();
   }
+  
+  public static String getSuffix(String id) {
+    int colpos = id.indexOf(SEPARATOR);
+    return (colpos == -1) ? null :
+      id.substring(colpos + 1);
+  }
+  
+  public static String getPrefix(String id) {
+    int colpos = id.indexOf(SEPARATOR);
+    return colpos == -1? id : id.substring(0, colpos);
+  }
 }
