@@ -32,6 +32,10 @@ public class SplitID {
     return togo.toString();
   }
   
+  public static boolean isSplit(String id) {
+    return id.indexOf(SEPARATOR) != -1;
+  }
+  
   public static String getSuffix(String id) {
     int colpos = id.indexOf(SEPARATOR);
     return (colpos == -1) ? null :

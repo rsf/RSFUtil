@@ -28,7 +28,7 @@ public class RenderUtil {
     while (true) {
       if (renderindex == lumps.length) break;
       HTMLLump lump = lumps[renderindex];
-      if (lump.forwardmap != null || lump.nestingdepth < basedepth) break;
+      if (lump.downmap != null || lump.nestingdepth < basedepth) break;
       target.print(lump.text);
       ++renderindex;
     }
