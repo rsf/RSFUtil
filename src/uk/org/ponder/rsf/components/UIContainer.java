@@ -5,6 +5,7 @@ package uk.org.ponder.rsf.components;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -22,9 +23,13 @@ public class UIContainer extends UIComponent {
   public UIComponent getComponent(String id) {
     return (UIComponent) childmap.get(id);
   }
-  
+  /** Return all child components with the given prefix */
   public List getComponents(String id) {
     return (List) childmap.get(id);
+  }
+  
+  public Iterator children() {
+    return childmap.values().iterator();
   }
   
   // this is a map of component IDs in this container, to their parent
