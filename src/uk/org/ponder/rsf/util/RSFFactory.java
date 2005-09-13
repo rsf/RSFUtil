@@ -26,6 +26,7 @@ public class RSFFactory {
   public static UIContainer makeContainer(UIContainer parent, String ID) {
     UIContainer togo = new UIContainer();
     togo.ID = ID;
+    parent.addComponent(togo);
     return togo;
   }
   
@@ -77,7 +78,7 @@ public class RSFFactory {
   // a super-repetition scope. fast EL will be useful for non-input components
   // too.
   public static void addParameter(UIContainer parent, String name, String value) {
-    parent.currentform.hiddenfields.put(name, value);
+    parent.getActiveForm().hiddenfields.put(name, value);
   }
   
   // adds global parameters required for ALL consumer-rendered links, in
@@ -121,7 +122,7 @@ public class RSFFactory {
     RSFUtil.addCommandLinkParameter(togo, ViewParameters.FAST_TRACK_ACTION,
         methodbinding);
 
-    if (parent.currentform == null) {
+    if (parent.getActiveForm() == null) {
       throw new UniversalRuntimeException("Component " + parent
           + " does not have a form parent");
     }

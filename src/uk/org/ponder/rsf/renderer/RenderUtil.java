@@ -24,11 +24,12 @@ public class RenderUtil {
     return limit;
   }
   
-  public static int dumpScan(HTMLLump[] lumps, int renderindex, int basedepth, PrintOutputStream target) {
+  public static int dumpScan(HTMLLump[] lumps, int renderindex, int basedepth,  
+      PrintOutputStream target) {
     while (true) {
       if (renderindex == lumps.length) break;
       HTMLLump lump = lumps[renderindex];
-      if (lump.downmap != null || lump.nestingdepth < basedepth) break;
+      if (lump.rsfID != null || lump.nestingdepth < basedepth) break;
       target.print(lump.text);
       ++renderindex;
     }
@@ -49,8 +50,8 @@ public class RenderUtil {
   public static void dumpAttributes(Map attrs, PrintOutputStream pos) {
     for (Iterator keyit = attrs.keySet().iterator(); keyit.hasNext(); ) {
       String key = (String) keyit.next();
-        HTMLLump valuelump = (HTMLLump) attrs.get(key);
-        dumpAttribute(key, valuelump.text, pos);
+        String attrvalue = (String) attrs.get(key);
+        dumpAttribute(key, attrvalue, pos);
     }
   }
   
