@@ -10,6 +10,7 @@ import java.util.Map;
 import uk.org.ponder.streamutil.PrintOutputStream;
 import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.util.Logger;
+import uk.org.ponder.xml.XMLWriter;
 
 /**
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
@@ -38,8 +39,9 @@ public class RenderUtil {
 
   public static void dumpAttribute(String name, String value, PrintOutputStream pos) {
     pos.print(" ").print(name).print("=\"");
-    // TODO: remember to XML-encode this!!
-    pos.print(value).print("\"");
+    XMLWriter xmlw = new XMLWriter(pos);
+    xmlw.write(value);
+    pos.print("\"");
   }
   
   public static void dumpHiddenField(String name, String value, PrintOutputStream pos) {

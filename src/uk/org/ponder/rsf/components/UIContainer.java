@@ -98,12 +98,11 @@ public class UIContainer extends UIComponent {
    */
   private transient UIForm currentform;
   
-  public void startForm(String formID) {
+  public void startForm(UIForm form) {
     if (getActiveForm() != null) {
       throw new AssertionException("Error starting form - form already in progress");
     }
-    currentform = new UIForm();
-    currentform.ID = formID;
+    currentform = form;
     if (componentToForm == null) { // don't overwrite any existing map.
       componentToForm = new HashMap();
     }
@@ -111,14 +110,9 @@ public class UIContainer extends UIComponent {
     // find the form component in the right place when it looks. The fact that
     // the form component is in the "wrong place" in the HTML hierarchy should
     // all come out in the wash.
-    childmap.put(formID, currentform);
+    childmap.put(form.ID, currentform);
   }
 
-
-  public void startForm() {
-    startForm(BasicComponentIDs.BASIC_FORM);
-  }
-  
   public void endForm() {
     currentform = null;
   }

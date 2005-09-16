@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.rsf.components;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -11,5 +12,5 @@ import java.util.Map;
  */
 public class UIForm extends UIComponent {
   public String postURL;
-  public Map hiddenfields;
+  public Map hiddenfields = new HashMap();
 }

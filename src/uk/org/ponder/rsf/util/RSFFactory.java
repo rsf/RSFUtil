@@ -5,8 +5,10 @@ package uk.org.ponder.rsf.util;
 
 import java.util.StringTokenizer;
 
+import uk.org.ponder.rsf.components.BasicComponentIDs;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.components.UIOutput;
@@ -23,6 +25,23 @@ import uk.org.ponder.webapputil.ViewParameters;
  */
 public class RSFFactory {
 
+  public static UIForm makeForm(UIContainer parent, String ID, ViewParameters viewparams) {
+    UIForm togo = new UIForm();
+    togo.ID = ID;
+    parent.startForm(togo);
+    String fullURL = viewparams.getFullURL();
+    togo.postURL = fullURL;
+    int questind = fullURL.indexOf('?');
+    if (questind != -1) {
+      extraParametersToForm(fullURL.substring(questind + 1), parent);
+    }
+    return togo;
+  }
+  
+  public static UIForm makeForm(UIContainer parent, ViewParameters viewparams) {
+    return makeForm(parent, BasicComponentIDs.BASIC_FORM, viewparams);
+  }
+  
   public static UIContainer makeContainer(UIContainer parent, String ID) {
     UIContainer togo = new UIContainer();
     togo.ID = ID;
