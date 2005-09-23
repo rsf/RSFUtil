@@ -8,5 +8,5 @@ package uk.org.ponder.rsf.components;
  * 
  */
 public class UIOutput extends UIBound {
-  public String value;
+  public String text;
 }

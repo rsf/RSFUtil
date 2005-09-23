@@ -9,8 +9,6 @@ import uk.org.ponder.errorutil.RequestStateEntry;
 import uk.org.ponder.errorutil.RequestSubmittedValueCache;
 import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.errorutil.TokenRequestState;
-import uk.org.ponder.hashutil.EighteenIDGenerator;
-import uk.org.ponder.webapputil.ViewParameters;
 
 /**
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
@@ -39,7 +37,7 @@ public class TokenStateHolder {
     TokenRequestState trs = new TokenRequestState();
     trs.rsvc = rsvc;
     trs.ese = ese;
-    errorcache.put(ese.outgoingtokenID, ese);
+    errorcache.put(ese.outgoingtokenID, trs);
     ThreadErrorState.getErrorState().errors.clear();
   }
 }

@@ -15,6 +15,7 @@ import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelectItem;
 import uk.org.ponder.rsf.components.UISelectOne;
 import uk.org.ponder.stringutil.StringList;
+import uk.org.ponder.util.AssertionException;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
 import uk.org.ponder.webapputil.ViewParameters;
@@ -28,6 +29,10 @@ public class RSFFactory {
   public static UIForm makeForm(UIContainer parent, String ID, ViewParameters viewparams) {
     UIForm togo = new UIForm();
     togo.ID = ID;
+    if (parent.getActiveForm() != null) {
+      throw new AssertionException("Error starting form - form already in progress");
+    }
+    parent.addComponent(togo);
     parent.startForm(togo);
     String fullURL = viewparams.getFullURL();
     togo.postURL = fullURL;
@@ -58,7 +63,7 @@ public class RSFFactory {
   public static UIOutput makeText(UIContainer parent, String ID,
       String binding, String initvalue) {
     UIOutput togo = new UIOutput();
-    togo.value = initvalue;
+    togo.text = initvalue;
     togo.valuebinding = binding;
     togo.ID = ID;
     parent.addComponent(togo);
@@ -88,9 +93,28 @@ public class RSFFactory {
     togo.value = initvalue;
     togo.ID = ID;
     parent.addComponent(togo);
+    RSFUtil.setFossilisedBinding(parent, togo, binding, initvalue);
     return togo;
   }
 
+
+  public static UISelectOne makeSelect(UIContainer parent, String ID, StringList values,
+      String selected, String valuebinding) {
+    UISelectOne togo = new UISelectOne();
+    togo.ID = ID;
+    togo.value = selected;
+    togo.choices = new UISelectItem[values.size()];
+
+    for (int i = 0; i < values.size(); ++i) {
+      String value = values.stringAt(i);
+      togo.choices[i] = new UISelectItem(value, value);
+    }
+    togo.valuebinding = valuebinding;
+    RSFUtil.setFossilisedBinding(parent, togo, valuebinding, selected);
+    return togo;
+  }
+
+  
   // typically used to add a fast EL binding - remember to allow UIForm elements
   // to appear in the tree to indicate scope. They can be omitted if scope
   // agrees with repetition scope. Assume that it is impossible to achieve
@@ -157,8 +181,7 @@ public class RSFFactory {
     return makeCommandLink(parent, ID, null, methodbinding);
   }
 
-  public static UILink makeLink(UIContainer parent, String ID, String target,
-      String text) {
+  public static UILink makeLink(UIContainer parent, String ID, String text, String target) {
     UILink togo = new UILink();
     togo.ID = ID;
     togo.text = text;
@@ -168,22 +191,7 @@ public class RSFFactory {
   }
 
   public static UILink makeLink(UIContainer parent, String ID, String target) {
-    return makeLink(parent, ID, target);
-  }
-
-  public static UISelectOne makeSelect(UIContainer parent, String ID, StringList values,
-      String selected, String valuebinding) {
-    UISelectOne togo = new UISelectOne();
-    togo.ID = ID;
-    togo.value = selected;
-    togo.choices = new UISelectItem[values.size()];
-
-    for (int i = 0; i < values.size(); ++i) {
-      String value = values.stringAt(i);
-      togo.choices[i] = new UISelectItem(value, value);
-    }
-    togo.valuebinding = valuebinding;
-    return togo;
+    return makeLink(parent, ID, null, target);
   }
 
 }
