@@ -4,7 +4,7 @@
 package uk.org.ponder.rsf.servlet;
 
 import java.io.IOException;
-import java.io.Writer;
+import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,8 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.rsf.processor.GetHandler;
 import uk.org.ponder.rsf.processor.PostHandler;
+import uk.org.ponder.springutil.RSACBeanGetter;
+import uk.org.ponder.streamutil.OutputStreamPOS;
 import uk.org.ponder.streamutil.PrintOutputStream;
-import uk.org.ponder.streamutil.WriterPOS;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
 import uk.org.ponder.webapputil.ViewParameters;
@@ -28,6 +29,8 @@ public class RootHandlerBean {
 
   private ViewParameters vpexemplar;
 
+  private RSACBeanGetter rsacbeangetter;
+  
   public void setViewParametersExemplar(ViewParameters vpexemplar) {
     this.vpexemplar = vpexemplar;
   }
@@ -39,12 +42,21 @@ public class RootHandlerBean {
   public void setPostHandler(PostHandler posthandler) {
     this.posthandler = posthandler;
   }
-
+  
+  public RSACBeanGetter getRequestBeanGetter() {
+    return rsacbeangetter;
+  }
+  
+  public void setRSACBeanGetter(RSACBeanGetter rsacbeangetter) {
+    this.rsacbeangetter = rsacbeangetter;
+  }
+  
   public void handleGet(HttpServletRequest request, HttpServletResponse response) {
     PrintOutputStream pos = setupResponseWriter(request, response);
     try {
       ViewParameters origrequest = RequestUtil
           .parseRequest(request, vpexemplar);
+      
       ThreadErrorState.initRequest(origrequest);
 
       ViewParameters redirect = gethandler.handle(origrequest, pos);
@@ -89,8 +101,10 @@ public class RootHandlerBean {
       HttpServletResponse response) {
     try {
       response.setContentType("text/html; charset=UTF-8");
-      Writer w = response.getWriter();
-      PrintOutputStream pos = new WriterPOS(w);
+      //response.setContentType("application/xhtml+xml; charset=UTF-8");
+      
+      OutputStream os = response.getOutputStream();
+      PrintOutputStream pos = new OutputStreamPOS(os, "UTF-8");
 
       String acceptHeader = request.getHeader("Accept");
 

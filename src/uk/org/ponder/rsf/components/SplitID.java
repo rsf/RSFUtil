@@ -42,8 +42,19 @@ public class SplitID {
       id.substring(colpos + 1);
   }
   
+  /** Returns the "raw" prefix of the ID - i.e. the part before the colon
+   * if one appears, or the entire ID if none.
+   */
   public static String getPrefix(String id) {
     int colpos = id.indexOf(SEPARATOR);
     return colpos == -1? id : id.substring(0, colpos);
+  }
+  
+  /** Returns the "repetitive" prefix of the ID - i.e. the prefix including
+   * colon if one appears, or null if none.
+   */
+  public static String getPrefixColon(String id) {
+    int colpos = id.indexOf(SEPARATOR);
+    return colpos == -1? null : id.substring(0, colpos + 1);
   }
 }

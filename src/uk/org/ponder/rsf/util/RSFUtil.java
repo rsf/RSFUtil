@@ -43,7 +43,7 @@ public class RSFUtil {
    * Creates a fossilised value binding that will only function for the
    * specified command link. The value will NOT be applied if the form is
    * submitted by some means other than the specified link. A Message component
-   * must be added manually.
+   * must be added manually. This value is decoded in SubmittedValueEntry constructor.
    */
   public static void setFossilisedBinding(UIInput toset, UICommand trigger,
       String binding, String currentvalue) {

@@ -18,9 +18,10 @@ import uk.org.ponder.rsf.components.BasicComponentSetter;
 import uk.org.ponder.rsf.components.ComponentProcessor;
 import uk.org.ponder.rsf.components.ComponentSetter;
 import uk.org.ponder.rsf.components.UIComponent;
-import uk.org.ponder.rsf.html.BasicComponentRenderer;
+import uk.org.ponder.rsf.html.BasicHTMLComponentRenderer;
 import uk.org.ponder.rsf.html.ComponentRenderer;
 import uk.org.ponder.rsf.html.ViewRender;
+import uk.org.ponder.rsf.util.ComponentDumper;
 import uk.org.ponder.rsf.util.ComponentProducer;
 import uk.org.ponder.rsf.util.CoreRSFMessages;
 import uk.org.ponder.rsf.util.TokenStateHolder;
@@ -31,13 +32,14 @@ import uk.org.ponder.rsf.view.TemplateResolver;
 import uk.org.ponder.rsf.view.View;
 import uk.org.ponder.rsf.view.ViewTemplate;
 import uk.org.ponder.streamutil.PrintOutputStream;
+import uk.org.ponder.streamutil.PrintStreamPOS;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
 import uk.org.ponder.webapputil.ViewParameters;
 
 /**
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
- *  
+ * 
  */
 public class GetHandler {
   // This is a hash of String viewIDs to Views.
@@ -46,7 +48,7 @@ public class GetHandler {
   private TemplateResolver templateresolver;
 
   // Springise this when we have more than 1
-  private ComponentRenderer renderer = new BasicComponentRenderer();
+  private ComponentRenderer renderer = new BasicHTMLComponentRenderer();
 
   private TokenStateHolder tsholder;
 
@@ -66,23 +68,37 @@ public class GetHandler {
     this.templateresolver = templateresolver;
   }
 
+  public void setComponentRenderer(ComponentRenderer renderer) {
+    this.renderer = renderer;
+  }
 
   private ComponentSetter setter = new BasicComponentSetter();
 
   public ViewParameters handle(ViewParameters request, PrintOutputStream pos) {
-  
+    boolean iserrorredirect = request.errorredirect != null;
+    request.errorredirect = null;
     try {
       ViewTemplate template = templateresolver.locateTemplate(request);
       View view = generateView(request, template);
 
+      PrintOutputStream dumppos = new PrintStreamPOS(System.out);
+      ComponentDumper.dumpContainer(view.viewroot, 0, dumppos);
+
       ComponentProcessor rsvcfixer = getRSVCFixer(view, request);
       ViewRender viewrender = template.getViewRender();
-      viewrender.init(view, renderer, pos, rsvcfixer);
+      // Fork a renderer for this request, which is aware of the relative path
+      // of the template file which it will be fed.
+      ComponentRenderer reqrenderer = renderer.copy();
+      reqrenderer.setRelativeTemplatePath(template.getRelativePath());
+
+      viewrender.init(view, reqrenderer, pos, rsvcfixer);
+
+      viewrender.render();
 
     }
     catch (Exception e) {
       // if a request comes in for an invalid view, redirect it onto a default
-      ViewParameters redirect = handleLevel1Error(request, e);
+      ViewParameters redirect = handleLevel1Error(request, e, iserrorredirect);
       return redirect;
     }
     finally {
@@ -116,7 +132,6 @@ public class GetHandler {
               if (sve != null) {
                 setter.setValue(toprocess, sve.oldvalue);
               }
-
             }
 
           };
@@ -129,23 +144,24 @@ public class GetHandler {
 
   // a "Level 1" GET error simply attempts to redirect onto a default
   // view, with errors intact.
-  public ViewParameters handleLevel1Error(ViewParameters viewparams, Throwable t) {
+  public ViewParameters handleLevel1Error(ViewParameters viewparams,
+      Throwable t, boolean iserrorredirect) {
     ViewComponentProducer defaultview = viewcollection.getDefaultView();
     Logger.log.warn("Exception populating view root: ", t);
     UniversalRuntimeException invest = UniversalRuntimeException.accumulate(t);
     Throwable target = invest.getTargetException();
     if (target != null) {
       Logger.log.warn("Got target exception of " + target.getClass());
+    }
 
-      if (target instanceof ConfigurationException || target instanceof Error
-          || target instanceof PermissionException) {
-        throw invest;
-      }
+    if (target instanceof ConfigurationException || target instanceof Error
+        || target instanceof PermissionException || iserrorredirect) {
+      throw invest;
     }
 
     TargettedMessage newerror = new TargettedMessage(null);
     ThreadErrorState.addError(newerror);
-    
+
     String tokenid = viewparams.viewtoken;
     String generalerror = defaultview.getMessageLocator().getMessage(
         CoreMessages.GENERAL_SHOW_ERROR, new Object[] { tokenid });
@@ -155,8 +171,9 @@ public class GetHandler {
     ViewParameters defaultparameters = viewparams.copyBase();
 
     defaultview.fillDefaultParameters(defaultparameters);
-    
+
     defaultparameters.viewtoken = ThreadErrorState.getErrorState().outgoingtokenID;
+    defaultparameters.errorredirect = "1";
     return defaultparameters;
   }
 
@@ -171,9 +188,9 @@ public class GetHandler {
     List producers = viewcollection.getProducers(viewparams.viewID);
 
     if (producers != null) {
-      for (int i = 0; i < producers.size(); ++ i) {
+      for (int i = 0; i < producers.size(); ++i) {
         ComponentProducer producer = (ComponentProducer) producers.get(i);
-      
+
         producer.fillComponents(view.viewroot, viewparams, checker);
       }
       return view;

@@ -52,11 +52,14 @@ public class PostHandler {
     this.tsholder = errorhandler;
   }
 
-  public static boolean valueChanged(Object oldvalue, Object newvalue) {
+  public static boolean valueUnchanged(Object oldvalue, Object newvalue) {
     if (oldvalue instanceof String) {
-      // special hack for dealing with checkboxes.
-      if (newvalue == null)
-        newvalue = "false";
+      // special hack for dealing with checkboxes, and a bit further for
+      // suppressed components - we should probably make some attempt to be
+      // component-aware here. 
+      if (newvalue == null) {
+        newvalue = oldvalue.equals("")? "" : "false";
+      }
       return oldvalue.equals(newvalue);
     }
     else if (oldvalue instanceof String[]) {
@@ -71,14 +74,19 @@ public class PostHandler {
   public ViewParameters handle(ViewParameters origrequest, Map origrequestparams) {
     HashMap requestparams = new HashMap();
     requestparams.putAll(origrequestparams);
-    RenderUtil.unpackCommandLink((String) requestparams.get(SubmittedValueEntry.COMMAND_LINK_PARAMETERS), 
-        requestparams);
+    String key = RenderUtil.findCommandParams(requestparams);
+    if (key != null) {
+      String params = key.substring(SubmittedValueEntry.COMMAND_LINK_PARAMETERS.length());
+      RenderUtil.unpackCommandLink(params, requestparams);
+      requestparams.remove(key);
+    }
     
-    String actionmethod = (String) requestparams.get(ViewParameters.FAST_TRACK_ACTION);
+    String actionmethod = ((String[]) requestparams.get(ViewParameters.FAST_TRACK_ACTION))[0];
+    
+    actionmethod = RSFUtil.stripEL(actionmethod);
     
     RequestSubmittedValueCache rsvc = null;
     try {
-      
       rsvc = applyValues(requestparams);
 
       beanwrapper.invokeBeanMethod(actionmethod);
@@ -104,6 +112,7 @@ public class PostHandler {
       // will shortly be thrown away.
       origrequest.clearActionState();
     }
+    origrequest.viewtoken = ThreadErrorState.getErrorState().outgoingtokenID;
     return origrequest;
   }
 
@@ -113,8 +122,10 @@ public class PostHandler {
       RequestSubmittedValueCache rsvc) {
     for (int i = 0; i < tml.size(); ++i) {
       TargettedMessage tm = tml.messageAt(i);
-      String id = rsvc.byPath(tm.targetid).componentid;
-      tm.targetid = id;
+      if (!tm.targetid.equals(TargettedMessage.TARGET_NONE)) {
+        String id = rsvc.byPath(tm.targetid).componentid;
+        tm.targetid = id;
+      }
     }
   }
 
@@ -169,13 +180,16 @@ public class PostHandler {
     //    the DARApplier.
     for (int i = 0; i < rsvc.entries.size(); ++i) {
       SubmittedValueEntry sve = (SubmittedValueEntry) rsvc.entries.get(i);
-      String newvalue = (String) requestparams.get(sve.componentid);
+      String[] values = (String[]) requestparams.get(sve.componentid);
+      String newvalue = values == null? null : values[0];
+      // a null new value might be an unchecked check box.... or else a component
+      // that was suppressed entirely during rendering.
       Logger.log.info("Fossilised binding for " + sve.valuebinding
           + " old value " + sve.oldvalue + " new value " + newvalue);
       // this is only a "UI level" value changed indication. It cannot
       // detect whether the user has made a value change that would cause
-      // no semantic change to the data value.
-      if (!valueChanged(sve.oldvalue, newvalue)) {
+      // no semantic change to the data value. - WHERE AM I? Impossible to locate new value here, JSF used to do it by magic! Should we just fork through the bean reference? Probably not.
+      if (valueUnchanged(sve.oldvalue, newvalue)) {
         continue;
       }
       String rootpath = PathUtil.getHeadPath(sve.valuebinding);

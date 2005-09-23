@@ -39,7 +39,8 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
   }
   
   public String getFullURL(ViewParameters viewparams) {
-    String requestparams = viewparams.toHTTPRequest();
+    // toHTTPRequest provides leading slash, and baseurl includes trailing slash
+    String requestparams = viewparams.toHTTPRequest().substring(1);
 
     String usebaseurl = baseurl;
     String extraparams = "";
@@ -52,7 +53,7 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
         extraparams = cri.ci.extraparameters;
         // rewrite the first character of extra params to ? if there 
         // a) are any extras and b) are not any base request params.
-        if (requestparams.length() == 0 && extraparams.length() > 0) {
+        if (requestparams.indexOf('?') == -1 && extraparams.length() > 0) {
           extraparams = "?" + extraparams.substring(1);
         }
       }
@@ -67,7 +68,7 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
     // http://www.theserverside.com/discussions/thread.tss?thread_id=6039
     //HttpServletResponse response = (HttpServletResponse) ec.getResponse();
     String path = //response.encodeRedirectURL(
-        usebaseurl + viewparams.viewID + requestparams + extraparams
+        usebaseurl + requestparams + extraparams
         //)
         ;
     return path;

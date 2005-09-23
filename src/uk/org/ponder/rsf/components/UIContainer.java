@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.util.AssertionException;
 
 /**
@@ -34,6 +35,20 @@ public class UIContainer extends UIComponent {
   /** Return all child components with the given prefix */
   public List getComponents(String id) {
     return (List) childmap.get(id);
+  }
+  
+  public String debugChildren() {
+    CharWrap togo = new CharWrap();
+    togo.append("Child IDs: (");
+    UIComponent[] children = flatChildren();
+    for (int i = 0; i < children.length; ++ i) {
+      if (i != 0) {
+        togo.append(", ");
+      }
+      togo.append(children[i].ID);
+    }
+    togo.append(")");
+    return togo.toString();
   }
   
   public UIComponent[] flatChildren() {
@@ -99,9 +114,7 @@ public class UIContainer extends UIComponent {
   private transient UIForm currentform;
   
   public void startForm(UIForm form) {
-    if (getActiveForm() != null) {
-      throw new AssertionException("Error starting form - form already in progress");
-    }
+  
     currentform = form;
     if (componentToForm == null) { // don't overwrite any existing map.
       componentToForm = new HashMap();

@@ -35,9 +35,10 @@ public class UIComponent {
       StringBuffer togo = new StringBuffer();
       UIComponent move = this;
       while (move.parent != null) {
-        togo.insert(0, ID.toString() + SplitID.SEPARATOR + localID);
+        togo.insert(0, move.ID.toString() + SplitID.SEPARATOR + move.localID + SplitID.SEPARATOR);
         move = move.parent;
       }
+      //togo.setLength(togo.length() - 1);
       fullID = togo.toString();
     }
     return fullID;
