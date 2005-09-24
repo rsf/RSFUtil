@@ -16,7 +16,7 @@ import uk.org.ponder.errorutil.TokenRequestState;
  */
 public class TokenStateHolder {
  
-  // a map of String error token IDs to ErrorStateEntries.
+// a map of String error token IDs to ErrorStateEntries.
 // the idea is that this be a timeout cache which is cleared out every
 // hour or so... all this functionality to be moved to another class.
   private HashMap errorcache = new HashMap();
