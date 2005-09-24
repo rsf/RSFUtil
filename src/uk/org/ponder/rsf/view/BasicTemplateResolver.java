@@ -11,7 +11,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
 
-import uk.org.ponder.rsf.html.XMLViewTemplate;
+import uk.org.ponder.rsf.template.XMLViewTemplate;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
 import uk.org.ponder.webapputil.ConsumerRequestInfo;
