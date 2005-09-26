@@ -29,7 +29,7 @@ public class BasicSCR implements StaticComponentRenderer {
   /** The name of this renderer, to form as index - it will be invoked by the
    * renderer on seeing an attribute rsf-id="scr:[name]";
    */
-  public String name;
+  private String name;
   /** Takes on one of the two static values above, indicating strategy to be
    * used with the supplied body text.
    */
@@ -46,6 +46,12 @@ public class BasicSCR implements StaticComponentRenderer {
   public void addNameValue(NameValue toadd) {
     attributemap.put(toadd.name, toadd.value);
   }
+  public String getName() {
+    return name;
+  }
+  public void setName(String name) {
+    this.name = name;
+  }
   // deserialisation method - fix this system at some point. Cannot understand
   // any more how maps are supported by the SAXalizer.
   public Iterator getNameValue() {
@@ -56,9 +62,7 @@ public class BasicSCR implements StaticComponentRenderer {
     }
     return values.iterator();
   }
-  public String getName() {
-    return name;
-  }
+ 
   public int render(XMLLump[] lumps, int lumpindex, XMLWriter xmlw) {
     PrintOutputStream pos = xmlw.getInternalWriter();
     
