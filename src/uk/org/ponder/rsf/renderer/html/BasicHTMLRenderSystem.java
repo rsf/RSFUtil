@@ -83,7 +83,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
     if (torendero == null) {
       if (lump.rsfID.startsWith(XMLLump.SCR_PREFIX)) {
         String scrname = lump.rsfID.substring(XMLLump.SCR_PREFIX.length());
-        StaticComponentRenderer scr = scrc.getSCR(scrname); 
+        StaticComponentRenderer scr = scrc.getSCR(scrname);
         if (scr != null) {
           int tagtype = scr.render(lumps, lumpindex, xmlw);
           nextpos = tagtype == ComponentRenderer.LEAF_TAG? 
@@ -91,7 +91,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         }
       }
      
-      if (lump.text.equals("<form ")) {
+      if (lump.textEquals("<form ")) {
         // Logger.log.info("Warning: skipping form with all children at lump
         // index " + lumpindex);
       }
@@ -116,8 +116,8 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       HashMap attrcopy = (HashMap) uselump.attributemap.clone();
       attrcopy.put("id", fullID);
       attrcopy.remove(XMLLump.ID_ATTRIBUTE);
-      // ALWAYS dump the tag name, this can never be rewritten.
-      pos.print(lumps[lumpindex].text);
+      // ALWAYS dump the tag name, this can never be rewritten. (probably?!)
+      pos.write(uselump.buffer, uselump.start, uselump.length);
 
       if (torendero.getClass() == UIOutput.class) {
         String value = ((UIOutput) torendero).text;
@@ -129,7 +129,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
           RenderUtil.dumpTillLump(lumps, lumpindex + 1, endopen.lumpindex + 1,
               pos);
           xmlw.write(value);
-          pos.print(close.text);
+          pos.write(close.buffer, close.start, close.length);
         }
       }
       else if (torendero.getClass() == UIOutputMultiline.class) {
@@ -147,7 +147,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
             }
             xmlw.write(value.stringAt(i));
           }
-          pos.print(close.text);
+          pos.write(close.buffer, close.start, close.length);
         }
       }
       else if (torendero instanceof UIInputBase) {
@@ -158,7 +158,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         String body = null;
         if (torendero instanceof UIInput) {
           value = ((UIInput) torender).value;
-          if (uselump.text.equals("<textarea ")) {
+          if (uselump.textEquals("<textarea ")) {
             body = value;
           }
           else {
@@ -182,7 +182,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         pos.print(">");
         if (body != null) {
           xmlw.write(body);
-          pos.print(close.text);
+          pos.write(close.buffer, close.start, close.length);
         }
         else {
           RenderUtil.dumpTillLump(lumps, endopen.lumpindex + 1,
@@ -204,7 +204,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         pos.print(">");
         if (torender.text != null) {
           xmlw.write(torender.text);
-          pos.print(close.text);
+          pos.write(close.buffer, close.start, close.length);
         }
         else {
           RenderUtil.dumpTillLump(lumps, endopen.lumpindex + 1,
@@ -218,7 +218,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         // secretly
         // bundled as this special attribute.
         attrcopy.put("name", SubmittedValueEntry.COMMAND_LINK_PARAMETERS + value);
-        if (lump.text.equals("<input ") && torender.text != null) {
+        if (lump.textEquals("<input ") && torender.text != null) {
           attrcopy.put("value", torender.text);
         }
 
@@ -228,9 +228,9 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         }
         else {
           pos.print(">");
-          if (torender.text != null && lump.text.equals("<button ")) {
+          if (torender.text != null && lump.textEquals("<button ")) {
             xmlw.write(torender.text);
-            pos.print(close.text);
+            pos.write(close.buffer, close.start, close.length);
           }
           else {
             RenderUtil.dumpTillLump(lumps, endopen.lumpindex + 1,

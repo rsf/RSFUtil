@@ -73,7 +73,7 @@ public class BasicSCR implements StaticComponentRenderer {
       pos.print("<").print(tag).print(" ");
     }
     else {
-      pos.print(lump.text);
+      pos.write(lump.buffer, lump.start, lump.length);
     }
     HashMap newattrs = new HashMap();
     newattrs.putAll(lump.attributemap);
@@ -87,7 +87,7 @@ public class BasicSCR implements StaticComponentRenderer {
       if (tag_type == ComponentRenderer.LEAF_TAG) {
         if (body != null && body_strategy.equals(REPLACE_BODY)) {
           pos.print(body);
-          pos.print(close.text);
+          pos.write(close.buffer, close.start, close.length);
         }
         else {
           if (body != null) { 
