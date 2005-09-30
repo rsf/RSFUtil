@@ -5,7 +5,6 @@ package uk.org.ponder.rsf.renderer;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +22,6 @@ import uk.org.ponder.rsf.view.ViewTemplate;
 import uk.org.ponder.streamutil.PrintOutputStream;
 import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.stringutil.StringList;
-import uk.org.ponder.util.Copiable;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
 
@@ -33,7 +31,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
-public class ViewRender implements Copiable {
+public class ViewRender {
 
   private XMLViewTemplate template;
   private XMLLump[] lumps;
@@ -71,11 +69,6 @@ public class ViewRender implements Copiable {
     this.renderer = renderer;
   }
 
-  public Object copy() {
-    ViewRender togo = new ViewRender();
-    return togo;
-  }
-  
   public void render(PrintOutputStream pos) {
     messagetargets = new HashMap();
     // need to fix this - can we actually do it statically?
@@ -260,7 +253,8 @@ public class ViewRender implements Copiable {
       if (i == debug.lumpindex) {
         message.append("(*)");
       }
-      message.append(lumps[i].text);
+      XMLLump lump = lumps[i];
+      message.append(lump.buffer, lump.start, lump.length);
     }
     if (debug.downmap != null) {
       message.append("\nDownmap here: ").append(debug.downmap.getHeadsDebug());
