@@ -1,7 +1,7 @@
 /*
  * Created on Aug 12, 2005
  */
-package uk.org.ponder.rsf.html;
+package uk.org.ponder.rsf.util;
 
 import java.io.Reader;
 import java.io.StringReader;

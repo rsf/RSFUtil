@@ -6,9 +6,7 @@ package uk.org.ponder.rsf.renderer;
 import java.util.HashMap;
 import java.util.List;
 
-import uk.org.ponder.util.Copiable;
-
-public class StaticRendererCollection implements Copiable {
+public class StaticRendererCollection {
   // a hashmap of either Strings or Component classes 
   private HashMap renderers = new HashMap();
   public void addSCR(StaticComponentRenderer renderer) {
@@ -29,11 +27,5 @@ public class StaticRendererCollection implements Copiable {
         renderers.putAll(((StaticRendererCollection)entry).renderers);
       }
     }
-  }
-  
-  public Object copy() {
-    StaticRendererCollection togo = new StaticRendererCollection();
-    togo.renderers.putAll(renderers);
-    return togo;
   }
 }

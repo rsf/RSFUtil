@@ -1,39 +1,23 @@
-package uk.org.ponder.jsfutil;
+/*
+ * Created on Jul 27, 2005
+ */
+package uk.org.ponder.rsf.view;
 
-import javax.faces.component.UIViewRoot;
+import java.util.HashMap;
 
-import uk.org.ponder.errorutil.MessageLocator;
-import uk.org.ponder.webapputil.ViewParameters;
+import uk.org.ponder.rsf.components.UIContainer;
 
 /**
- * This interface must be implemented by classes representing a view for the
- * ClassViewHandler.
+ * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
- * @author Hans Bergsten, Gefion Software <hans@gefionsoftware.com>
- * @version 1.0
  */
-public abstract class View {
-  /**
-   * The UIViewRoot object returned from createView will be given a String
-   * attribute with this name representing the title required for the specific
-   * view rendered.
-   */
-  public static final String VIEW_NAME_ATTRIBUTE = "View name";
-
-  public abstract void createView(UIViewRoot viewroot, ViewParameters origviewparams);
-
-  public abstract String getViewID();
-  
-  public abstract void fillDefaultParameters(ViewParameters defaultparameters);
-
-  protected MessageLocator messagelocator;
-  
-  public void setMessageLocator(MessageLocator messagelocator) {
-    this.messagelocator = messagelocator;
+public class View {
+  public static final String VIEWROOT_ID = "  viewroot  ";
+  public View() {
+    viewroot = new UIContainer();
+    viewroot.ID = VIEWROOT_ID;
   }
-  
-  public MessageLocator getMessageLocator() {
-    return messagelocator;
-  }
-
+  public UIContainer viewroot;
+  // This is a map of FULL component IDs to String messages.
+  public HashMap IDtomessage = new HashMap();
 }

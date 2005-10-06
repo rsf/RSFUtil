@@ -15,7 +15,7 @@ public class BasicComponentSetter implements ComponentSetter {
       ((UIInput)toset).value = (String)value;
     }
     else if (toset instanceof UIOutput) {
-      ((UIOutput)toset).value = (String)value;
+      ((UIOutput)toset).text = (String)value;
     }
     else if (toset instanceof UISelectBoolean) {
       ((UISelectBoolean)toset).value = value.equals("true");

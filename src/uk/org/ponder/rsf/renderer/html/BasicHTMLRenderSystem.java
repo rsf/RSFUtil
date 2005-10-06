@@ -113,7 +113,9 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       }
 
       String fullID = torendero.getFullID();
-      HashMap attrcopy = (HashMap) uselump.attributemap.clone();
+      //HashMap attrcopy = (HashMap) uselump.attributemap.clone();
+      HashMap attrcopy = new HashMap();
+      attrcopy.putAll(uselump.attributemap);
       attrcopy.put("id", fullID);
       attrcopy.remove(XMLLump.ID_ATTRIBUTE);
       // ALWAYS dump the tag name, this can never be rewritten. (probably?!)

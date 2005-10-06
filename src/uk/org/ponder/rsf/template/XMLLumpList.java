@@ -1,7 +1,7 @@
 /*
  * Created on Aug 17, 2005
  */
-package uk.org.ponder.rsf.html;
+package uk.org.ponder.rsf.template;
 
 import java.util.ArrayList;
 
