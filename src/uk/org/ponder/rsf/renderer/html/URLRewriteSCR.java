@@ -12,17 +12,9 @@ import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.util.URLRewriter;
 import uk.org.ponder.rsf.view.ViewTemplate;
 import uk.org.ponder.streamutil.PrintOutputStream;
-import uk.org.ponder.util.Copiable;
 import uk.org.ponder.xml.XMLWriter;
 
-public class URLRewriteSCR implements StaticComponentRenderer, Copiable {
-  public Object copy() {
-    URLRewriteSCR togo = new URLRewriteSCR();
-    togo.rewriter = rewriter;
-    togo.relpath = relpath;
-    return togo;
-  }
-  
+public class URLRewriteSCR implements StaticComponentRenderer {
   private URLRewriter rewriter;
   private String relpath;
 
@@ -61,14 +53,14 @@ public class URLRewriteSCR implements StaticComponentRenderer, Copiable {
     XMLLump lump = lumps[lumpindex];
     XMLLump close = lump.close_tag;
     XMLLump endopen = lump.open_end;
-    if ((lump.text.equals("<a ") || lump.text.equals("<link "))
+    if ((lump.textEquals("<a ") || lump.textEquals("<link "))
         && lump.attributemap.containsKey("href")) {
       newattrs = getResolvedURLMap(lump.attributemap, "href");
     }
-    if (lump.text.equals("<img ") && lump.attributemap.containsKey("src")) {
+    if (lump.textEquals("<img ") && lump.attributemap.containsKey("src")) {
       newattrs = getResolvedURLMap(lump.attributemap, "src");
     }
-    xmlw.writeRaw(lump.text);
+    xmlw.writeRaw(lump.buffer, lump.start, lump.length);
     if (newattrs == null) {
       RenderUtil.dumpTillLump(lumps, lumpindex + 1, close.lumpindex + 1, pos);
     }

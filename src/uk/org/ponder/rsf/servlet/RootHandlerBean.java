@@ -54,12 +54,8 @@ public class RootHandlerBean {
   public void handleGet(HttpServletRequest request, HttpServletResponse response) {
     PrintOutputStream pos = setupResponseWriter(request, response);
     try {
-      ViewParameters origrequest = RequestUtil
-          .parseRequest(request, vpexemplar);
-      
-      ThreadErrorState.initRequest(origrequest);
-
-      ViewParameters redirect = gethandler.handle(origrequest, pos);
+      ViewParameters redirect = gethandler.handle(pos, 
+          rsacbeangetter.getBeanGetter());
 
       if (redirect != null) {
         issueRedirect(redirect, response);
@@ -73,7 +69,7 @@ public class RootHandlerBean {
 
   public void handlePost(HttpServletRequest request,
       HttpServletResponse response) {
-    ViewParameters origrequest = RequestUtil.parseRequest(request, vpexemplar);
+    ViewParameters origrequest = ViewParametersFactory.parseRequest(request, vpexemplar);
 
     ViewParameters redirect = posthandler.handle(origrequest, request.getParameterMap());
 

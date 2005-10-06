@@ -11,23 +11,15 @@ import uk.org.ponder.rsf.util.ComponentDumper;
 import uk.org.ponder.rsf.util.ViewCollection;
 import uk.org.ponder.streamutil.PrintOutputStream;
 import uk.org.ponder.streamutil.PrintStreamPOS;
-import uk.org.ponder.util.Copiable;
 import uk.org.ponder.util.UniversalRuntimeException;
-import uk.org.ponder.webapputil.BlankViewParameters;
 import uk.org.ponder.webapputil.ViewParameters;
 
-public class ViewGenerator implements FactoryBean, Copiable {
+public class ViewGenerator implements FactoryBean {
   private ViewCollection viewcollection;
   private View view;
   private ComponentChecker checker;
   private ViewParameters viewparams;
-  
-  public Object copy() {
-    ViewGenerator togo = new ViewGenerator();
-    togo.viewcollection = viewcollection;
-    return togo;
-  }
-
+ 
   public Object getObject() throws Exception {
     if (view == null) {
       view = generateView(viewparams, checker);
@@ -57,9 +49,6 @@ public class ViewGenerator implements FactoryBean, Copiable {
    */
   private View generateView(ViewParameters viewparams, ComponentChecker checker) {
     View view = new View();
-    if (viewparams instanceof BlankViewParameters) { // we are probably a dead bean
-      return view;
-    }
     List producers = viewcollection.getProducers(viewparams.viewID);
 
     if (producers != null) {

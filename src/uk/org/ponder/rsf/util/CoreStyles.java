@@ -1,7 +1,7 @@
 /*
  * Created on Nov 24, 2004
  */
-package uk.org.ponder.jsfutil;
+package uk.org.ponder.rsf.util;
 
 /**
  * @author Antranig Basman (antranig@caret.cam.ac.uk)

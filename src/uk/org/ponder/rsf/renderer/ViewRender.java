@@ -329,7 +329,7 @@ public class ViewRender {
 
   // plus one, since a deficit indicates one of the concrete lump children
   // must count as an extra unficit.
-  HashMap doneprefix = new HashMap();
+  HashMap doneprefix = new HashMap(8);
   // the "deficit" is the number of (requested) children issued by the producer
   // that are not found within children of the target lump.
   // A match is either an exact match in prefix and suffix, or else a "default

@@ -1,13 +1,14 @@
 /*
  * Created on Jul 27, 2005
  */
-package uk.org.ponder.rsf.html;
+package uk.org.ponder.rsf.renderer;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import uk.org.ponder.errorutil.SubmittedValueEntry;
+import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.streamutil.PrintOutputStream;
 import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.util.Logger;
@@ -18,23 +19,28 @@ import uk.org.ponder.xml.XMLWriter;
  * 
  */
 public class RenderUtil {
-
+ 
   public static int dumpTillLump(XMLLump[] lumps, int start, int limit, PrintOutputStream target) {
-    for (; start < limit; ++ start) {
-      target.print(lumps[start].text);
-    }
+//    for (; start < limit; ++ start) {
+//      target.print(lumps[start].text);
+//    }
+    target.write(lumps[start].buffer, lumps[start].start, lumps[limit].start - lumps[start].start);
     return limit;
   }
   
   public static int dumpScan(XMLLump[] lumps, int renderindex, int basedepth,  
       PrintOutputStream target) {
+    int start = lumps[renderindex].start;
+    char[] buffer = lumps[renderindex].buffer;
     while (true) {
       if (renderindex == lumps.length) break;
       XMLLump lump = lumps[renderindex];
       if (lump.rsfID != null || lump.nestingdepth < basedepth) break;
-      target.print(lump.text);
+//      target.print(lump.text);
       ++renderindex;
     }
+    int limit = (renderindex == lumps.length? buffer.length : lumps[renderindex].start);
+    target.write(buffer, start, limit - start);
     return renderindex;
   }
 
