@@ -11,7 +11,7 @@ import uk.org.ponder.errorutil.PermissionException;
 import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.rsf.renderer.ViewRender;
-import uk.org.ponder.rsf.util.TokenStateHolder;
+import uk.org.ponder.rsf.state.RequestStateEntry;
 import uk.org.ponder.rsf.util.ViewCollection;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.streamutil.PrintOutputStream;
@@ -26,6 +26,7 @@ import uk.org.ponder.webapputil.ViewParameters;
 public class GetHandler {
   // This is a hash of String viewIDs to Views.
   private ViewCollection viewcollection;
+  private RequestStateEntry requeststateentry;
 
   public void setViewCollection(ViewCollection viewcollection) {
     this.viewcollection = viewcollection;
@@ -35,11 +36,8 @@ public class GetHandler {
     return viewcollection;
   }
 
-
-  private TokenStateHolder tsholder;
-
-  public void setTSHolder(TokenStateHolder errorhandler) {
-    this.tsholder = errorhandler;
+  public void setRequestState(RequestStateEntry requeststateentry) {
+    this.requeststateentry = requeststateentry;
   }
 
   public ViewParameters handle(PrintOutputStream pos, BeanGetter beangetter) {
@@ -57,7 +55,7 @@ public class GetHandler {
       return redirect;
     }
     finally {
-      tsholder.errorAccumulationComplete(null);
+      requeststateentry.requestComplete(null);
     }
     return null;
   }
@@ -89,11 +87,11 @@ public class GetHandler {
     newerror.message = generalerror;
     Logger.log.warn("Error creating view tree - token " + tokenid, t);
 
-    ViewParameters defaultparameters = (ViewParameters) viewparams.copyBase();
+    ViewParameters defaultparameters = viewparams.copyBase();
 
     defaultview.fillDefaultParameters(defaultparameters);
 
-    defaultparameters.viewtoken = ThreadErrorState.getErrorState().outgoingtokenID;
+    defaultparameters.viewtoken = requeststateentry.outgoingtokenID;
     defaultparameters.errorredirect = "1";
     return defaultparameters;
   }

@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.FactoryBean;
 
-import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.servletutil.HttpServletRequestAware;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
@@ -44,6 +43,8 @@ public class ViewParametersFactory implements HttpServletRequestAware,
       ViewParameters vpexemplar) {
     Logger.log.info("begin parseRequest");
     // We INSIST that all data passed in and out should be in UTF-8.
+    // TODO: Make sure we do not tread on the toes of a POST request in
+    // doing this however.
     try {
       request.setCharacterEncoding("UTF-8");
     }
@@ -70,7 +71,6 @@ public class ViewParametersFactory implements HttpServletRequestAware,
   public Object getObject() throws Exception {
     if (viewparams == null) {
       viewparams = parseRequest(request, vpexemplar);
-      ThreadErrorState.initRequest(viewparams);
     }
     return viewparams;
   }

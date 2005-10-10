@@ -3,23 +3,29 @@
  */
 package uk.org.ponder.rsf.processor;
 
-import uk.org.ponder.errorutil.RequestSubmittedValueCache;
-import uk.org.ponder.errorutil.SubmittedValueEntry;
 import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.ThreadErrorState;
-import uk.org.ponder.errorutil.TokenRequestState;
 import uk.org.ponder.rsf.components.BasicComponentSetter;
 import uk.org.ponder.rsf.components.ComponentProcessor;
 import uk.org.ponder.rsf.components.ComponentSetter;
 import uk.org.ponder.rsf.components.UIComponent;
+import uk.org.ponder.rsf.state.RequestSubmittedValueCache;
+import uk.org.ponder.rsf.state.SubmittedValueEntry;
+import uk.org.ponder.rsf.state.TokenRequestState;
+import uk.org.ponder.rsf.state.TokenStateHolder;
 import uk.org.ponder.rsf.util.CoreRSFMessages;
-import uk.org.ponder.rsf.util.TokenStateHolder;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.webapputil.ViewParameters;
 
-// Returns a ComponentProcessor which will do the work of setting the
-// value of a component to the value obtained from the RSVC stored at the
-// CURRENT view token.
+/** 
+ * A ComponentProcessor which will do the work of setting the
+ * value of a component to the value obtained from the RSVC stored at the
+ * CURRENT view token. This is used to return the values of an erroneous submission
+ * to the user for correction.
+ * <br>
+ * This is a request scope bean with init-method init().
+ * 
+ */
 
 public class RSVCFixer implements ComponentProcessor {
   TokenRequestState cachedtrs;
@@ -42,7 +48,7 @@ public class RSVCFixer implements ComponentProcessor {
       Logger.log
           .info("INTERESTING EVENT!! User requested error state which has expired from the cache");
 
-      ThreadErrorState.getErrorState().errors.addMessage(new TargettedMessage(
+      ThreadErrorState.addError(new TargettedMessage(
           TargettedMessage.TARGET_NONE, CoreRSFMessages.EXPIRED_TOKEN));
     }
  

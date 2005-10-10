@@ -6,7 +6,6 @@ package uk.org.ponder.rsf.renderer.html;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import uk.org.ponder.errorutil.SubmittedValueEntry;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIForm;
@@ -21,6 +20,7 @@ import uk.org.ponder.rsf.renderer.RenderSystem;
 import uk.org.ponder.rsf.renderer.RenderUtil;
 import uk.org.ponder.rsf.renderer.StaticComponentRenderer;
 import uk.org.ponder.rsf.renderer.StaticRendererCollection;
+import uk.org.ponder.rsf.state.SubmittedValueEntry;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.template.XMLLumpList;
 import uk.org.ponder.streamutil.PrintOutputStream;
