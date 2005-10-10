@@ -5,10 +5,10 @@ package uk.org.ponder.rsf.util;
 
 import java.util.HashMap;
 
-import uk.org.ponder.errorutil.SubmittedValueEntry;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInput;
+import uk.org.ponder.rsf.state.SubmittedValueEntry;
 
 /**
  * @author Antranig Basman (antranig@caret.cam.ac.uk)

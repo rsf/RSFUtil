@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import uk.org.ponder.errorutil.SubmittedValueEntry;
+import uk.org.ponder.rsf.state.SubmittedValueEntry;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.streamutil.PrintOutputStream;
 import uk.org.ponder.stringutil.CharWrap;

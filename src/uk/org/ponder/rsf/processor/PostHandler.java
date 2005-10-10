@@ -11,9 +11,6 @@ import uk.org.ponder.arrayutil.ArrayUtil;
 import uk.org.ponder.beanutil.BeanContainerWrapper;
 import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.errorutil.CoreMessages;
-import uk.org.ponder.errorutil.RequestStateEntry;
-import uk.org.ponder.errorutil.RequestSubmittedValueCache;
-import uk.org.ponder.errorutil.SubmittedValueEntry;
 import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.TargettedMessageList;
 import uk.org.ponder.errorutil.ThreadErrorState;
@@ -21,21 +18,26 @@ import uk.org.ponder.mapping.DARApplier;
 import uk.org.ponder.mapping.DARReceiver;
 import uk.org.ponder.mapping.DataAlterationRequest;
 import uk.org.ponder.rsf.renderer.RenderUtil;
+import uk.org.ponder.rsf.state.RequestStateEntry;
+import uk.org.ponder.rsf.state.RequestSubmittedValueCache;
+import uk.org.ponder.rsf.state.SubmittedValueEntry;
 import uk.org.ponder.rsf.util.RSFUtil;
-import uk.org.ponder.rsf.util.TokenStateHolder;
 import uk.org.ponder.util.AssertionException;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.webapputil.ViewParameters;
 
 /**
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
- *  
+ * PostHandler is a request scope bean responsible for handling an HTTP
+ * POST request. 
  */
 public class PostHandler {
 
   public static final String RSVC_VAR = "uk.org.ponder.rsvc";
   private DARApplier darapplier;
   private BeanContainerWrapper beanwrapper;
+  private ActionResultInterpreter ari;
+  private RequestStateEntry requeststateentry;
 
   // this will be used to locate request-scope beans.
   public void setBeanContainerWrapper(BeanContainerWrapper beanwrapper) {
@@ -46,10 +48,12 @@ public class PostHandler {
     this.darapplier = darapplier;
   }
 
-  private TokenStateHolder tsholder;
-
-  public void setTSHolder(TokenStateHolder errorhandler) {
-    this.tsholder = errorhandler;
+  public void setRequestState(RequestStateEntry requeststateentry) {
+    this.requeststateentry = requeststateentry;
+  }
+  
+  public void setActionResultInterpreter(ActionResultInterpreter ari) {
+    this.ari = ari;
   }
 
   public static boolean valueUnchanged(Object oldvalue, Object newvalue) {
@@ -85,12 +89,11 @@ public class PostHandler {
     
     actionmethod = RSFUtil.stripEL(actionmethod);
     
+    String result = null;
     RequestSubmittedValueCache rsvc = null;
     try {
       rsvc = applyValues(requestparams);
-
-      beanwrapper.invokeBeanMethod(actionmethod);
-      
+      result = (String) beanwrapper.invokeBeanMethod(actionmethod);
     }
     catch (Exception e) {
       Logger.log.error(e);
@@ -99,35 +102,15 @@ public class PostHandler {
     }
     
     String linkid = TargettedMessage.TARGET_NONE;
-    RequestStateEntry ese = ThreadErrorState.getErrorState();
-    if (ese.errors.size() != 0) {
-      // if there are errors, the submitted values will be cached too, to be
-      // returned to the user.
-      fixupErrors(ese.errors, rsvc);
-      tsholder.errorAccumulationComplete(rsvc);
-    }
-    else {
-      tsholder.errorAccumulationComplete(null);
-      // recall this is a global shared copy - no harm since we know it 
-      // will shortly be thrown away.
-      origrequest.clearActionState();
-    }
-    origrequest.viewtoken = ThreadErrorState.getErrorState().outgoingtokenID;
+   
+    ARIResult arires = ari.interpretActionResult(origrequest, result);
+    requeststateentry.requestComplete(rsvc);
+    
+    arires.resultingview.viewtoken = requeststateentry.outgoingtokenID;
     return origrequest;
   }
 
-  // Convert errors which are currently referring to bean paths back onto
-  // their fields as specified in RSVC.
-  private void fixupErrors(TargettedMessageList tml, 
-      RequestSubmittedValueCache rsvc) {
-    for (int i = 0; i < tml.size(); ++i) {
-      TargettedMessage tm = tml.messageAt(i);
-      if (!tm.targetid.equals(TargettedMessage.TARGET_NONE)) {
-        String id = rsvc.byPath(tm.targetid).componentid;
-        tm.targetid = id;
-      }
-    }
-  }
+  
 
   // This is assumed to be a standard servlet map of Strings to String[].
   // one would assume this was easy enough to assure with any other technology
