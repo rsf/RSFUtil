@@ -9,11 +9,9 @@ import java.io.OutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.rsf.processor.GetHandler;
 import uk.org.ponder.rsf.processor.PostHandler;
-import uk.org.ponder.rsf.state.RequestStateEntry;
-import uk.org.ponder.springutil.RSACBeanGetter;
+import uk.org.ponder.springutil.RSACBeanLocator;
 import uk.org.ponder.streamutil.OutputStreamPOS;
 import uk.org.ponder.streamutil.PrintOutputStream;
 import uk.org.ponder.util.Logger;
@@ -21,6 +19,11 @@ import uk.org.ponder.util.UniversalRuntimeException;
 import uk.org.ponder.webapputil.ViewParameters;
 
 /**
+ * The RootHandlerBean is the main entry point for handling of the HttpServletRequest
+ * cycle. Almost all servlet-dependent logic is placed in this class, including
+ * initiating parameter decoding (eventually done by RSAC), setting up the
+ * response writer and issuing client redirects. From here, handling forks
+ * to the GetHandler and PostHandler in the <code>processor</code> package.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  *  
  */
@@ -30,7 +33,7 @@ public class RootHandlerBean {
 
   private ViewParameters vpexemplar;
 
-  private RSACBeanGetter rsacbeangetter;
+  private RSACBeanLocator rsacbeangetter;
   
   public void setViewParametersExemplar(ViewParameters vpexemplar) {
     this.vpexemplar = vpexemplar;
@@ -43,12 +46,12 @@ public class RootHandlerBean {
   public void setPostHandler(PostHandler posthandler) {
     this.posthandler = posthandler;
   }
-  
-  public RSACBeanGetter getRequestBeanGetter() {
-    return rsacbeangetter;
-  }
-  
-  public void setRSACBeanGetter(RSACBeanGetter rsacbeangetter) {
+//  
+//  public RSACBeanLocator getRequestBeanLocator() {
+//    return rsacbeangetter;
+//  }
+//  
+  public void setRequestBeanLocator(RSACBeanLocator rsacbeangetter) {
     this.rsacbeangetter = rsacbeangetter;
   }
   
@@ -56,7 +59,7 @@ public class RootHandlerBean {
     PrintOutputStream pos = setupResponseWriter(request, response);
     try {
       ViewParameters redirect = gethandler.handle(pos, 
-          rsacbeangetter.getBeanGetter());
+          rsacbeangetter.getBeanLocator());
 
       if (redirect != null) {
         issueRedirect(redirect, response);
@@ -82,7 +85,7 @@ public class RootHandlerBean {
   // the redirect directly to the client via this connection.
   // TODO: This method might need some state, depending on the client.
   // maybe we can do this all with "request beans"?
-  public void issueRedirect(ViewParameters viewparams,
+  public static void issueRedirect(ViewParameters viewparams,
       HttpServletResponse response) {
     String path = viewparams.getFullURL();
     Logger.log.info("Redirecting to " + path);
@@ -94,7 +97,7 @@ public class RootHandlerBean {
     }
   }
 
-  private PrintOutputStream setupResponseWriter(HttpServletRequest request,
+  public static PrintOutputStream setupResponseWriter(HttpServletRequest request,
       HttpServletResponse response) {
     try {
       response.setContentType("text/html; charset=UTF-8");

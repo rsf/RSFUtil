@@ -5,6 +5,7 @@ package uk.org.ponder.rsf.renderer.html;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIComponent;
@@ -28,6 +29,10 @@ import uk.org.ponder.stringutil.StringList;
 import uk.org.ponder.xml.XMLWriter;
 
 /**
+ * The implementation of the standard XHTML rendering System. This class
+ * is due for basic refactoring since it contains logic that belongs in a)
+ * a "base System-independent" lookup bean, and b) in a number of individual
+ * ComponentRenderer objects.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
@@ -53,6 +58,16 @@ public class BasicHTMLRenderSystem implements RenderSystem {
     
   public void setStaticRenderers(StaticRendererCollection scrc) {
     this.scrc = scrc;
+  }
+  
+
+  public void normalizeRequestMap(Map requestparams) {
+    String key = RenderUtil.findCommandParams(requestparams);
+    if (key != null) {
+      String params = key.substring(SubmittedValueEntry.COMMAND_LINK_PARAMETERS.length());
+      RenderUtil.unpackCommandLink(params, requestparams);
+      requestparams.remove(key);
+    }
   }
   
   // No, this method will not stay like this forever! We plan on an architecture
@@ -284,6 +299,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
 
     return nextpos;
   }
+
 
   
 

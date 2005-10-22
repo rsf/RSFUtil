@@ -7,6 +7,14 @@ import org.springframework.beans.factory.FactoryBean;
 
 import uk.org.ponder.webapputil.ViewParameters;
 
+/** A utility bean to enable template loading to proceed by RSAC autowiring.
+ * It's unclear whether this has improved the code structure significantly, but
+ * is an interesting experiment. This is a FactoryBean since RSACBeanGetter
+ * has not yet support for "factory-method".
+ * @author Antranig Basman (antranig@caret.cam.ac.uk)
+ *
+ */
+
 public class TemplateLoaderBean implements FactoryBean {
   private ViewParameters viewparams;
   private TemplateResolver resolver;

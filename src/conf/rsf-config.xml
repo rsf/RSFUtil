@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
+  "http://www.springframework.org/dtd/spring-beans.dtd">
+<!-- This file is RSF-static configuration - common and invariant to 
+  all applications using RSF -->
+<beans>
+  <bean id="saxalizermappingcontext"
+    class="uk.org.ponder.saxalizer.SAXalizerMappingContext">
+  </bean>
+  <bean id="mappablexmlprovider" class="uk.org.ponder.saxalizer.SAXalXMLProvider">
+    <constructor-arg>
+      <ref local="saxalizermappingcontext"/>
+    </constructor-arg>
+  </bean>
+  <bean id="darapplier" class="uk.org.ponder.mapping.DARApplier">
+    <property name="SAXalXMLProvider">
+      <ref local="mappablexmlprovider"/>
+    </property>
+  </bean>
+  <bean id="tokenstateholder" class="uk.org.ponder.rsf.state.TokenStateHolder">
+  </bean>
+  
+  <!-- The two properties of viewstatehandler, like installationname above 
+		are only relevant to users of the direct UI. These will be overridden
+		for consumers of the remote web service. I will try to remove the
+		need for these parameters since it should be possible to automatically
+		infer the relevant URLs. -->
+	<bean id="viewstatehandler" 
+		class="uk.org.ponder.rsf.util.RSFServletViewStateHandler">
+		<!-- CONFIG The URL under which JSF-rendered pages served directly by FlowTalk
+			will be made visible -->
+		<property name="baseURL">
+			<ref bean="directuibaseurl"/>
+		</property>
+		<!-- CONFIG The URL under which static resource served by FlowTalk will
+			be made visible -->
+		<property name="resourceBaseURL">
+			<ref bean="directuiresourcebaseurl"/>
+		</property>
+	</bean>
+  
+  <bean id="rsacbeanfactoryfactory" 
+    class="uk.org.ponder.springutil.RSACBeanFactoryFactory">
+  </bean>
+  
+  <bean id="rsacbeanlocator" factory-bean="rsacbeanfactoryfactory"
+    factory-method="getRSACBeanLocator">  
+    <property name="mappingContext">
+      <ref local="saxalizermappingcontext"/>
+    </property>
+  </bean>
+    
+  <bean id="rsacsafebeanlocator"
+    class="uk.org.ponder.beanutil.BeanContainerWrapper">
+    <property name="beanLocator">
+      <ref local="rsacbeanlocator"/>
+    </property>
+    <property name="permittedBeanRoots">
+      <ref bean="requestwriteablebeans"/>
+    </property>
+  </bean>
+  
+  <bean id="urlrewriter"
+    class="uk.org.ponder.rsf.util.URLRewriter">
+    <property name="viewParametersExemplar">
+      <ref bean="viewparamsexemplar"/>
+    </property>
+  </bean>
+  
+   
+  <bean id="roothandlerbean" class="uk.org.ponder.rsf.servlet.RootHandlerBean">
+      <!-- EXTERNAL DEPENDENCY! The application supplies the view params -->
+    <property name="viewParametersExemplar">
+      <ref bean="viewparamsexemplar"/>
+    </property>
+    <property name="requestBeanLocator">
+      <ref local="rsacbeanlocator"/>
+    </property>
+  </bean>
+  
+</beans>

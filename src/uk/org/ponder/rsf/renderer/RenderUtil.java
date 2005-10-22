@@ -3,7 +3,6 @@
  */
 package uk.org.ponder.rsf.renderer;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -75,7 +74,12 @@ public class RenderUtil {
     return togo.toString();
   }
 
-  public static void unpackCommandLink(String value, HashMap requestparams) {
+  /** "Unpacks" the supplied command link "name" (as encoded using the 
+   * HTMLRenderSystem for submission controls) by treating it as a section
+   * of URL attribute stanzas. The key/value pairs encoded in it will be
+   * added to the supplied (modifiable) map.
+   */ 
+  public static void unpackCommandLink(String value, Map requestparams) {
     String[] split = value.split("[&=]");
     // start at 1 since string will begin with &
     for (int i = 1; i < split.length; i += 2) {

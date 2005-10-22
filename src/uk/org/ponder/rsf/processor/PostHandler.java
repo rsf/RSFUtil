@@ -9,6 +9,8 @@ import java.util.Map;
 
 import uk.org.ponder.arrayutil.ArrayUtil;
 import uk.org.ponder.beanutil.BeanContainerWrapper;
+import uk.org.ponder.beanutil.BeanLocator;
+import uk.org.ponder.beanutil.BeanUtil;
 import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.errorutil.CoreMessages;
 import uk.org.ponder.errorutil.TargettedMessage;
@@ -17,11 +19,13 @@ import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.mapping.DARApplier;
 import uk.org.ponder.mapping.DARReceiver;
 import uk.org.ponder.mapping.DataAlterationRequest;
+import uk.org.ponder.rsf.flow.ARIResult;
+import uk.org.ponder.rsf.flow.ActionResultInterpreter;
+import uk.org.ponder.rsf.renderer.RenderSystem;
 import uk.org.ponder.rsf.renderer.RenderUtil;
 import uk.org.ponder.rsf.state.RequestStateEntry;
 import uk.org.ponder.rsf.state.RequestSubmittedValueCache;
 import uk.org.ponder.rsf.state.SubmittedValueEntry;
-import uk.org.ponder.rsf.util.RSFUtil;
 import uk.org.ponder.util.AssertionException;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.webapputil.ViewParameters;
@@ -35,12 +39,13 @@ public class PostHandler {
 
   public static final String RSVC_VAR = "uk.org.ponder.rsvc";
   private DARApplier darapplier;
-  private BeanContainerWrapper beanwrapper;
+  private BeanLocator beanwrapper;
   private ActionResultInterpreter ari;
   private RequestStateEntry requeststateentry;
+  private RenderSystem rendersystem;
 
   // this will be used to locate request-scope beans.
-  public void setBeanContainerWrapper(BeanContainerWrapper beanwrapper) {
+  public void setBeanLocator(BeanLocator beanwrapper) {
     this.beanwrapper = beanwrapper;
   }
 
@@ -55,12 +60,16 @@ public class PostHandler {
   public void setActionResultInterpreter(ActionResultInterpreter ari) {
     this.ari = ari;
   }
+  
+  public void setRenderSystem(RenderSystem rendersystem) {
+    this.rendersystem = rendersystem;
+  }
 
   public static boolean valueUnchanged(Object oldvalue, Object newvalue) {
     if (oldvalue instanceof String) {
       // special hack for dealing with checkboxes, and a bit further for
       // suppressed components - we should probably make some attempt to be
-      // component-aware here. 
+      // component-aware here. TODO: somehow forward this to the RenderSystem.
       if (newvalue == null) {
         newvalue = oldvalue.equals("")? "" : "false";
       }
@@ -78,22 +87,17 @@ public class PostHandler {
   public ViewParameters handle(ViewParameters origrequest, Map origrequestparams) {
     HashMap requestparams = new HashMap();
     requestparams.putAll(origrequestparams);
-    String key = RenderUtil.findCommandParams(requestparams);
-    if (key != null) {
-      String params = key.substring(SubmittedValueEntry.COMMAND_LINK_PARAMETERS.length());
-      RenderUtil.unpackCommandLink(params, requestparams);
-      requestparams.remove(key);
-    }
+    rendersystem.normalizeRequestMap(requestparams);
     
-    String actionmethod = ((String[]) requestparams.get(ViewParameters.FAST_TRACK_ACTION))[0];
+    String actionmethod = ((String[]) requestparams.get(SubmittedValueEntry.FAST_TRACK_ACTION))[0];
     
-    actionmethod = RSFUtil.stripEL(actionmethod);
+    actionmethod = BeanUtil.stripEL(actionmethod);
     
     String result = null;
     RequestSubmittedValueCache rsvc = null;
     try {
       rsvc = applyValues(requestparams);
-      result = (String) beanwrapper.invokeBeanMethod(actionmethod);
+      result = (String) darapplier.invokeBeanMethod(actionmethod, beanwrapper);
     }
     catch (Exception e) {
       Logger.log.error(e);
@@ -128,11 +132,17 @@ public class PostHandler {
       String[] values = (String[]) requestparams.get(key);
       String value = values[0];
       Logger.log.info("PostInit: key " + key + " value " + value);
-      String elpath = RSFUtil.stripEL(key);
+      String elpath = BeanUtil.stripEL(key);
       if (elpath != null && value.length() > 0) {
         Logger.log.info("Setting EL parameter " + key + " to value "
             + requestparams.get(key));
         for (int i = 0; i < values.length; ++i) {
+          // TODO: resolve EL expressions occuring as values to GET requests
+          // to the model. This requires BeanUtil.navigate to be broken out,
+          // which is also required to get the ReflectiveCache to work correctly
+          // (cache of classes/objects at a path as indirection to cache of
+          // methods). NB - CANNOT CACHE! Object at a path may change
+          // unpredictably. Must walk the EL each time.
           darapplier.setBeanValue(elpath, beanwrapper, values[i]);
         }
 
@@ -147,7 +157,7 @@ public class PostHandler {
           // rsvc
           String rootpath = PathUtil.getHeadPath(sve.valuebinding);
           DARReceiver rootbean = (DARReceiver) beanwrapper
-              .locateRootBean(rootpath);
+              .locateBean(rootpath);
           String strippedpath = PathUtil.getFromHeadPath(sve.valuebinding);
           rootbean.addDataAlterationRequest(new DataAlterationRequest(
               strippedpath, sve.oldvalue, DataAlterationRequest.DELETE));
@@ -165,6 +175,7 @@ public class PostHandler {
       SubmittedValueEntry sve = (SubmittedValueEntry) rsvc.entries.get(i);
       String[] values = (String[]) requestparams.get(sve.componentid);
       String newvalue = values == null? null : values[0];
+      sve.newvalue = newvalue;
       // a null new value might be an unchecked check box.... or else a component
       // that was suppressed entirely during rendering.
       Logger.log.info("Fossilised binding for " + sve.valuebinding
@@ -176,7 +187,7 @@ public class PostHandler {
         continue;
       }
       String rootpath = PathUtil.getHeadPath(sve.valuebinding);
-      Object rootbean = beanwrapper.locateRootBean(rootpath);
+      Object rootbean = beanwrapper.locateBean(rootpath);
       // if it is a receiver, apply the request for deferred handling
       if (rootbean instanceof DARReceiver) {
         String strippedpath = PathUtil.getFromHeadPath(sve.valuebinding);

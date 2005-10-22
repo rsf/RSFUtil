@@ -5,7 +5,9 @@ package uk.org.ponder.rsf.util;
 
 import java.util.HashMap;
 
+import uk.org.ponder.rsf.components.SplitID;
 import uk.org.ponder.rsf.components.UICommand;
+import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.state.SubmittedValueEntry;
@@ -15,12 +17,21 @@ import uk.org.ponder.rsf.state.SubmittedValueEntry;
  *  
  */
 public class RSFUtil {
-  public static String stripEL(String el) {
-    if (el.startsWith("#{") && el.endsWith("}")) {
-      return el.substring(2, el.length() - 1);
+  public static String computeFullID(UIComponent tocompute) {
+    StringBuffer togo = new StringBuffer();
+    UIComponent move = tocompute;
+    while (move.parent != null) {
+      if (move instanceof UIContainer) {
+        UIContainer movec = (UIContainer)move;
+        togo.insert(0, movec.ID.toString() + SplitID.SEPARATOR + movec.localID + SplitID.SEPARATOR);
+      }
+      else {
+        // this will surely be the leaf and requires no colon to separate forwards.
+        togo.insert(0, move.ID);
+      }
+      move = move.parent;
     }
-    else
-      return null;
+    return togo.toString();
   }
 
   /**

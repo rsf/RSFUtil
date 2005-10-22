@@ -18,7 +18,13 @@ import uk.org.ponder.xml.XMLWriter;
  *
  */
 public class BasicSCR implements StaticComponentRenderer {
+  /** A value for the <code>body_strategy</code> field, indicating that this
+   * renderer will append to any existing tag body that it discovers.
+   */
   public static final String APPEND_BODY = "append body";
+  /** A value for the <code>body_strategy</code> field, indicating that this
+   * renderer will replace any existing tag body that it discovers.
+   */
   public static final String REPLACE_BODY = "replace body";
   /** A replacement tag, if tag is to be rewritten - this is currently only
    * supported for empty tags. May be null for no action.
@@ -54,6 +60,7 @@ public class BasicSCR implements StaticComponentRenderer {
   }
   // deserialisation method - fix this system at some point. Cannot understand
   // any more how maps are supported by the SAXalizer.
+  /** A method for deserialisation */
   public Iterator getNameValue() {
     ArrayList values = new ArrayList();
     for (Iterator vit = attributemap.keySet().iterator(); vit.hasNext();) {

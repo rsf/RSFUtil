@@ -10,13 +10,31 @@ import java.util.List;
 import java.util.Map;
 
 import uk.org.ponder.stringutil.CharWrap;
-import uk.org.ponder.util.AssertionException;
 
 /**
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
- * 
+ * UIContainer represents a "branch point" in the IKAT rendering process,
+ * rather than simply just a level of component containment.
+ * <p>UIContainer has responsibility for managing naming of child components, 
+ * as well as separate and parallel responsibility for forms.
+ * The key to the child map is the ID prefix - if the ID has no suffix, the
+ * value is the single component with that ID at this level. If the ID
+ * has a suffix, indicating a repetitive domain, the value is an ordered
+ * list of components provided by the producer which will drive the 
+ * rendering at this recursion level.
+ * <p>It is assumed that an ID prefix is globally unique within the tree, not
+ * just within its own recursion level - i.e. IKAT resolution takes place
+ * over ALL components sharing a prefix throughout the template. This is "safe"
+ * since "execution" will always return to the call site once the base
+ * (XML) nesting level at the target is reached again.
  */
 public class UIContainer extends UIComponent {
+  /** The localID allows clients to distinguish between multiple instantiations
+   * of the "same" (by rsf:id) component within the same scope. It forms part
+   * of the global path constructed by getFullID() which uniquely identifies
+   * the component.
+   */
+  public String localID = "";
   // This is a map to either the single component with a given ID prefix, or a 
   // list in the case of a repetitive domain (non-null suffix)
   private Map childmap = new HashMap();

@@ -16,6 +16,14 @@ import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 /**
+ * The parser for the IKAT view template, implemented using the XPP3 "rapid"
+ * XML pull parser. After parsing, this representation of the template is 
+ * discarded, in favour of its raw constituents, being i) The XMLLump[] array,
+ * ii) The "root lump" holding the initial downmap, and iii) the global headmap.
+ * The system assumes that renders will be much more frequent than template reads,
+ * and so takes special efforts to condense the representation for rapid render-time
+ * access, at the expense of slightly slower parsing. TODO: fix this ridiculous
+ * dependency mixup - parsing code should be OUTSIDE and state should be INSIDE!
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  *  
  */

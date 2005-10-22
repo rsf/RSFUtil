@@ -1,7 +1,7 @@
 /*
  * Created on Oct 20, 2004
  */
-package uk.org.ponder.rsf.util;
+package uk.org.ponder.rsf.view;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import uk.org.ponder.errorutil.MessageLocator;
-import uk.org.ponder.rsf.view.ComponentProducer;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 
 /**
  * @author Antranig Basman (antranig@caret.cam.ac.uk)

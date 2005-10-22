@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
+	"http://www.springframework.org/dtd/spring-beans.dtd">
+<!-- The purpose of this file is to provide an "empty" implementation of
+  the request scope portion of 
+  RSF's Spring API, so that the project will validate self-consistently in,
+  for example, Spring IDE. It also serves as useful documentation for the 
+  application-defined dependencies of RSF. -->
+
+<beans>
+ <!-- There are currently no such dependencies in RSF. Placeholder bean to
+   ensure that document validates! -->
+  <bean name="empty" class="java.lang.String"/> 
+</beans>

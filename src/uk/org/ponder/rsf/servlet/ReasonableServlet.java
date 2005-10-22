@@ -13,6 +13,8 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
+ * The main servlet for the RSF system. Hands off immediately to the 
+ * RootHandlerBean for all logic.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
