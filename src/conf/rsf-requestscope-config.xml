@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
+	"http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+  <!-- This file contains request scope beans which are specific to RSF -->
+   <bean id="viewparameters" class="uk.org.ponder.rsf.servlet.ViewParametersFactory">
+     <property name="viewParametersExemplar">
+         <!-- EXTERNAL DEPENDENCY! The application supplies the view params -->
+       <ref bean="viewparamsexemplar"/>
+     </property>
+   </bean>
+  
+  <bean id="urlrewritescr" class="uk.org.ponder.rsf.renderer.html.URLRewriteSCR">
+    <property name="URLRewriter">
+      <ref bean="urlrewriter"/>
+    </property>
+    <property name="viewTemplate">
+      <ref bean="viewtemplate"/>
+    </property>
+  </bean>
+
+  <!-- A collection of static renderers that is expected to be dynamically
+    writeable - filters and the like might populate it before request handling
+    with consumer-specific rewriters. -->
+  <bean id="consumerstaticrenderers" class="uk.org.ponder.rsf.renderer.StaticRendererCollection">
+  </bean>
+  
+  <!-- A set of static renderers to be used for this request -->
+  <bean id="staticrenderers" class="uk.org.ponder.rsf.renderer.StaticRendererCollection">
+     <property name="staticRenderers">
+       <list>
+         <ref local="urlrewritescr"/>
+         <ref local="consumerstaticrenderers"/>
+       </list>
+     </property>
+  </bean>
+  
+  <bean id="rendersystem"
+    class="uk.org.ponder.rsf.renderer.html.BasicHTMLRenderSystem">
+     <property name="staticRenderers">
+       <ref local="staticrenderers"/>
+     </property>
+  </bean>
+  
+  <!-- Given a TemplateResolver and a ViewParameters object, the Template
+    LoaderBean returns a template. This is a factory bean -->
+  <bean id="viewtemplate" class="uk.org.ponder.rsf.view.TemplateLoaderBean">
+    <!-- EXTERNAL DEPENDENCY! The application supplies the template resolver -->
+    <property name="templateResolver">
+      <ref bean="viewtemplateresolver"/>
+    </property>
+    <property name="viewParameters">
+      <ref local="viewparameters"/>
+    </property>
+  </bean>
+    
+  <bean id="view" class="uk.org.ponder.rsf.view.ViewGenerator">
+     <!-- EXTERNAL DEPENDENCY! The application supplies the view collection -->
+    <property name="viewCollection">
+      <ref bean="viewcollection"></ref>
+    </property>
+    <property name="viewParameters">
+      <ref local="viewparameters"/>
+    </property>
+    <property name="componentChecker">
+      <ref local="viewtemplate"></ref>
+    </property>
+  </bean>
+  
+  <bean id="rsvcfixer" class="uk.org.ponder.rsf.processor.RSVCFixer" init-method="init">
+    <property name="viewParameters">
+      <ref local="viewparameters"/>
+    </property>
+    <property name="TSHolder">
+      <ref bean="tokenstateholder"/>
+    </property>
+  </bean>
+  
+  <bean id="requeststate" class="uk.org.ponder.rsf.state.RequestStateEntry">
+    <property name="TSHolder">
+      <ref bean="tokenstateholder"/>
+    </property>
+  </bean>
+  
+  <bean id="viewrender" class="uk.org.ponder.rsf.renderer.ViewRender">
+     <property name="viewTemplate">
+       <ref local="viewtemplate"/>
+     </property>
+    <property name="view">
+       <ref local="view"/>
+    </property>
+    <property name="componentProcessor">
+       <ref local="rsvcfixer"/>
+    </property>
+    <property name="renderSystem">
+      <ref local="rendersystem"/>
+    </property>
+  </bean>
+  
+   <bean id="posthandler" class="uk.org.ponder.rsf.processor.PostHandler">
+    <property name="DARApplier">
+      <ref bean="darapplier"/>
+    </property>
+    <property name="beanLocator">
+      <ref bean="rsacsafebeanlocator"/>
+    </property>
+    <property name="requestState">
+      <ref local="requeststate"/>
+    </property>
+  </bean> 
+  
+  <bean id="gethandler" class="uk.org.ponder.rsf.processor.GetHandler">
+    <!-- EXTERNAL DEPENDENCY! The application supplies the view collection -->
+    <property name="viewCollection">
+      <ref bean="viewcollection"/>
+    </property>
+    <property name="requestState">
+      <ref local="requeststate"/>
+    </property>
+  </bean>
+  
+</beans>

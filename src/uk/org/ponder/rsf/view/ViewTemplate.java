@@ -5,8 +5,6 @@ package uk.org.ponder.rsf.view;
 
 import java.io.InputStream;
 
-import uk.org.ponder.rsf.renderer.ViewRender;
-
 /**
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 

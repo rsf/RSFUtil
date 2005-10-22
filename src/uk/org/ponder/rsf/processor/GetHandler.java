@@ -3,7 +3,7 @@
  */
 package uk.org.ponder.rsf.processor;
 
-import uk.org.ponder.beanutil.BeanGetter;
+import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.errorutil.ConfigurationException;
 import uk.org.ponder.errorutil.CoreMessages;
 import uk.org.ponder.errorutil.ErrorUtil;
@@ -12,7 +12,7 @@ import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.rsf.renderer.ViewRender;
 import uk.org.ponder.rsf.state.RequestStateEntry;
-import uk.org.ponder.rsf.util.ViewCollection;
+import uk.org.ponder.rsf.view.ViewCollection;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.streamutil.PrintOutputStream;
 import uk.org.ponder.util.Logger;
@@ -40,13 +40,13 @@ public class GetHandler {
     this.requeststateentry = requeststateentry;
   }
 
-  public ViewParameters handle(PrintOutputStream pos, BeanGetter beangetter) {
-    ViewParameters viewparams = (ViewParameters) beangetter.getBean("viewparameters");
+  public ViewParameters handle(PrintOutputStream pos, BeanLocator beanlocator) {
+    ViewParameters viewparams = (ViewParameters) beanlocator.locateBean("viewparameters");
     boolean iserrorredirect = viewparams.errorredirect != null;
     // YES, reach into the original request! somewhat bad...
     viewparams.errorredirect = null;
     try {
-      ViewRender viewrender = (ViewRender) beangetter.getBean("viewrender");
+      ViewRender viewrender = (ViewRender) beanlocator.locateBean("viewrender");
       viewrender.render(pos);
     }
     catch (Exception e) {

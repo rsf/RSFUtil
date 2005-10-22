@@ -1,7 +1,7 @@
 /*
  * Created on Oct 8, 2005
  */
-package uk.org.ponder.rsf.processor;
+package uk.org.ponder.rsf.flow;
 
 import uk.org.ponder.webapputil.ViewParameters;
 

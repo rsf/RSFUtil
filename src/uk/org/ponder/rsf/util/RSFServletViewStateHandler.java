@@ -8,6 +8,11 @@ import uk.org.ponder.webapputil.ViewParameters;
 import uk.org.ponder.webapputil.ViewStateHandler;
 
 /**
+ * A "simple" ViewStateHandler which in addition to accepting statically
+ * configured Spring information, also is able to look in the 
+ * ConsumerRequestInfo threadlocal in order to discover relevant URL
+ * rendering information. This should probably be made into a request bean
+ * along with CRI, if we can be sure it will be cheap enough.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */

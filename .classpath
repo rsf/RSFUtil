@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="/PonderUtilCore"/>
-	<classpathentry kind="var" path="MAVEN_REPO/xpp3/jars/xpp3-1.1.3.4-RC8_min.jar"/>
+	<classpathentry sourcepath="/E_DRIVE/Source/xpp3-1.1.3.4.K/src" kind="var" path="MAVEN_REPO/xpp3/jars/xpp3-1.1.3.4-RC8_min.jar"/>
 	<classpathentry sourcepath="/E_DRIVE/logging-log4j-1.2.9/src/java" kind="var" path="MAVEN_REPO/log4j/jars/log4j-1.2.9.jar"/>
 	<classpathentry kind="src" path="/J-ServletUtil"/>
 	<classpathentry kind="var" path="MAVEN_REPO/servletapi/jars/servletapi-2.3.jar"/>

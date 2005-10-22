@@ -26,7 +26,9 @@ import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 /**
- * Encapsulates the request-specific process of rendering a view.
+ * Encapsulates the request-specific process of rendering a view - 
+ * a request-scope bean containing the implementation of the IKAT rendering
+ * algorithm. 
  * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 

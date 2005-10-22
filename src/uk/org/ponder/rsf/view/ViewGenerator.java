@@ -8,7 +8,6 @@ import java.util.List;
 import org.springframework.beans.factory.FactoryBean;
 
 import uk.org.ponder.rsf.util.ComponentDumper;
-import uk.org.ponder.rsf.util.ViewCollection;
 import uk.org.ponder.streamutil.PrintOutputStream;
 import uk.org.ponder.streamutil.PrintStreamPOS;
 import uk.org.ponder.util.UniversalRuntimeException;

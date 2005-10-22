@@ -14,6 +14,7 @@ import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelectItem;
 import uk.org.ponder.rsf.components.UISelectOne;
+import uk.org.ponder.rsf.state.SubmittedValueEntry;
 import uk.org.ponder.stringutil.StringList;
 import uk.org.ponder.util.AssertionException;
 import uk.org.ponder.util.Logger;
@@ -162,7 +163,7 @@ public class RSFFactory {
     UICommand togo = new UICommand();
     togo.text = text;
     togo.ID = ID;
-    RSFUtil.addCommandLinkParameter(togo, ViewParameters.FAST_TRACK_ACTION,
+    RSFUtil.addCommandLinkParameter(togo, SubmittedValueEntry.FAST_TRACK_ACTION,
         methodbinding);
 
     if (parent.getActiveForm() == null) {

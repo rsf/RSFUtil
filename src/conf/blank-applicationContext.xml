@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
+	"http://www.springframework.org/dtd/spring-beans.dtd">
+<!-- The purpose of this file is to provide an "empty" implementation of
+  the application scope portion of 
+  RSF's Spring API, so that the project will validate self-consistently in,
+  for example, Spring IDE. It also serves as useful documentation for the 
+  application-defined dependencies of RSF. -->
+<beans>
+ <bean id="viewcollection" class="uk.org.ponder.rsf.util.ViewCollection">
+	</bean>
+  <bean id="viewparamsexemplar"
+    class="uk.org.ponder.webapputil.BlankTalkViewParams">
+    <property name="viewStateHandler">
+      <ref bean="viewstatehandler"/>
+    </property>
+  </bean>
+  <bean id="viewtemplateresolver"
+    class="uk.org.ponder.rsf.view.BasicTemplateResolver">
+    <property name="baseDirectory">    
+      <value>/content/templates/</value>
+    </property>
+  </bean>
+  <bean id="actionresultinterpreter"
+    class="uk.org.ponder.rsf.flow.NullActionResultInterpreter">
+  </bean>
+   <bean name="requestwriteablebeans" class="uk.org.ponder.stringutil.StringList">
+    <constructor-arg>
+      <list>
+   
+      </list>
+    </constructor-arg>
+  </bean>
+</beans>
