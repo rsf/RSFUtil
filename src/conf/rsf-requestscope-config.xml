@@ -10,6 +10,28 @@
      </property>
    </bean>
   
+  <bean id="autobaseurlprovider" class="uk.org.ponder.rsf.servlet.AutoBaseURLProvider">
+  </bean>
+  
+  <!-- The default viewstatehandler uses the autobaseurlprovider to infer
+    URLS. Clients may override it by referring to a static one of their
+    choosing. It is easier to ask them to override this whole bean than it is
+    to implement support for Spring bean aliases in RSAC :P -->
+	<bean id="viewstatehandler"
+		class="uk.org.ponder.rsf.util.RSFServletViewStateHandler">
+    <property name="baseURLProvider">
+      <ref local="autobaseurlprovider"/>
+    </property>
+	</bean>
+  
+  
+  <bean id="urlrewriter"
+    class="uk.org.ponder.rsf.util.URLRewriter">
+    <property name="viewStateHandler">
+      <ref bean="viewstatehandler"/>
+    </property>
+  </bean>
+  
   <bean id="urlrewritescr" class="uk.org.ponder.rsf.renderer.html.URLRewriteSCR">
     <property name="URLRewriter">
       <ref bean="urlrewriter"/>
@@ -98,6 +120,9 @@
   </bean>
   
    <bean id="posthandler" class="uk.org.ponder.rsf.processor.PostHandler">
+      <property name="viewParameters">
+      <ref local="viewparameters"/>
+    </property>
     <property name="DARApplier">
       <ref bean="darapplier"/>
     </property>

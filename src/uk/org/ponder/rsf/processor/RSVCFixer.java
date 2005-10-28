@@ -14,8 +14,8 @@ import uk.org.ponder.rsf.state.SubmittedValueEntry;
 import uk.org.ponder.rsf.state.TokenRequestState;
 import uk.org.ponder.rsf.state.TokenStateHolder;
 import uk.org.ponder.rsf.util.CoreRSFMessages;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.Logger;
-import uk.org.ponder.webapputil.ViewParameters;
 
 /** 
  * A ComponentProcessor which will do the work of setting the

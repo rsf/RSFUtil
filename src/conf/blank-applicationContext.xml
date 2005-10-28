@@ -7,13 +7,10 @@
   for example, Spring IDE. It also serves as useful documentation for the 
   application-defined dependencies of RSF. -->
 <beans>
- <bean id="viewcollection" class="uk.org.ponder.rsf.util.ViewCollection">
+ <bean id="viewcollection" class="uk.org.ponder.rsf.view.ViewCollection">
 	</bean>
   <bean id="viewparamsexemplar"
-    class="uk.org.ponder.webapputil.BlankTalkViewParams">
-    <property name="viewStateHandler">
-      <ref bean="viewstatehandler"/>
-    </property>
+    class="uk.org.ponder.webapputil.BlankViewParameters">
   </bean>
   <bean id="viewtemplateresolver"
     class="uk.org.ponder.rsf.view.BasicTemplateResolver">
@@ -31,4 +28,45 @@
       </list>
     </constructor-arg>
   </bean>
+  
+  <bean id="directuibaseurl" class="java.lang.String">
+    <constructor-arg>
+      <value>http://www.unexpected.hosting.environment/servletcontext/faces/</value>
+    </constructor-arg>
+  </bean> 
+   <bean id="directuiresourcebaseurl" class="java.lang.String">
+    <constructor-arg>
+      <value>http://www.unexpected.hosting.environment/servletcontext/</value>
+    </constructor-arg>
+  </bean> 
+  
+  <!-- The two properties of sbup
+		are only relevant to users of the direct UI, where the URL that it appears
+    at is somehow "unexpected". In order to use these values, it is necessary
+    to copy these two definitions into the application's application context
+    file, together with definitions for the referenced URLs. Given these URLs
+    will generally represent configuration relevant to the end user, these should
+    be placed in yet a 3rd application context file, suggestion: a file called
+    userconfig.xml which breaks out all such configurable dependencies.
+    These will be overridden
+		for consumers of the remote web service.  -->
+  <bean id="staticbaseurlprovider">
+  	<!-- CONFIG The URL under which JSF-rendered pages served directly by FlowTalk
+			will be made visible -->
+		<property name="baseURL">
+			<ref bean="directuibaseurl"/>
+		</property>
+		<!-- CONFIG The URL under which static resource served by FlowTalk will
+			be made visible -->
+		<property name="resourceBaseURL">
+			<ref bean="directuiresourcebaseurl"/>
+		</property>  
+  </bean>
+  
+  <bean id="viewstatehandler" 
+		class="uk.org.ponder.rsf.util.RSFServletViewStateHandler">
+    <property name="baseURLProvider">
+       <ref local="staticbaseurlprovider"/>
+    </property>
+	</bean>
 </beans>

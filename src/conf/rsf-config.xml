@@ -20,25 +20,10 @@
   <bean id="tokenstateholder" class="uk.org.ponder.rsf.state.TokenStateHolder">
   </bean>
   
-  <!-- The two properties of viewstatehandler, like installationname above 
-		are only relevant to users of the direct UI. These will be overridden
-		for consumers of the remote web service. I will try to remove the
-		need for these parameters since it should be possible to automatically
-		infer the relevant URLs. -->
-	<bean id="viewstatehandler" 
-		class="uk.org.ponder.rsf.util.RSFServletViewStateHandler">
-		<!-- CONFIG The URL under which JSF-rendered pages served directly by FlowTalk
-			will be made visible -->
-		<property name="baseURL">
-			<ref bean="directuibaseurl"/>
-		</property>
-		<!-- CONFIG The URL under which static resource served by FlowTalk will
-			be made visible -->
-		<property name="resourceBaseURL">
-			<ref bean="directuiresourcebaseurl"/>
-		</property>
-	</bean>
-  
+  <bean id="baseurlprovider">
+  </bean>
+ 
+    
   <bean id="rsacbeanfactoryfactory" 
     class="uk.org.ponder.springutil.RSACBeanFactoryFactory">
   </bean>
@@ -59,14 +44,7 @@
       <ref bean="requestwriteablebeans"/>
     </property>
   </bean>
-  
-  <bean id="urlrewriter"
-    class="uk.org.ponder.rsf.util.URLRewriter">
-    <property name="viewParametersExemplar">
-      <ref bean="viewparamsexemplar"/>
-    </property>
-  </bean>
-  
+    
    
   <bean id="roothandlerbean" class="uk.org.ponder.rsf.servlet.RootHandlerBean">
       <!-- EXTERNAL DEPENDENCY! The application supplies the view params -->

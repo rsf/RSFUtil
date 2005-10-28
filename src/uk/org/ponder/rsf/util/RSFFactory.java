@@ -15,11 +15,11 @@ import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UISelectItem;
 import uk.org.ponder.rsf.components.UISelectOne;
 import uk.org.ponder.rsf.state.SubmittedValueEntry;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.stringutil.StringList;
 import uk.org.ponder.util.AssertionException;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
-import uk.org.ponder.webapputil.ViewParameters;
 
 /**
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
@@ -190,8 +190,8 @@ public class RSFFactory {
     parent.addComponent(togo);
     return togo;
   }
-
-  public static UILink makeLink(UIContainer parent, String ID, String target) {
+  
+   public static UILink makeLink(UIContainer parent, String ID, String target) {
     return makeLink(parent, ID, null, target);
   }
 

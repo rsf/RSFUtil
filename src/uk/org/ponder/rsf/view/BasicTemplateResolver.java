@@ -12,10 +12,10 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
 
 import uk.org.ponder.rsf.template.XMLViewTemplate;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
 import uk.org.ponder.webapputil.ConsumerRequestInfo;
-import uk.org.ponder.webapputil.ViewParameters;
 
 /**
  * A basic template resolver that simply takes the viewID from the

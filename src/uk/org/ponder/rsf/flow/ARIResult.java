@@ -3,7 +3,7 @@
  */
 package uk.org.ponder.rsf.flow;
 
-import uk.org.ponder.webapputil.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /** An object summarising the return from the ActionResultInterpreter. This
  * embodies the flow of the application by determining the resulting view to

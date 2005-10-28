@@ -10,10 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.FactoryBean;
 
+import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.servletutil.HttpServletRequestAware;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
-import uk.org.ponder.webapputil.ViewParameters;
 
 /**
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
@@ -39,8 +39,7 @@ public class ViewParametersFactory implements HttpServletRequestAware,
    * Returns the UIViewRoot for the restored view identified by the provided
    * view ID, or null if no state is available.
    */
-  public static ViewParameters parseRequest(HttpServletRequest request,
-      ViewParameters vpexemplar) {
+  public ViewParameters parseRequest(HttpServletRequest request) {
     Logger.log.info("begin parseRequest");
     // We INSIST that all data passed in and out should be in UTF-8.
     // TODO: Make sure we do not tread on the toes of a POST request in
@@ -64,13 +63,13 @@ public class ViewParametersFactory implements HttpServletRequestAware,
     // Map requestmap = req.
     // requestmap.put(ViewParameters.CURRENT_REQUEST, origrequest);
     Logger.log.info("Restoring view " + origrequest.viewID
-        + " from request URL " + origrequest.getFullURL());
+        + " from request parameters " + origrequest.toHTTPRequest());
     return origrequest;
   }
 
   public Object getObject() throws Exception {
     if (viewparams == null) {
-      viewparams = parseRequest(request, vpexemplar);
+      viewparams = parseRequest(request);
     }
     return viewparams;
   }

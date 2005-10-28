@@ -7,7 +7,7 @@ import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.TargettedMessageList;
 import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.hashutil.EighteenIDGenerator;
-import uk.org.ponder.webapputil.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /**
  * Represents the token-related state which is stored DURING a request.
