@@ -8,13 +8,11 @@ import java.util.Iterator;
 import java.util.Map;
 
 import uk.org.ponder.arrayutil.ArrayUtil;
-import uk.org.ponder.beanutil.BeanContainerWrapper;
 import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.beanutil.BeanUtil;
 import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.errorutil.CoreMessages;
 import uk.org.ponder.errorutil.TargettedMessage;
-import uk.org.ponder.errorutil.TargettedMessageList;
 import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.mapping.DARApplier;
 import uk.org.ponder.mapping.DARReceiver;
@@ -22,13 +20,12 @@ import uk.org.ponder.mapping.DataAlterationRequest;
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterpreter;
 import uk.org.ponder.rsf.renderer.RenderSystem;
-import uk.org.ponder.rsf.renderer.RenderUtil;
 import uk.org.ponder.rsf.state.RequestStateEntry;
 import uk.org.ponder.rsf.state.RequestSubmittedValueCache;
 import uk.org.ponder.rsf.state.SubmittedValueEntry;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.AssertionException;
 import uk.org.ponder.util.Logger;
-import uk.org.ponder.webapputil.ViewParameters;
 
 /**
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
@@ -43,6 +40,7 @@ public class PostHandler {
   private ActionResultInterpreter ari;
   private RequestStateEntry requeststateentry;
   private RenderSystem rendersystem;
+  private ViewParameters viewparams;
 
   // this will be used to locate request-scope beans.
   public void setBeanLocator(BeanLocator beanwrapper) {
@@ -65,6 +63,10 @@ public class PostHandler {
     this.rendersystem = rendersystem;
   }
 
+  public void setViewParameters(ViewParameters viewparams) {
+    this.viewparams = viewparams;
+  }
+  
   public static boolean valueUnchanged(Object oldvalue, Object newvalue) {
     if (oldvalue instanceof String) {
       // special hack for dealing with checkboxes, and a bit further for
@@ -84,7 +86,7 @@ public class PostHandler {
       throw new AssertionException("Unknown value type " + oldvalue);
   }
 
-  public ViewParameters handle(ViewParameters origrequest, Map origrequestparams) {
+  public ViewParameters handle(Map origrequestparams) {
     HashMap requestparams = new HashMap();
     requestparams.putAll(origrequestparams);
     rendersystem.normalizeRequestMap(requestparams);
@@ -107,11 +109,11 @@ public class PostHandler {
     
     String linkid = TargettedMessage.TARGET_NONE;
    
-    ARIResult arires = ari.interpretActionResult(origrequest, result);
+    ARIResult arires = ari.interpretActionResult(viewparams, result);
     requeststateentry.requestComplete(rsvc);
     
     arires.resultingview.viewtoken = requeststateentry.outgoingtokenID;
-    return origrequest;
+    return arires.resultingview;
   }
 
   

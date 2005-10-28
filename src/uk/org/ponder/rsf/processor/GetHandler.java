@@ -14,10 +14,10 @@ import uk.org.ponder.rsf.renderer.ViewRender;
 import uk.org.ponder.rsf.state.RequestStateEntry;
 import uk.org.ponder.rsf.view.ViewCollection;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.streamutil.PrintOutputStream;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
-import uk.org.ponder.webapputil.ViewParameters;
 
 /**
  * @author Antranig Basman (antranig@caret.cam.ac.uk)

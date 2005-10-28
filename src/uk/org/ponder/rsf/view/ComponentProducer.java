@@ -2,7 +2,7 @@ package uk.org.ponder.rsf.view;
 
 import uk.org.ponder.errorutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIContainer;
-import uk.org.ponder.webapputil.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 // This honorary comment left in honour of Hans Bergsten, who suggested
 // as loudly as he could that JSF could be better.

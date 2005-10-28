@@ -1,11 +1,9 @@
 /*
  * Created on Jan 6, 2005
  */
-package uk.org.ponder.rsf.util;
+package uk.org.ponder.rsf.viewstate;
 
 import uk.org.ponder.webapputil.ConsumerRequestInfo;
-import uk.org.ponder.webapputil.ViewParameters;
-import uk.org.ponder.webapputil.ViewStateHandler;
 
 /**
  * A "simple" ViewStateHandler which in addition to accepting statically
@@ -17,37 +15,17 @@ import uk.org.ponder.webapputil.ViewStateHandler;
  * 
  */
 public class RSFServletViewStateHandler implements ViewStateHandler {
-  private String baseurl;
-  private String resourcebaseurl;
-  
-  /** Sets the default base URL for this view state handler, including trailing
-   * slash. However, if a URL has been registered for this request via 
-   * ServletUtil.setRequestConsumerURLBase, that one will be used by preference.
-   */
-  public void setBaseURL(String baseurl) {
-    this.baseurl = baseurl;
-  }
-  
-  public String getBaseURL() {
-    return baseurl;
-  }
-  
-  /** Sets the default base URL for static resources, including trailing
-   * slash. As with baseURL, this may be overridden by ServletUtil.
-   */
-  public void setResourceBaseURL(String resourcebaseurl) {
-    this.resourcebaseurl = resourcebaseurl;
-  }
-  
-  public String getResourceBaseURL() {
-    return resourcebaseurl;
+
+  private BaseURLProvider urlprovider;
+  public void setBaseURLProvider(BaseURLProvider urlprovider) {
+    this.urlprovider = urlprovider;
   }
   
   public String getFullURL(ViewParameters viewparams) {
     // toHTTPRequest provides leading slash, and baseurl includes trailing slash
     String requestparams = viewparams.toHTTPRequest().substring(1);
 
-    String usebaseurl = baseurl;
+    String usebaseurl = urlprovider.getBaseURL();
     String extraparams = "";
     ConsumerRequestInfo cri = ConsumerRequestInfo.getConsumerRequestInfo();
     if (cri != null) {
@@ -81,7 +59,7 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
   
 
   public String getResourceURL(String resourcepath) {
-    String useresurl = resourcebaseurl;
+    String useresurl = urlprovider.getResourceBaseURL();
     ConsumerRequestInfo cri = ConsumerRequestInfo.getConsumerRequestInfo();
     if (cri != null && cri.ci.resourceurlbase != null) {
       useresurl = cri.ci.resourceurlbase; 

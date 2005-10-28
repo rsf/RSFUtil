@@ -3,7 +3,7 @@
  */
 package uk.org.ponder.rsf.flow;
 
-import uk.org.ponder.webapputil.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /** Used at the end of a POST request to determine which view will be
  * redirected to. As well as the String result returned from the action method,

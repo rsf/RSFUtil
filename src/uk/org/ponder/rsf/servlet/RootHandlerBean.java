@@ -11,12 +11,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import uk.org.ponder.rsf.processor.GetHandler;
 import uk.org.ponder.rsf.processor.PostHandler;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewStateHandler;
 import uk.org.ponder.springutil.RSACBeanLocator;
 import uk.org.ponder.streamutil.OutputStreamPOS;
 import uk.org.ponder.streamutil.PrintOutputStream;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
-import uk.org.ponder.webapputil.ViewParameters;
 
 /**
  * The RootHandlerBean is the main entry point for handling of the HttpServletRequest
@@ -31,12 +32,12 @@ public class RootHandlerBean {
   private GetHandler gethandler;
   private PostHandler posthandler;
 
-  private ViewParameters vpexemplar;
+  private ViewStateHandler viewstatehandler;
 
   private RSACBeanLocator rsacbeangetter;
   
-  public void setViewParametersExemplar(ViewParameters vpexemplar) {
-    this.vpexemplar = vpexemplar;
+  public void setViewStateHandler(ViewStateHandler viewstatehandler) {
+    this.viewstatehandler = viewstatehandler;
   }
 
   public void setGetHandler(GetHandler gethandler) {
@@ -73,9 +74,8 @@ public class RootHandlerBean {
 
   public void handlePost(HttpServletRequest request,
       HttpServletResponse response) {
-    ViewParameters origrequest = ViewParametersFactory.parseRequest(request, vpexemplar);
 
-    ViewParameters redirect = posthandler.handle(origrequest, request.getParameterMap());
+    ViewParameters redirect = posthandler.handle(request.getParameterMap());
 
     issueRedirect(redirect, response);
   }
@@ -85,9 +85,9 @@ public class RootHandlerBean {
   // the redirect directly to the client via this connection.
   // TODO: This method might need some state, depending on the client.
   // maybe we can do this all with "request beans"?
-  public static void issueRedirect(ViewParameters viewparams,
+  public void issueRedirect(ViewParameters viewparams,
       HttpServletResponse response) {
-    String path = viewparams.getFullURL();
+    String path = viewstatehandler.getFullURL(viewparams);
     Logger.log.info("Redirecting to " + path);
     try {
       response.sendRedirect(path);

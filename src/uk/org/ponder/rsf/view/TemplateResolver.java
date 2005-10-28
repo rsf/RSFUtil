@@ -3,7 +3,7 @@
  */
 package uk.org.ponder.rsf.view;
 
-import uk.org.ponder.webapputil.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /**
  * @author Antranig Basman (antranig@caret.cam.ac.uk)

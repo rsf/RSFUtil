@@ -9,7 +9,7 @@
 	<configSets>
 		<configSet>
 			<name>RSF Blank Closure</name>
-			<allowBeanDefinitionOverriding>false</allowBeanDefinitionOverriding>
+			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
 			<incomplete>false</incomplete>
 			<configs>
 				<config>src/conf/blank-applicationContext.xml</config>

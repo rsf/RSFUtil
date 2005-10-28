@@ -5,7 +5,7 @@ package uk.org.ponder.rsf.view;
 
 import org.springframework.beans.factory.FactoryBean;
 
-import uk.org.ponder.webapputil.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /** A utility bean to enable template loading to proceed by RSAC autowiring.
  * It's unclear whether this has improved the code structure significantly, but
