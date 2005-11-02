@@ -8,8 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import uk.org.ponder.rsf.components.ComponentProcessor;
-import uk.org.ponder.rsf.components.SplitID;
+import uk.org.ponder.rsf.componentprocessor.ComponentProcessor;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIOutput;
@@ -17,6 +16,7 @@ import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.template.XMLLumpList;
 import uk.org.ponder.rsf.template.XMLLumpMMap;
 import uk.org.ponder.rsf.template.XMLViewTemplate;
+import uk.org.ponder.rsf.util.SplitID;
 import uk.org.ponder.rsf.view.View;
 import uk.org.ponder.rsf.view.ViewTemplate;
 import uk.org.ponder.streamutil.PrintOutputStream;
@@ -48,8 +48,6 @@ public class ViewRender {
   // NB - this will not work, rethink message architecture.
   private Map messagetargets;
 
-  private ComponentProcessor processor;
-
   public void setViewTemplate(ViewTemplate viewtemplateo) {
     // TODO: hack for now - will we have other kinds of template?
     XMLViewTemplate viewtemplate = (XMLViewTemplate) viewtemplateo;
@@ -58,11 +56,7 @@ public class ViewRender {
     this.rootlump = template.rootlump;
     this.globalmap = template.globalmap;
   }
-  
-  public void setComponentProcessor(ComponentProcessor processor) {
-    this.processor = processor;
-  }
-  
+   
   public void setView(View view) {
     this.view = view;
   }
@@ -168,7 +162,8 @@ public class ViewRender {
 //            Logger.log.info("for component with ID " + child.ID + " to ");
             System.out.println(debugLump(targetlump));
             }
-            if (child instanceof UIContainer) {
+            // NB - leaf components may now be containers.
+            if (child.getClass() == UIContainer.class) {
               XMLLump firstchild = lumps[targetlump.open_end.lumpindex + 1];
               dumpContainerHead(targetlump, firstchild);
               renderRecurse((UIContainer) child, targetlump, firstchild);

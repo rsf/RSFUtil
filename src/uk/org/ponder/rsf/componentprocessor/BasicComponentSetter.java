@@ -1,7 +1,13 @@
 /*
  * Created on Aug 7, 2005
  */
-package uk.org.ponder.rsf.components;
+package uk.org.ponder.rsf.componentprocessor;
+
+import uk.org.ponder.rsf.components.UIComponent;
+import uk.org.ponder.rsf.components.UIInput;
+import uk.org.ponder.rsf.components.UIInputMany;
+import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.UISelectBoolean;
 
 /**
  * @author Antranig Basman (antranig@caret.cam.ac.uk)

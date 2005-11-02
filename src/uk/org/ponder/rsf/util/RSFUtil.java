@@ -5,7 +5,6 @@ package uk.org.ponder.rsf.util;
 
 import java.util.HashMap;
 
-import uk.org.ponder.rsf.components.SplitID;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIContainer;

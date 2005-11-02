@@ -3,7 +3,7 @@
  */
 package uk.org.ponder.rsf.processor;
 
-import uk.org.ponder.rsf.components.ComponentProcessor;
+import uk.org.ponder.rsf.componentprocessor.ComponentProcessor;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.viewstate.ViewStateHandler;

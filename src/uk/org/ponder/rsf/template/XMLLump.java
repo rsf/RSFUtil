@@ -6,7 +6,7 @@ package uk.org.ponder.rsf.template;
 import java.util.HashMap;
 
 import uk.org.ponder.arrayutil.ArrayUtil;
-import uk.org.ponder.rsf.components.SplitID;
+import uk.org.ponder.rsf.util.SplitID;
 
 /**
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
