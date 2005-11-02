@@ -5,6 +5,7 @@ package uk.org.ponder.rsf.view;
 
 import java.util.HashMap;
 
+import uk.org.ponder.rsf.componentprocessor.FormModel;
 import uk.org.ponder.rsf.components.UIContainer;
 
 /**
@@ -20,4 +21,5 @@ public class View {
   public UIContainer viewroot;
   // This is a map of FULL component IDs to String messages.
   public HashMap IDtomessage = new HashMap();
+  public FormModel formmodel;
 }

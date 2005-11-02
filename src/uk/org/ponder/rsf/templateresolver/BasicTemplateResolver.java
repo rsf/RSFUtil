@@ -1,7 +1,7 @@
 /*
  * Created on Sep 19, 2005
  */
-package uk.org.ponder.rsf.view;
+package uk.org.ponder.rsf.templateresolver;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +12,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
 
 import uk.org.ponder.rsf.template.XMLViewTemplate;
+import uk.org.ponder.rsf.view.ViewTemplate;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;

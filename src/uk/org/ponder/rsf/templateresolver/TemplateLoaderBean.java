@@ -1,10 +1,11 @@
 /*
  * Created on Sep 23, 2005
  */
-package uk.org.ponder.rsf.view;
+package uk.org.ponder.rsf.templateresolver;
 
 import org.springframework.beans.factory.FactoryBean;
 
+import uk.org.ponder.rsf.view.ViewTemplate;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /** A utility bean to enable template loading to proceed by RSAC autowiring.
