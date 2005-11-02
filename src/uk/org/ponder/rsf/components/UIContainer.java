@@ -87,13 +87,16 @@ public class UIContainer extends UIComponent {
    */
   public UIComponent[] flatChildren() {
     if (flatchildren == null) {
-      flatchildren = flattenChildren();
+      ComponentList children = flattenChildren();
+      flatchildren = (UIComponent[]) children.toArray(new UIComponent[children.size()]);
     }
     return flatchildren;
   }
-  
-  private UIComponent[] flattenChildren() {
-    ArrayList children = new ArrayList();
+  /** Returns a list of all CURRENT children of this container. This method
+   * is safe to use at any time.
+   */
+  public ComponentList flattenChildren() {
+    ComponentList children = new ComponentList();
     for (Iterator childit = childmap.values().iterator(); childit.hasNext(); ) {
       Object child = childit.next();
       if (child instanceof UIComponent) {
@@ -103,7 +106,7 @@ public class UIContainer extends UIComponent {
         children.addAll((List)child);
       }
     }
-   return (UIComponent[]) children.toArray(new UIComponent[children.size()]);  
+   return children;  
   }
    
   public void addComponent(UIComponent toadd) {

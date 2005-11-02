@@ -1,8 +1,9 @@
 /*
  * Created on Aug 5, 2005
  */
-package uk.org.ponder.rsf.view;
+package uk.org.ponder.rsf.templateresolver;
 
+import uk.org.ponder.rsf.view.ViewTemplate;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /**
