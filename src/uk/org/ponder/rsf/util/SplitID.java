@@ -1,7 +1,7 @@
 /*
  * Created on Jul 28, 2005
  */
-package uk.org.ponder.rsf.components;
+package uk.org.ponder.rsf.util;
 
 import uk.org.ponder.stringutil.CharWrap;
 

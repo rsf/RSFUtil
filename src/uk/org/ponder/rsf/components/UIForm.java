@@ -11,6 +11,9 @@ import java.util.Map;
  * 
  */
 public class UIForm extends UIComponent {
+  /** The URL to which this form will be submitted. This SHOULD be the same
+   * as the URL of the page containing the form, minus query parameters.
+   */
   public String postURL;
   public Map hiddenfields = new HashMap();
 }

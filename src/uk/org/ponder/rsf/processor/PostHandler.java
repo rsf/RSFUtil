@@ -33,8 +33,6 @@ import uk.org.ponder.util.Logger;
  * POST request. 
  */
 public class PostHandler {
-
-  public static final String RSVC_VAR = "uk.org.ponder.rsvc";
   private DARApplier darapplier;
   private BeanLocator beanwrapper;
   private ActionResultInterpreter ari;

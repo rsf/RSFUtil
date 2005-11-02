@@ -5,9 +5,9 @@ package uk.org.ponder.rsf.processor;
 
 import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.ThreadErrorState;
-import uk.org.ponder.rsf.components.BasicComponentSetter;
-import uk.org.ponder.rsf.components.ComponentProcessor;
-import uk.org.ponder.rsf.components.ComponentSetter;
+import uk.org.ponder.rsf.componentprocessor.BasicComponentSetter;
+import uk.org.ponder.rsf.componentprocessor.ComponentProcessor;
+import uk.org.ponder.rsf.componentprocessor.ComponentSetter;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.state.RequestSubmittedValueCache;
 import uk.org.ponder.rsf.state.SubmittedValueEntry;

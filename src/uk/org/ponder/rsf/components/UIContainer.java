@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import uk.org.ponder.rsf.util.SplitID;
 import uk.org.ponder.stringutil.CharWrap;
 
 /**
@@ -27,6 +28,10 @@ import uk.org.ponder.stringutil.CharWrap;
  * over ALL components sharing a prefix throughout the template. This is "safe"
  * since "execution" will always return to the call site once the base
  * (XML) nesting level at the target is reached again.
+ * <p>"Leaf" rendering classes <it>may</it> be derived from UIContainer - only
+ * concrete instances of UIContainer will be considered as representatives of
+ * pure branch points. By the time fixups have concluded, all non-branching
+ * containers (e.g. UIForms) MUST have been removed from the component hierarchy.
  */
 public class UIContainer extends UIComponent {
   /** The localID allows clients to distinguish between multiple instantiations
@@ -47,10 +52,15 @@ public class UIContainer extends UIComponent {
   // in the 4 scopes.
   private transient UIComponent[] flatchildren;
  
+  /** Return the single component with the given ID. This should be an 
+   * ID without colon designating a leaf child.
+   */
   public UIComponent getComponent(String id) {
     return (UIComponent) childmap.get(id);
   }
-  /** Return all child components with the given prefix */
+  /** Return all child components with the given prefix. This should be an ID
+   * containing colon designating a child container. 
+   * */
   public List getComponents(String id) {
     return (List) childmap.get(id);
   }
@@ -69,6 +79,12 @@ public class UIContainer extends UIComponent {
     return togo.toString();
   }
   
+  /** Returns a flattened array of all children of this container.
+   * Note that this method will trigger the creation of a cached internal array
+   * on its first use, which cannot be recreated. It is essential therefore that
+   * it only be used once ALL modifications to the component tree have 
+   * concluded (i.e. once rendering starts).
+   */
   public UIComponent[] flatChildren() {
     if (flatchildren == null) {
       flatchildren = flattenChildren();
@@ -90,64 +106,6 @@ public class UIContainer extends UIComponent {
    return (UIComponent[]) children.toArray(new UIComponent[children.size()]);  
   }
    
-  // All this horrid form logic is here, ironically, so that code that
-  // oughtn't to know about forms (e.g. parser) should be able to ignore them.
-  // Review this when we get a moment.
-  private UIContainer getFormHolder() {
-    UIContainer search = this;
-    while (search != null) {
-      if (search.currentform == null) 
-        search = search.parent;
-      else return search;
-    }
-    return null;
-  }
-  // This method is called during PRODUCTION in order to assess whether
-  // components should be assigned to a form or not. 
-  public UIForm getActiveForm() {
-    UIContainer formholder = getFormHolder();
-    return formholder == null? null : formholder.currentform;
-  }
-  
-  // this is a map of component IDs in this container, to their parent
-  // form.
-  private Map componentToForm;
-  
-  // this is called during RENDERING to find the relevant form.
-  // currently disused - will be used by fossilized code somehow.
-  public UIForm formForComponent(UIComponent component) {
-    UIContainer search = this;
-    while (search != null) {
-      if (search.componentToForm == null)
-        search = search.parent;
-      else return (UIForm) search.componentToForm.get(component);
-    }
-    return null;
-  }
-  
-  /** This field is used as a convenience when building up a component
-   * tree in code. It is periodically set to null or otherwise, and the
-   * next added component will be ascribed to the mentioned form.
-   */
-  private transient UIForm currentform;
-  
-  public void startForm(UIForm form) {
-  
-    currentform = form;
-    if (componentToForm == null) { // don't overwrite any existing map.
-      componentToForm = new HashMap();
-    }
-    // a formID is never repetitive. We put this here so that the renderer can
-    // find the form component in the right place when it looks. The fact that
-    // the form component is in the "wrong place" in the HTML hierarchy should
-    // all come out in the wash.
-    childmap.put(form.ID, currentform);
-  }
-
-  public void endForm() {
-    currentform = null;
-  }
-  
   public void addComponent(UIComponent toadd) {
     toadd.parent = this;
 //    if (childmap == null) {
@@ -166,9 +124,9 @@ public class UIContainer extends UIComponent {
       }
       children.add(toadd);
     }
-    UIContainer formholder = getFormHolder();
-    if (formholder != null) {  
-      formholder.componentToForm.put(toadd, currentform);
-    }
+//    UIContainer formholder = getFormHolder();
+//    if (formholder != null) {  
+//      formholder.componentToForm.put(toadd, currentform);
+//    }
   }
 }

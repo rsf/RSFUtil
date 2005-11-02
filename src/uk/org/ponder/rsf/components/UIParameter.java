@@ -4,12 +4,12 @@
 package uk.org.ponder.rsf.components;
 
 /**
- * Typically used for binding "fast bean" parameters. This is registered
- * as an "only child" of an input
+ * These may appear as children of either UIForm components, or of UIComponent
+ * components.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
-public class UIParameter extends UIComponent {
+public class UIParameter {
   
   // these parameters are optional, and ensure that a bean
   // referenced by this component will be initialised with any context.

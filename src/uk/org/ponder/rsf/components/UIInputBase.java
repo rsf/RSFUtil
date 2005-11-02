@@ -9,5 +9,7 @@ package uk.org.ponder.rsf.components;
  */
 
 public class UIInputBase extends UIBound {
-
+  public UIInputBase() {
+    fossilize = true;
+  }
 }
