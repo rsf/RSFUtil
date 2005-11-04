@@ -48,4 +48,11 @@ public interface RenderSystem {
    * declaration.
    */
   public String getDeclaration();
+  
+  /** A "UI-level" indication of whether a value was changed. At this point
+   * the values are in String/String[] form and this method is intended to 
+   * perform a cheap "cull" of incoming change requests to avoid unnecessary
+   * trips to the model. 
+   */
+  public boolean valueUnchanged(Object oldvalue, Object newvalue);
 }

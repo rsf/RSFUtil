@@ -7,14 +7,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import uk.org.ponder.arrayutil.ArrayUtil;
 import uk.org.ponder.beanutil.BeanLocator;
+import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.beanutil.BeanUtil;
 import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.errorutil.CoreMessages;
 import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.ThreadErrorState;
-import uk.org.ponder.mapping.DARApplier;
 import uk.org.ponder.mapping.DARReceiver;
 import uk.org.ponder.mapping.DataAlterationRequest;
 import uk.org.ponder.rsf.flow.ARIResult;
@@ -24,7 +23,6 @@ import uk.org.ponder.rsf.state.RequestStateEntry;
 import uk.org.ponder.rsf.state.RequestSubmittedValueCache;
 import uk.org.ponder.rsf.state.SubmittedValueEntry;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
-import uk.org.ponder.util.AssertionException;
 import uk.org.ponder.util.Logger;
 
 /**
@@ -33,7 +31,7 @@ import uk.org.ponder.util.Logger;
  * POST request. 
  */
 public class PostHandler {
-  private DARApplier darapplier;
+  private BeanModelAlterer darapplier;
   private BeanLocator beanwrapper;
   private ActionResultInterpreter ari;
   private RequestStateEntry requeststateentry;
@@ -45,7 +43,7 @@ public class PostHandler {
     this.beanwrapper = beanwrapper;
   }
 
-  public void setDARApplier(DARApplier darapplier) {
+  public void setDARApplier(BeanModelAlterer darapplier) {
     this.darapplier = darapplier;
   }
 
@@ -64,32 +62,14 @@ public class PostHandler {
   public void setViewParameters(ViewParameters viewparams) {
     this.viewparams = viewparams;
   }
-  
-  public static boolean valueUnchanged(Object oldvalue, Object newvalue) {
-    if (oldvalue instanceof String) {
-      // special hack for dealing with checkboxes, and a bit further for
-      // suppressed components - we should probably make some attempt to be
-      // component-aware here. TODO: somehow forward this to the RenderSystem.
-      if (newvalue == null) {
-        newvalue = oldvalue.equals("")? "" : "false";
-      }
-      return oldvalue.equals(newvalue);
-    }
-    else if (oldvalue instanceof String[]) {
-      String[] olds = (String[]) oldvalue;
-      String[] news = (String[]) newvalue;
-      return ArrayUtil.lexicalCompare(olds, olds.length, news, news.length) != 0;
-    }
-    else
-      throw new AssertionException("Unknown value type " + oldvalue);
-  }
 
   public ViewParameters handle(Map origrequestparams) {
     HashMap requestparams = new HashMap();
     requestparams.putAll(origrequestparams);
     rendersystem.normalizeRequestMap(requestparams);
     
-    String actionmethod = ((String[]) requestparams.get(SubmittedValueEntry.FAST_TRACK_ACTION))[0];
+    String[] actionmethods = (String[]) requestparams.get(SubmittedValueEntry.FAST_TRACK_ACTION); 
+    String actionmethod = actionmethods == null? null : actionmethods[0];
     
     actionmethod = BeanUtil.stripEL(actionmethod);
     
@@ -97,7 +77,9 @@ public class PostHandler {
     RequestSubmittedValueCache rsvc = null;
     try {
       rsvc = applyValues(requestparams);
-      result = (String) darapplier.invokeBeanMethod(actionmethod, beanwrapper);
+      if (actionmethod != null) {
+        result = (String) darapplier.invokeBeanMethod(actionmethod, beanwrapper);
+      }
     }
     catch (Exception e) {
       Logger.log.error(e);
@@ -155,6 +137,7 @@ public class PostHandler {
         if (sve.isdeletion) {
           // process deletions separately, they have no state and so evade the
           // rsvc
+          // TODO: They MUST NOT! Otherwise it is not replayable!
           String rootpath = PathUtil.getHeadPath(sve.valuebinding);
           DARReceiver rootbean = (DARReceiver) beanwrapper
               .locateBean(rootpath);
@@ -182,8 +165,10 @@ public class PostHandler {
           + " old value " + sve.oldvalue + " new value " + newvalue);
       // this is only a "UI level" value changed indication. It cannot
       // detect whether the user has made a value change that would cause
-      // no semantic change to the data value. - WHERE AM I? Impossible to locate new value here, JSF used to do it by magic! Should we just fork through the bean reference? Probably not.
-      if (valueUnchanged(sve.oldvalue, newvalue)) {
+      // no semantic change to the data value. 
+      //- WHERE AM I? Impossible to locate new value here, 
+      //JSF used to do it by magic! Should we just fork through the bean reference? Probably not.
+      if (rendersystem.valueUnchanged(sve.oldvalue, newvalue)) {
         continue;
       }
       String rootpath = PathUtil.getHeadPath(sve.valuebinding);

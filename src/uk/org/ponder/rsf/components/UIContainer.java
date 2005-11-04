@@ -31,7 +31,8 @@ import uk.org.ponder.stringutil.CharWrap;
  * <p>"Leaf" rendering classes <it>may</it> be derived from UIContainer - only
  * concrete instances of UIContainer will be considered as representatives of
  * pure branch points. By the time fixups have concluded, all non-branching
- * containers (e.g. UIForms) MUST have been removed from the component hierarchy.
+ * containers (e.g. UIForms) MUST have been removed from non-leaf positions in 
+ * the component hierarchy.
  */
 public class UIContainer extends UIComponent {
   /** The localID allows clients to distinguish between multiple instantiations
@@ -95,6 +96,10 @@ public class UIContainer extends UIComponent {
   /** Returns a list of all CURRENT children of this container. This method
    * is safe to use at any time.
    */
+  // There are now two calls to this in the codebase, firstly from ViewProcessor
+  // and then from BasicFormFixer. The VP call is necessary since it needs to fossilize
+  // the list up front, but if another call arises as in BFF we ought to write a 
+  // multi-iterator.
   public ComponentList flattenChildren() {
     ComponentList children = new ComponentList();
     for (Iterator childit = childmap.values().iterator(); childit.hasNext(); ) {
@@ -108,12 +113,12 @@ public class UIContainer extends UIComponent {
     }
    return children;  
   }
-   
+  
+  /** Add a component as a new child of this container */
+  
   public void addComponent(UIComponent toadd) {
     toadd.parent = this;
-//    if (childmap == null) {
-//      childmap = new HashMap();
-//    }
+    
     SplitID split = toadd.ID == null? null : new SplitID(toadd.ID);
     String childkey = toadd.ID == null? NON_PEER_ID : split.prefix;
     if (toadd.ID != null && split.suffix == null) {
@@ -127,9 +132,15 @@ public class UIContainer extends UIComponent {
       }
       children.add(toadd);
     }
-//    UIContainer formholder = getFormHolder();
-//    if (formholder != null) {  
-//      formholder.componentToForm.put(toadd, currentform);
-//    }
+  }
+  
+  /** "Fold" this container into its parent by shifting all children into the parent.
+   * This should only be called during fixup time. Note that this must NOT
+   * alter the fullID of any component in the tree! 
+   * @see uk.org.ponder.rsf.util.RSFFactory for implementation of computeFullID.
+   */
+  public void fold() {
+    parent.childmap.putAll(childmap);
+    childmap.clear();
   }
 }

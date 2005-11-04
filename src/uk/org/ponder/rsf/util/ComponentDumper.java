@@ -34,7 +34,7 @@ public class ComponentDumper {
       }
       else if (component instanceof UIInput) {
         XMLWriter.indent(indent, pos);
-        pos.println("Value: " + ((UIInput)component).value);
+        pos.println("Value: " + ((UIInput)component).getValue());
       }
       if (component instanceof UILink) {
         XMLWriter.indent(indent, pos);

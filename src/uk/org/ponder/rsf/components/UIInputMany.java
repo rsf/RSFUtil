@@ -9,4 +9,12 @@ package uk.org.ponder.rsf.components;
  */
 public class UIInputMany extends UIBound {
   public String[] values;
+
+  public Object uncastValue() {
+    return values;
+  }
+
+  public void castValue(Object value) {
+    values = (String[]) value;
+  }
 }

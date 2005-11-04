@@ -9,5 +9,11 @@ package uk.org.ponder.rsf.components;
  * 
  */
 public class UISelectBoolean extends UIInputBase {
-  public boolean value;
+  public boolean getValue() {
+    return ((Boolean)value).booleanValue();
+  }
+
+  public void setValue(boolean value) {
+    this.value = new Boolean(value); 
+  }
 }
