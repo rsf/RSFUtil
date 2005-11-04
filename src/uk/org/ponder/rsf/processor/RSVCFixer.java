@@ -5,9 +5,7 @@ package uk.org.ponder.rsf.processor;
 
 import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.ThreadErrorState;
-import uk.org.ponder.rsf.componentprocessor.BasicComponentSetter;
 import uk.org.ponder.rsf.componentprocessor.ComponentProcessor;
-import uk.org.ponder.rsf.componentprocessor.ComponentSetter;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.state.RequestSubmittedValueCache;
 import uk.org.ponder.rsf.state.SubmittedValueEntry;
@@ -54,7 +52,6 @@ public class RSVCFixer implements ComponentProcessor {
  
   }
   
-  private ComponentSetter setter = new BasicComponentSetter();
 
   public void processComponent(UIComponent toprocess) {
     if (rsvc != null) {

@@ -8,11 +8,11 @@ import java.util.ArrayList;
 /** A type-safe list of UIParameter objects */
 
 public class ParameterList extends ArrayList {
-  public UIParameter componentAt(int i) {
+  public UIParameter parameterAt(int i) {
     return (UIParameter) get(i);
   }
   public boolean add(Object o) {
-    UIParameter cast = (UIComponent) o;
+    UIParameter cast = (UIParameter) o;
     return super.add(cast);
   }
 }

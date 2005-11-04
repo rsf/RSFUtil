@@ -13,4 +13,10 @@ public class UIOutputMultiline extends UIBound {
     this.value = value;
     parent.addComponent(this);
   }
+  public StringList queryValue() {
+    return value;
+  }
+  public void applyValue(StringList value) {
+    this.value = value;
+  }
 }

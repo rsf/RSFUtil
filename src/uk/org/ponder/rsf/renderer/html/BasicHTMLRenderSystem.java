@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import uk.org.ponder.arrayutil.ArrayUtil;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIForm;
@@ -15,6 +16,7 @@ import uk.org.ponder.rsf.components.UIInputBase;
 import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UIOutputMultiline;
+import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.components.UISelectBoolean;
 import uk.org.ponder.rsf.renderer.ComponentRenderer;
 import uk.org.ponder.rsf.renderer.RenderSystem;
@@ -26,6 +28,7 @@ import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.template.XMLLumpList;
 import uk.org.ponder.streamutil.PrintOutputStream;
 import uk.org.ponder.stringutil.StringList;
+import uk.org.ponder.util.AssertionException;
 import uk.org.ponder.xml.XMLWriter;
 
 /**
@@ -69,7 +72,26 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       requestparams.remove(key);
     }
   }
-  
+
+  public boolean valueUnchanged(Object oldvalue, Object newvalue) {
+    if (oldvalue instanceof String) {
+      // special hack for dealing with checkboxes, and a bit further for
+      // suppressed components - we should probably make some attempt to be
+      // component-aware here. TODO: somehow forward this to the RenderSystem.
+      if (newvalue == null) {
+        newvalue = oldvalue.equals("")? "" : "false";
+      }
+      return oldvalue.equals(newvalue);
+    }
+    else if (oldvalue instanceof String[]) {
+      String[] olds = (String[]) oldvalue;
+      String[] news = (String[]) newvalue;
+      return ArrayUtil.lexicalCompare(olds, olds.length, news, news.length) != 0;
+    }
+    else
+      throw new AssertionException("Unknown value type " + oldvalue);
+  }
+
   // No, this method will not stay like this forever! We plan on an architecture
   // with renderer-per-component "class" as before, plus interceptors.
   // Although a lot of the parameterisation now lies in the allowable tag
@@ -174,7 +196,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         String value = "";
         String body = null;
         if (torendero instanceof UIInput) {
-          value = ((UIInput) torender).value;
+          value = ((UIInput) torender).getValue();
           if (uselump.textEquals("<textarea ")) {
             body = value;
           }
@@ -184,7 +206,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
 
         }
         else if (torendero instanceof UISelectBoolean) {
-          if (((UISelectBoolean) torender).value) {
+          if (((UISelectBoolean) torender).getValue()) {
             attrcopy.put("checked", "yes");
             value = "true";
           }
@@ -230,7 +252,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       }
       else if (torendero instanceof UICommand) {
         UICommand torender = (UICommand) torendero;
-        String value = RenderUtil.makeURLAttributes(torender.commandparams);
+        String value = RenderUtil.makeURLAttributes(torender.parameters);
         // any desired "attributes" decoded for JUST THIS ACTION must be
         // secretly
         // bundled as this special attribute.
@@ -273,11 +295,9 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         attrcopy.put("action", qpos == -1? torender.postURL: torender.postURL.substring(0, qpos));
         RenderUtil.dumpAttributes(attrcopy, xmlw);
         pos.println(">");
-        for (Iterator fit = torender.hiddenfields.keySet().iterator(); fit
-            .hasNext();) {
-          String name = (String) fit.next();
-          String value = (String) torender.hiddenfields.get(name);
-          RenderUtil.dumpHiddenField(name, value, xmlw);
+        for (int i = 0; i < torender.hiddenfields.size(); ++ i) {
+          UIParameter param = torender.hiddenfields.parameterAt(i);
+          RenderUtil.dumpHiddenField(param.name, param.value, xmlw);
         }
         // override "nextpos" - form is expected to contain numerous nested
         // Components.
@@ -300,7 +320,5 @@ public class BasicHTMLRenderSystem implements RenderSystem {
     return nextpos;
   }
 
-
-  
 
 }

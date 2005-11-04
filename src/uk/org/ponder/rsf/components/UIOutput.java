@@ -13,4 +13,12 @@ package uk.org.ponder.rsf.components;
  */
 public class UIOutput extends UIBound {
   public String text;
+
+  public Object uncastValue() {
+    return text;
+  }
+
+  public void castValue(Object value) {
+    text = (String) value;
+  }
 }

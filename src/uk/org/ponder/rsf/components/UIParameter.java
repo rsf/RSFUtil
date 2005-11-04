@@ -22,4 +22,9 @@ public class UIParameter {
   // this form is submitted.
   public String name;
   public String value;
+  public UIParameter() {}
+  public UIParameter(String name, String value) {
+    this.name = name;
+    this.value = value;
+  }
 }

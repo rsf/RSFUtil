@@ -6,6 +6,8 @@ package uk.org.ponder.rsf.renderer;
 import java.util.Iterator;
 import java.util.Map;
 
+import uk.org.ponder.rsf.components.ParameterList;
+import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.state.SubmittedValueEntry;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.streamutil.PrintOutputStream;
@@ -64,12 +66,11 @@ public class RenderUtil {
     }
   }
   
-  public static String makeURLAttributes(Map attrs) {
+  public static String makeURLAttributes(ParameterList params) {
     CharWrap togo = new CharWrap();
-    for (Iterator keyit = attrs.keySet().iterator(); keyit.hasNext();) {
-      String key = (String) keyit.next();
-      String value = (String) attrs.get(key);
-      togo.append("&").append(key).append("=").append(value);
+    for (int i = 0; i < params.size(); ++ i) {
+      UIParameter param = params.parameterAt(i);
+      togo.append("&").append(param.name).append("=").append(param.value);
     }
     return togo.toString();
   }

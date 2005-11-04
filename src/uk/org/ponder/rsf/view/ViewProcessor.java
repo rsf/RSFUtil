@@ -10,6 +10,7 @@ import uk.org.ponder.rsf.componentprocessor.ComponentProcessor;
 import uk.org.ponder.rsf.components.ComponentList;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.util.Logger;
 
 /** A request-scope bean which processes a component tree (view) 
  * after its production by the ViewGenerator, and before rendering by the
@@ -30,30 +31,41 @@ public class ViewProcessor {
   // not use the tree directly because of possible folding mutations.
   private ComponentList worklist;
   
-  private UIContainer root;
+  private View view;
   
-  public void setRoot(UIContainer root) {
-    this.root = root;
+  public void setView(View view) {
+    this.view = view;
   }
-  public UIContainer getRoot() {
+  public View getView() {
     performFixup();
-    return root;
+    return view;
   }
+  
   private void performFixup() {
     generateWorkList();
+    // ensure that the ID map is fully populated before any processors begin
+    // to execute, which may be dependent on it.
+    for (int compind = 0; compind < worklist.size(); ++ compind) {
+      UIComponent child = worklist.componentAt(compind);
+      view.registerComponent(child);
+    }
     for (int compind = 0; compind < worklist.size(); ++ compind) {
       UIComponent child = worklist.componentAt(compind);
       for (int procind = 0; procind < processors.size(); ++ procind) {
         ComponentProcessor proc = (ComponentProcessor) processors.get(procind);
-        int code = proc.processComponent(child);
+        try {
+          proc.processComponent(child);
+        }
+        catch (Exception e) {
+          Logger.log.warn("Error processing component " + child.getFullID(), e);
+        }
       }
     }
-    // TODO Auto-generated method stub
     
   }
   private void generateWorkList() {
     worklist = new ComponentList();
-    appendContainer(root);
+    appendContainer(view.viewroot);
     
   }
   private void appendContainer(UIContainer toappend) {

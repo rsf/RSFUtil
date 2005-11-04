@@ -8,7 +8,7 @@ package uk.org.ponder.rsf.components;
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
 
-public class UIInputBase extends UIBound {
+public abstract class UIInputBase extends UIBound {
   public UIInputBase() {
     fossilize = true;
   }

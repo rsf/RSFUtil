@@ -17,24 +17,13 @@ import uk.org.ponder.rsf.components.UIComponent;
  * 
  */
 public interface ComponentProcessor {
-  /** Returned from processComponent indicating that an error occurred. 
-   * This is a placeholder value that will be assumed in the case handling
-   * throws an exception. However, to be graceful, any such exception should be
-   * noted in the TargettedMessageList for the current request.
+  /** Process the supplied component. Any exception thrown by this method will
+   * be logged but will not propagate. In order to gracefully signal an error,
+   * it should be appended to the TargettedErrorList for this request.
+   * The only permitted structural modification of the tree is a "fold" of a 
+   * component STRICTLY DERIVED from UIContainer (e.g. UIForm) into its
+   * UIContainer parent. 
    */
-  public static final int ERROR = -1;
-  /** Returned from processComponent indicating that the component was 
-   * untouched by processing.
-   */
-  public static final int NOT_HANDLED = 0;
-  /** Returned from processComponent indicating that the component was 
-   * modified by processing.
-   */
-  public static final int HANDLED = 1;
-  /** Returned from processComponent indicating that the component was 
-   * modified by "folding", i.e. shunting as a leaf child and reattaching 
-   * its children to the former parent.
-   */
-  public static final int HANDLED_FOLDED = 2;
-  public int processComponent(UIComponent toprocess);
+
+  public void processComponent(UIComponent toprocess);
 }
