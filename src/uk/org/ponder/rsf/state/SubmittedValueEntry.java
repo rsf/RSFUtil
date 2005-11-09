@@ -13,9 +13,14 @@ package uk.org.ponder.rsf.state;
  * In case of an HTTP submission, these are encoded as key/value in the
  * request map (via hidden form fields) as follows:
  * <br>key = componentid-fossil, value=#{bean.member}oldvalue
+ * <br>Alternatively, this SVE may represent a "fast EL" binding, without
+ * a component. In this case, it has the form
+ * <br>key = #{el.lvalue}, value = rvalue, where rvalue may represent an EL
+ * rvalue, a SAXLeafType or a Object.
  * <br>The actual value submission is encoded in the RenderSystem for UIInputBase,
  * but is generally expected to simply follow
  * <br>key = componentid, value = newvalue.
+ * 
  */
 public class SubmittedValueEntry {
   /** The suffix appended to the component fullID in order to derive the key
@@ -60,22 +65,31 @@ public class SubmittedValueEntry {
   public static boolean isFossilisedBinding(String key) {
     return key.endsWith(FOSSIL_SUFFIX);
   }
-  /** Constructs a SubmittedValueEntry on a key/value pair for which 
-   * isFossilisedBinding has previously returned <code> true. In order to 
+  /** Attempts to construct a SubmittedValueEntry on a key/value pair found in
+   * the request map, for which isFossilisedBinding has already returned <code>true</code>. 
+   * In order to 
    * complete this (non-deletion) entry, the <code>newvalue</code> field must
    * be set separately.
    * @param key
    * @param value
    */
-  public SubmittedValueEntry(String key, String value) {
+
+  public static SubmittedValueEntry parseFossil(String key, String value) {
+    SubmittedValueEntry togo = new SubmittedValueEntry();
     int endcurly = value.indexOf('}');
-    valuebinding = value.substring(2, endcurly);
-    oldvalue = value.substring(endcurly + 1);
-    componentid = key.substring(0, key.length() - 
-        FOSSIL_SUFFIX.length());
-    if (componentid.equals(DELETION_BINDING)) {
-      isdeletion = true;
-      componentid = null;
+    togo.valuebinding = value.substring(2, endcurly);
+    togo.oldvalue = value.substring(endcurly + 1);
+    togo.componentid = key.substring(0, key.length() - 
+        SubmittedValueEntry.FOSSIL_SUFFIX.length());
+    if (togo.componentid.equals(SubmittedValueEntry.DELETION_BINDING)) {
+      togo.isdeletion = true;
+      togo.componentid = null;
     }
+    return togo;
   }
+  
+  public SubmittedValueEntry () {
+    
+  }
+  
 }
