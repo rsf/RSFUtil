@@ -3,14 +3,19 @@
  */
 package uk.org.ponder.rsf.components;
 
-/** The base class of all input components, which have their values 
- * bound to a bean reference. This reference is used both on render to give them their
+/** Represents a single value as transferred between the bean model and the
+ * rendererd view. Unless this is a pure output component, the value will be
+ * bound to an (EL) bean reference. This reference is used both on render to give them their
  * initial values, and on submission to apply the input value to the model.
  * <br> Immediate descendents are UIInput(One) and UIInputMany, as well as UIOutput.
+ * <br> A bound value may well be the container for other bound values, or 
+ * annotations of other types. However, any containment hierarchy below this level
+ * is invisible to IKAT, which hands off component subtrees to renderers at anything
+ * below UIIKATContainer.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  *
  */
-public abstract class UIBound extends UIComponent {
+public abstract class UIBound extends UISimpleContainer {
   /** The EL value reference that this component's value is bound to.
    * This will be a string of the form <code>#{rootbean.property1.property2}</code>
    */
@@ -53,4 +58,10 @@ public abstract class UIBound extends UIComponent {
    * requests should override the constructor default in UIOutput with <code>true</code>.
    */
   public boolean fossilize = false;
+  
+  /** A field recording whether any input is expected to result from this
+   * component. Note that if this flag is set to <code>true</code>, the
+   * <code>fossilize</code> flag MUST also be set to true.
+   */
+  public boolean willinput = false;
 }

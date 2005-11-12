@@ -30,6 +30,10 @@ public class ValueFixer implements ComponentProcessor {
       UIBound toprocess = (UIBound) toprocesso;
       if (toprocess.valuebinding != null && toprocess.acquireValue() == null) {
         Object value = alterer.getBeanValue(toprocess.valuebinding, beanlocator);
+        // The slightly tricky (and unique, in the codebase) work of converting 
+        // a bean value to its semi-reduced representation. Note that this is inverse
+        // to the unflattening operations in setBeanValue itself. However, these must
+        // stay INSIDE the alterer since only it has knowledge of the target object type.
         toprocess.updateValue(value);
       }
     }

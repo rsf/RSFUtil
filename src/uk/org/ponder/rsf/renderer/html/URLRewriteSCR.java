@@ -11,7 +11,7 @@ import uk.org.ponder.rsf.renderer.StaticComponentRenderer;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.view.ViewTemplate;
 import uk.org.ponder.rsf.viewstate.URLRewriter;
-import uk.org.ponder.streamutil.PrintOutputStream;
+import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.xml.XMLWriter;
 
 public class URLRewriteSCR implements StaticComponentRenderer {

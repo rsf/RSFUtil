@@ -8,16 +8,12 @@ package uk.org.ponder.rsf.components;
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
-public class UIInput extends UIInputBase {
-  public String getValue() {
-    return (String) value;
+public class UIInput extends UIBoundString {
+  public UIInput() {
+    fossilize = true;
+    willinput = true;
   }
-
-  public void setValue(String value) {
-    this.value = value;
-  }
-  
-  // leave initvalue null to perform "fixup" based on current bean contents.
+  // leave initvalue as constructed to perform "fixup" based on current bean contents.
   // this relies on some kind of "mini-submit" against current request scope
   // in order to initialise beans with non-user values.
   // Since we now have an explicit form model, it is easy to tell for a given

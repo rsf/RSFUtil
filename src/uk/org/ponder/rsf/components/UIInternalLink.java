@@ -10,7 +10,7 @@ public class UIInternalLink extends UILink {
       ViewParameters viewparams) {
     UIInternalLink togo = new UIInternalLink();
     togo.ID = ID;
-    togo.text = text;
+    togo.setValue(text);
     togo.viewparams = viewparams;
     parent.addComponent(togo);
     return togo;

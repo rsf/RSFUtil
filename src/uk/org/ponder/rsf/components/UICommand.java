@@ -11,8 +11,8 @@ import uk.org.ponder.rsf.state.SubmittedValueEntry;
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
-public class UICommand extends UIOutput {
-
+public class UICommand extends UIBoundString {
+  public String methodbinding;
   /**
    * Creates a command link initiating the specified method binding on trigger,
    * but also backed by infrastructure to produce a GET redirect to the original
@@ -31,8 +31,10 @@ public class UICommand extends UIOutput {
   public static UICommand make(UIContainer parent, String ID, String text,
       String methodbinding) {
     UICommand togo = new UICommand();
-    togo.text = text;
+    togo.setValue(text);
     togo.ID = ID;
+    togo.methodbinding = methodbinding;
+    // TODO: do this at fixup
     togo.parameters.add(new UIParameter(SubmittedValueEntry.FAST_TRACK_ACTION,
         methodbinding));
 //    if (parent.getActiveForm() == null) {
@@ -48,7 +50,6 @@ public class UICommand extends UIOutput {
     return make(parent, ID, null, methodbinding);
   }
 
-  
   // a map of param/values to be surreptitiously added to the parameter
   // map during submission. We maintain these as single-valued here for
   // simplicity, but they will be upgraded to the standard String[] values

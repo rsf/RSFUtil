@@ -11,5 +11,6 @@ package uk.org.ponder.rsf.components;
 public abstract class UIInputBase extends UIBound {
   public UIInputBase() {
     fossilize = true;
+    willinput = true;
   }
 }

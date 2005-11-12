@@ -10,7 +10,7 @@ import uk.org.ponder.rsf.components.ParameterList;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.state.SubmittedValueEntry;
 import uk.org.ponder.rsf.template.XMLLump;
-import uk.org.ponder.streamutil.PrintOutputStream;
+import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.xml.XMLWriter;

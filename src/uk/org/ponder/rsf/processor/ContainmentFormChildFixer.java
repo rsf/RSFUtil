@@ -7,6 +7,7 @@ import uk.org.ponder.rsf.componentprocessor.ComponentProcessor;
 import uk.org.ponder.rsf.components.ComponentList;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIIKATContainer;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.util.RSFUtil;
 
@@ -33,8 +34,8 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
       if (RSFUtil.isBound(child)) {
         toprocess.submittingcontrols.add(child.getFullID());
       }
-      else if (child instanceof UIContainer) {
-        registerContainer(toprocess, (UIContainer) child);
+      else if (child instanceof UIIKATContainer) {
+        registerContainer(toprocess, (UIIKATContainer) child);
       }
     }
   }

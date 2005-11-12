@@ -14,8 +14,8 @@ import uk.org.ponder.rsf.processor.PostHandler;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewStateHandler;
 import uk.org.ponder.springutil.RSACBeanLocator;
-import uk.org.ponder.streamutil.OutputStreamPOS;
-import uk.org.ponder.streamutil.PrintOutputStream;
+import uk.org.ponder.streamutil.write.OutputStreamPOS;
+import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
 

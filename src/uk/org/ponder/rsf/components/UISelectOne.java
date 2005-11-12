@@ -12,7 +12,6 @@ import uk.org.ponder.stringutil.StringList;
  */
 public class UISelectOne extends UIInput {
   public UISelectItem[] choices;
-  
 
   public static UISelectOne make(UIContainer parent, String ID, StringList values,
       String selected, String valuebinding) {

@@ -6,14 +6,29 @@ package uk.org.ponder.rsf.renderer;
 import java.util.Map;
 
 import uk.org.ponder.rsf.components.UIComponent;
+import uk.org.ponder.rsf.state.SubmittedValueEntry;
 import uk.org.ponder.rsf.template.XMLLump;
-import uk.org.ponder.streamutil.PrintOutputStream;
+import uk.org.ponder.streamutil.write.PrintOutputStream;
 
 /**
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
 public interface RenderSystem {
+  /** "Normalize" the supplied (writeable) request map by scouring it for
+   * System-specific key/values that secretly encode a number of others.
+   * TODO: Might also normalize by making multi-valued params into single-valued,
+   * but unclear whether there is enough knowledge in the system to distinguish
+   * values which OUGHT to be multivalued (probably only list submits).
+   */
+  public void normalizeRequestMap(Map requestparams);
+  
+  /** Fix up the "new value" in the supplied SVE, for example to take account of the
+   * target idiom's "missing value" semantics. E.g. for HTTP, checkboxes in the
+   * false state submit nothing, as do multiple list selections with nothing 
+   * selected.
+   */
+  public void fixupUIType(SubmittedValueEntry sve);
   //public void setViewTemplate(ViewTemplate template);
   /** Invoked by the IKAT renderer in order to perform a template rewrite based
    * on the System XML dialect. 
@@ -32,13 +47,7 @@ public interface RenderSystem {
   public int renderComponent(UIComponent torender, XMLLump[] lumps, 
       int lumpindex, PrintOutputStream pos);
 
-  /** "Normalize" the supplied (writeable) request map by scouring it for
-   * System-specific key/values that secretly encode a number of others.
-   * TODO: Might also normalize by making multi-valued params into single-valued,
-   * but unclear whether there is enough knowledge in the system to distinguish
-   * values which OUGHT to be multivalued (probably only list submits).
-   */
-  public void normalizeRequestMap(Map requestparams);
+ 
   public void setStaticRenderers(StaticRendererCollection scrc);
   /** Returns an XML/HTML declaration suitable to appear at the head of rendered
    * (full) files. This method will be invoked should the IKAT renderer 
@@ -49,10 +58,4 @@ public interface RenderSystem {
    */
   public String getDeclaration();
   
-  /** A "UI-level" indication of whether a value was changed. At this point
-   * the values are in String/String[] form and this method is intended to 
-   * perform a cheap "cull" of incoming change requests to avoid unnecessary
-   * trips to the model. 
-   */
-  public boolean valueUnchanged(Object oldvalue, Object newvalue);
 }

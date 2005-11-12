@@ -4,20 +4,18 @@
 package uk.org.ponder.rsf.renderer.html;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
-import uk.org.ponder.arrayutil.ArrayUtil;
+import uk.org.ponder.rsf.components.UIBound;
+import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
-import uk.org.ponder.rsf.components.UIInputBase;
 import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UIOutputMultiline;
 import uk.org.ponder.rsf.components.UIParameter;
-import uk.org.ponder.rsf.components.UISelectBoolean;
 import uk.org.ponder.rsf.renderer.ComponentRenderer;
 import uk.org.ponder.rsf.renderer.RenderSystem;
 import uk.org.ponder.rsf.renderer.RenderUtil;
@@ -26,9 +24,8 @@ import uk.org.ponder.rsf.renderer.StaticRendererCollection;
 import uk.org.ponder.rsf.state.SubmittedValueEntry;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.template.XMLLumpList;
-import uk.org.ponder.streamutil.PrintOutputStream;
+import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.stringutil.StringList;
-import uk.org.ponder.util.AssertionException;
 import uk.org.ponder.xml.XMLWriter;
 
 /**
@@ -58,12 +55,12 @@ public class BasicHTMLRenderSystem implements RenderSystem {
   public String getDeclaration() {
     return declaration;
   }
-    
+  
+  // Request-scope dependency enters here. probably should try to remove it.
   public void setStaticRenderers(StaticRendererCollection scrc) {
     this.scrc = scrc;
   }
   
-
   public void normalizeRequestMap(Map requestparams) {
     String key = RenderUtil.findCommandParams(requestparams);
     if (key != null) {
@@ -72,24 +69,14 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       requestparams.remove(key);
     }
   }
-
-  public boolean valueUnchanged(Object oldvalue, Object newvalue) {
-    if (oldvalue instanceof String) {
-      // special hack for dealing with checkboxes, and a bit further for
-      // suppressed components - we should probably make some attempt to be
-      // component-aware here. TODO: somehow forward this to the RenderSystem.
-      if (newvalue == null) {
-        newvalue = oldvalue.equals("")? "" : "false";
-      }
-      return oldvalue.equals(newvalue);
+  
+  public void fixupUIType(SubmittedValueEntry sve) {
+    if (sve.oldvalue instanceof Boolean) {
+      if (sve.newvalue == null) sve.newvalue = Boolean.FALSE;
     }
-    else if (oldvalue instanceof String[]) {
-      String[] olds = (String[]) oldvalue;
-      String[] news = (String[]) newvalue;
-      return ArrayUtil.lexicalCompare(olds, olds.length, news, news.length) != 0;
+    else if (sve.oldvalue instanceof String[]) {
+      if (sve.newvalue == null) sve.newvalue = new String[]{};
     }
-    else
-      throw new AssertionException("Unknown value type " + oldvalue);
   }
 
   // No, this method will not stay like this forever! We plan on an architecture
@@ -132,8 +119,6 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         // Logger.log.info("Warning: skipping form with all children at lump
         // index " + lumpindex);
       }
-      // if it is not a component marked with URL_REWRITE, just skip rendering
-      // it completely.
     }
     else {
       // else there IS a component and we are going to render it. First make
@@ -159,7 +144,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       pos.write(uselump.buffer, uselump.start, uselump.length);
 
       if (torendero.getClass() == UIOutput.class) {
-        String value = ((UIOutput) torendero).text;
+        String value = ((UIOutput) torendero).getValue();
         if (value == null) {
           RenderUtil.dumpTillLump(lumps, lumpindex + 1, close.lumpindex + 1,
               pos);
@@ -172,7 +157,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         }
       }
       else if (torendero.getClass() == UIOutputMultiline.class) {
-        StringList value = ((UIOutputMultiline) torendero).value;
+        StringList value = ((UIOutputMultiline) torendero).getValue();
         if (value == null) {
           RenderUtil.dumpTillLump(lumps, lumpindex + 1, close.lumpindex + 1,
               pos);
@@ -189,8 +174,8 @@ public class BasicHTMLRenderSystem implements RenderSystem {
           pos.write(close.buffer, close.start, close.length);
         }
       }
-      else if (torendero instanceof UIInputBase) {
-        UIInputBase torender = (UIInputBase) torendero;
+      else if (torendero instanceof UIBound) {
+        UIBound torender = (UIBound) torendero;
         attrcopy.put("name", fullID);
         //attrcopy.put("id", fullID);
         String value = "";
@@ -205,8 +190,8 @@ public class BasicHTMLRenderSystem implements RenderSystem {
           }
 
         }
-        else if (torendero instanceof UISelectBoolean) {
-          if (((UISelectBoolean) torender).getValue()) {
+        else if (torendero instanceof UIBoundBoolean) {
+          if (((UIBoundBoolean) torender).getValue()) {
             attrcopy.put("checked", "yes");
             value = "true";
           }
@@ -241,8 +226,8 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         attrcopy.put("href", torender.target);
         RenderUtil.dumpAttributes(attrcopy, xmlw);
         pos.print(">");
-        if (torender.text != null) {
-          xmlw.write(torender.text);
+        if (torender.getValue() != null) {
+          xmlw.write(torender.getValue());
           pos.write(close.buffer, close.start, close.length);
         }
         else {
@@ -257,8 +242,8 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         // secretly
         // bundled as this special attribute.
         attrcopy.put("name", SubmittedValueEntry.COMMAND_LINK_PARAMETERS + value);
-        if (lump.textEquals("<input ") && torender.text != null) {
-          attrcopy.put("value", torender.text);
+        if (lump.textEquals("<input ") && torender.getValue() != null) {
+          attrcopy.put("value", torender.getValue());
         }
 
         RenderUtil.dumpAttributes(attrcopy, xmlw);
@@ -267,8 +252,8 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         }
         else {
           pos.print(">");
-          if (torender.text != null && lump.textEquals("<button ")) {
-            xmlw.write(torender.text);
+          if (torender.getValue() != null && lump.textEquals("<button ")) {
+            xmlw.write(torender.getValue());
             pos.write(close.buffer, close.start, close.length);
           }
           else {
@@ -279,14 +264,9 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         // RenderUtil.dumpHiddenField(SubmittedValueEntry.ACTION_METHOD,
         // torender.actionhandler, pos);
       }
-      // Forms are a total arse. We decided that i) they will NOT APPEAR IN
-      // THE CONTAINER HIERARCHY! So in which case how will they be located?
-      // see iv) for this. ii) every form WILL HAVE
-      // AN ID, even if it is almost always BASIC_FORM. iii) since it has an
-      // ID, the default scanner will always stop on it. Therefore iv)
-      // forms WILL appear in the childmap, since we need to allow multiple
-      // forms
-      // covering different child sets in a domain.
+   // Forms behave slightly oddly in the hierarchy - by the time they reach 
+   // the renderer, they have been "shunted out" of line with their children,
+      // i.e. any "submitting" controls, if indeed they ever were there.
       else if (torendero instanceof UIForm) {
         UIForm torender = (UIForm) torendero;
         attrcopy.put("method", "post"); // yes, we MEAN this!

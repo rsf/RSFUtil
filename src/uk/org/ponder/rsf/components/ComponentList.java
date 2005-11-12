@@ -11,6 +11,7 @@ import java.util.ArrayList;
  * 
  */
 public class ComponentList extends ArrayList {
+  public static ComponentList EMPTY_LIST = new ComponentList();
   public UIComponent componentAt(int i) {
     return (UIComponent) get(i);
   }

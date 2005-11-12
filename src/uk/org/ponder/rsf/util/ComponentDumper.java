@@ -4,33 +4,34 @@
 package uk.org.ponder.rsf.util;
 
 import uk.org.ponder.rsf.components.UIBound;
+import uk.org.ponder.rsf.components.UIBoundString;
 import uk.org.ponder.rsf.components.UIComponent;
-import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIIKATContainer;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.components.UIOutput;
-import uk.org.ponder.streamutil.PrintOutputStream;
+import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.xml.XMLWriter;
 
 public class ComponentDumper {
   
-  public static void dumpContainer(UIContainer container, int indent, PrintOutputStream pos) {
+  public static void dumpContainer(UIIKATContainer container, int indent, PrintOutputStream pos) {
     UIComponent[] children = container.flatChildren();
     for (int i = 0; i < children.length; ++ i) {
       UIComponent component = children[i];
       String clazz = component.getClass().getName();
       XMLWriter.indent(indent, pos);
       pos.println(clazz + " with ID " + component.ID + " fullID " + component.getFullID());
-      if (component instanceof UIContainer) {
-        dumpContainer((UIContainer) component, indent + 1, pos);
+      if (component instanceof UIIKATContainer) {
+        dumpContainer((UIIKATContainer) component, indent + 1, pos);
       }
       else if (component instanceof UIBound) {
         XMLWriter.indent(indent, pos);
         pos.println("Value binding: " + ((UIBound)component).valuebinding);
       }
-      if (component instanceof UIOutput) {
+      if (component instanceof UIBoundString) {
         XMLWriter.indent(indent, pos);
-        pos.println("Text: " + ((UIOutput)component).text);
+        pos.println("Text: " + ((UIBoundString)component).getValue());
       }
       else if (component instanceof UIInput) {
         XMLWriter.indent(indent, pos);
