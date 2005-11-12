@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import uk.org.ponder.rsf.template.XMLLump;
-import uk.org.ponder.streamutil.PrintOutputStream;
+import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.xml.NameValue;
 import uk.org.ponder.xml.XMLWriter;
 

@@ -10,9 +10,9 @@ import java.io.StringWriter;
 import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 
-import uk.org.ponder.streamutil.PrintOutputStream;
-import uk.org.ponder.streamutil.StringPOS;
-import uk.org.ponder.streamutil.WriterPOS;
+import uk.org.ponder.streamutil.write.PrintOutputStream;
+import uk.org.ponder.streamutil.write.StringPOS;
+import uk.org.ponder.streamutil.write.WriterPOS;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 public class XMLFlattener {

@@ -5,21 +5,19 @@ package uk.org.ponder.rsf.view;
 
 import java.util.List;
 
-import org.springframework.beans.factory.FactoryBean;
-
 import uk.org.ponder.rsf.util.ComponentDumper;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
-import uk.org.ponder.streamutil.PrintOutputStream;
-import uk.org.ponder.streamutil.PrintStreamPOS;
+import uk.org.ponder.streamutil.write.PrintOutputStream;
+import uk.org.ponder.streamutil.write.PrintStreamPOS;
 import uk.org.ponder.util.UniversalRuntimeException;
 
-public class ViewGenerator implements FactoryBean {
+public class ViewGenerator {
   private ViewCollection viewcollection;
   private View view;
   private ComponentChecker checker;
   private ViewParameters viewparams;
  
-  public Object getObject() throws Exception {
+  public View getView() {
     if (view == null) {
       view = generateView(viewparams, checker);
       PrintOutputStream dumppos = new PrintStreamPOS(System.out);
@@ -30,6 +28,10 @@ public class ViewGenerator implements FactoryBean {
 
   public void setViewCollection(ViewCollection viewcollection) {
     this.viewcollection = viewcollection;
+  }
+  
+  public ViewCollection getViewCollection() {
+    return viewcollection;
   }
   
   public void setComponentChecker(ComponentChecker checker) {

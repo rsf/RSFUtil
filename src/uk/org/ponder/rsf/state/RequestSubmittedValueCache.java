@@ -5,6 +5,7 @@ package uk.org.ponder.rsf.state;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
@@ -33,7 +34,7 @@ public class RequestSubmittedValueCache {
   private HashMap pathmap = new HashMap();
   /** The list of entries, in order of application.
    */
-  public ArrayList entries = new ArrayList();
+  public List entries = new ArrayList();
   public SubmittedValueEntry entryAt(int i) {
     return (SubmittedValueEntry) entries.get(i);
   }

@@ -3,9 +3,7 @@
  */
 package uk.org.ponder.rsf.components;
 
-import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.stringutil.StringList;
-import uk.org.ponder.util.AssertionException;
 
 
 /**
@@ -18,7 +16,7 @@ import uk.org.ponder.util.AssertionException;
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
-public class UIForm extends UIContainer {
+public class UIForm extends UISimpleContainer {
   /** The URL to which this form will be submitted. This SHOULD be the same
    * as the URL of the page containing the form, minus query parameters. This
    * field need not be filled in by the user.
@@ -38,14 +36,14 @@ public class UIForm extends UIContainer {
   public StringList submittingcontrols = new StringList();
   
   
-  public static UIForm make(UIContainer parent, String ID) {
+  public static UIForm make(UIIKATContainer parent, String ID) {
     UIForm togo = new UIForm();
     togo.ID = ID;
     parent.addComponent(togo);
     return togo;
   }
   
-  public static UIForm make(UIContainer parent) {
+  public static UIForm make(UIIKATContainer parent) {
     return make(parent, BasicComponentIDs.BASIC_FORM);
   }
   

@@ -11,47 +11,93 @@ import uk.org.ponder.errorutil.PermissionException;
 import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.rsf.renderer.ViewRender;
+import uk.org.ponder.rsf.state.RSVCApplier;
 import uk.org.ponder.rsf.state.RequestStateEntry;
-import uk.org.ponder.rsf.view.ViewCollection;
+import uk.org.ponder.rsf.state.RequestSubmittedValueCache;
+import uk.org.ponder.rsf.view.View;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
+import uk.org.ponder.rsf.view.ViewGenerator;
+import uk.org.ponder.rsf.view.ViewProcessor;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
-import uk.org.ponder.streamutil.PrintOutputStream;
+import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.util.Logger;
+import uk.org.ponder.util.RunnableWrapper;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 /**
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
+// This has now become a request-scope bean.
 public class GetHandler {
-  // This is a hash of String viewIDs to Views.
-  private ViewCollection viewcollection;
+  // all request-scope dependencies
+  private ViewGenerator viewgenerator;
   private RequestStateEntry requeststateentry;
+  private RunnableWrapper getwrapper;
+  private ViewProcessor viewprocessor;
+  private RSVCApplier rsvcapplier;
+  private ViewParameters viewparams;
 
-  public void setViewCollection(ViewCollection viewcollection) {
-    this.viewcollection = viewcollection;
+  public void setRSVCApplier(RSVCApplier rsvcapplier) {
+    this.rsvcapplier = rsvcapplier;
   }
 
-  public ViewCollection getViewCollection() {
-    return viewcollection;
+  public void setViewGenerator(ViewGenerator viewgenerator) {
+    this.viewgenerator = viewgenerator;
   }
 
   public void setRequestState(RequestStateEntry requeststateentry) {
     this.requeststateentry = requeststateentry;
   }
 
+  public void setGetAlterationWrapper(RunnableWrapper getwrapper) {
+    this.getwrapper = getwrapper;
+  }
+
+  public void setViewProcessor(ViewProcessor viewprocessor) {
+    this.viewprocessor = viewprocessor;
+  }
+  
+  public void setViewParameters(ViewParameters viewparams) {
+    this.viewparams = viewparams;
+  }
+
+  // Since this is a request-scope bean, there is no problem letting the
+  // returned
+  // view from the getwrapper escape into this member.
+  private View view;
+
   public ViewParameters handle(PrintOutputStream pos, BeanLocator beanlocator) {
-    ViewParameters viewparams = (ViewParameters) beanlocator.locateBean("viewparameters");
+   
     boolean iserrorredirect = viewparams.errorredirect != null;
     // YES, reach into the original request! somewhat bad...
     viewparams.errorredirect = null;
     try {
+      view = viewgenerator.getView();
+      getwrapper.wrapRunnable(new Runnable() {
+        public void run() {
+
+          if (viewparams.viewtoken != null) {
+            // TODO: generalise this to allow bean-transfer, and fuse with POST processing.
+            RequestSubmittedValueCache rsvc = requeststateentry.getTSHolder()
+                .getTokenState(viewparams.viewtoken).rsvc;
+            rsvcapplier.applyValues(rsvc);
+          }
+          // some slight failure of RSAC here. But this pipeline is a bit
+          // clearer in code.
+          viewprocessor.setView(view);
+          view = viewprocessor.getView();
+        }
+      }).run();
+
       ViewRender viewrender = (ViewRender) beanlocator.locateBean("viewrender");
+      viewrender.setView(view);
       viewrender.render(pos);
     }
     catch (Exception e) {
       // if a request comes in for an invalid view, redirect it onto a default
-      ViewParameters redirect = handleLevel1Error(viewparams, e, iserrorredirect);
+      ViewParameters redirect = handleLevel1Error(viewparams, e,
+          iserrorredirect);
       return redirect;
     }
     finally {
@@ -60,12 +106,11 @@ public class GetHandler {
     return null;
   }
 
-
   // a "Level 1" GET error simply attempts to redirect onto a default
   // view, with errors intact.
   public ViewParameters handleLevel1Error(ViewParameters viewparams,
       Throwable t, boolean iserrorredirect) {
-    ViewComponentProducer defaultview = viewcollection.getDefaultView();
+    ViewComponentProducer defaultview = viewgenerator.getViewCollection().getDefaultView();
     Logger.log.warn("Exception populating view root: ", t);
     UniversalRuntimeException invest = UniversalRuntimeException.accumulate(t);
     Throwable target = invest.getTargetException();
@@ -97,6 +142,8 @@ public class GetHandler {
   }
 
   public void renderFatalError(Throwable t, PrintOutputStream pos) {
+    // We may have such a fatal misconfiguration that we can't even rely on
+    // IKAT to format this error message
     Logger.log.fatal("Completely fatal error populating view root", t);
 
     pos.println("<html><head><title>Internal Error</title></head></body><pre>");

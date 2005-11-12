@@ -3,7 +3,6 @@
  */
 package uk.org.ponder.rsf.view;
 
-import java.util.Iterator;
 import java.util.List;
 
 import uk.org.ponder.rsf.componentprocessor.ComponentProcessor;
@@ -74,7 +73,7 @@ public class ViewProcessor {
     for (int i = 0; i < thischildren.size(); ++ i) {
       UIComponent thischild = thischildren.componentAt(i);
       if (thischild instanceof UIContainer) {
-        appendContainer(toappend);
+        appendContainer((UIContainer) thischild);
       }
     }
   }

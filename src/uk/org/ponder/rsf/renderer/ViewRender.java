@@ -8,10 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import uk.org.ponder.rsf.componentprocessor.ComponentProcessor;
 import uk.org.ponder.rsf.components.UIComponent;
-import uk.org.ponder.rsf.components.UIContainer;
-import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.UIIKATContainer;
+import uk.org.ponder.rsf.components.UIOutputMultiline;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.template.XMLLumpList;
 import uk.org.ponder.rsf.template.XMLLumpMMap;
@@ -19,7 +18,7 @@ import uk.org.ponder.rsf.template.XMLViewTemplate;
 import uk.org.ponder.rsf.util.SplitID;
 import uk.org.ponder.rsf.view.View;
 import uk.org.ponder.rsf.view.ViewTemplate;
-import uk.org.ponder.streamutil.PrintOutputStream;
+import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.stringutil.StringList;
 import uk.org.ponder.util.Logger;
@@ -125,7 +124,7 @@ public class ViewRender {
     messages.add(message);
   }
 
-  private void renderRecurse(UIContainer basecontainer, XMLLump parentlump,
+  private void renderRecurse(UIIKATContainer basecontainer, XMLLump parentlump,
       XMLLump baselump) {
 
     int renderindex = baselump.lumpindex;
@@ -163,10 +162,10 @@ public class ViewRender {
             System.out.println(debugLump(targetlump));
             }
             // NB - leaf components may now be containers.
-            if (child.getClass() == UIContainer.class) {
+            if (child.getClass() == UIIKATContainer.class) {
               XMLLump firstchild = lumps[targetlump.open_end.lumpindex + 1];
               dumpContainerHead(targetlump, firstchild);
-              renderRecurse((UIContainer) child, targetlump, firstchild);
+              renderRecurse((UIIKATContainer) child, targetlump, firstchild);
             }
             else {
               int renderend = renderer.renderComponent(child, lumps,
@@ -261,10 +260,10 @@ public class ViewRender {
 
   private XMLLump resolveCall(XMLLump sourcescope, UIComponent child) {
     SplitID split = new SplitID(child.ID);
-    if (child instanceof UIContainer) {
+    if (child instanceof UIIKATContainer) {
       String defprefix = split.prefix + SplitID.SEPARATOR;
       BestMatch bestmatch = new BestMatch();
-      UIContainer childc = (UIContainer) child;
+      UIIKATContainer childc = (UIIKATContainer) child;
       if (Logger.log.isInfoEnabled()) {
         Logger.log.info("Resolving call from container "
             + childc.debugChildren());
@@ -307,7 +306,7 @@ public class ViewRender {
     }
   }
 
-  private void passDeficit(BestMatch bestmatch, UIContainer container,
+  private void passDeficit(BestMatch bestmatch, UIIKATContainer container,
       XMLLumpList tocheck) {
     for (int i = 0; i < tocheck.size(); ++i) {
       XMLLump lump = tocheck.lumpAt(i);
@@ -332,7 +331,7 @@ public class ViewRender {
   // A match is either an exact match in prefix and suffix, or else a "default
   // match" produced by looking for a "default" member in the template with the
   // name "prefix:" for the issued component prefix.
-  private int evalDeficit(UIContainer container, XMLLump lump) {
+  private int evalDeficit(UIIKATContainer container, XMLLump lump) {
     int deficit = 0;
     UIComponent[] children = container.flatChildren();
     doneprefix.clear();
@@ -372,12 +371,10 @@ public class ViewRender {
   private UIComponent getMessageComponent(StringList messages) {
     if (messages == null)
       return null;
-    UIOutput togo = new UIOutput();
-    togo.text = "";
+    UIOutputMultiline togo = new UIOutputMultiline();
+    togo.setValue(messages);
     // hack, awaiting repetitive message domains.
-    for (int i = 0; i < messages.size(); ++i) {
-      togo.text += messages.stringAt(i) + "<br/>";
-    }
+    // URGH! This is actually a UIOutputMultiLine!!! Hack eluded!!
     return togo;
   }
 

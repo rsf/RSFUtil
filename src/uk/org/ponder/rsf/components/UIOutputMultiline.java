@@ -6,17 +6,21 @@ package uk.org.ponder.rsf.components;
 import uk.org.ponder.stringutil.StringList;
 
 public class UIOutputMultiline extends UIBound {
-  public StringList value;
-  public UIOutputMultiline(UIContainer parent, String ID, String binding, StringList value) {
-    this.ID = ID;
-    this.valuebinding = binding;
-    this.value = value;
-    parent.addComponent(this);
+  public static UIOutputMultiline make(UIContainer parent, String ID,
+      String binding, StringList value) {
+    UIOutputMultiline togo = new UIOutputMultiline();
+    togo.ID = ID;
+    togo.valuebinding = binding;
+    togo.value = value;
+    parent.addComponent(togo);
+    return togo;
   }
-  public StringList queryValue() {
-    return value;
+
+  public StringList getValue() {
+    return (StringList) value;
   }
-  public void applyValue(StringList value) {
+
+  public void setValue(StringList value) {
     this.value = value;
   }
 }

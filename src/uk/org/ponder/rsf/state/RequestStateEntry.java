@@ -50,6 +50,10 @@ public class RequestStateEntry {
     this.tsholder = errorhandler;
   }
   
+  public TokenStateHolder getTSHolder() {
+    return tsholder;
+  }
+  
   private static EighteenIDGenerator idgenerator = new EighteenIDGenerator();
    
   public void setViewParameters(ViewParameters viewparams) {
