@@ -13,11 +13,11 @@ import uk.org.ponder.rsf.util.SplitID;
 import uk.org.ponder.stringutil.CharWrap;
 
 /**
- * @author Antranig Basman (antranig@caret.cam.ac.uk) UIIKATContainer represents a
+ * @author Antranig Basman (antranig@caret.cam.ac.uk) UIBranchContainer represents a
  *         "branch point" in the IKAT rendering process, rather than simply just
  *         a level of component containment.
  *         <p>
- *         UIIKATContainer has responsibility for managing naming of child
+ *         UIBranchContainer has responsibility for managing naming of child
  *         components, as well as separate and parallel responsibility for
  *         forms. The key to the child map is the ID prefix - if the ID has no
  *         suffix, the value is the single component with that ID at this level.
@@ -32,12 +32,12 @@ import uk.org.ponder.stringutil.CharWrap;
  *         once the base (XML) nesting level at the target is reached again.
  *         <p>
  *         "Leaf" rendering classes <it>may</it> be derived from UISimpleContainer -
- *         only concrete instances of UIIKATContainer will be considered as
+ *         only concrete instances of UIBranchContainer will be considered as
  *         representatives of pure branch points. By the time fixups have
  *         concluded, all non-branching containers (e.g. UIForms) MUST have been
  *         removed from non-leaf positions in the component hierarchy.
  */
-public class UIIKATContainer extends UIContainer {
+public class UIBranchContainer extends UIContainer {
   /**
    * The localID allows clients to distinguish between multiple instantiations
    * of the "same" (by rsf:id) component within the same scope. It forms part of
@@ -59,8 +59,8 @@ public class UIIKATContainer extends UIContainer {
 
 // NB - the parent of an IKATContainer WILL BE an IKATContainer when it is
 // fixed up - but intermediately, it may be something like a Form...
-  public static UIIKATContainer make(UIContainer parent, String ID) {
-    UIIKATContainer togo = new UIIKATContainer();
+  public static UIBranchContainer make(UIContainer parent, String ID) {
+    UIBranchContainer togo = new UIBranchContainer();
     togo.ID = ID;
     parent.addComponent(togo);
     return togo;
@@ -158,17 +158,4 @@ public class UIIKATContainer extends UIContainer {
     }
   }
 
-  /**
-   * "Fold" this container into its parent by shifting all children into the
-   * parent. This should only be called during fixup time. Note that this must
-   * NOT alter the fullID of any component in the tree!
-   * 
-   * @see uk.org.ponder.rsf.util.RSFFactory for implementation of computeFullID.
-   */
-  public void fold() {
-    // the parent of an IKATContainer is ALWAYS another IKATContainer.
-    UIIKATContainer parenti = (UIIKATContainer) parent;
-    parenti.childmap.putAll(childmap);
-    childmap.clear();
-  }
 }

@@ -6,7 +6,7 @@ package uk.org.ponder.rsf.state;
 import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIParameter;
-import uk.org.ponder.rsf.renderer.RenderSystem;
+import uk.org.ponder.rsf.renderer.RenderSystemStatic;
 import uk.org.ponder.rsf.uitype.UIType;
 import uk.org.ponder.rsf.uitype.UITypes;
 import uk.org.ponder.saxalizer.SAXalXMLProvider;
@@ -33,13 +33,10 @@ public class FossilizedConverter {
   public static final String DELETION_BINDING = "*"+FOSSIL_SUFFIX;
   
   private SAXalXMLProvider xmlprovider;
-  private RenderSystem rendersystem;
+  
+  public static final String COMMAND_LINK_PARAMETERS = "command link parameters";
   public void setSAXalXMLProvider(SAXalXMLProvider xmlprovider) {
     this.xmlprovider = xmlprovider;
-  }
-  
-  public void setRenderSystem(RenderSystem rendersystem) {
-    this.rendersystem = rendersystem;
   }
   
   /** A utility method to determine whether a given key (from the request map)
@@ -96,7 +93,8 @@ public class FossilizedConverter {
    * non-leaf type. This value will be serialized and added to the end of the
    * binding.
    */
-  
+  // NB! UIType is hardwired to use the static StringArrayParser, to avoid a 
+  // wireup graph cycle of FossilizedConverter on the HTMLRenderSystem. 
   public UIParameter computeFossilizedBinding(UIBound togenerate) {
     if (!togenerate.fossilize) {
       throw new IllegalArgumentException("Cannot compute fossilized binding " +
@@ -125,9 +123,10 @@ public class FossilizedConverter {
    * not null for every component which was marked as "expecting input", and
    * of the same type as oldvalue.
    */
-  public void fixupNewValue(SubmittedValueEntry sve, String key, String value) {
+  public void fixupNewValue(SubmittedValueEntry sve, RenderSystemStatic rendersystemstatic, 
+      String key, String value) {
     if (key.charAt(0) == INPUT_COMPONENT) {
-      rendersystem.fixupUIType(sve);
+      rendersystemstatic .fixupUIType(sve);
       Class requiredclass = sve.oldvalue.getClass();
       UIType type = UITypes.forObject(sve.oldvalue);
       if (type != null && sve.newvalue.getClass() != requiredclass) {

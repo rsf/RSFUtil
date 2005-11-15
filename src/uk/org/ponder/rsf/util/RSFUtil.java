@@ -3,12 +3,14 @@
  */
 package uk.org.ponder.rsf.util;
 
+import uk.org.ponder.rsf.components.ComponentList;
 import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIForm;
-import uk.org.ponder.rsf.components.UIIKATContainer;
+import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIParameter;
+import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.util.AssertionException;
 
 /**
@@ -50,18 +52,21 @@ public class RSFUtil {
     return tocheck instanceof UIBound? ((UIBound)tocheck).valuebinding != null : false;
   }
   
+  public static String getFullIDSegment(String ID, String localID) {
+    return ID + SplitID.SEPARATOR + localID + SplitID.SEPARATOR;
+  }
+  
   /** @see UIComponent for the operation of this algorithm.
    */
-  
   public static String computeFullID(UIComponent tocompute) {
     StringBuffer togo = new StringBuffer();
     UIComponent move = tocompute;
     while (move.parent != null) {
-      if (move instanceof UIIKATContainer) {
-        UIIKATContainer movec = (UIIKATContainer)move;
+      if (move instanceof UIContainer) {
         // only insert naming section for concrete container. 
-        if (move.getClass() == UIIKATContainer.class) {
-          togo.insert(0, movec.ID.toString() + SplitID.SEPARATOR + movec.localID + SplitID.SEPARATOR);
+        if (move.getClass() == UIBranchContainer.class) {
+          UIBranchContainer movec = (UIBranchContainer)move;
+          togo.insert(0, getFullIDSegment(movec.ID.toString(), movec.localID));
         }
       }
       else {
@@ -72,8 +77,32 @@ public class RSFUtil {
     }
     return togo.toString();
   }
-
-
+  
+  public static ComponentList getRootPath(UIComponent leaf) {
+    ComponentList togo = new ComponentList();
+    while (leaf != null) {
+      togo.add(0, leaf);
+      leaf = leaf.parent;
+    }
+    return togo;
+  }
+  
+/** "Reduce" a component full ID by stripping out the local ID segments. Now disused. */
+  public static String getReducedID(String fullID) {
+    String[] components = fullID.split(":");
+    CharWrap toappend = new CharWrap();
+    for (int i = 0; i < components.length; ++ i) {
+      if (i%3 != 2) {
+        toappend.append(components[i]);
+        // ID can either end on %0 for a container, or on %1 for a leaf. 
+        // So if it is a container, we will retain the :.
+        if (i != components.length - 1) {
+          toappend.append(':');
+        }
+      }
+    }
+    return toappend.toString();
+  }
 //  public static void addCommandLinkParameter(UICommand trigger, String key,
 //      String value) {
 //    trigger.parameters.put(key, value);

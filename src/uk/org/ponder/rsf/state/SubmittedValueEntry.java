@@ -15,12 +15,18 @@ package uk.org.ponder.rsf.state;
  */
 public class SubmittedValueEntry {
  
-  public static final String COMMAND_LINK_PARAMETERS = "command link parameters";
-  /** The key used in the parameteres of a command link (and hence in the 
+  /** The key used in the parameters of a command link (and hence in the 
    * servlet request) whose value is the method binding EL to be invoked on
    * this request.
    */
   public static final String FAST_TRACK_ACTION = "Fast track action";
+  
+  /** The key used to find the ID of the <it>submitting control</it> used
+   * to produce this submission, which is that of the corresponding UIForm 
+   * component. For "WAP-style" forms this may well be the same as the
+   * physical submitting control.
+   */
+  public static final String SUBMITTING_CONTROL = "Submitting control";
 //  RSFFactory.addParameter(parent, toset.getFullID()
 //      + SubmittedValueEntry.FOSSIL_SUFFIX, binding + currentvalue);
   // key = {value-binding}componentid-fossil, value = oldvalue OLD

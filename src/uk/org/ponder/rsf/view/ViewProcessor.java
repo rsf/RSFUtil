@@ -35,7 +35,7 @@ public class ViewProcessor {
   public void setView(View view) {
     this.view = view;
   }
-  public View getView() {
+  public View getProcessedView() {
     performFixup();
     return view;
   }

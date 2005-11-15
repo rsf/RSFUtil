@@ -10,6 +10,7 @@ import uk.org.ponder.stringutil.CharWrap;
  * 
  */
 public class SplitID {
+  public static final String WILDCARD_COMPONENT = "*";
   public static final char SEPARATOR = ':';
   public String prefix;
   public String suffix;

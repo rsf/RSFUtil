@@ -22,4 +22,5 @@ public class StringArrayUIType implements UIType {
     String[] news = (String[]) newvalue;
     return ArrayUtil.lexicalCompare(olds, olds.length, news, news.length) != 0;
   }
+
 }

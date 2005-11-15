@@ -35,7 +35,7 @@ public class ViewCollection {
   public void setViews(List viewlist) {
     for (Iterator it = viewlist.iterator(); it.hasNext();) {
       ComponentProducer view = (ComponentProducer)it.next();
-      view.setMessageLocator(messagelocator);
+      //view.setMessageLocator(messagelocator);
       String key = ALL_VIEW_PRODUCER;
       if (view instanceof ViewComponentProducer) {
         key = ((ViewComponentProducer)view).getViewID();

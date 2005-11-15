@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import uk.org.ponder.springutil.RSACBeanLocator;
+
 /**
  * The main servlet for the RSF system. Hands off immediately to the 
  * RootHandlerBean for all logic.
@@ -19,20 +21,15 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  * 
  */
 public class ReasonableServlet extends HttpServlet {
-  private RootHandlerBean rootbean;
+  private RSACBeanLocator rsacbeanlocator;
   public void init(ServletConfig config) {
     ServletContext sc = config.getServletContext();
     WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(sc);
-    rootbean = (RootHandlerBean) wac.getBean("roothandlerbean");
+    rsacbeanlocator = (RSACBeanLocator) wac.getBean("rsacbeanlocator");
   }
   
-  protected void doGet(HttpServletRequest request, HttpServletResponse response) {
-    rootbean.handleGet(request, response); 
-  }
-  
-
-  protected void doPost(HttpServletRequest request, HttpServletResponse response) {
-    rootbean.handlePost(request, response); 
+  protected void service(HttpServletRequest requst, HttpServletResponse response) {
+    rsacbeanlocator.getBeanLocator().locateBean("roothandlerbean");
   }
   
 }

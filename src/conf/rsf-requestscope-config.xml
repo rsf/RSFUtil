@@ -3,6 +3,21 @@
 	"http://www.springframework.org/dtd/spring-beans.dtd">
 <beans>
   <!-- This file contains request scope beans which are specific to RSF -->
+  
+  <!-- A request scope bean locator locating beans from THIS container! -->
+  <bean id="requestbeanlocator" factory-bean="rsacbeanlocator" factory-method="getBeanLocator">
+  </bean>
+  
+  <bean id="roothandlerbean" class="uk.org.ponder.rsf.servlet.RootHandlerBean">
+      <!-- EXTERNAL DEPENDENCY! The application supplies the view params -->
+    <property name="viewParametersExemplar">
+      <ref bean="viewparamsexemplar"/>
+    </property>
+    <property name="requestBeanLocator">
+      <ref local="requestbeanlocator"/>
+    </property>
+  </bean>
+  
    <bean id="viewparameters" class="uk.org.ponder.rsf.servlet.ViewParametersFactory">
      <property name="viewParametersExemplar">
          <!-- EXTERNAL DEPENDENCY! The application supplies the view params -->

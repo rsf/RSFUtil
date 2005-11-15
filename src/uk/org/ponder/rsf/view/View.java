@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 import uk.org.ponder.rsf.componentprocessor.FormModel;
 import uk.org.ponder.rsf.components.UIComponent;
-import uk.org.ponder.rsf.components.UIIKATContainer;
+import uk.org.ponder.rsf.components.UIBranchContainer;
 
 /**
  * The View holds the component tree while it is in transit between 
@@ -21,13 +21,12 @@ import uk.org.ponder.rsf.components.UIIKATContainer;
 public class View {
   public static final String VIEWROOT_ID = "  viewroot  ";
   public View() {
-    viewroot = new UIIKATContainer();
+    viewroot = new UIBranchContainer();
     viewroot.ID = VIEWROOT_ID;
   }
-  public UIIKATContainer viewroot;
-  // This is a map of FULL component IDs to String messages.
-  public HashMap IDtomessage = new HashMap();
-  // This is a map of full component IDs to components.
+  public UIBranchContainer viewroot;
+  
+   // This is a map of full component IDs to components.
   private HashMap IDtocomponent = new HashMap();
   /** Registers the supplied component into the ID map */
   public void registerComponent(UIComponent toregister) {

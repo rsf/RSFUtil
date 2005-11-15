@@ -5,10 +5,13 @@ package uk.org.ponder.rsf.processor;
 
 import uk.org.ponder.rsf.componentprocessor.ComponentProcessor;
 import uk.org.ponder.rsf.components.ComponentList;
+import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIContainer;
-import uk.org.ponder.rsf.components.UIIKATContainer;
+import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIForm;
+import uk.org.ponder.rsf.components.UIParameter;
+import uk.org.ponder.rsf.state.SubmittedValueEntry;
 import uk.org.ponder.rsf.util.RSFUtil;
 
 /** A fixer to be run BEFORE the main form fixer, which implements the HTML/HTTP
@@ -23,7 +26,11 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
   public void processComponent(UIComponent toprocesso) {
     if (toprocesso instanceof UIForm) {
       UIForm toprocess = (UIForm) toprocesso;
-      registerContainer(toprocess, toprocess);
+      if (toprocess.submittingcontrols.size() == 0) {
+        // we would really like this to be a check for NULL, but the SAXalizer
+        // could not cope with this.
+        registerContainer(toprocess, toprocess);
+      }
     }
   }
   
@@ -34,8 +41,15 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
       if (RSFUtil.isBound(child)) {
         toprocess.submittingcontrols.add(child.getFullID());
       }
-      else if (child instanceof UIIKATContainer) {
-        registerContainer(toprocess, (UIIKATContainer) child);
+      else if (child instanceof UICommand) {
+        // TODO: clarify UIForm/UICommand relationship for WAP-style forms. 
+        // Who is to be master!
+        UICommand command = (UICommand) child;
+        command.parameters.add(new UIParameter(SubmittedValueEntry.SUBMITTING_CONTROL, 
+            toprocess.getFullID()));
+      }
+      else if (child instanceof UIBranchContainer) {
+        registerContainer(toprocess, (UIBranchContainer) child);
       }
     }
   }
