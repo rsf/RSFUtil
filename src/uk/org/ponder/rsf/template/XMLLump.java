@@ -6,7 +6,6 @@ package uk.org.ponder.rsf.template;
 import java.util.HashMap;
 
 import uk.org.ponder.arrayutil.ArrayUtil;
-import uk.org.ponder.rsf.util.SplitID;
 
 /**
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
@@ -21,7 +20,6 @@ public class XMLLump {
   public int nestingdepth;
   public char[] buffer;
   public int start, length;
-  //public String text;
   public String rsfID;
   public XMLLump open_end = null;        // lump containing " >"
   public XMLLump close_tag = null;       // lump containing "</close">
@@ -46,7 +44,8 @@ public class XMLLump {
   // component holding the ID will be either a div or a span.
   public static final String PAYLOAD_COMPONENT = "payload-component";
   // this occurs in the SAME CONTAINER scope as the target???
-  public static final String FORID_PREFIX = "message-for" + SplitID.SEPARATOR;
+  public static final String FORID_PREFIX = "message-for";// + SplitID.SEPARATOR;
+  public static final String FORID_SUFFIX = ":*";
   public XMLLump() {}
   public XMLLump(int lumpindex, int nestingdepth) {
     this.lumpindex = lumpindex;

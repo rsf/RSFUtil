@@ -10,10 +10,12 @@ import uk.org.ponder.errorutil.ErrorUtil;
 import uk.org.ponder.errorutil.PermissionException;
 import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.ThreadErrorState;
+import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.renderer.ViewRender;
 import uk.org.ponder.rsf.state.RSVCApplier;
 import uk.org.ponder.rsf.state.RequestStateEntry;
 import uk.org.ponder.rsf.state.RequestSubmittedValueCache;
+import uk.org.ponder.rsf.state.TokenRequestState;
 import uk.org.ponder.rsf.view.View;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.view.ViewGenerator;
@@ -37,6 +39,8 @@ public class GetHandler {
   private ViewProcessor viewprocessor;
   private RSVCApplier rsvcapplier;
   private ViewParameters viewparams;
+  
+  private RequestStateEntry tokenrse;
 
   public void setRSVCApplier(RSVCApplier rsvcapplier) {
     this.rsvcapplier = rsvcapplier;
@@ -50,7 +54,7 @@ public class GetHandler {
     this.requeststateentry = requeststateentry;
   }
 
-  public void setGetAlterationWrapper(RunnableWrapper getwrapper) {
+  public void setAlterationWrapper(RunnableWrapper getwrapper) {
     this.getwrapper = getwrapper;
   }
 
@@ -63,10 +67,12 @@ public class GetHandler {
   }
 
   // Since this is a request-scope bean, there is no problem letting the
-  // returned
-  // view from the getwrapper escape into this member.
+  // returned view from the getwrapper escape into this member.
   private View view;
 
+  /** The beanlocator is passed in to allow the late location of the 
+   * ViewRender bean which needs to occur in a controlled exception context.
+   */
   public ViewParameters handle(PrintOutputStream pos, BeanLocator beanlocator) {
    
     boolean iserrorredirect = viewparams.errorredirect != null;
@@ -74,23 +80,27 @@ public class GetHandler {
     viewparams.errorredirect = null;
     try {
       view = viewgenerator.getView();
+      final TokenRequestState trs = viewparams.viewtoken == null ? 
+        null : requeststateentry.getTSHolder().getTokenState(viewparams.viewtoken);
       getwrapper.wrapRunnable(new Runnable() {
         public void run() {
 
           if (viewparams.viewtoken != null) {
             // TODO: generalise this to allow bean-transfer, and fuse with POST processing.
-            RequestSubmittedValueCache rsvc = requeststateentry.getTSHolder()
-                .getTokenState(viewparams.viewtoken).rsvc;
+            RequestSubmittedValueCache rsvc = trs.rsvc;
             rsvcapplier.applyValues(rsvc);
           }
           // some slight failure of RSAC here. But this pipeline is a bit
           // clearer in code.
           viewprocessor.setView(view);
-          view = viewprocessor.getView();
+          view = viewprocessor.getProcessedView();
         }
       }).run();
 
       ViewRender viewrender = (ViewRender) beanlocator.locateBean("viewrender");
+     
+      viewrender.setMessages(trs.errors);
+      viewrender.setGlobalMessageTarget(trs.globaltargetid);
       viewrender.setView(view);
       viewrender.render(pos);
     }
@@ -101,7 +111,7 @@ public class GetHandler {
       return redirect;
     }
     finally {
-      requeststateentry.requestComplete(null);
+      requeststateentry.requestComplete(null, ARIResult.DESTROY);
     }
     return null;
   }
@@ -123,20 +133,20 @@ public class GetHandler {
       throw invest;
     }
 
-    TargettedMessage newerror = new TargettedMessage(null);
+    String tokenid = viewparams.viewtoken;
+    TargettedMessage newerror = 
+      new TargettedMessage(CoreMessages.GENERAL_SHOW_ERROR,  new Object[] { tokenid });
     ThreadErrorState.addError(newerror);
 
-    String tokenid = viewparams.viewtoken;
-    String generalerror = defaultview.getMessageLocator().getMessage(
-        CoreMessages.GENERAL_SHOW_ERROR, new Object[] { tokenid });
-    newerror.message = generalerror;
+
     Logger.log.warn("Error creating view tree - token " + tokenid, t);
 
     ViewParameters defaultparameters = viewparams.copyBase();
 
     defaultview.fillDefaultParameters(defaultparameters);
-
-    defaultparameters.viewtoken = requeststateentry.outgoingtokenID;
+    // make sure this method is prodded FIRST, because requestComplete is
+    // only called AFTER we visibly return from handle() above.
+    defaultparameters.viewtoken = requeststateentry.allocateOutgoingToken();
     defaultparameters.errorredirect = "1";
     return defaultparameters;
   }

@@ -34,7 +34,8 @@
       <ref local="saxalizermappingcontext"/>
     </property>
   </bean>
-    
+    <!-- The "censored" bean locator for which it is safe to resolve EL
+      expressions coming in over the request -->
   <bean id="rsacsafebeanlocator"
     class="uk.org.ponder.beanutil.BeanContainerWrapper">
     <property name="beanLocator">
@@ -45,15 +46,5 @@
     </property>
   </bean>
     
-   
-  <bean id="roothandlerbean" class="uk.org.ponder.rsf.servlet.RootHandlerBean">
-      <!-- EXTERNAL DEPENDENCY! The application supplies the view params -->
-    <property name="viewParametersExemplar">
-      <ref bean="viewparamsexemplar"/>
-    </property>
-    <property name="requestBeanLocator">
-      <ref local="rsacbeanlocator"/>
-    </property>
-  </bean>
   
 </beans>

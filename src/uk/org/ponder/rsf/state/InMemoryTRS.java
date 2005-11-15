@@ -31,7 +31,8 @@ public class InMemoryTRS implements TokenStateHolder {
   }
   
   /** Stores the supplied TokenRequestState object in the repository */
-  public void putTokenState(TokenRequestState trs) {
+  public void putTokenState(TokenRequestState trs, String aricode) {
+    // TODO: use aricode to set expiry time.
     errorcache.put(trs.tokenid, trs);
   }
   

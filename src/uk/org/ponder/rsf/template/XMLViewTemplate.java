@@ -5,11 +5,14 @@ package uk.org.ponder.rsf.template;
 
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 
 import uk.org.ponder.arrayutil.ArrayUtil;
+import uk.org.ponder.rsf.util.RSFUtil;
 import uk.org.ponder.rsf.util.SplitID;
 import uk.org.ponder.rsf.view.ViewTemplate;
 import uk.org.ponder.stringutil.CharWrap;
@@ -36,6 +39,8 @@ public class XMLViewTemplate implements ViewTemplate {
   
   public XMLLump[] lumps;
   private CharWrap buffer;
+  // Looks like we can do without this. Faster to get through the tree itself.
+  public Set forids = new HashSet();
 
   public boolean hasComponent(String ID) {
     return globalmap.hasID(ID);
@@ -145,11 +150,16 @@ public class XMLViewTemplate implements ViewTemplate {
         headlump.rsfID = attrvalue;
         SplitID split = new SplitID(ID);
         
-        XMLLump stacktop = findTopContainer();     
+        XMLLump stacktop = findTopContainer();  
         stacktop.downmap.addLump(ID, headlump);
         globalmap.addLump(ID, headlump);
         
-        //if (split.prefix.equals(HTMLLump.FORID_PREFIX)) {
+        if (split.prefix.equals(XMLLump.FORID_PREFIX)) {
+          String curtop = getTopFullID();
+          // note that this template HAS a message-for: at this nesting
+          // level with this target.
+          forids.add(curtop + split.suffix);
+        }
         //  foridtocomponent.put(split.suffix == null ? HTMLLump.FORID_PREFIX
         //      : split.suffix, headlump);
           // we need really to be able to locate 3 levels of id -
@@ -160,7 +170,7 @@ public class XMLViewTemplate implements ViewTemplate {
           // repetitious and non-repetitious constructs to share the same
           // prefix, so revisit this to solve.
         //}
-        if (split.suffix != null) {
+        else if (split.suffix != null) {
           // a repetitive tag is found.
           headlump.downmap = new XMLLumpMMap();
 
@@ -205,6 +215,18 @@ public class XMLViewTemplate implements ViewTemplate {
       if (lump.rsfID != null && lump.rsfID.indexOf(SplitID.SEPARATOR) != -1) return lump;
     }
     return rootlump;
+  }
+  
+  private String getTopFullID() {
+    CharWrap togo = new CharWrap();
+    for (int i = 0; i < tagstack.size(); ++ i) {
+      XMLLump lump = tagstack.lumpAt(i);
+      if (lump.rsfID != null && lump.rsfID.indexOf(SplitID.SEPARATOR) != -1) {
+        togo.append(RSFUtil.getFullIDSegment(lump.rsfID, SplitID.WILDCARD_COMPONENT));
+      }
+    
+    }
+    return togo.toString();
   }
 
   // temporary array for getCharacterText

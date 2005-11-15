@@ -26,6 +26,18 @@ import uk.org.ponder.util.FieldHash;
 // omit baseurl!!
 
 public abstract class ViewParameters implements Cloneable {
+  /** Identifies this request as part of a "render" cycle - for a simple HTTP
+   * servlet, corresponds to a GET, a JSR168 "render" request or a WSRP 
+   * getMarkup request.
+   */ 
+  public static final String RENDER_REQUEST = "render";
+  
+  /** Identifies this request as part of an "action" cycle - for a simple
+   * HTTP servlet, corresponds to a POST, a JSR168 "processAction" request 
+   * or a WRSP performBlockingInteration request.
+   */
+  public static final String ACTION_REQUEST = "action";
+  
   public String viewtoken;
   public String viewID;
   public String errorredirect;

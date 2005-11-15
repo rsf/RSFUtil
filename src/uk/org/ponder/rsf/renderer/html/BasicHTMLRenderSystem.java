@@ -4,7 +4,6 @@
 package uk.org.ponder.rsf.renderer.html;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
@@ -21,7 +20,7 @@ import uk.org.ponder.rsf.renderer.RenderSystem;
 import uk.org.ponder.rsf.renderer.RenderUtil;
 import uk.org.ponder.rsf.renderer.StaticComponentRenderer;
 import uk.org.ponder.rsf.renderer.StaticRendererCollection;
-import uk.org.ponder.rsf.state.SubmittedValueEntry;
+import uk.org.ponder.rsf.state.FossilizedConverter;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.template.XMLLumpList;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
@@ -46,11 +45,6 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         "PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"" + 
      " \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
   private StaticRendererCollection scrc;
-
-  public Object copy() {
-    BasicHTMLRenderSystem togo = new BasicHTMLRenderSystem();
-    return togo;
-  }
   
   public String getDeclaration() {
     return declaration;
@@ -60,25 +54,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
   public void setStaticRenderers(StaticRendererCollection scrc) {
     this.scrc = scrc;
   }
-  
-  public void normalizeRequestMap(Map requestparams) {
-    String key = RenderUtil.findCommandParams(requestparams);
-    if (key != null) {
-      String params = key.substring(SubmittedValueEntry.COMMAND_LINK_PARAMETERS.length());
-      RenderUtil.unpackCommandLink(params, requestparams);
-      requestparams.remove(key);
-    }
-  }
-  
-  public void fixupUIType(SubmittedValueEntry sve) {
-    if (sve.oldvalue instanceof Boolean) {
-      if (sve.newvalue == null) sve.newvalue = Boolean.FALSE;
-    }
-    else if (sve.oldvalue instanceof String[]) {
-      if (sve.newvalue == null) sve.newvalue = new String[]{};
-    }
-  }
-
+   
   // No, this method will not stay like this forever! We plan on an architecture
   // with renderer-per-component "class" as before, plus interceptors.
   // Although a lot of the parameterisation now lies in the allowable tag
@@ -142,7 +118,8 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       attrcopy.remove(XMLLump.ID_ATTRIBUTE);
       // ALWAYS dump the tag name, this can never be rewritten. (probably?!)
       pos.write(uselump.buffer, uselump.start, uselump.length);
-
+      // TODO: Note that these are actually BOUND now. Create some kind of 
+      // defaultBoundRenderer.
       if (torendero.getClass() == UIOutput.class) {
         String value = ((UIOutput) torendero).getValue();
         if (value == null) {
@@ -174,6 +151,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
           pos.write(close.buffer, close.start, close.length);
         }
       }
+      // factor out component-invariant processing of UIBound.
       else if (torendero instanceof UIBound) {
         UIBound torender = (UIBound) torendero;
         attrcopy.put("name", fullID);
@@ -193,6 +171,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         else if (torendero instanceof UIBoundBoolean) {
           if (((UIBoundBoolean) torender).getValue()) {
             attrcopy.put("checked", "yes");
+            // this "value" is thrown away for checkboxes.
             value = "true";
           }
           else {
@@ -212,13 +191,13 @@ public class BasicHTMLRenderSystem implements RenderSystem {
           RenderUtil.dumpTillLump(lumps, endopen.lumpindex + 1,
               close.lumpindex + 1, pos);
         }
+        // dump any fossilized binding for this component.
+        if (torender.fossilizedbinding != null) {
+          RenderUtil.dumpHiddenField(torender.fossilizedbinding.name,
+              torender.fossilizedbinding.value, xmlw);
+        }
         // unify hidden field processing? ANY parameter children found must
         // be dumped as hidden fields.
-        // NB this is the WRONG ID, we need to put the GLOBAL ID here.
-//        RenderUtil.dumpHiddenField(torender.ID
-//            + SubmittedValueEntry.FOSSIL_SUFFIX, torender.valuebinding + value,
-//            pos);
-        // this is not done in makeField, call to setFossilisedBinding.
       }
       else if (torendero instanceof UILink) {
         UILink torender = (UILink) torendero;
@@ -241,7 +220,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         // any desired "attributes" decoded for JUST THIS ACTION must be
         // secretly
         // bundled as this special attribute.
-        attrcopy.put("name", SubmittedValueEntry.COMMAND_LINK_PARAMETERS + value);
+        attrcopy.put("name", FossilizedConverter.COMMAND_LINK_PARAMETERS + value);
         if (lump.textEquals("<input ") && torender.getValue() != null) {
           attrcopy.put("value", torender.getValue());
         }
@@ -295,6 +274,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         RenderUtil.dumpTillLump(lumps, close.lumpindex + 1,
             outerclose.lumpindex + 1, pos);
       }
+   
     }
 
     return nextpos;

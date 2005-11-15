@@ -3,29 +3,25 @@
  */
 package uk.org.ponder.rsf.processor;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import uk.org.ponder.beanutil.BeanLocator;
-import uk.org.ponder.beanutil.BeanModelAlterer;
-import uk.org.ponder.beanutil.BeanUtil;
 import uk.org.ponder.errorutil.CoreMessages;
 import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterpreter;
-import uk.org.ponder.rsf.renderer.RenderSystem;
 import uk.org.ponder.rsf.state.RSVCApplier;
 import uk.org.ponder.rsf.state.RequestStateEntry;
 import uk.org.ponder.rsf.state.RequestSubmittedValueCache;
-import uk.org.ponder.rsf.state.SubmittedValueEntry;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.RunnableWrapper;
 
 /**
- * @author Antranig Basman (antranig@caret.cam.ac.uk) PostHandler is a request
- *         scope bean responsible for handling an HTTP POST request.
+ * PostHandler is a request
+ *         scope bean responsible for handling an HTTP POST request, or other
+ *         non-idempotent web service "action" cycle.
+ * @author Antranig Basman (antranig@caret.cam.ac.uk) 
  */
 public class PostHandler {
   // application-scope dependencies
@@ -34,8 +30,7 @@ public class PostHandler {
   private PostDecoder postdecoder;
 
   // request-scope dependencies
-  private RenderSystem rendersystem; // should be split. No rendering done on
-                                      // this path.
+  private Map normalizedmap;
   private ViewParameters viewparams;
   private RequestStateEntry requeststateentry;
   private RSVCApplier rsvcapplier;
@@ -48,10 +43,6 @@ public class PostHandler {
     this.ari = ari;
   }
 
-  public void setRenderSystem(RenderSystem rendersystem) {
-    this.rendersystem = rendersystem;
-  }
-
   public void setViewParameters(ViewParameters viewparams) {
     this.viewparams = viewparams;
   }
@@ -60,12 +51,16 @@ public class PostHandler {
     this.postdecoder = postdecoder;
   }
 
-  public void setPostAlterationWrapper(RunnableWrapper postwrapper) {
+  public void setAlterationWrapper(RunnableWrapper postwrapper) {
     this.postwrapper = postwrapper;
   }
 
   public void setRSVCApplier(RSVCApplier rsvcapplier) {
     this.rsvcapplier = rsvcapplier;
+  }
+  
+  public void setNormalizedRequestMap(Map normalizedmap) {
+    this.normalizedmap = normalizedmap;
   }
 
   // Since this entire bean is request scope, there is no difficulty with
@@ -73,12 +68,9 @@ public class PostHandler {
   // the action result escape from the wrapper into this instance variable.
   private String actionresult = null;
 
-  public ViewParameters handle(Map origrequestparams) {
-    final HashMap requestparams = new HashMap();
-    requestparams.putAll(origrequestparams);
-    rendersystem.normalizeRequestMap(requestparams);
-
-    final String actionmethod = PostDecoder.decodeAction(requestparams);
+  public ViewParameters handle() {
+  
+    final String actionmethod = PostDecoder.decodeAction(normalizedmap);
 
     final RequestSubmittedValueCache basersvc;
     if (viewparams.viewtoken != null) {
@@ -96,7 +88,7 @@ public class PostHandler {
       // invoke all state-altering operations within the runnable wrapper.
       postwrapper.wrapRunnable(new Runnable() {
         public void run() {
-          postdecoder.accreteRSVC(requestparams, basersvc);
+          postdecoder.accreteRSVC(normalizedmap, basersvc);
           rsvcapplier.applyValues(basersvc);
 
           if (actionmethod != null) {
@@ -111,12 +103,12 @@ public class PostHandler {
           CoreMessages.GENERAL_ACTION_ERROR));
     }
 
-    String linkid = TargettedMessage.TARGET_NONE;
+    String submitting = PostDecoder.decodeSubmittingControl(normalizedmap);
+    requeststateentry.globaltargetid = submitting;
 
     ARIResult arires = ari.interpretActionResult(viewparams, actionresult);
-    requeststateentry.requestComplete(basersvc);
-
-    arires.resultingview.viewtoken = requeststateentry.outgoingtokenID;
+    requeststateentry.requestComplete(basersvc, arires.propagatebeans);
+    arires.resultingview.viewtoken = requeststateentry.getOutgoingToken();
     return arires.resultingview;
   }
 

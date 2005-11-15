@@ -8,7 +8,7 @@ import java.util.Map;
 
 import uk.org.ponder.rsf.components.ParameterList;
 import uk.org.ponder.rsf.components.UIParameter;
-import uk.org.ponder.rsf.state.SubmittedValueEntry;
+import uk.org.ponder.rsf.state.FossilizedConverter;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.stringutil.CharWrap;
@@ -92,7 +92,7 @@ public class RenderUtil {
   public static String findCommandParams(Map requestparams) {
     for (Iterator parit = requestparams.keySet().iterator(); parit.hasNext();) {
       String key = (String) parit.next();
-      if (key.startsWith(SubmittedValueEntry.COMMAND_LINK_PARAMETERS)) return key;
+      if (key.startsWith(FossilizedConverter.COMMAND_LINK_PARAMETERS)) return key;
     }
     return null;
   }

@@ -36,14 +36,14 @@ public class UIForm extends UISimpleContainer {
   public StringList submittingcontrols = new StringList();
   
   
-  public static UIForm make(UIIKATContainer parent, String ID) {
+  public static UIForm make(UIBranchContainer parent, String ID) {
     UIForm togo = new UIForm();
     togo.ID = ID;
     parent.addComponent(togo);
     return togo;
   }
   
-  public static UIForm make(UIIKATContainer parent) {
+  public static UIForm make(UIBranchContainer parent) {
     return make(parent, BasicComponentIDs.BASIC_FORM);
   }
   

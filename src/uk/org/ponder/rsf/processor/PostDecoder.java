@@ -3,12 +3,13 @@
  */
 package uk.org.ponder.rsf.processor;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import uk.org.ponder.beanutil.BeanUtil;
+import uk.org.ponder.rsf.renderer.RenderSystem;
+import uk.org.ponder.rsf.renderer.RenderSystemStatic;
 import uk.org.ponder.rsf.state.FossilizedConverter;
 import uk.org.ponder.rsf.state.RequestSubmittedValueCache;
 import uk.org.ponder.rsf.state.SVESorter;
@@ -23,6 +24,12 @@ public class PostDecoder {
     this.fossilizedconverter = fossilizedconverter;
   }
 
+  private RenderSystemStatic rendersystemstatic;
+
+  public void setRenderSystemStatic(RenderSystemStatic rendersystemstatic) {
+    this.rendersystemstatic = rendersystemstatic;
+  }
+  
   // This method is expected to be called by accreteRSVC
   public void parseRequest(Map requestparams, RequestSubmittedValueCache rsvc) {
     // NB checks for value size are needed for default JSF parameter
@@ -51,7 +58,7 @@ public class PostDecoder {
 
         String[] newvalue = (String[]) requestparams.get(sve.componentid);
         sve.newvalue = newvalue;
-        fossilizedconverter.fixupNewValue(sve, key, values[0]);
+        fossilizedconverter.fixupNewValue(sve, rendersystemstatic, key, values[0]);
         Logger.log.info("Discovered fossilised binding for " + sve.valuebinding
             + " for component " + sve.componentid + " with old value "
             + sve.oldvalue);
@@ -78,7 +85,7 @@ public class PostDecoder {
     }
   }
 
-  public static String decodeAction(HashMap requestparams) {
+  public static String decodeAction(Map requestparams) {
     String[] actionmethods = (String[]) requestparams
         .get(SubmittedValueEntry.FAST_TRACK_ACTION);
     if (actionmethods != null) {
@@ -89,4 +96,10 @@ public class PostDecoder {
     return null;
   }
 
+  public static String decodeSubmittingControl(Map normalized) {
+    // This MUST be set or the post is erroneous.
+    String[] array = (String[]) normalized.get(SubmittedValueEntry.SUBMITTING_CONTROL);
+    return array[0];
+  }
+  
 }
