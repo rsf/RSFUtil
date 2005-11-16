@@ -38,7 +38,8 @@ public abstract class ViewParameters implements Cloneable {
    */
   public static final String ACTION_REQUEST = "action";
   
-  public String viewtoken;
+  public String flowtoken;
+  public String errortoken;
   public String viewID;
   public String errorredirect;
 
@@ -63,7 +64,8 @@ public abstract class ViewParameters implements Cloneable {
   public ViewParameters copyBase() {
     try {
       ViewParameters togo = (ViewParameters) clone(); 
-      togo.viewtoken = null;
+      togo.flowtoken = null;
+      togo.errortoken = null;
       return togo;
     }
     catch (Throwable t) {

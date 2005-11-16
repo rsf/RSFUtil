@@ -12,10 +12,8 @@ import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.renderer.ViewRender;
-import uk.org.ponder.rsf.state.RSVCApplier;
-import uk.org.ponder.rsf.state.RequestStateEntry;
-import uk.org.ponder.rsf.state.RequestSubmittedValueCache;
-import uk.org.ponder.rsf.state.TokenRequestState;
+import uk.org.ponder.rsf.state.ErrorStateManager;
+import uk.org.ponder.rsf.state.StatePreservationManager;
 import uk.org.ponder.rsf.view.View;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.view.ViewGenerator;
@@ -34,24 +32,20 @@ import uk.org.ponder.util.UniversalRuntimeException;
 public class GetHandler {
   // all request-scope dependencies
   private ViewGenerator viewgenerator;
-  private RequestStateEntry requeststateentry;
+  private ErrorStateManager errorstatemanager;
   private RunnableWrapper getwrapper;
   private ViewProcessor viewprocessor;
-  private RSVCApplier rsvcapplier;
   private ViewParameters viewparams;
   
-  private RequestStateEntry tokenrse;
-
-  public void setRSVCApplier(RSVCApplier rsvcapplier) {
-    this.rsvcapplier = rsvcapplier;
-  }
+  private ErrorStateManager tokenrse;
+  private StatePreservationManager presmanager;
 
   public void setViewGenerator(ViewGenerator viewgenerator) {
     this.viewgenerator = viewgenerator;
   }
 
-  public void setRequestState(RequestStateEntry requeststateentry) {
-    this.requeststateentry = requeststateentry;
+  public void setErrorStateManager(ErrorStateManager errorstatemanager) {
+    this.errorstatemanager = errorstatemanager;
   }
 
   public void setAlterationWrapper(RunnableWrapper getwrapper) {
@@ -66,6 +60,10 @@ public class GetHandler {
     this.viewparams = viewparams;
   }
 
+  public void setStatePreservationManager(StatePreservationManager presmanager) {
+    this.presmanager = presmanager;
+  }
+  
   // Since this is a request-scope bean, there is no problem letting the
   // returned view from the getwrapper escape into this member.
   private View view;
@@ -80,15 +78,12 @@ public class GetHandler {
     viewparams.errorredirect = null;
     try {
       view = viewgenerator.getView();
-      final TokenRequestState trs = viewparams.viewtoken == null ? 
-        null : requeststateentry.getTSHolder().getTokenState(viewparams.viewtoken);
+//      final TokenRequestState trs = viewparams.errortoken == null ? 
+//        null : requeststateentry.getTSHolder().getTokenState(viewparams.errortoken);
       getwrapper.wrapRunnable(new Runnable() {
         public void run() {
-
-          if (viewparams.viewtoken != null) {
-            // TODO: generalise this to allow bean-transfer, and fuse with POST processing.
-            RequestSubmittedValueCache rsvc = trs.rsvc;
-            rsvcapplier.applyValues(rsvc);
+          if (viewparams.flowtoken != null) {
+            presmanager.restore(viewparams.flowtoken);
           }
           // some slight failure of RSAC here. But this pipeline is a bit
           // clearer in code.
@@ -98,9 +93,10 @@ public class GetHandler {
       }).run();
 
       ViewRender viewrender = (ViewRender) beanlocator.locateBean("viewrender");
-     
-      viewrender.setMessages(trs.errors);
-      viewrender.setGlobalMessageTarget(trs.globaltargetid);
+      if (errorstatemanager.errorstate != null) {
+        viewrender.setMessages(errorstatemanager.errorstate.errors);
+        viewrender.setGlobalMessageTarget(errorstatemanager.errorstate.globaltargetid);
+      }
       viewrender.setView(view);
       viewrender.render(pos);
     }
@@ -111,8 +107,10 @@ public class GetHandler {
       return redirect;
     }
     finally {
-      requeststateentry.requestComplete(null, ARIResult.DESTROY);
+      errorstatemanager.requestComplete();
     }
+    // if an exception escapes this block, handler will externally call
+    // renderFatalError
     return null;
   }
 
@@ -133,7 +131,7 @@ public class GetHandler {
       throw invest;
     }
 
-    String tokenid = viewparams.viewtoken;
+    String tokenid = viewparams.flowtoken;
     TargettedMessage newerror = 
       new TargettedMessage(CoreMessages.GENERAL_SHOW_ERROR,  new Object[] { tokenid });
     ThreadErrorState.addError(newerror);
@@ -144,9 +142,10 @@ public class GetHandler {
     ViewParameters defaultparameters = viewparams.copyBase();
 
     defaultview.fillDefaultParameters(defaultparameters);
-    // make sure this method is prodded FIRST, because requestComplete is
+    // make sure this method is prodded FIRST, because requestComplete 
+    // (which would ordinarily allocate the token on seeing an error state) is
     // only called AFTER we visibly return from handle() above.
-    defaultparameters.viewtoken = requeststateentry.allocateOutgoingToken();
+    defaultparameters.flowtoken = errorstatemanager.allocateOutgoingToken();
     defaultparameters.errorredirect = "1";
     return defaultparameters;
   }

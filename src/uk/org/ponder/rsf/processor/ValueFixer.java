@@ -10,6 +10,8 @@ import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.state.FossilizedConverter;
+import uk.org.ponder.rsf.state.RequestSubmittedValueCache;
+import uk.org.ponder.rsf.state.SubmittedValueEntry;
 
 /** Fetches values from the request bean model that are referenced via EL
  * value bindings, if such have not already been set. Will also compute the
@@ -21,11 +23,15 @@ import uk.org.ponder.rsf.state.FossilizedConverter;
 public class ValueFixer implements ComponentProcessor {
   private BeanLocator beanlocator;
   private BeanModelAlterer alterer;
+  private RequestSubmittedValueCache rsvc;
   public void setBeanLocator(BeanLocator beanlocator) {
     this.beanlocator = beanlocator;
   }
   public void setModelAlterer(BeanModelAlterer alterer) {
     this.alterer = alterer;
+  }
+  public void setRequestRSVC(RequestSubmittedValueCache rsvc) {
+    this.rsvc = rsvc;
   }
   // This dependency is here so we can free FC from instance wiring cycle on 
   // RenderSystem. A slight loss of efficiency since this component may never
@@ -39,7 +45,11 @@ public class ValueFixer implements ComponentProcessor {
   public void processComponent(UIComponent toprocesso) {
     if (toprocesso instanceof UIBound) {
       UIBound toprocess = (UIBound) toprocesso;
-      if (toprocess.valuebinding != null && toprocess.acquireValue() == null) {
+      SubmittedValueEntry sve = rsvc.byID(toprocess.getFullID());
+      if (sve != null) {
+        toprocess.updateValue(sve.newvalue);
+      }
+      else if (toprocess.valuebinding != null && toprocess.acquireValue() == null) {
         // a bound component ALWAYS contains a value of the correct type.
         Object oldvalue = toprocess.acquireValue();
         Object flatvalue = alterer.getFlattenedValue(toprocess.valuebinding, beanlocator, oldvalue.getClass());

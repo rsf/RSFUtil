@@ -16,8 +16,7 @@ public class NullActionResultInterpreter implements ActionResultInterpreter {
   public ARIResult interpretActionResult(ViewParameters incoming, String result) {
     ARIResult togo = new ARIResult();
     togo.resultingview = incoming; 
-    togo.propagatebeans = ThreadErrorState.isError()? ARIResult.PROPAGATE_ERROR_ONLY:
-      ARIResult.DESTROY;
+    togo.propagatebeans = ARIResult.FLOW_END;
     return togo;
   }
   

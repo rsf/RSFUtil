@@ -34,17 +34,8 @@
       <ref local="saxalizermappingcontext"/>
     </property>
   </bean>
-    <!-- The "censored" bean locator for which it is safe to resolve EL
-      expressions coming in over the request -->
-  <bean id="rsacsafebeanlocator"
-    class="uk.org.ponder.beanutil.BeanContainerWrapper">
-    <property name="beanLocator">
-      <ref local="rsacbeanlocator"/>
-    </property>
-    <property name="permittedBeanRoots">
-      <ref bean="requestwriteablebeans"/>
-    </property>
+     
+  <bean id="rendersystemstatic" class="uk.org.ponder.rsf.renderer.html.BasicHTMLRenderSystemStatic">  
   </bean>
-    
   
 </beans>

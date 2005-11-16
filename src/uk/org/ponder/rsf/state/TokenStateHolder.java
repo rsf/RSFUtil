@@ -8,9 +8,9 @@ public interface TokenStateHolder {
   /** Returns any TokenRequestState object with the specified ID.
    * @return The required TRS object, or <code>null</code> if none is stored.
    */
-  public TokenRequestState getTokenState(String tokenID);
+  public TokenState getTokenState(String tokenID);
 
   /** Stores the supplied TokenRequestState object in the repository */
-  public void putTokenState(TokenRequestState trs, String aricode);
-
+  public void putTokenState(TokenState trs);
+  public void clearTokenState(String tokenID);
 }
