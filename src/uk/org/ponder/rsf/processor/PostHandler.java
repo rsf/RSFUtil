@@ -11,8 +11,9 @@ import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterpreter;
 import uk.org.ponder.rsf.state.RSVCApplier;
-import uk.org.ponder.rsf.state.RequestStateEntry;
+import uk.org.ponder.rsf.state.ErrorStateManager;
 import uk.org.ponder.rsf.state.RequestSubmittedValueCache;
+import uk.org.ponder.rsf.state.StatePreservationManager;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.RunnableWrapper;
@@ -27,16 +28,17 @@ public class PostHandler {
   // application-scope dependencies
   private ActionResultInterpreter ari;
   private RunnableWrapper postwrapper;
-  private PostDecoder postdecoder;
+  private RequestSubmittedValueCache requestrsvc;
 
   // request-scope dependencies
   private Map normalizedmap;
   private ViewParameters viewparams;
-  private RequestStateEntry requeststateentry;
+  private ErrorStateManager errorstatemanager;
   private RSVCApplier rsvcapplier;
+  private StatePreservationManager presmanager; // no, not that of OS/2
 
-  public void setRequestState(RequestStateEntry requeststateentry) {
-    this.requeststateentry = requeststateentry;
+  public void setRequestState(ErrorStateManager requeststateentry) {
+    this.errorstatemanager = requeststateentry;
   }
 
   public void setActionResultInterpreter(ActionResultInterpreter ari) {
@@ -47,8 +49,8 @@ public class PostHandler {
     this.viewparams = viewparams;
   }
 
-  public void setPostDecoder(PostDecoder postdecoder) {
-    this.postdecoder = postdecoder;
+  public void setRequestRSVC(RequestSubmittedValueCache requestrsvc) {
+    this.requestrsvc = requestrsvc;
   }
 
   public void setAlterationWrapper(RunnableWrapper postwrapper) {
@@ -63,6 +65,10 @@ public class PostHandler {
     this.normalizedmap = normalizedmap;
   }
 
+  public void setStatePreservationManager(StatePreservationManager presmanager) {
+    this.presmanager = presmanager;
+  }
+  
   // Since this entire bean is request scope, there is no difficulty with
   // letting
   // the action result escape from the wrapper into this instance variable.
@@ -72,24 +78,14 @@ public class PostHandler {
   
     final String actionmethod = PostDecoder.decodeAction(normalizedmap);
 
-    final RequestSubmittedValueCache basersvc;
-    if (viewparams.viewtoken != null) {
-      basersvc = requeststateentry.getTSHolder().getTokenState(
-          viewparams.viewtoken).rsvc;
-      // TODO: Think very carefully whether we want to fork the rsvc here.
-      // Again this is an application policy - rsvc PER FLOW, or rsvc PER FORK?
-      // Fork would result in rather tricky semantics that not all might want.
-    }
-    else {
-      basersvc = new RequestSubmittedValueCache();
-    }
-
     try {
       // invoke all state-altering operations within the runnable wrapper.
       postwrapper.wrapRunnable(new Runnable() {
         public void run() {
-          postdecoder.accreteRSVC(normalizedmap, basersvc);
-          rsvcapplier.applyValues(basersvc);
+          if (viewparams.flowtoken != null) {
+            presmanager.restore(viewparams.flowtoken);
+          }
+          rsvcapplier.applyValues(requestrsvc); // many errors possible here.
 
           if (actionmethod != null) {
             actionresult = rsvcapplier.invokeAction(actionmethod);
@@ -104,11 +100,27 @@ public class PostHandler {
     }
 
     String submitting = PostDecoder.decodeSubmittingControl(normalizedmap);
-    requeststateentry.globaltargetid = submitting;
+    errorstatemanager.globaltargetid = submitting;
 
     ARIResult arires = ari.interpretActionResult(viewparams, actionresult);
-    requeststateentry.requestComplete(basersvc, arires.propagatebeans);
-    arires.resultingview.viewtoken = requeststateentry.getOutgoingToken();
+    if (!arires.propagatebeans.equals(ARIResult.FLOW_END)) {
+      // TODO: consider whether we want to allow ARI to allocate a NEW TOKEN
+      // for a FLOW FORK.
+      if (arires.resultingview.flowtoken == null) {
+        // if the ARI wanted one and hasn't allocated one, allocate flow token.
+        arires.resultingview.flowtoken = errorstatemanager.allocateToken();
+      }
+      presmanager.preserve(viewparams.flowtoken);
+    }
+    else {
+      if (viewparams.flowtoken != null) {
+        presmanager.clear(viewparams.flowtoken);
+      }
+    }
+    
+    String errortoken = errorstatemanager.requestComplete();
+    
+    arires.resultingview.errortoken = errortoken;
     return arires.resultingview;
   }
 

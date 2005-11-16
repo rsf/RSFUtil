@@ -20,6 +20,11 @@ public class UIParameter {
   // EL with #{ } escaping, so setting this fields is a method which technically
   // allows arbitrary request parameters to be set when the field containing
   // this form is submitted.
+  
+  // TODO: recall that we need to unambiguously tell what sort of value is
+  // on the RHS for a pure EL binding - need to create a UIPureELBinding
+  // type?? Somehow the RHS has an object in it? Same problem as for
+  // deletion bindings.
   public String name;
   public String value;
   public UIParameter() {}

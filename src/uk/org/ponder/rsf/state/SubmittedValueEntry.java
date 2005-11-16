@@ -47,6 +47,8 @@ public class SubmittedValueEntry {
   * iii) XML-encoded object tree. Isn't this fun! (really!)
   */
   public Object newvalue;
+  /** Holds <code>true</code> in the case the rvalue represents an EL binding. */
+  public boolean isEL;
   /** Holds <code>true</code> if this submitted value is a deletion binding,
    * in which case both oldvalue and newvalue will be <code>null</code>
    */

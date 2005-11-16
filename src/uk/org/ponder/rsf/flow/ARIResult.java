@@ -22,14 +22,19 @@ public class ARIResult {
    * at the successful conclusion of either a multi-request wizard, or of a 
    * single request. 
    */
-  public static final String DESTROY = "destroy";
-  /** Propagate the request scope state only as an "error" state - i.e. this
-   * represents an erroneous submission from a single-request submission.
-   * The default implementation will expire the storage of this state on
-   * a more rapid schedule than "normal" multi-request state (on the order
-   * of minutes rather than hours).
-   */
-  public static final String PROPAGATE_ERROR_ONLY = "propagate error only";
+  public static final String FLOW_END = "flow-end";
+ /** THIS VALUE IS NOT YET SUPPORTED! Indicate that the following view
+  * will represent a "forked" instance of the flow in progress, with a clone
+  * of all of its flow state. Will anyone really want this?
+  */
+  public static final String FLOW_FORK = "flow-fork";
+    /** Propagate the request scope state only as an "error" state - i.e. this
+     * represents an erroneous submission from a single-request submission.
+     * The default implementation will expire the storage of this state on
+     * a more rapid schedule than "normal" multi-request state (on the order
+     * of minutes rather than hours).
+     */
+ // public static final String PROPAGATE_ERROR_ONLY = "propagate error only";
   /** The view to be shown on the next cycle. The <code>tokenid</code> field
    * will be overwritten by RSF with a unique token before it is dispensed
    * to the client via the client redirect.

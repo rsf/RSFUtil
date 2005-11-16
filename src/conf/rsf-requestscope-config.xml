@@ -8,22 +8,140 @@
   <bean id="requestbeanlocator" factory-bean="rsacbeanlocator" factory-method="getBeanLocator">
   </bean>
   
+  
   <bean id="roothandlerbean" class="uk.org.ponder.rsf.servlet.RootHandlerBean">
-      <!-- EXTERNAL DEPENDENCY! The application supplies the view params -->
-    <property name="viewParametersExemplar">
-      <ref bean="viewparamsexemplar"/>
-    </property>
     <property name="requestBeanLocator">
       <ref local="requestbeanlocator"/>
     </property>
   </bean>
   
-   <bean id="viewparameters" class="uk.org.ponder.rsf.servlet.ViewParametersFactory">
+  <bean id="requestmap" factory-bean="roothandlerbean" factory-method="getRequestMap"/>
+  
+  <bean id="requestpathinfo" factory-bean="roothandlerbean" factory-method="getPathInfo"/>
+  
+  <bean id="requesttype" factory-bean="roothandlerbean" factory-method="getRequestType"/>
+  
+     <!-- The "censored" bean locator for which it is safe to resolve EL
+      expressions coming in over the request -->
+  <bean id="rsacsafebeanlocator"
+    class="uk.org.ponder.beanutil.BeanContainerWrapper">
+    <property name="beanLocator">
+      <ref local="requestbeanlocator"/>
+    </property>
+    <property name="permittedBeanRoots">
+      <ref bean="requestwriteablebeans"/>
+    </property>
+  </bean>
+  
+  
+   <bean id="viewparametersparser" class="uk.org.ponder.rsf.viewstate.ViewParametersParser">
      <property name="viewParametersExemplar">
          <!-- EXTERNAL DEPENDENCY! The application supplies the view params -->
        <ref bean="viewparamsexemplar"/>
      </property>
+     <property name="requestMap">
+       <ref local="requestmap"/>
+     </property>
+     <property name="pathInfo">
+       <ref local="requestpathinfo"/>
+     </property>
    </bean>
+  
+  <bean id="viewparameters"  factory-bean="viewparametersparser"
+     factory-method="getViewParameters">
+  </bean>
+  
+  <bean id="flowtokenstateholder" class="uk.org.ponder.rsf.state.InMemoryTSH">
+    <property name="expirySeconds">
+      <!-- deliberately short time for testing - all flows will expire after 
+        30 seconds of disuse -->
+      <value>30</value>
+    </property>
+  </bean>
+  
+  
+  <bean id="errortokenstateholder" class="uk.org.ponder.rsf.state.InMemoryTSH">
+    <property name="expirySeconds">
+      <!-- deliberately short time for testing - all errors will expire after 
+        10 seconds of disuse -->
+      <value>10</value>
+    </property>
+  </bean>
+  
+  <bean id="postdecoder" class="uk.org.ponder.rsf.processor.PostDecoder">
+    <property name="renderSystemStatic">
+      <ref bean="rendersystemstatic"/>
+    </property>
+    <property name="requestMap">
+      <ref bean="requestmap"/>
+    </property>
+  </bean>
+  
+  <bean id="normalizedrequest" factory-bean="postdecoder" 
+    factory-method="getNormalizedRequest"/>
+  
+  <bean id="requestrsvc" factory-bean="postdecoder"
+    factory-method="getRequestRSVC"/>
+  
+  <bean id="versioncheckpolicy" class="uk.org.ponder.rsf.state.NullVersionCheckPolicy"/>
+  
+  <bean id="rsvcapplier">
+    <property name="versionCheckPolicy">
+      <ref bean="versioncheckpolicy"/>
+    </property>
+    <property name="rootBeanLocator">
+      <ref bean="rsacsafebeanlocator"/>
+    </property>
+    <property name="beanModelAlterer">
+      <ref bean="beanmodelalterer"/>
+    </property>
+  </bean>
+  
+  <bean id="defaultpreserver" class = "uk.org.ponder.rsf.state.RSVCPreservationStrategy">
+    <property name="requestRSVC">
+      <ref local="requestrsvc"/>
+    </property>
+    <property name="preservingBeans">
+      <ref bean="requestwriteablebeans"/>
+    </property>
+    <property name="tokenStateHolder">
+      <ref local="flowtokenstateholder"/>
+    </property>
+    <property name="RSVCApplier">
+      <ref bean="rsvcapplier"/>
+    </property>
+  </bean>
+  
+  
+  <bean id="errorstatemanager" class ="uk.org.ponder.rsf.state.ErrorStateManager">
+    <property name="TSHolder">
+      <ref local="errortokenstateholder"/>
+    </property>
+    <property name="viewParameters">
+      <ref local="viewparameters"/>
+    </property>
+    <property name="requestRSVC">
+      <ref local="requestrsvc"/>
+    </property>
+  </bean>
+  
+  <bean id="statepreservationstrategies" class="java.util.ArrayList">
+    <constructor-arg>
+      <list>
+        <ref bean="defaultpreserver"/>
+      </list>
+    </constructor-arg>
+  </bean>
+  
+  <bean id="statepreservationmanager" class="uk.org.ponder.rsf.state.StatePreservationManager">
+    <property name="strategies">
+      <ref bean="statepreservationstrategies"/>
+    </property>
+    <property name="writeableBeanLocator">
+      <ref local="rsacsafebeanlocator"/>
+    </property>
+  </bean>
+  
   
   <bean id="autobaseurlprovider" class="uk.org.ponder.rsf.servlet.AutoBaseURLProvider">
   </bean>
@@ -33,7 +151,7 @@
     choosing. It is easier to ask them to override this whole bean than it is
     to implement support for Spring bean aliases in RSAC :P -->
 	<bean id="viewstatehandler"
-		class="uk.org.ponder.rsf.util.RSFServletViewStateHandler">
+		class="uk.org.ponder.rsf.viewstate.RSFServletViewStateHandler">
     <property name="baseURLProvider">
       <ref local="autobaseurlprovider"/>
     </property>
@@ -41,7 +159,7 @@
   
   
   <bean id="urlrewriter"
-    class="uk.org.ponder.rsf.util.URLRewriter">
+    class="uk.org.ponder.rsf.viewstate.URLRewriter">
     <property name="viewStateHandler">
       <ref bean="viewstatehandler"/>
     </property>
@@ -81,7 +199,9 @@
   
   <!-- Given a TemplateResolver and a ViewParameters object, the Template
     LoaderBean returns a template. This is a factory bean -->
-  <bean id="viewtemplate" class="uk.org.ponder.rsf.view.TemplateLoaderBean">
+  <!-- Get rid of this and turn the TemplateResolver itself into a 
+    request-scope bean -->
+  <bean id="viewtemplate" class="uk.org.ponder.rsf.templateresolver.TemplateLoaderBean">
     <!-- EXTERNAL DEPENDENCY! The application supplies the template resolver -->
     <property name="templateResolver">
       <ref bean="viewtemplateresolver"/>

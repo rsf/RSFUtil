@@ -7,7 +7,7 @@ import java.util.Map;
 
 import uk.org.ponder.util.Logger;
 
-public class ViewParameterParser {
+public class ViewParametersParser {
   private Map requestmap;
   private String pathinfo;
 

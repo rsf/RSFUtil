@@ -7,8 +7,8 @@ import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.TargettedMessageList;
 import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.hashutil.EighteenIDGenerator;
-import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.util.Logger;
 
 /**
  * Represents the token-related state which is stored DURING a request. After
@@ -36,46 +36,50 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
-public class RequestStateEntry {
+public class ErrorStateManager {
+  /** The id of the submitting control responsible for this POST cycle, if there
+  * is one. This will be used to target the error messages delivered to the
+  * following RENDER cycle. */
   public String globaltargetid = null;
+  // this field will be set if there is an incoming error state.
+  public ErrorTokenState errorstate;
 
-  public String incomingtokenID;
-  private String outgoingtokenID = null;
+  private TokenStateHolder errortsholder;
+  // for a GET request this will be set, but empty.
+  private RequestSubmittedValueCache requestrsvc;
 
-  private TokenStateHolder tsholder;
-
-  public void setTSHolder(TokenStateHolder errorhandler) {
-    this.tsholder = errorhandler;
+  public void setTSHolder(TokenStateHolder errortsholder) {
+    this.errortsholder = errortsholder;
   }
 
-  public TokenStateHolder getTSHolder() {
-    return tsholder;
+  public void setViewParameters(ViewParameters viewparams) {
+    if (viewparams.errortoken != null) {
+      errorstate = (ErrorTokenState) errortsholder.getTokenState(viewparams.errortoken);
+      if (errorstate == null) {
+        Logger.log.warn("Client requested error state " + viewparams.errortoken
+            + " which has expired from the cache");
+      }
+    }
   }
+  
+  public void setRequestRSVC(RequestSubmittedValueCache requestrsvc) {
+    this.requestrsvc = requestrsvc;
+  }
+
 
   private static EighteenIDGenerator idgenerator = new EighteenIDGenerator();
 
-  public void setViewParameters(ViewParameters viewparams) {
-    incomingtokenID = viewparams == null ? null
-        : viewparams.viewtoken;
+  public String allocateToken() {
+    return idgenerator.generateID();
   }
+  
 
   public String allocateOutgoingToken() {
-    if (outgoingtokenID == null) {
-      outgoingtokenID = idgenerator.generateID();
+    if (errorstate == null) {
+      errorstate = new ErrorTokenState();
+      errorstate.tokenID = allocateToken();
     }
-    return outgoingtokenID;
-  }
-
-  public String getOutgoingToken() {
-    return outgoingtokenID;
-  }
-
-  // rewrites any queued errors with no target to refer to the
-  // specified target.
-  // We are HERE: In the days when RSE was INSIDE the TRS, this was just
-  // inherited for free. But now we must propagate it manually.
-  public void setGlobalTarget(String globalid) {
-    globaltargetid = globalid;
+    return errorstate.tokenID;
   }
 
   // Convert errors which are currently referring to bean paths back onto
@@ -97,26 +101,31 @@ public class RequestStateEntry {
    * reference by further requests, under the OUTGOING token ID, and cleared
    * from the current thread.
    * 
-   * @return The converted TokenRequestState object ready to be stored in the
-   *         global cache.
+   * @return The error token ID to be used for the outgoing request, or null
+   * if there is no error.
    */
-  public void requestComplete(RequestSubmittedValueCache rsvc, String aricode) {
-    TargettedMessageList errors = ThreadErrorState.getErrorState().errors;
+  public String requestComplete() {
     try {
-      if (errors.size() > 0) {
-        fixupErrors(errors, rsvc);
-      }
-      else if (!aricode.equals(ARIResult.DESTROY)) {
-        return;
-        // if no errors and no multistate, store nothing.
-      }
+      if (ThreadErrorState.isError()) {
+        TargettedMessageList errors = ThreadErrorState.getErrorState().errors;
+        // the errors arose from this cycle, and hence must be referred to
+        // by SVEs from this cycle. If it is a GET cycle, rsvc will be empty,
+        // but then all errors will have global target.
+        fixupErrors(errors, requestrsvc);
 
-      TokenRequestState trs = new TokenRequestState();
-      trs.globaltargetid = globaltargetid;
-      trs.tokenid = allocateOutgoingToken();
-      trs.rsvc = rsvc;
-      trs.errors = errors;
-      tsholder.putTokenState(trs, aricode);
+        allocateOutgoingToken();
+        errorstate.globaltargetid = globaltargetid;
+        errorstate.rsvc = requestrsvc;
+        errorstate.errors = errors;
+        errortsholder.putTokenState(errorstate);
+        return errorstate.tokenID;
+      }
+      else {
+        if (errorstate != null) {
+          errortsholder.clearTokenState(errorstate.tokenID);
+        }
+        return null;
+      }
     }
     finally {
       ThreadErrorState.clearState();

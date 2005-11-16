@@ -5,8 +5,6 @@ package uk.org.ponder.rsf.template;
 
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
@@ -19,28 +17,28 @@ import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 /**
- * The parser for the IKAT view template, implemented using the XPP3 "rapid"
- * XML pull parser. After parsing, this representation of the template is 
- * discarded, in favour of its raw constituents, being i) The XMLLump[] array,
- * ii) The "root lump" holding the initial downmap, and iii) the global headmap.
- * The system assumes that renders will be much more frequent than template reads,
- * and so takes special efforts to condense the representation for rapid render-time
- * access, at the expense of slightly slower parsing. TODO: fix this ridiculous
- * dependency mixup - parsing code should be OUTSIDE and state should be INSIDE!
+ * The parser for the IKAT view template, implemented using the XPP3 "rapid" XML
+ * pull parser. After parsing, this representation of the template is discarded,
+ * in favour of its raw constituents, being i) The XMLLump[] array, ii) The
+ * "root lump" holding the initial downmap, and iii) the global headmap. The
+ * system assumes that renders will be much more frequent than template reads,
+ * and so takes special efforts to condense the representation for rapid
+ * render-time access, at the expense of slightly slower parsing. TODO: fix this
+ * ridiculous dependency mixup - parsing code should be OUTSIDE and state should
+ * be INSIDE!
+ * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
- *  
+ * 
  */
 public class XMLViewTemplate implements ViewTemplate {
   public int INITIAL_LUMP_SIZE = 1000;
   public XMLLump rootlump;
   public XMLLumpMMap globalmap;
-  
-  //private HashMap foridtocomponent = new HashMap();
-  
+
+  // private HashMap foridtocomponent = new HashMap();
+
   public XMLLump[] lumps;
   private CharWrap buffer;
-  // Looks like we can do without this. Faster to get through the tree itself.
-  public Set forids = new HashSet();
 
   public boolean hasComponent(String ID) {
     return globalmap.hasID(ID);
@@ -86,12 +84,12 @@ public class XMLViewTemplate implements ViewTemplate {
       break;
     }
   }
-  
+
   private void setLumpChars(XMLLump lump, char[] chars, int start, int length) {
     lump.start = buffer.size;
     lump.length = length;
     buffer.append(chars, start, length);
-  }  
+  }
 
   private void setLumpString(XMLLump lump, String string) {
     lump.start = buffer.size;
@@ -102,15 +100,15 @@ public class XMLViewTemplate implements ViewTemplate {
   private void simpleTagText(XmlPullParser parser) {
     char[] chars = parser.getTextCharacters(limits);
     setLumpChars(lumps[lumpindex - 1], chars, limits[0], limits[1]);
-//    String text = new String(chars, limits[0], limits[1]);
-//    lumps[lumpindex - 1].text = text;
+    // String text = new String(chars, limits[0], limits[1]);
+    // lumps[lumpindex - 1].text = text;
   }
 
   private void processDefaultTag(int token, XmlPullParser parser) {
     CharWrap w = new CharWrap();
     writeToken(token, parser, w);
     setLumpChars(lumps[lumpindex - 1], w.storage, 0, w.size);
-//    lumps[lumpindex - 1].text = w.toString();
+    // lumps[lumpindex - 1].text = w.toString();
   }
 
   private void processTagStart(XmlPullParser parser, boolean isempty) {
@@ -118,11 +116,11 @@ public class XMLViewTemplate implements ViewTemplate {
     String tagname = parser.getName();
     // standard text of |<tagname | to allow easy identification.
     setLumpString(headlump, XMLLump.tagToText(tagname));
-    //HashMap forwardmap = new HashMap();
-    //headlump.forwardmap = forwardmap;
+    // HashMap forwardmap = new HashMap();
+    // headlump.forwardmap = forwardmap;
     // current policy - every open tag gets a forwardmap, and separate lumps.
     // eventually we want only thing with an ID as such.
-    int attrs = parser.getAttributeCount(); 
+    int attrs = parser.getAttributeCount();
     if (attrs > 0) {
       headlump.attributemap = new HashMap();
     }
@@ -147,29 +145,29 @@ public class XMLViewTemplate implements ViewTemplate {
 
       if (attrname.equals(XMLLump.ID_ATTRIBUTE)) {
         String ID = attrvalue;
-        headlump.rsfID = attrvalue;
-        SplitID split = new SplitID(ID);
-        
-        XMLLump stacktop = findTopContainer();  
+        if (ID.startsWith(XMLLump.FORID_PREFIX)
+            && ID.endsWith(XMLLump.FORID_SUFFIX)) {
+          ID = ID.substring(0, ID.length() - XMLLump.FORID_SUFFIX.length());
+        }
+        headlump.rsfID = ID;
+
+        XMLLump stacktop = findTopContainer();
         stacktop.downmap.addLump(ID, headlump);
         globalmap.addLump(ID, headlump);
-        
+
+        SplitID split = new SplitID(ID);
+
         if (split.prefix.equals(XMLLump.FORID_PREFIX)) {
-          String curtop = getTopFullID();
-          // note that this template HAS a message-for: at this nesting
-          // level with this target.
-          forids.add(curtop + split.suffix);
+          // no special note, just prevent suffix logic.
         }
-        //  foridtocomponent.put(split.suffix == null ? HTMLLump.FORID_PREFIX
-        //      : split.suffix, headlump);
-          // we need really to be able to locate 3 levels of id -
-          // for-message:message:to
-          // ideally we would also like to be able to locate repetition
-          // constructs too, hopefully the standard suffix-based computation
-          // will allow this. However we previously never allowed BOTH
-          // repetitious and non-repetitious constructs to share the same
-          // prefix, so revisit this to solve.
-        //}
+        // we need really to be able to locate 3 levels of id -
+        // for-message:message:to
+        // ideally we would also like to be able to locate repetition
+        // constructs too, hopefully the standard suffix-based computation
+        // will allow this. However we previously never allowed BOTH
+        // repetitious and non-repetitious constructs to share the same
+        // prefix, so revisit this to solve.
+        // }
         else if (split.suffix != null) {
           // a repetitive tag is found.
           headlump.downmap = new XMLLumpMMap();
@@ -178,20 +176,23 @@ public class XMLViewTemplate implements ViewTemplate {
           XMLLump prevlast = stacktop.downmap.getFinal(split.prefix);
           stacktop.downmap.setFinal(split.prefix, headlump);
           if (prevlast != null) {
-            // only store transitions from non-initial state - 
-            // TODO: see if transition system will ever be needed. 
-          String prevsuffix = SplitID.getSuffix(prevlast.rsfID);
-          String transitionkey = split.prefix + SplitID.SEPARATOR + prevsuffix + XMLLump.TRANSITION_SEPARATOR
-              + split.suffix;
-          stacktop.downmap.addLump(transitionkey, prevlast);
-          globalmap.addLump(transitionkey, prevlast);
+            // only store transitions from non-initial state -
+            // TODO: see if transition system will ever be needed.
+            String prevsuffix = SplitID.getSuffix(prevlast.rsfID);
+            String transitionkey = split.prefix + SplitID.SEPARATOR
+                + prevsuffix + XMLLump.TRANSITION_SEPARATOR + split.suffix;
+            stacktop.downmap.addLump(transitionkey, prevlast);
+            globalmap.addLump(transitionkey, prevlast);
           }
         }
       }
     }
     XMLLump finallump = newLump(parser);
-    
-    String closetext = attrs == 0? (isempty? "/>" : ">"):(isempty? "\"/>" : "\">");
+
+    String closetext = attrs == 0 ? (isempty ? "/>"
+        : ">")
+        : (isempty ? "\"/>"
+            : "\">");
     setLumpString(finallump, closetext);
     headlump.open_end = finallump;
 
@@ -202,29 +203,31 @@ public class XMLViewTemplate implements ViewTemplate {
   }
 
   private void processTagEnd(XmlPullParser parser) {
-    //String tagname = parser.getName();
+    // String tagname = parser.getName();
     XMLLump oldtop = tagstack.lumpAt(nestingdepth);
-    
+
     oldtop.close_tag = lumps[lumpindex - 1];
     tagstack.remove(nestingdepth);
   }
-  
+
   private XMLLump findTopContainer() {
     for (int i = tagstack.size() - 1; i >= 0; --i) {
       XMLLump lump = tagstack.lumpAt(i);
-      if (lump.rsfID != null && lump.rsfID.indexOf(SplitID.SEPARATOR) != -1) return lump;
+      if (lump.rsfID != null && lump.rsfID.indexOf(SplitID.SEPARATOR) != -1)
+        return lump;
     }
     return rootlump;
   }
-  
+
   private String getTopFullID() {
     CharWrap togo = new CharWrap();
-    for (int i = 0; i < tagstack.size(); ++ i) {
+    for (int i = 0; i < tagstack.size(); ++i) {
       XMLLump lump = tagstack.lumpAt(i);
       if (lump.rsfID != null && lump.rsfID.indexOf(SplitID.SEPARATOR) != -1) {
-        togo.append(RSFUtil.getFullIDSegment(lump.rsfID, SplitID.WILDCARD_COMPONENT));
+        togo.append(RSFUtil.getFullIDSegment(lump.rsfID,
+            SplitID.WILDCARD_COMPONENT));
       }
-    
+
     }
     return togo.toString();
   }
@@ -248,15 +251,14 @@ public class XMLViewTemplate implements ViewTemplate {
     return togo;
   }
 
-
   // XPP tag depths:
-  //  <!-- outside --> 0
-  //  <root> 1
-  //    sometext 1
-  //      <foobar> 2
-  //      </foobar> 2
-  //  </root> 1
-  //  <!-- outside --> 0
+  // <!-- outside --> 0
+  // <root> 1
+  // sometext 1
+  // <foobar> 2
+  // </foobar> 2
+  // </root> 1
+  // <!-- outside --> 0
 
   public void init() {
     lumps = new XMLLump[INITIAL_LUMP_SIZE];
@@ -268,17 +270,18 @@ public class XMLViewTemplate implements ViewTemplate {
     rootlump.nestingdepth = -1;
     globalmap = new XMLLumpMMap();
   }
-  
+
   public void parse(InputStream xmlstream) {
     long time = System.currentTimeMillis();
     init();
     XmlPullParser parser = new MXParser();
     try {
-      //parser.setFeature(FEATURE_XML_ROUNDTRIP, true);
+      // parser.setFeature(FEATURE_XML_ROUNDTRIP, true);
       parser.setInput(xmlstream, null);
       while (true) {
         int token = parser.nextToken();
-        if (token == XmlPullParser.END_DOCUMENT) break;
+        if (token == XmlPullParser.END_DOCUMENT)
+          break;
         // currently 1 lump for each token - an optimisation would collapse
         // provable irrelevant lumps. but watch out for end tags! Some might
         // be fused, some not.
@@ -307,7 +310,8 @@ public class XMLViewTemplate implements ViewTemplate {
       throw UniversalRuntimeException.accumulate(t, "Error parsing template");
     }
     endParse();
-    //Logger.log.info("Template parsed in " + (System.currentTimeMillis() - time) + "ms");
+    // Logger.log.info("Template parsed in " + (System.currentTimeMillis() -
+    // time) + "ms");
   }
 
   private void endParse() {
@@ -316,18 +320,19 @@ public class XMLViewTemplate implements ViewTemplate {
     char[] compacted = new char[buffer.size];
     System.arraycopy(buffer.storage, 0, compacted, 0, buffer.size);
     buffer = null;
-    for (int i = 0; i < lumps.length; ++ i) {
+    for (int i = 0; i < lumps.length; ++i) {
       lumps[i].buffer = compacted;
     }
   }
-  
+
   private String relativepath;
-  
+
   public void setRelativePath(String relativepath) {
-   this.relativepath = relativepath;
+    this.relativepath = relativepath;
   }
+
   public String getRelativePath() {
     return relativepath;
   }
-  
+
 }
