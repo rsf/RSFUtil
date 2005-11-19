@@ -37,8 +37,8 @@ public class PostHandler {
   private RSVCApplier rsvcapplier;
   private StatePreservationManager presmanager; // no, not that of OS/2
 
-  public void setRequestState(ErrorStateManager requeststateentry) {
-    this.errorstatemanager = requeststateentry;
+  public void setErrorStateManager(ErrorStateManager errorstatemanager) {
+    this.errorstatemanager = errorstatemanager;
   }
 
   public void setActionResultInterpreter(ActionResultInterpreter ari) {

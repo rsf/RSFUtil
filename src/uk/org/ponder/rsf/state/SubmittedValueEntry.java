@@ -12,6 +12,8 @@ package uk.org.ponder.rsf.state;
  * <br>- the initial value presented to the UI when the view was rendered.
  * These values, once accumulated, are stored inside the 
  * {@see uk.org.ponder.rsf.state.RequestSubmittedValueCache}
+ * In addition to encoding a component submission, an SVE may either 
+ * represent a deletion binding or a pure EL binding.
  */
 public class SubmittedValueEntry {
  
@@ -27,30 +29,31 @@ public class SubmittedValueEntry {
    * physical submitting control.
    */
   public static final String SUBMITTING_CONTROL = "Submitting control";
-//  RSFFactory.addParameter(parent, toset.getFullID()
-//      + SubmittedValueEntry.FOSSIL_SUFFIX, binding + currentvalue);
-  // key = {value-binding}componentid-fossil, value = oldvalue OLD
-  // key = componentid-fossil, value=#{bean.member}oldvalue NEW
-  // deletion - id is *, does not enter rsvc.
+  /** The EL path (without #{}) that is the l-value target of this binding.
+   */
   public String valuebinding;
   /** The full ID of the component giving rise to this submission. 
-   * This may be null if this represents a fast EL submission */
+   * This will be null for a non-component binding. */
   public String componentid;
   /** The value held by the component at the time the view holding it was
    * rendered. This was the initial value seen by the user at render time.
-   * Either an object of type String or String[].
+   * Either an object of type String or String[]. Holds an additional value
+   * (binding or EL) in the case of a non-component binding.
    */
   public Object oldvalue;
   /** The value received back to the system via the (current) submission.
   * Either a String or a String[]. However, if it is a String, there are some
   * interesting possibilities - i) String or SaxLeafType, ii) EL reference,
-  * iii) XML-encoded object tree. Isn't this fun! (really!)
+  * iii) XML-encoded object tree. Isn't this fun! (really!).
+  * This value is null for non-component bindings.
   */
   public Object newvalue;
-  /** Holds <code>true</code> in the case the rvalue represents an EL binding. */
+  /** Holds <code>true</code> in the case the rvalue (encoded in oldvalue)
+   * of this non-component binding represents an EL binding, rather
+   * than a serialised object */
   public boolean isEL;
   /** Holds <code>true</code> if this submitted value is a deletion binding,
-   * in which case both oldvalue and newvalue will be <code>null</code>
+   * in which case newvalue will be <code>null</code>
    */
   public boolean isdeletion = false;
   

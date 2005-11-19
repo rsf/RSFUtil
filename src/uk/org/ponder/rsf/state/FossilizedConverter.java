@@ -3,20 +3,27 @@
  */
 package uk.org.ponder.rsf.state;
 
+import uk.org.ponder.conversion.ConvertUtil;
 import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UICommand;
+import uk.org.ponder.rsf.components.UIDeletionBinding;
+import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.renderer.RenderSystemStatic;
 import uk.org.ponder.rsf.uitype.UIType;
 import uk.org.ponder.rsf.uitype.UITypes;
 import uk.org.ponder.saxalizer.SAXalXMLProvider;
 
-/* In case of an HTTP submission, these are encoded as key/value in the
+/* Manages the (to some extent RenderSystem dependent) process of converting
+ * bindings (of three types - fossilized, deletion and pure EL) into String
+ * key/value pairs suitable for transit over HTTP.
+ * 
+ * <p>In case of an HTTP submission, these are encoded as key/value in the
  * request map (via hidden form fields) as follows:
  * <br>key = componentid-fossil, value=[i|o]uitype-name#{bean.member}oldvalue
  * <br>Alternatively, this SVE may represent a "fast EL" binding, without
  * a component. In this case, it has the form
- * <br>key = #{el.lvalue}, value = rvalue, where rvalue may represent an EL
+ * <br>key = [deletion|el]-binding, value = [e|o]#{el.lvalue}rvalue, where rvalue may represent an EL
  * rvalue, a SAXLeafType or a Object.
  * <br>The actual value submission is encoded in the RenderSystem for UIInputBase,
  * but is generally expected to simply follow
@@ -26,11 +33,18 @@ import uk.org.ponder.saxalizer.SAXalXMLProvider;
 public class FossilizedConverter {
   public static final char INPUT_COMPONENT = 'i';
   public static final char OUTPUT_COMPONENT = 'o';
+  public static final char EL_BINDING = 'e';
+  public static final char OBJECT_BINDING = 'o';
   /** The suffix appended to the component fullID in order to derive the key
    * for its corresponding fossilized binding.
    */
   public static final String FOSSIL_SUFFIX = "-fossil";
-  public static final String DELETION_BINDING = "*"+FOSSIL_SUFFIX;
+  /** A suffix to be used for the "componentless" bindings defined by
+   * UIDeletionBinding and UIELBinding.
+   */
+  public static final String BINDING_SUFFIX = "-binding";
+  public static final String DELETION_KEY = "deletion"+BINDING_SUFFIX;
+  public static final String ELBINDING_KEY = "el"+BINDING_SUFFIX;
   
   private SAXalXMLProvider xmlprovider;
   
@@ -45,6 +59,26 @@ public class FossilizedConverter {
   public boolean isFossilisedBinding(String key) {
     return key.endsWith(FOSSIL_SUFFIX);
   }
+ 
+
+  public boolean isNonComponentBinding(String key) {
+    return key.endsWith(BINDING_SUFFIX);
+  }
+  
+  public SubmittedValueEntry parseBinding(String key, String value) {
+    SubmittedValueEntry togo = new SubmittedValueEntry();
+    togo.isEL = value.charAt(0) == EL_BINDING;
+    int endcurly = value.indexOf('}');
+    togo.valuebinding = value.substring(3, endcurly);
+    if (key.equals(DELETION_KEY)) {
+      togo.isdeletion = true;
+    }
+    togo.newvalue = value.substring(endcurly + 1);
+    // such a binding will hit the data model via the RSVCApplier.
+    return togo;
+  }
+  
+  
   /** Attempts to construct a SubmittedValueEntry on a key/value pair found in
    * the request map, for which isFossilisedBinding has already returned <code>true</code>. 
    * In order to 
@@ -53,38 +87,42 @@ public class FossilizedConverter {
    * @param key
    * @param value
    */
-
   public SubmittedValueEntry parseFossil(String key, String value) {
     SubmittedValueEntry togo = new SubmittedValueEntry();
+    
     int firsthash = value.indexOf('#');
     String uitypename = value.substring(1, firsthash);
     int endcurly = value.indexOf('}');
     togo.valuebinding = value.substring(2 + firsthash, endcurly);
     String oldvaluestring = value.substring(endcurly + 1);
     
-    UIType uitype = UITypes.forName(uitypename);
-    if (uitype != null) {
-      togo.oldvalue = xmlprovider.getMappingContext().saxleafparser.parse(uitype.getClass(), oldvaluestring);
-    }
-    else {
-      togo.oldvalue = xmlprovider.fromString(oldvaluestring);
+    if (oldvaluestring.length() > 0) {
+      UIType uitype = UITypes.forName(uitypename);
+      Class uiclass = uitype == null? null :uitype.getClass();
+      togo.oldvalue = ConvertUtil.parse(oldvaluestring, xmlprovider, uiclass);
     }
     
     togo.componentid = key.substring(0, key.length() - 
         FOSSIL_SUFFIX.length());
-    if (togo.componentid.equals(DELETION_BINDING)) {
-      togo.isdeletion = true;
-      togo.componentid = null;
-    }
+ 
     return togo;
   }
   
-// TODO: THIS SHOULD NOT BE STATIC!! Need to have an ENCODED 
-// representation of this.
-  public static UIParameter computeDeletionBinding(UICommand trigger,
-      String deletebinding, String todelete) {
-    return new UIParameter(DELETION_BINDING,
-        deletebinding + todelete);
+  public void computeDeletionBinding(UIDeletionBinding binding) {
+    binding.name = DELETION_KEY;
+    String converted = binding.deletetarget == null? "" :
+      ConvertUtil.render(binding.deletetarget, xmlprovider);
+    binding.value = OBJECT_BINDING + binding.deletebinding + converted;
+  }
+  
+  public void computeELBinding(UIELBinding binding) {
+    binding.name = ELBINDING_KEY;
+    if (binding.elrvalue != null) {
+      binding.value = EL_BINDING + binding.elrvalue;
+    }
+    else {
+      binding.value = OBJECT_BINDING + ConvertUtil.render(binding.objrvalue, xmlprovider);
+    }
   }
   
   /** Computes the fossilised binding parameter that needs to be added to
@@ -106,11 +144,14 @@ public class FossilizedConverter {
     String oldvaluestring = null;
     Object oldvalue = togenerate.acquireValue();
     UIType type = UITypes.forObject(oldvalue);
-    if (type == null) {
-      oldvaluestring = xmlprovider.toString(oldvalue);
+
+    if (type != null) {
+      // don't try to write as a leaf type, since the the parser (above) will
+      // not have enough context to infer the type above.
+      oldvaluestring = xmlprovider.getMappingContext().saxleafparser.render(oldvalue);
     }
     else {
-      oldvaluestring = xmlprovider.getMappingContext().saxleafparser.render(oldvalue);
+      oldvaluestring = xmlprovider.toString(oldvalue);
     }
     String typestring = type == null? "" : type.getName();
     togo.value = (togenerate.willinput? INPUT_COMPONENT : OUTPUT_COMPONENT) + typestring 

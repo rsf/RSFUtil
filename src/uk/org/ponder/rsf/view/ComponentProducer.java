@@ -26,15 +26,15 @@ public abstract class ComponentProducer {
    */
   public abstract void fillComponents(UIContainer tofill, ViewParameters origviewparams, 
       ComponentChecker checker);
-
-  protected MessageLocator messagelocator;
-  
-  public void setMessageLocator(MessageLocator messagelocator) {
-    this.messagelocator = messagelocator;
-  }
-  
-  public MessageLocator getMessageLocator() {
-    return messagelocator;
-  }
+//
+//  protected MessageLocator messagelocator;
+//  
+//  public void setMessageLocator(MessageLocator messagelocator) {
+//    this.messagelocator = messagelocator;
+//  }
+//  
+//  public MessageLocator getMessageLocator() {
+//    return messagelocator;
+//  }
 
 }

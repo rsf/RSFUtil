@@ -10,19 +10,35 @@ import uk.org.ponder.rsf.viewstate.StaticBaseURLProvider;
 import uk.org.ponder.servletutil.HttpServletRequestAware;
 import uk.org.ponder.servletutil.ServletUtil;
 
-public class AutoBaseURLProvider implements HttpServletRequestAware {
+public class AutoBaseURLProvider implements HttpServletRequestAware,
+    BaseURLProvider {
   private HttpServletRequest request;
+
   public void setHttpServletRequest(HttpServletRequest request) {
     this.request = request;
   }
 
-  public BaseURLProvider getBaseURLProvider() {
-    StaticBaseURLProvider sbup = new StaticBaseURLProvider();
+  private StaticBaseURLProvider sbup;
+
+  public void init() {
+    sbup = new StaticBaseURLProvider();
     String baseurl = ServletUtil.getBaseURL2(request);
     String resourcebaseurl = request.getServletPath();
     sbup.setBaseURL(baseurl);
     sbup.setResourceBaseURL(resourcebaseurl);
+
+  }
+
+  public BaseURLProvider getBaseURLProvider() {
     return sbup;
+  }
+
+  public String getBaseURL() {
+    return sbup.getBaseURL();
+  }
+
+  public String getResourceBaseURL() {
+    return sbup.getResourceBaseURL();
   }
 
 }

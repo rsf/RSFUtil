@@ -5,11 +5,10 @@ package uk.org.ponder.rsf.util;
 
 import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIBoundString;
-import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIBranchContainer;
+import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UILink;
-import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.xml.XMLWriter;
 

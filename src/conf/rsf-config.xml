@@ -4,38 +4,83 @@
 <!-- This file is RSF-static configuration - common and invariant to 
   all applications using RSF -->
 <beans>
+  <bean id="reflectivecache" class="uk.org.ponder.reflect.JDKReflectiveCache">
+  </bean>
+  
   <bean id="saxalizermappingcontext"
     class="uk.org.ponder.saxalizer.SAXalizerMappingContext">
+    <property name="reflectiveCache">
+      <ref bean="reflectivecache"/>
+    </property>
   </bean>
+  
   <bean id="mappablexmlprovider" class="uk.org.ponder.saxalizer.SAXalXMLProvider">
     <constructor-arg>
       <ref local="saxalizermappingcontext"/>
     </constructor-arg>
   </bean>
+  
   <bean id="darapplier" class="uk.org.ponder.mapping.DARApplier">
     <property name="SAXalXMLProvider">
       <ref local="mappablexmlprovider"/>
     </property>
-  </bean>
-  <bean id="tokenstateholder" class="uk.org.ponder.rsf.state.TokenStateHolder">
+    <property name="reflectiveCache">
+      <ref bean="reflectivecache"/>
+    </property>
   </bean>
   
+  <bean id="fossilizedconverter"
+    class="uk.org.ponder.rsf.state.FossilizedConverter">
+    <property name="SAXalXMLProvider">
+      <ref bean="mappablexmlprovider"/>
+    </property>
+  </bean>
+  
+  <bean id="bindingfixer" class="uk.org.ponder.rsf.processor.BindingFixer">
+    <property name="fossilizedConverter">
+      <ref bean="fossilizedconverter"/>
+    </property>
+  </bean>
+  
+  <bean id="messagefixer" class="uk.org.ponder.rsf.processor.MessageFixer">
+    <property name="messageLocator">
+      <ref bean="messagelocator"/>
+    </property>
+  </bean>
+
   <bean id="baseurlprovider">
   </bean>
- 
-    
-  <bean id="rsacbeanfactoryfactory" 
+  
+  <bean id="rsacbeanfactoryfactory"
     class="uk.org.ponder.springutil.RSACBeanFactoryFactory">
   </bean>
   
   <bean id="rsacbeanlocator" factory-bean="rsacbeanfactoryfactory"
-    factory-method="getRSACBeanLocator">  
+    factory-method="getRSACBeanLocator">
+    <property name="reflectiveCache">
+      <ref bean="reflectivecache"/>
+    </property>
     <property name="mappingContext">
       <ref local="saxalizermappingcontext"/>
     </property>
   </bean>
-     
-  <bean id="rendersystemstatic" class="uk.org.ponder.rsf.renderer.html.BasicHTMLRenderSystemStatic">  
+  
+  <bean id="viewparametersparser"
+    class="uk.org.ponder.rsf.viewstate.SimpleViewParametersParser">
+    <property name="viewParametersExemplar">
+      <!-- EXTERNAL DEPENDENCY! The application supplies the view params -->
+      <ref bean="viewparamsexemplar"/>
+    </property>
   </bean>
+  
+  <bean id="rendersystemstatic"
+    class="uk.org.ponder.rsf.renderer.html.BasicHTMLRenderSystemStatic">
+  </bean>
+  <!-- The default ActionResultInterpreter which directs to the same view-->
+  <bean id="actionresultinterpreter"
+    class="uk.org.ponder.rsf.flow.NullActionResultInterpreter">
+  </bean>
+  
+  
   
 </beans>

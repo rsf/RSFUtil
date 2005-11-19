@@ -3,10 +3,7 @@
  */
 package uk.org.ponder.rsf.renderer;
 
-import java.util.Map;
-
 import uk.org.ponder.rsf.components.UIComponent;
-import uk.org.ponder.rsf.state.SubmittedValueEntry;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 

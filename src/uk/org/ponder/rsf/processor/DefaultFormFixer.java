@@ -9,6 +9,7 @@ import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.view.View;
+import uk.org.ponder.rsf.view.ViewGenerator;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewStateHandler;
 import uk.org.ponder.util.UniversalRuntimeException;
@@ -18,7 +19,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * ii) Folding form children up into parent, leaving it as a leaf in the tree,
  * iii) registering submitting nested UIBound components into the FormModel.
  * Point iii) must have ALREADY been set up by having the <code>submittingcontrols</code>
- * field of UIForm filled in.
+ * field of UIForm filled in (possibly by ContainmentFormChildFixer)
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
 // WHY do we treat forms in this strange way? We WOULD like IKAT to be
@@ -27,6 +28,9 @@ public class DefaultFormFixer implements ComponentProcessor {
   private ViewParameters viewparams;
   private ViewStateHandler viewstatehandler;
   private FormModel formmodel;
+  private ViewGenerator viewgenerator;
+  // This property is lazily loaded, since the GetProcessor must have 
+  // exception-block control over the order of view generation. 
   private View view;
 
   public void setViewParameters(ViewParameters viewparams) {
@@ -41,11 +45,14 @@ public class DefaultFormFixer implements ComponentProcessor {
     this.formmodel = formmodel;
   }
   
-  public void setView(View view) {
-    this.view = view;
+  public void setViewGenerator(ViewGenerator viewgenerator) {
+    this.viewgenerator = viewgenerator;
   }
   
   public void processComponent(UIComponent toprocesso) {
+    if (view != null) {
+      view = viewgenerator.getView();
+    }
     if (toprocesso instanceof UIForm) {
       UIForm toprocess = (UIForm) toprocesso;
       toprocess.fold();

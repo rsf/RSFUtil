@@ -21,14 +21,13 @@ public class ViewCollection {
   // how we might actually want to locate view templates and component 
   // producers relative to views (view IDs or in general, ViewParams)
   public static final String ALL_VIEW_PRODUCER = "  all views  ";
-  private MessageLocator messagelocator;
-  
-  public void setMessageLocator(MessageLocator messagelocator) {
-    this.messagelocator = messagelocator;
-  }
+//  private MessageLocator messagelocator;
+//  
+//  public void setMessageLocator(MessageLocator messagelocator) {
+//    this.messagelocator = messagelocator;
+//  }
   
   private Map views = new HashMap();
-  private ViewComponentProducer defaultview;
 //  public Map getViews() {
 //    return views;
 //  }
@@ -62,14 +61,6 @@ public class ViewCollection {
     togo.addAll(get(ALL_VIEW_PRODUCER));
     togo.addAll(get(viewid));
     return togo;
-  }
-  
-  public void setDefaultView(ViewComponentProducer defaultview) {
-    this.defaultview = defaultview;
-  }
-  
-  public ViewComponentProducer getDefaultView() {
-    return defaultview;
   }
   
 }

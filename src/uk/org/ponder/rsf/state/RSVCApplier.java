@@ -37,7 +37,7 @@ public class RSVCApplier {
     DARList toapply = new DARList();
     for (int i = 0; i < rsvc.entries.size(); ++ i) {
       SubmittedValueEntry sve = rsvc.entryAt(i);
-      if (sve.newvalue != null) {
+      if (sve.componentid != null) { // it is a component binding.
         if (sve.oldvalue != null && sve.valuebinding != null) {
           versioncheckpolicy.checkOldVersion(sve); // will blow on error
           
@@ -49,10 +49,14 @@ public class RSVCApplier {
       DataAlterationRequest dar = null;
       if (sve.isdeletion) {
         dar = new DataAlterationRequest(
-            sve.valuebinding, sve.oldvalue, DataAlterationRequest.DELETE);
+            sve.valuebinding, sve.newvalue, DataAlterationRequest.DELETE);
       }
       else {
-        dar = new DataAlterationRequest(sve.valuebinding, sve.newvalue);
+        Object newvalue = sve.newvalue;
+        if (sve.isEL) {
+          newvalue = darapplier.getBeanValue((String) sve.newvalue, rbl);
+        }
+        dar = new DataAlterationRequest(sve.valuebinding, newvalue);
       }
       toapply.add(dar);
     }
