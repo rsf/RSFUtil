@@ -5,9 +5,7 @@ package uk.org.ponder.rsf.viewstate;
 
 import java.util.Map;
 
-import uk.org.ponder.stringutil.CharWrap;
-import uk.org.ponder.stringutil.StringList;
-import uk.org.ponder.util.FieldHash;
+import uk.org.ponder.reflect.FieldHash;
 
 /**
  * The base class abstracting common functionality for specifying a view
@@ -52,7 +50,7 @@ public abstract class ViewParameters implements Cloneable {
    * from the supplied URL (which may be null), the supplied parameter map
    * and any other statically accessible sources of information.
    */
-  public void fromRequest(Map parameters, String pathinfo) {
+  public void fromRequest(String pathinfo, Map parameters) {
     parsePathInfo(pathinfo);
     getFieldHash().fromMap(parameters, this);
   }
@@ -71,22 +69,6 @@ public abstract class ViewParameters implements Cloneable {
     catch (Throwable t) {
       return null;
     } // CANNOT THROW! IDIOTIC SYSTEM!!   
-  }
-
-  /** Returns the "mid-portion" of the URL corresponding to these parameters,
-   * i.e. /view-id/more-path-info?param1=val&param2=val 
-   */
-  public String toHTTPRequest() {
-    StringList[] vals = getFieldHash().fromObj(this);
-    CharWrap togo = new CharWrap();
-    togo.append(toPathInfo());
-    for (int i = 0; i < vals[0].size(); ++i) {
-      togo.append(i == 0? '?' : '&');
-      togo.append(vals[0].stringAt(i));
-      togo.append("=");
-      togo.append(vals[1].stringAt(i));
-    }
-    return togo.toString();
   }
 
 }

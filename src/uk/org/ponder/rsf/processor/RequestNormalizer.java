@@ -9,6 +9,8 @@ import java.util.Map;
 import uk.org.ponder.rsf.renderer.RenderSystemStatic;
 import uk.org.ponder.rsf.state.SubmittedValueEntry;
 
+/** This class now disused in favour of PostDecoder **/
+
 public class RequestNormalizer {
   private RenderSystemStatic rendersystemstatic;
   private Map requestmap;

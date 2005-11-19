@@ -6,7 +6,7 @@ package uk.org.ponder.rsf.state;
 import java.util.Date;
 import java.util.Map;
 
-import uk.org.ponder.util.ReflectiveCache;
+import uk.org.ponder.reflect.ReflectiveCache;
 
 /**
  * The repository of all inter-request state in RSF. This is held in entries of
@@ -22,7 +22,7 @@ public class InMemoryTSH implements TokenStateHolder {
 // a map of String error token IDs to ErrorStateEntries.
 // the idea is that this be a timeout cache which is cleared out every
 // hour or so... all this functionality to be moved to another class.
-  private Map tokencache = ReflectiveCache.getConcurrentMap(16);
+  private Map tokencache = ReflectiveCache.instance.getConcurrentMap(16);
   
   private int expiryseconds;
   

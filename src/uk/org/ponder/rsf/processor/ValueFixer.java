@@ -55,6 +55,10 @@ public class ValueFixer implements ComponentProcessor {
         Object flatvalue = alterer.getFlattenedValue(toprocess.valuebinding, beanlocator, oldvalue.getClass());
         toprocess.updateValue(flatvalue);
       }
+      // TODO: Think carefully whether we want these "encoded" bindings to
+      // EVER appear in the component tree. Tradeoffs - we would need to create more
+      // classes that renderer could recognise to compute bindings, and increase its
+      // knowledge about the rest of RSF.
       if (toprocess.fossilize && toprocess.fossilizedbinding == null) {
         UIParameter fossilized = fossilizedconverter.computeFossilizedBinding(toprocess);
         toprocess.fossilizedbinding = fossilized;

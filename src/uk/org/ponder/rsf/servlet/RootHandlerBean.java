@@ -5,8 +5,6 @@ package uk.org.ponder.rsf.servlet;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,10 +29,6 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * here, handling forks to the GetHandler and PostHandler in the
  * <code>processor</code> package.
  * 
- * <p>Nothing should touch the HttpServletRequest before this request-scope
- * factory bean, which parses primitive information such as the request
- * type and parameter map. 
- * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
@@ -58,21 +52,11 @@ public class RootHandlerBean implements HttpServletRequestAware,
     this.response = response;
   }
 
+  public void setRequestType(String requesttype) {
+    this.requesttype = requesttype;
+  }
+  
   public void init() {
-    requesttype = request.getMethod().equals("GET")? ViewParameters.RENDER_REQUEST : 
-      ViewParameters.ACTION_REQUEST;
-    Logger.log.info("begin parseRequest");
-    // We INSIST that all data passed in and out should be in UTF-8.
-    // TODO: Make sure we do not tread on the toes of a POST request in
-    // doing this however.
-    try {
-      request.setCharacterEncoding("UTF-8");
-    }
-    catch (UnsupportedEncodingException uee) {
-      throw UniversalRuntimeException.accumulate(uee,
-          "Fatal internal error: UTF-8 encoding not found");
-    }
-    
     if (requesttype.equals(ViewParameters.RENDER_REQUEST)) {
       GetHandler gethandler = (GetHandler) beanlocator.locateBean("gethandler");
       handleGet(gethandler);
@@ -151,22 +135,6 @@ public class RootHandlerBean implements HttpServletRequestAware,
       throw UniversalRuntimeException.accumulate(ioe,
           "Error setting up response writer");
     }
-  }
-  
-  public Map getRequestMap() {
-    return request.getParameterMap();
-  }
-  
-  public String getPathInfo() {
-    return request.getPathInfo();
-  }
-
-  /** A factory method for a String encoding the nature of the current
-   * request cycle, either ViewParameters.RENDER_REQUEST or 
-   * ViewParameters.ACTION_REQUEST.
-   */
-  public String getRequestType() {
-    return requesttype;
   }
 
 }

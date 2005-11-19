@@ -5,18 +5,27 @@ package uk.org.ponder.rsf.view;
 
 import java.util.List;
 
+import uk.org.ponder.rsf.componentprocessor.FormModel;
 import uk.org.ponder.rsf.util.ComponentDumper;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.streamutil.write.PrintStreamPOS;
 import uk.org.ponder.util.UniversalRuntimeException;
 
+/** Invokes the list of ComponentProducers in the supplied ViewCollection to
+ * populate the view tree for this request. A request-scope bean, but is 
+ * currently invoked manually.
+ * @author Antranig Basman (antranig@caret.cam.ac.uk)
+ *
+ */
+
 public class ViewGenerator {
   private ViewCollection viewcollection;
   private View view;
   private ComponentChecker checker;
   private ViewParameters viewparams;
- 
+  private FormModel formmodel;
+ // This method is called manually from GetHandler.
   public View getView() {
     if (view == null) {
       view = generateView(viewparams, checker);
@@ -42,6 +51,10 @@ public class ViewGenerator {
     this.viewparams = viewparams;
   }
   
+  public void setFormModel(FormModel formmodel) {
+    this.formmodel = formmodel;
+  }
+  
   /**
    * Returns the UIViewRoot for the view created by the View instance matching
    * the view ID. Any potentially recoverable errors are caught and a redirect
@@ -50,6 +63,7 @@ public class ViewGenerator {
    */
   private View generateView(ViewParameters viewparams, ComponentChecker checker) {
     View view = new View();
+    view.formmodel = formmodel;
     List producers = viewcollection.getProducers(viewparams.viewID);
 
     if (producers != null) {
@@ -61,17 +75,9 @@ public class ViewGenerator {
       return view;
     }
     else {
-      throw new UniversalRuntimeException(
+      throw UniversalRuntimeException.accumulate(new ViewNotFoundException(), 
           "Request intercepted for unknown view " + viewparams.viewID);
     }
-  }
-  
-  public Class getObjectType() {
-    return View.class;
-  }
-
-  public boolean isSingleton() {
-    return true;
   }
 
 }

@@ -4,7 +4,7 @@
   <artifactId>rsfutil</artifactId>
   <name>J-RSFUtil</name>
   <groupId>rsfutil</groupId>
-  <currentVersion>1.0</currentVersion>
+  <currentVersion>0.5</currentVersion>
   <organization>
     <name>CARET, University of Cambridge</name>
     <url>http://www.caret.cam.ac.uk/</url>
@@ -139,6 +139,13 @@
     </resources>
   <build>
     <sourceDirectory>src</sourceDirectory>
+    <resources>
+      <resource>
+        <directory>src/conf/</directory>
+        <targetPath>conf</targetPath>
+        <filtering>false</filtering>
+      </resource>
+    </resources>
   </build>
 </project>
 

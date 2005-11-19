@@ -3,7 +3,6 @@
  */
 package uk.org.ponder.rsf.flow;
 
-import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /** An action result interpreter that simply redirects to the incoming

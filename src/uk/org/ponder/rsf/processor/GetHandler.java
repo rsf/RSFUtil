@@ -10,12 +10,11 @@ import uk.org.ponder.errorutil.ErrorUtil;
 import uk.org.ponder.errorutil.PermissionException;
 import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.ThreadErrorState;
-import uk.org.ponder.rsf.flow.ARIResult;
+import uk.org.ponder.rsf.flow.ViewExceptionStrategy;
 import uk.org.ponder.rsf.renderer.ViewRender;
 import uk.org.ponder.rsf.state.ErrorStateManager;
 import uk.org.ponder.rsf.state.StatePreservationManager;
 import uk.org.ponder.rsf.view.View;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.view.ViewGenerator;
 import uk.org.ponder.rsf.view.ViewProcessor;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
@@ -36,9 +35,9 @@ public class GetHandler {
   private RunnableWrapper getwrapper;
   private ViewProcessor viewprocessor;
   private ViewParameters viewparams;
-  
-  private ErrorStateManager tokenrse;
+
   private StatePreservationManager presmanager;
+  private ViewExceptionStrategy ves;
 
   public void setViewGenerator(ViewGenerator viewgenerator) {
     this.viewgenerator = viewgenerator;
@@ -46,6 +45,10 @@ public class GetHandler {
 
   public void setErrorStateManager(ErrorStateManager errorstatemanager) {
     this.errorstatemanager = errorstatemanager;
+  }
+  
+  public void setViewExceptionStrategy(ViewExceptionStrategy ves) {
+    this.ves = ves;
   }
 
   public void setAlterationWrapper(RunnableWrapper getwrapper) {
@@ -78,8 +81,6 @@ public class GetHandler {
     viewparams.errorredirect = null;
     try {
       view = viewgenerator.getView();
-//      final TokenRequestState trs = viewparams.errortoken == null ? 
-//        null : requeststateentry.getTSHolder().getTokenState(viewparams.errortoken);
       getwrapper.wrapRunnable(new Runnable() {
         public void run() {
           if (viewparams.flowtoken != null) {
@@ -117,10 +118,9 @@ public class GetHandler {
   // a "Level 1" GET error simply attempts to redirect onto a default
   // view, with errors intact.
   public ViewParameters handleLevel1Error(ViewParameters viewparams,
-      Throwable t, boolean iserrorredirect) {
-    ViewComponentProducer defaultview = viewgenerator.getViewCollection().getDefaultView();
-    Logger.log.warn("Exception populating view root: ", t);
-    UniversalRuntimeException invest = UniversalRuntimeException.accumulate(t);
+      Exception e, boolean iserrorredirect) {
+    Logger.log.warn("Exception populating view root: ", e);
+    UniversalRuntimeException invest = UniversalRuntimeException.accumulate(e);
     Throwable target = invest.getTargetException();
     if (target != null) {
       Logger.log.warn("Got target exception of " + target.getClass());
@@ -137,11 +137,10 @@ public class GetHandler {
     ThreadErrorState.addError(newerror);
 
 
-    Logger.log.warn("Error creating view tree - token " + tokenid, t);
+    Logger.log.warn("Error creating view tree - token " + tokenid, e);
+    
+    ViewParameters defaultparameters = ves.handleException(e, viewparams);
 
-    ViewParameters defaultparameters = viewparams.copyBase();
-
-    defaultview.fillDefaultParameters(defaultparameters);
     // make sure this method is prodded FIRST, because requestComplete 
     // (which would ordinarily allocate the token on seeing an error state) is
     // only called AFTER we visibly return from handle() above.
