@@ -36,7 +36,7 @@ public class InMemoryTSH implements TokenStateHolder {
   /** Stores the supplied TokenRequestState object in the repository */
   public void putTokenState(TokenState trs) {
     Date current = new Date();
-    long forwardsecs = current.getTime() + expiryseconds;
+    long forwardsecs = current.getTime() + expiryseconds * 1000;
     trs.expiry = new Date(forwardsecs);
     tokencache.put(trs.tokenID, trs);
   

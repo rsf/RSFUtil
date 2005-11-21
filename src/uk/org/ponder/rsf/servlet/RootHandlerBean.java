@@ -14,8 +14,6 @@ import uk.org.ponder.rsf.processor.GetHandler;
 import uk.org.ponder.rsf.processor.PostHandler;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewStateHandler;
-import uk.org.ponder.servletutil.HttpServletRequestAware;
-import uk.org.ponder.servletutil.HttpServletResponseAware;
 import uk.org.ponder.streamutil.write.OutputStreamPOS;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.util.Logger;
@@ -32,8 +30,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
-public class RootHandlerBean implements HttpServletRequestAware,
-    HttpServletResponseAware {
+public class RootHandlerBean {
 
   private BeanLocator beanlocator;
   private String requesttype;

@@ -3,13 +3,25 @@
 	"http://www.springframework.org/dtd/spring-beans.dtd">
 <beans>
   <!-- This file contains request scope beans which are specific to RSF -->
-  
+   
   <!-- A request scope bean locator locating beans from THIS container! -->
   <bean id="requestbeanlocator" factory-bean="rsacbeanlocator"
     factory-method="getBeanLocator">
   </bean>
   
+  <bean id="httpservletfactory" class="uk.org.ponder.rsac.servlet.HttpServletFactory">
+  </bean>
+   
+  <bean id="httpservletrequest" factory-bean="httpservletfactory"
+    factory-method="getHttpServletRequest"/>
+  
+  <bean id="httpservletresponse" factory-bean="httpservletfactory"
+    factory-method="getHttpServletResponse"/>
+  
   <bean id="earlyrequestparser" class="uk.org.ponder.rsf.servlet.EarlyRequestParser">
+    <property name="httpServletRequest">
+      <ref bean="httpservletrequest"/>
+    </property>
   </bean>
   
   <bean id="requestmap" factory-bean="earlyrequestparser"
@@ -23,6 +35,12 @@
   
   <bean id="roothandlerbean" class="uk.org.ponder.rsf.servlet.RootHandlerBean"
     init-method="init">
+    <property name="httpServletRequest">
+      <ref bean="httpservletrequest"/>
+    </property>
+    <property name="httpServletResponse">
+      <ref bean="httpservletresponse"/>
+    </property>
     <property name="requestType">
       <ref local="requesttype"/>
     </property>
@@ -58,24 +76,7 @@
       </list>
     </property>
   </bean>
-  
-  
-  <bean id="flowtokenstateholder" class="uk.org.ponder.rsf.state.InMemoryTSH">
-    <property name="expirySeconds">
-      <!-- deliberately short time for testing - all flows will expire after 
-      30 seconds of disuse -->
-      <value>30</value>
-    </property>
-  </bean>
-  
-  <bean id="errortokenstateholder" class="uk.org.ponder.rsf.state.InMemoryTSH">
-    <property name="expirySeconds">
-      <!-- deliberately short time for testing - all errors will expire after 
-      10 seconds of disuse -->
-      <value>10</value>
-    </property>
-  </bean>
-  
+    
   <bean id="postdecoder" class="uk.org.ponder.rsf.processor.PostDecoder">
     <property name="renderSystemStatic">
       <ref bean="rendersystemstatic"/>
@@ -121,16 +122,17 @@
       <ref bean="requestwriteablebeans"/>
     </property>
     <property name="tokenStateHolder">
-      <ref local="flowtokenstateholder"/>
+      <ref bean="flowtokenstateholder"/>
     </property>
     <property name="RSVCApplier">
       <ref bean="rsvcapplier"/>
     </property>
   </bean>
   
-  <bean id="errorstatemanager" class="uk.org.ponder.rsf.state.ErrorStateManager">
+  <bean id="errorstatemanager" class="uk.org.ponder.rsf.state.ErrorStateManager"
+    init-method="init">
     <property name="TSHolder">
-      <ref local="errortokenstateholder"/>
+      <ref bean="errortokenstateholder"/>
     </property>
     <property name="viewParameters">
       <ref local="viewparameters"/>
@@ -160,6 +162,9 @@
   
   <bean id="autobaseurlprovider" class="uk.org.ponder.rsf.servlet.AutoBaseURLProvider"
     init-method="init">
+    <property name="httpServletRequest">
+      <ref bean="httpservletrequest"/>
+    </property>
   </bean>
   
   <!-- The default viewstatehandler uses the autobaseurlprovider to infer
@@ -232,7 +237,8 @@
     <property name="viewTemplate">
       <ref local="viewtemplate"/>
     </property>
-    <!-- This dependence is injected manually -->
+    <!-- This dependence is injected manually, since the alterationwrapper must
+      bracket restoration, and access to the model by fixup -->
     <!--
     <property name="view">
     <ref local="view"/>
@@ -351,28 +357,38 @@
   </bean>
   
   <bean id="gethandler" class="uk.org.ponder.rsf.processor.GetHandler">
-    <property name="viewGenerator">
-      <ref bean="viewgenerator"/>
-    </property>
     <property name="errorStateManager">
       <ref local="errorstatemanager"/>
     </property>
     <property name="viewExceptionStrategy">
       <ref bean="viewexceptionstrategy"/>
     </property>
-    <property name="alterationWrapper">
-      <ref bean="alterationwrapper"/>
+    <property name="viewParameters">
+      <ref local="viewparameters"/>
+    </property>
+  </bean>
+  
+  <bean id="gethandlerimpl" class="uk.org.ponder.rsf.processor.GetHandlerImpl">
+    <property name="errorStateManager">
+      <ref local="errorstatemanager"/>
     </property>
     <property name="viewParameters">
       <ref local="viewparameters"/>
     </property>
-    <property name="statePreservationManager">
+    <property name="viewGenerator">
+      <ref bean="viewgenerator"/>
+    </property> 
+    <property name="alterationWrapper">
+      <ref bean="alterationwrapper"/>
+    </property>
+     <property name="statePreservationManager">
       <ref local="statepreservationmanager"/>
     </property>
     <property name="viewProcessor">
       <ref bean="viewprocessor"/>
     </property>
-    
+    <property name="viewRender">
+      <ref bean="viewrender"/>
+    </property>
   </bean>
-  
 </beans>

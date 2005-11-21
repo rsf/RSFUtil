@@ -58,7 +58,10 @@ public class ViewCollection {
   
   public List getProducers(String viewid) {
     ArrayList togo = new ArrayList();
-    togo.addAll(get(ALL_VIEW_PRODUCER));
+    List allproducers = get(ALL_VIEW_PRODUCER);
+    if (allproducers != null) {
+      togo.addAll(allproducers);
+    }
     togo.addAll(get(viewid));
     return togo;
   }

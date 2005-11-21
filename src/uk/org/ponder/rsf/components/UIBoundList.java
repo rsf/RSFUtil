@@ -5,6 +5,7 @@ package uk.org.ponder.rsf.components;
 
 import uk.org.ponder.rsf.uitype.StringArrayUIType;
 
+/** Suitable for being the input-generating component for a multiple-selection list **/
 public class UIBoundList extends UIBound {
   public void setValue(String[] value) {
     this.value = value;

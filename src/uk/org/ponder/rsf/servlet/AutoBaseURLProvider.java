@@ -7,11 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import uk.org.ponder.rsf.viewstate.BaseURLProvider;
 import uk.org.ponder.rsf.viewstate.StaticBaseURLProvider;
-import uk.org.ponder.servletutil.HttpServletRequestAware;
 import uk.org.ponder.servletutil.ServletUtil;
 
-public class AutoBaseURLProvider implements HttpServletRequestAware,
-    BaseURLProvider {
+public class AutoBaseURLProvider implements BaseURLProvider {
   private HttpServletRequest request;
 
   public void setHttpServletRequest(HttpServletRequest request) {

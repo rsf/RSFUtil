@@ -11,68 +11,39 @@ import uk.org.ponder.errorutil.PermissionException;
 import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.rsf.flow.ViewExceptionStrategy;
-import uk.org.ponder.rsf.renderer.ViewRender;
 import uk.org.ponder.rsf.state.ErrorStateManager;
-import uk.org.ponder.rsf.state.StatePreservationManager;
-import uk.org.ponder.rsf.view.View;
-import uk.org.ponder.rsf.view.ViewGenerator;
-import uk.org.ponder.rsf.view.ViewProcessor;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.util.Logger;
-import uk.org.ponder.util.RunnableWrapper;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 /**
+ * This request-scope bean exists to bracket the creation and operation of the 
+ * rendering process, such that any "first" exception causes a redirect to a default
+ * view. A "double fault", caught above in the RootHandlerBean, 
+ * will render a fatal error message in the raw.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
-// This has now become a request-scope bean.
 public class GetHandler {
-  // all request-scope dependencies
-  private ViewGenerator viewgenerator;
+  private ViewExceptionStrategy ves;
   private ErrorStateManager errorstatemanager;
-  private RunnableWrapper getwrapper;
-  private ViewProcessor viewprocessor;
   private ViewParameters viewparams;
 
-  private StatePreservationManager presmanager;
-  private ViewExceptionStrategy ves;
-
-  public void setViewGenerator(ViewGenerator viewgenerator) {
-    this.viewgenerator = viewgenerator;
-  }
-
-  public void setErrorStateManager(ErrorStateManager errorstatemanager) {
-    this.errorstatemanager = errorstatemanager;
-  }
-  
   public void setViewExceptionStrategy(ViewExceptionStrategy ves) {
     this.ves = ves;
   }
-
-  public void setAlterationWrapper(RunnableWrapper getwrapper) {
-    this.getwrapper = getwrapper;
-  }
-
-  public void setViewProcessor(ViewProcessor viewprocessor) {
-    this.viewprocessor = viewprocessor;
+  
+  public void setErrorStateManager(ErrorStateManager errorstatemanager) {
+    this.errorstatemanager = errorstatemanager;
   }
   
   public void setViewParameters(ViewParameters viewparams) {
     this.viewparams = viewparams;
   }
 
-  public void setStatePreservationManager(StatePreservationManager presmanager) {
-    this.presmanager = presmanager;
-  }
-  
-  // Since this is a request-scope bean, there is no problem letting the
-  // returned view from the getwrapper escape into this member.
-  private View view;
-
   /** The beanlocator is passed in to allow the late location of the 
-   * ViewRender bean which needs to occur in a controlled exception context.
+   * GetHandlerImpl bean which needs to occur in a controlled exception context.
    */
   public ViewParameters handle(PrintOutputStream pos, BeanLocator beanlocator) {
    
@@ -80,26 +51,9 @@ public class GetHandler {
     // YES, reach into the original request! somewhat bad...
     viewparams.errorredirect = null;
     try {
-      view = viewgenerator.getView();
-      getwrapper.wrapRunnable(new Runnable() {
-        public void run() {
-          if (viewparams.flowtoken != null) {
-            presmanager.restore(viewparams.flowtoken);
-          }
-          // some slight failure of RSAC here. But this pipeline is a bit
-          // clearer in code.
-          viewprocessor.setView(view);
-          view = viewprocessor.getProcessedView();
-        }
-      }).run();
-
-      ViewRender viewrender = (ViewRender) beanlocator.locateBean("viewrender");
-      if (errorstatemanager.errorstate != null) {
-        viewrender.setMessages(errorstatemanager.errorstate.errors);
-        viewrender.setGlobalMessageTarget(errorstatemanager.errorstate.globaltargetid);
-      }
-      viewrender.setView(view);
-      viewrender.render(pos);
+      GetHandlerImpl gethandlerimpl = (GetHandlerImpl) beanlocator.locateBean("gethandlerimpl");
+      gethandlerimpl.handle(pos);
+    
     }
     catch (Exception e) {
       // if a request comes in for an invalid view, redirect it onto a default
@@ -119,7 +73,7 @@ public class GetHandler {
   // view, with errors intact.
   public ViewParameters handleLevel1Error(ViewParameters viewparams,
       Exception e, boolean iserrorredirect) {
-    Logger.log.warn("Exception populating view root: ", e);
+    Logger.log.warn("Exception rendering view: ", e);
     UniversalRuntimeException invest = UniversalRuntimeException.accumulate(e);
     Throwable target = invest.getTargetException();
     if (target != null) {
@@ -131,21 +85,20 @@ public class GetHandler {
       throw invest;
     }
 
-    String tokenid = viewparams.flowtoken;
-    TargettedMessage newerror = 
-      new TargettedMessage(CoreMessages.GENERAL_SHOW_ERROR,  new Object[] { tokenid });
-    ThreadErrorState.addError(newerror);
-
-
-    Logger.log.warn("Error creating view tree - token " + tokenid, e);
-    
     ViewParameters defaultparameters = ves.handleException(e, viewparams);
-
+    
     // make sure this method is prodded FIRST, because requestComplete 
     // (which would ordinarily allocate the token on seeing an error state) is
     // only called AFTER we visibly return from handle() above.
-    defaultparameters.flowtoken = errorstatemanager.allocateOutgoingToken();
+    String tokenid = errorstatemanager.allocateOutgoingToken();
+    defaultparameters.errortoken = tokenid;
     defaultparameters.errorredirect = "1";
+
+    Logger.log.warn("Error creating view tree - token " + tokenid);
+    
+    TargettedMessage newerror = 
+      new TargettedMessage(CoreMessages.GENERAL_SHOW_ERROR,  new Object[] { tokenid });
+    ThreadErrorState.addError(newerror);
     return defaultparameters;
   }
 

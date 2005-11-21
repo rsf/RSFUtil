@@ -5,7 +5,6 @@ package uk.org.ponder.rsf.state;
 
 import uk.org.ponder.conversion.ConvertUtil;
 import uk.org.ponder.rsf.components.UIBound;
-import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIDeletionBinding;
 import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIParameter;
@@ -64,12 +63,12 @@ public class FossilizedConverter {
   public boolean isNonComponentBinding(String key) {
     return key.endsWith(BINDING_SUFFIX);
   }
-  
+  /** Parse a "non-component binding" key/value pair **/
   public SubmittedValueEntry parseBinding(String key, String value) {
     SubmittedValueEntry togo = new SubmittedValueEntry();
     togo.isEL = value.charAt(0) == EL_BINDING;
     int endcurly = value.indexOf('}');
-    togo.valuebinding = value.substring(3, endcurly);
+    togo.valuebinding = value.substring(1, endcurly + 1);
     if (key.equals(DELETION_KEY)) {
       togo.isdeletion = true;
     }
@@ -93,7 +92,7 @@ public class FossilizedConverter {
     int firsthash = value.indexOf('#');
     String uitypename = value.substring(1, firsthash);
     int endcurly = value.indexOf('}');
-    togo.valuebinding = value.substring(2 + firsthash, endcurly);
+    togo.valuebinding = value.substring(firsthash, endcurly + 1);
     String oldvaluestring = value.substring(endcurly + 1);
     
     if (oldvaluestring.length() > 0) {
