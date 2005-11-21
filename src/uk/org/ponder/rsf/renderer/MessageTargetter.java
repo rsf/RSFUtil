@@ -56,13 +56,14 @@ public class MessageTargetter {
    *          The fullID of the "submitting control" for the previous view. This
    *          will form the SECOND LEVEL fallback after all targets in the
    *          GLOBAL ROOT have been searched. This should almost always be set.
- 
    */
+  
   public static MessageTargetMap targetMessages(Map branchmap, View view,
       TargettedMessageList messages, String globalmessagetarget) {
-    BestTarget best = new BestTarget();
-
     MessageTargetMap togo = new MessageTargetMap();
+    if (messages == null) return togo;
+    
+    BestTarget best = new BestTarget();
     UIComponent globaltarget = globalmessagetarget == null ? null
         : view.getComponent(globalmessagetarget);
     ComponentList globalrootpath = globaltarget == null ? null

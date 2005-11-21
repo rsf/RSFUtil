@@ -5,6 +5,7 @@ package uk.org.ponder.rsf.processor;
 
 import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.beanutil.BeanModelAlterer;
+import uk.org.ponder.beanutil.BeanUtil;
 import uk.org.ponder.rsf.componentprocessor.ComponentProcessor;
 import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIComponent;
@@ -12,6 +13,7 @@ import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.state.FossilizedConverter;
 import uk.org.ponder.rsf.state.RequestSubmittedValueCache;
 import uk.org.ponder.rsf.state.SubmittedValueEntry;
+import uk.org.ponder.rsf.uitype.UITypes;
 
 /** Fetches values from the request bean model that are referenced via EL
  * value bindings, if such have not already been set. Will also compute the
@@ -49,10 +51,12 @@ public class ValueFixer implements ComponentProcessor {
       if (sve != null) {
         toprocess.updateValue(sve.newvalue);
       }
-      else if (toprocess.valuebinding != null && toprocess.acquireValue() == null) {
+      else if (toprocess.valuebinding != null && toprocess.acquireValue() == null 
+          || UITypes.isPlaceholder(toprocess.acquireValue())) {
         // a bound component ALWAYS contains a value of the correct type.
         Object oldvalue = toprocess.acquireValue();
-        Object flatvalue = alterer.getFlattenedValue(toprocess.valuebinding, beanlocator, oldvalue.getClass());
+        String stripbinding = BeanUtil.stripEL(toprocess.valuebinding);
+        Object flatvalue = alterer.getFlattenedValue(stripbinding, beanlocator, oldvalue.getClass());
         toprocess.updateValue(flatvalue);
       }
       // TODO: Think carefully whether we want these "encoded" bindings to

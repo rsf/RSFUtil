@@ -17,7 +17,9 @@ public class UILink extends UIBoundString {
   public static UILink make(UIContainer parent, String ID, String text, String target) {
     UILink togo = new UILink();
     togo.ID = ID;
-    togo.setValue(text);
+    if (text != null) {
+      togo.setValue(text);
+    }
     togo.target = target;
     parent.addComponent(togo);
     return togo;

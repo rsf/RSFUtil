@@ -11,7 +11,12 @@ public class UIOutputMultiline extends UIBound {
     UIOutputMultiline togo = new UIOutputMultiline();
     togo.ID = ID;
     togo.valuebinding = binding;
-    togo.value = value;
+    // note that StringList is not a UIType, and hence can never give rise
+    // to input, and hence has no placeholder type, and hence must always
+    // be set here.
+    if (value != null) {
+      togo.setValue(value);
+    }
     parent.addComponent(togo);
     return togo;
   }

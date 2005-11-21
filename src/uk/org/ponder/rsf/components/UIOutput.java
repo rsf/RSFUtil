@@ -18,9 +18,11 @@ public class UIOutput extends UIBoundString {
    * it will be fetched automatically from the bean model during fixup.
    */
   public static UIOutput make(UIContainer parent, String ID,
-      String binding, String initvalue) {
+      String initvalue, String binding) {
     UIOutput togo = new UIOutput();
-    togo.setValue(initvalue);
+    if (initvalue != null) {
+      togo.setValue(initvalue);
+    }
     togo.valuebinding = binding;
     togo.ID = ID;
     parent.addComponent(togo);
@@ -31,9 +33,12 @@ public class UIOutput extends UIBoundString {
    * This will not interact with the bean model in any way. */
   public static UIOutput make(UIContainer parent, String ID,
       String initvalue) {
-    return make(parent, ID, null, initvalue);
+    return make(parent, ID, initvalue, null);
   }
-
+/** This constructor creates an output component that will simply select
+ * a message already present in the template, free from any further interaction
+ * with the code.
+ */
   public static UIOutput make(UIContainer parent, String ID) {
     return make(parent, ID, null, null);
   }

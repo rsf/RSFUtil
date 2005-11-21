@@ -47,19 +47,23 @@ public class ErrorStateManager {
   private TokenStateHolder errortsholder;
   // for a GET request this will be set, but empty.
   private RequestSubmittedValueCache requestrsvc;
+  private ViewParameters viewparams;
 
   public void setTSHolder(TokenStateHolder errortsholder) {
     this.errortsholder = errortsholder;
   }
 
   public void setViewParameters(ViewParameters viewparams) {
+   this.viewparams = viewparams;
+  }
+  public void init() {
     if (viewparams.errortoken != null) {
       errorstate = (ErrorTokenState) errortsholder.getTokenState(viewparams.errortoken);
       if (errorstate == null) {
         Logger.log.warn("Client requested error state " + viewparams.errortoken
             + " which has expired from the cache");
       }
-    }
+    } 
   }
   
   public void setRequestRSVC(RequestSubmittedValueCache requestrsvc) {
@@ -77,7 +81,7 @@ public class ErrorStateManager {
   public String allocateOutgoingToken() {
     if (errorstate == null) {
       errorstate = new ErrorTokenState();
-      errorstate.tokenID = allocateToken();
+      errorstate.tokenID = viewparams.errortoken == null? allocateToken() : viewparams.errortoken;
     }
     return errorstate.tokenID;
   }

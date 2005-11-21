@@ -24,7 +24,9 @@ public class UIInput extends UIBoundString {
       String binding, String initvalue) {
     UIInput togo = new UIInput();
     togo.valuebinding = binding;
-    togo.value = initvalue;
+    if (initvalue != null) {
+      togo.setValue(initvalue);
+    }
     togo.ID = ID;
     parent.addComponent(togo);
     //RSFUtil.setFossilisedBinding(parent, togo, binding, initvalue);

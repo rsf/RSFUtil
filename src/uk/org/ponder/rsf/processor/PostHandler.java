@@ -105,7 +105,7 @@ public class PostHandler {
     ARIResult arires = ari.interpretActionResult(viewparams, actionresult);
     if (!arires.propagatebeans.equals(ARIResult.FLOW_END)) {
       // TODO: consider whether we want to allow ARI to allocate a NEW TOKEN
-      // for a FLOW FORK.
+      // for a FLOW FORK. Some call this, "continuations".
       if (arires.resultingview.flowtoken == null) {
         // if the ARI wanted one and hasn't allocated one, allocate flow token.
         arires.resultingview.flowtoken = errorstatemanager.allocateToken();

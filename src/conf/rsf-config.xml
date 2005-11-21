@@ -51,10 +51,16 @@
   <bean id="baseurlprovider">
   </bean>
   
-  <bean id="rsacbeanfactoryfactory"
-    class="uk.org.ponder.springutil.RSACBeanFactoryFactory">
+  <bean id="rsacresourcelocator" class="uk.org.ponder.rsac.servlet.ServletRSACResourceLocator">
   </bean>
   
+  <bean id="rsacbeanfactoryfactory"
+    class="uk.org.ponder.rsac.RSACBeanFactoryFactory">
+    <property name="RSACResourceLocator">
+      <ref local="rsacresourcelocator"/>
+    </property>
+  </bean>
+   
   <bean id="rsacbeanlocator" factory-bean="rsacbeanfactoryfactory"
     factory-method="getRSACBeanLocator">
     <property name="reflectiveCache">
@@ -76,6 +82,24 @@
   <bean id="rendersystemstatic"
     class="uk.org.ponder.rsf.renderer.html.BasicHTMLRenderSystemStatic">
   </bean>
+  
+  
+  <bean id="flowtokenstateholder" class="uk.org.ponder.rsf.state.InMemoryTSH">
+    <property name="expirySeconds">
+      <!-- deliberately short time for testing - all flows will expire after 
+      30 seconds of disuse -->
+      <value>30</value>
+    </property>
+  </bean>
+  
+  <bean id="errortokenstateholder" class="uk.org.ponder.rsf.state.InMemoryTSH">
+    <property name="expirySeconds">
+      <!-- deliberately short time for testing - all errors will expire after 
+      10 seconds of disuse -->
+      <value>10</value>
+    </property>
+  </bean>
+  
   <!-- The default ActionResultInterpreter which directs to the same view-->
   <bean id="actionresultinterpreter"
     class="uk.org.ponder.rsf.flow.NullActionResultInterpreter">

@@ -12,7 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import uk.org.ponder.springutil.RSACBeanLocator;
+import uk.org.ponder.rsac.RSACBeanLocator;
+import uk.org.ponder.util.Logger;
 
 /**
  * The main servlet for the RSF system. Hands off immediately to the 
