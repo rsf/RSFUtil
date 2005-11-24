@@ -28,12 +28,16 @@ public class ARIResult {
   * of all of its flow state. Will anyone really want this?
   */
   public static final String FLOW_FORK = "flow-fork";
+
+  /** An action name representing the start of a flow **/
+  public static final String FLOW_START = "flow-start";
     /** Propagate the request scope state only as an "error" state - i.e. this
      * represents an erroneous submission from a single-request submission.
      * The default implementation will expire the storage of this state on
      * a more rapid schedule than "normal" multi-request state (on the order
      * of minutes rather than hours).
      */
+ 
  // public static final String PROPAGATE_ERROR_ONLY = "propagate error only";
   /** The view to be shown on the next cycle. The <code>tokenid</code> field
    * will be overwritten by RSF with a unique token before it is dispensed

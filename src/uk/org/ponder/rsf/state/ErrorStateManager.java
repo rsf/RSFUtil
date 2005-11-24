@@ -56,6 +56,7 @@ public class ErrorStateManager {
   public void setViewParameters(ViewParameters viewparams) {
    this.viewparams = viewparams;
   }
+  
   public void init() {
     if (viewparams.errortoken != null) {
       errorstate = (ErrorTokenState) errortsholder.getTokenState(viewparams.errortoken);
@@ -69,7 +70,6 @@ public class ErrorStateManager {
   public void setRequestRSVC(RequestSubmittedValueCache requestrsvc) {
     this.requestrsvc = requestrsvc;
   }
-
 
   private static EighteenIDGenerator idgenerator = new EighteenIDGenerator();
 

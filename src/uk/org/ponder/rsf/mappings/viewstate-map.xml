@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<mapperentry targetclass="uk.org.ponder.rsf.flow.lite.ViewState">
+  <taghandler xmlname="id" xml-form="attribute">
+    <fieldname>id</fieldname>
+  </taghandler>
+   <taghandler xmlname="view" xml-form="attribute">
+    <fieldname>viewID</fieldname>
+  </taghandler>
+  <taghandler xmlname="transition">
+    <fieldname>transitions</fieldname>
+    <javaclass>uk.org.ponder.rsf.flow.lite.Transition</javaclass>
+  </taghandler>
+</mapperentry>

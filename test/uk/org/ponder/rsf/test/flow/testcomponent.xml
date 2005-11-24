@@ -1,0 +1,5 @@
+<view>
+  <component type="command" id="fourDigitNumberGuess">
+    <methodbinding>#{fourdigitnumberguessaction.start}</methodbinding>
+  </component>
+</view>

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<mapperentry targetclass="uk.org.ponder.rsf.components.UISimpleContainer">
+  <taghandler xmlname="id" xml-form="attribute">
+    <fieldname>id</fieldname>
+  </taghandler>
+  <taghandler xmlname="component*">
+    <setmethod>addComponent</setmethod>
+    <getmethod>flattenChildren</getmethod>
+  </taghandler>
+</mapperentry>

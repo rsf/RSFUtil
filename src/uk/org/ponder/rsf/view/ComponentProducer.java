@@ -13,7 +13,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * @author Hans Bergsten, Gefion Software <hans@gefionsoftware.com>
  * @version 1.0
  */
-public abstract class ComponentProducer {
+public interface ComponentProducer {
   /** @param tofill The container into which produced components will be inserted.
    *  @param origviewparams The view parameters specifying the currently rendering 
    *  view
@@ -24,7 +24,7 @@ public abstract class ComponentProducer {
    *  is currently only economic to check components that are present at the root
    *  level of the template, but these are the most likely to be expensive.
    */
-  public abstract void fillComponents(UIContainer tofill, ViewParameters origviewparams, 
+  public void fillComponents(UIContainer tofill, ViewParameters origviewparams, 
       ComponentChecker checker);
 //
 //  protected MessageLocator messagelocator;

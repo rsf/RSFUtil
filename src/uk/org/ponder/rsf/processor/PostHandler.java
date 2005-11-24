@@ -83,7 +83,7 @@ public class PostHandler {
       postwrapper.wrapRunnable(new Runnable() {
         public void run() {
           if (viewparams.flowtoken != null) {
-            presmanager.restore(viewparams.flowtoken);
+            presmanager.restore(viewparams.flowtoken, viewparams.endflow != null);
           }
           rsvcapplier.applyValues(requestrsvc); // many errors possible here.
 
@@ -106,15 +106,18 @@ public class PostHandler {
     if (!arires.propagatebeans.equals(ARIResult.FLOW_END)) {
       // TODO: consider whether we want to allow ARI to allocate a NEW TOKEN
       // for a FLOW FORK. Some call this, "continuations".
-      if (arires.resultingview.flowtoken == null) {
+      if (arires.resultingview.flowtoken == null || 
+          arires.propagatebeans.equals(ARIResult.FLOW_START)) {
+        
         // if the ARI wanted one and hasn't allocated one, allocate flow token.
         arires.resultingview.flowtoken = errorstatemanager.allocateToken();
       }
       presmanager.preserve(viewparams.flowtoken);
     }
-    else {
+    else { // it is a flow end.
+      arires.resultingview.endflow = "1";
       if (viewparams.flowtoken != null) {
-        presmanager.clear(viewparams.flowtoken);
+        presmanager.flowEnd(viewparams.flowtoken);
       }
     }
     
