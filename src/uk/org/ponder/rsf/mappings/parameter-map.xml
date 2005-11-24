@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<mapperentry targetclass="uk.org.ponder.rsf.components.UIParameter">
+  <taghandler xmlname="name" xml-form="attribute">
+    <fieldname>name</fieldname>
+  </taghandler>
+   <taghandler xmlname="value" xml-form="attribute">
+    <fieldname>value</fieldname>
+  </taghandler>
+</mapperentry>

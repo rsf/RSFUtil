@@ -25,7 +25,7 @@ public class UIForm extends UISimpleContainer {
   /** A list of key/value pairs to appear in the request map once this form
    * is submitted. This will accrete 
    */
-  public ParameterList hiddenfields = new ParameterList();
+  public ParameterList parameters = new ParameterList();
   /** A list of the FullIDs of the all controls to be submitted by this form.
    * If this is left blank(empty), it will be filled in by a FormFixer 
    * (currently by looking for all nested controls that are bound).

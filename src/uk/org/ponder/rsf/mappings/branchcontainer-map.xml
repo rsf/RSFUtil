@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<mapperentry targetclass="uk.org.ponder.rsf.components.UIBranchContainer">
+  <taghandler xmlname="id" xml-form="attribute">
+    <fieldname>ID</fieldname>
+  </taghandler>
+  <taghandler xmlname="component*">
+    <setmethod>addComponent</setmethod>
+    <getmethod>flattenChildren</getmethod>
+  </taghandler>
+  <taghandler xmlname="localID">
+    <fieldname>localID</fieldname>
+  </taghandler>
+</mapperentry>

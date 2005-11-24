@@ -16,10 +16,30 @@
   
   <bean id="mappablexmlprovider" class="uk.org.ponder.saxalizer.SAXalXMLProvider">
     <constructor-arg>
-      <ref local="saxalizermappingcontext"/>
+      <ref bean="saxalizermappingcontext"/>
     </constructor-arg>
   </bean>
   
+  <bean id="rsfmappingloader" class="uk.org.ponder.rsf.mappings.RSFMappingLoader"/>
+  
+  <bean id="mappingloadmanager" 
+		class="uk.org.ponder.springutil.SpringXMLMappingLoader" init-method="init">
+		<property name="SAXalizerMappingContext">
+			<ref bean="saxalizermappingcontext"></ref>
+		</property>
+		<property name="mappableXMLProvider">
+			<ref bean="mappablexmlprovider"></ref>
+		</property>
+	</bean>
+  <!--
+  <bean id="saxalizerMappingContext" factory-bean="mappingloadmanager"
+    factory-method="getSAXalizerMappingContext">   
+  </bean>
+  -->
+	<bean id="xmlprovider" factory-bean="mappingloadmanager" 
+    factory-method="getXMLProvider"></bean>
+  
+    
   <bean id="darapplier" class="uk.org.ponder.mapping.DARApplier">
     <property name="SAXalXMLProvider">
       <ref local="mappablexmlprovider"/>
@@ -67,7 +87,7 @@
       <ref bean="reflectivecache"/>
     </property>
     <property name="mappingContext">
-      <ref local="saxalizermappingcontext"/>
+      <ref bean="saxalizermappingcontext"/>
     </property>
   </bean>
   
@@ -83,6 +103,7 @@
     class="uk.org.ponder.rsf.renderer.html.BasicHTMLRenderSystemStatic">
   </bean>
   
+  <bean id="idgenerator" class="uk.org.ponder.hashutil.EighteenIDGenerator"/>
   
   <bean id="flowtokenstateholder" class="uk.org.ponder.rsf.state.InMemoryTSH">
     <property name="expirySeconds">

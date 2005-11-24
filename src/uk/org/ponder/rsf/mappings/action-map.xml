@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<mapperentry targetclass="uk.org.ponder.rsf.flow.lite.Action">
+  <taghandler xmlname="bean" xml-form="attribute">
+    <fieldname>bean</fieldname>
+  </taghandler>
+  <taghandler xmlname="method" xml-form="attribute">
+    <fieldname>method</fieldname>
+  </taghandler>
+</mapperentry>

@@ -285,6 +285,19 @@
     
   </bean>
   
+  <bean id="flowproxyfactory"
+    class="uk.org.ponder.rsf.flow.lite.FlowProxyFactory">
+    <property name="reflectiveCache">
+      <ref bean="reflectivecache"/>
+    </property>
+    <property name="beanLocator">
+      <ref bean="requestbeanlocator"/>
+    </property>
+    <property name="viewParameters">
+      <ref bean="viewparameters"/>
+    </property>
+  </bean>
+  
   <bean id="viewgenerator" class="uk.org.ponder.rsf.view.ViewGenerator">
     <!-- EXTERNAL DEPENDENCY! The application supplies the view collection -->
     <property name="viewCollection">

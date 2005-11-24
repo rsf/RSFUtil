@@ -30,7 +30,7 @@ public class UIComponent {
    * globally unique within the containing component tree (the View), by 
    * appending path components derived from IDs and local IDs found at each
    * level of UIContainer. This algorithm should be "accessible" to simple 
-   * environments such as XSLs since they will need to operate it to generate
+   * environments such as XSLTs since they will need to operate it to generate
    * inter-component references within a view (for example to express any
    * EL dependencies).
    * <p>
