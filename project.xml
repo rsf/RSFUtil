@@ -51,13 +51,7 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
- <!-- <repository>
-    <connection>scm:cvs:caret_anon_cvs:/home/cvs/rep</connection>
-    <developerConnection> :extssh:amb26@saffron.caret.cam.ac.uk:/home/cvs/rep
-      </developerConnection>
-    <url> http://saffron.caret.cam.ac.uk/cgi-bin/cvsweb/</url>
-  </repository>
--->
+  
   <mailingLists>
     <mailingList>
       <name>${pom.name} Dev List</name>
@@ -130,19 +124,15 @@
       <type>jar</type>
     </dependency>
   </dependencies>
-   <resources>
-      <resource>
-        <directory>src/conf/</directory>
-        <targetPath>conf</targetPath>
-        <filtering>false</filtering>
-      </resource>
-    </resources>
   <build>
     <sourceDirectory>src</sourceDirectory>
     <resources>
       <resource>
-        <directory>src/conf/</directory>
-        <targetPath>conf</targetPath>
+        <directory>src/</directory>
+        <targetPath>/</targetPath>
+        <includes>
+          <include>**/*.xml</include>
+        </includes>
         <filtering>false</filtering>
       </resource>
     </resources>

@@ -1,11 +1,11 @@
 /*
  * Created on Nov 2, 2005
  */
-package uk.org.ponder.rsf.processor;
+package uk.org.ponder.rsf.componentprocessor;
 
-import uk.org.ponder.rsf.componentprocessor.ComponentProcessor;
-import uk.org.ponder.rsf.componentprocessor.FormModel;
+import uk.org.ponder.rsf.components.ParameterList;
 import uk.org.ponder.rsf.components.UIBound;
+import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.view.View;
@@ -28,10 +28,8 @@ public class DefaultFormFixer implements ComponentProcessor {
   private ViewParameters viewparams;
   private ViewStateHandler viewstatehandler;
   private FormModel formmodel;
-  private ViewGenerator viewgenerator;
-  // This property is lazily loaded, since the GetProcessor must have 
-  // exception-block control over the order of view generation. 
   private View view;
+  private ParameterList outgoingparams;
 
   public void setViewParameters(ViewParameters viewparams) {
     this.viewparams = viewparams;
@@ -45,27 +43,32 @@ public class DefaultFormFixer implements ComponentProcessor {
     this.formmodel = formmodel;
   }
   
-  public void setViewGenerator(ViewGenerator viewgenerator) {
-    this.viewgenerator = viewgenerator;
+  public void setView(View view) {
+    this.view = view;
+  }
+  
+  public void setOutgoingParams(ParameterList outgoingparams) {
+    this.outgoingparams = outgoingparams;
   }
   
   public void processComponent(UIComponent toprocesso) {
-    if (view != null) {
-      view = viewgenerator.getView();
-    }
     if (toprocesso instanceof UIForm) {
       UIForm toprocess = (UIForm) toprocesso;
       toprocess.fold();
       toprocess.postURL = viewstatehandler.getFullURL(viewparams);
+      toprocess.parameters.addAll(outgoingparams);
+      
+      // Check that anything registered so far as submitting exists and is valid.
       for (int i = 0; i < toprocess.submittingcontrols.size(); ++ i) {
         String childid = toprocess.submittingcontrols.stringAt(i);
         UIComponent child = view.getComponent(childid);
-        if (!(child instanceof UIBound)) {
+        if (!(child instanceof UIBound) && !(child instanceof UICommand)) {
           throw UniversalRuntimeException.accumulate(new IllegalArgumentException(), 
               "Component with ID " + childid + " listed as submitting child of form " +
-              toprocess.getFullID() + " is not an instance of UIBound");
+              toprocess.getFullID() + " is not valid (non-Command, non-Bound or" +
+                    "non-existent)");
         }
-        formmodel.registerChild(toprocess, (UIBound) child);
+        //formmodel.registerChild(toprocess, (UIBound) child);
       }
     }
   }

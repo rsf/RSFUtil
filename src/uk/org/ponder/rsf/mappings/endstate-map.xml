@@ -6,4 +6,5 @@
    <taghandler xmlname="view" xml-form="attribute">
     <fieldname>viewID</fieldname>
   </taghandler>
+  <taghandler xmlname="autowire" xml-form="attribute" access-type="ignore"/>
 </mapperentry>

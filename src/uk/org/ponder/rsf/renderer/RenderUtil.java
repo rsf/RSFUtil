@@ -66,6 +66,13 @@ public class RenderUtil {
     }
   }
   
+  public static String appendAttributes(String baseurl, String attributes) {
+    if (baseurl.indexOf('?') == -1) {
+      attributes = "?" + attributes.substring(1);
+    }
+    return baseurl + attributes;
+  }
+  
   public static String makeURLAttributes(ParameterList params) {
     CharWrap togo = new CharWrap();
     for (int i = 0; i < params.size(); ++ i) {

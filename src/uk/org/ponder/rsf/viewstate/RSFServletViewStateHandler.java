@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.rsf.viewstate;
 
+import uk.org.ponder.webapputil.ConsumerInfo;
 import uk.org.ponder.webapputil.ConsumerRequestInfo;
 
 /**
@@ -17,8 +18,13 @@ import uk.org.ponder.webapputil.ConsumerRequestInfo;
 public class RSFServletViewStateHandler implements ViewStateHandler {
 
   private BaseURLProvider urlprovider;
+  private ConsumerInfo ci;
   public void setBaseURLProvider(BaseURLProvider urlprovider) {
     this.urlprovider = urlprovider;
+  }
+  
+  public void setConsumerInfo(ConsumerInfo ci) {
+    this.ci = ci;
   }
   
   public String getFullURL(ViewParameters viewparams) {
@@ -27,20 +33,30 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
 
     String usebaseurl = urlprovider.getBaseURL();
     String extraparams = "";
-    ConsumerRequestInfo cri = ConsumerRequestInfo.getConsumerRequestInfo();
-    if (cri != null) {
-      if (cri.ci.urlbase != null) {
-        usebaseurl = cri.ci.urlbase;
+//    ConsumerRequestInfo cri = ConsumerRequestInfo.getConsumerRequestInfo();
+    boolean quest = requestparams.indexOf('?') != -1;
+//    String presparams = "";
+//    if (outgoingparams != null) {
+//    RenderUtil.makeURLAttributes(outgoingparams);
+//      if (!quest && presparams.length() > 0) {
+//        presparams = "?" + presparams.substring(1);
+//        quest = true;
+//      }
+//    }
+      if (ci.urlbase != null) {
+        usebaseurl = ci.urlbase;
       }
-      if (cri.ci.extraparameters != null) {
-        extraparams = cri.ci.extraparameters;
+      if (ci.extraparameters != null) {
+        extraparams = ci.extraparameters;
         // rewrite the first character of extra params to ? if there 
         // a) are any extras and b) are not any base request params.
-        if (requestparams.indexOf('?') == -1 && extraparams.length() > 0) {
+        if (!quest && extraparams.length() > 0) {
           extraparams = "?" + extraparams.substring(1);
+          quest = true;
         }
       }
-    }
+  
+    
     // We don't make any use of sessions - remove all dependence on request
     // for URL encoding now.
     //ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
@@ -51,7 +67,7 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
     // http://www.theserverside.com/discussions/thread.tss?thread_id=6039
     //HttpServletResponse response = (HttpServletResponse) ec.getResponse();
     String path = //response.encodeRedirectURL(
-        usebaseurl + requestparams + extraparams
+        usebaseurl + requestparams  + extraparams
         //)
         ;
     return path;
@@ -60,9 +76,9 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
 
   public String getResourceURL(String resourcepath) {
     String useresurl = urlprovider.getResourceBaseURL();
-    ConsumerRequestInfo cri = ConsumerRequestInfo.getConsumerRequestInfo();
-    if (cri != null && cri.ci.resourceurlbase != null) {
-      useresurl = cri.ci.resourceurlbase; 
+    //ConsumerRequestInfo cri = ConsumerRequestInfo.getConsumerRequestInfo();
+    if (ci.resourceurlbase != null) {
+      useresurl = ci.resourceurlbase; 
     }
     return useresurl + resourcepath;
   }
@@ -70,12 +86,10 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
 
   // in servlet context, rendered URLs agree with ultimate ones.
   public String getUltimateURL(ViewParameters viewparams) {
-    ConsumerRequestInfo cri = ConsumerRequestInfo.getConsumerRequestInfo();
-     if (cri != null) {
-       if (cri.ci.externalURL != null) {
-         return cri.ci.externalURL;
+    //ConsumerRequestInfo cri = ConsumerRequestInfo.getConsumerRequestInfo();
+       if (ci.externalURL != null) {
+         return ci.externalURL;
        }
-     }
     return getFullURL(viewparams);
   }
 

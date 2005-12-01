@@ -32,7 +32,7 @@ public class StandardBeanFinder {
   }
   
   public static SBFEntry[] entries = {
-    new SBFEntry("xmlprovider", XMLProvider.class)
+    new SBFEntry("xmlprovider", XMLProvider.class),
   };
   
   public static Object findBean(Class clazz, ListableBeanFactory lbf) {
@@ -47,4 +47,6 @@ public class StandardBeanFinder {
     Iterator beanit = allbeans.values().iterator();
     return beanit.next();
   }
+  public static final String RSAC_SAFE_BEAN_LOCATOR = "rsacsafebeanlocator";
+  
 }

@@ -121,7 +121,7 @@ public class ErrorStateManager {
         errorstate.globaltargetid = globaltargetid;
         errorstate.rsvc = requestrsvc;
         errorstate.errors = errors;
-        errortsholder.putTokenState(errorstate);
+        errortsholder.putTokenState(errorstate.tokenID, errorstate);
         return errorstate.tokenID;
       }
       else {

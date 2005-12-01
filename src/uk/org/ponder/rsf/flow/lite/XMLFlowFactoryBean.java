@@ -9,4 +9,9 @@ public class XMLFlowFactoryBean extends XMLFactoryBean {
   public Class getObjectType() {
     return Flow.class;
   }
+  public Object getObject() throws Exception {
+    Flow togo = (Flow) super.getObject();
+    togo.init();
+    return togo;
+  }
 }

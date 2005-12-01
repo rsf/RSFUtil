@@ -10,4 +10,5 @@
     <fieldname>transitions</fieldname>
     <javaclass>uk.org.ponder.rsf.flow.lite.Transition</javaclass>
   </taghandler>
+  <taghandler xmlname="autowire" xml-form="attribute" access-type="ignore"/>
 </mapperentry>

@@ -31,7 +31,7 @@ public class PostDecoder {
   private Map requestparams;
   private String requesttype;
   private Map normalizedrequest;
-  
+  private RequestSubmittedValueCache requestrsvc;
 
   public void setFossilizedConverter(FossilizedConverter fossilizedconverter) {
     this.fossilizedconverter = fossilizedconverter;
@@ -48,34 +48,29 @@ public class PostDecoder {
   public void setRequestType(String requesttype) {
     this.requesttype = requesttype;
   }
-  
+
   public void init() {
     normalizedrequest = new HashMap();
     normalizedrequest.putAll(requestparams);
-    rendersystemstatic.normalizeRequestMap(requestparams);
+    rendersystemstatic.normalizeRequestMap(normalizedrequest);
   }
 
-  
   // This method is expected to be called by accreteRSVC
   public void parseRequest(RequestSubmittedValueCache rsvc) {
     // NB checks for value size are needed for default JSF parameter
     // implementation
     // which synthesises hidden fields for every key/value set within a form.
-    for (Iterator keyit = normalizedrequest.keySet().iterator(); keyit.hasNext();) {
+    for (Iterator keyit = normalizedrequest.keySet().iterator(); keyit
+        .hasNext();) {
       String key = (String) keyit.next();
       String[] values = (String[]) normalizedrequest.get(key);
       Logger.log.info("PostInit: key " + key + " value " + values[0]);
-      String elpath = BeanUtil.stripEL(key);
-      // First parse pure EL bindings
-      // TODO: use first character of value as a type indicator
-      if (elpath != null && values.length > 0) {
-        Logger.log.info("Setting EL parameter " + key + " to value "
-            + values[0]);
-        SubmittedValueEntry sve = new SubmittedValueEntry();
-        sve.valuebinding = elpath;
-        sve.newvalue = values;
+      if (fossilizedconverter.isNonComponentBinding(key)) {
+        SubmittedValueEntry sve = fossilizedconverter.parseBinding(key,
+            values[0]);
         rsvc.addEntry(sve);
-
+        Logger.log.info("Discovered noncomponent binding for "
+            + sve.valuebinding + " rvalue " + sve.newvalue);
       }
       // Secondly assess whether this was a component fossilised binding.
       else if (fossilizedconverter.isFossilisedBinding(key)
@@ -96,25 +91,29 @@ public class PostDecoder {
   }
 
   public RequestSubmittedValueCache getRequestRSVC() {
-    RequestSubmittedValueCache newvalues = new RequestSubmittedValueCache();
-    if (requesttype.equals(ViewParameters.ACTION_REQUEST)) {
-      parseRequest(newvalues);
-      // Topologically sort the fresh values (which may be arbitrarily
-      // disordered through passing the request) in order of intrinsic
-      // dependency.
-      SVESorter sorter = new SVESorter(newvalues);
-      List sorted = sorter.getSortedRSVC();
-      for (int i = 0; i < sorted.size(); ++i) {
-        newvalues.addEntry((SubmittedValueEntry) sorted.get(i));
+    if (requestrsvc == null) {
+      requestrsvc = new RequestSubmittedValueCache();
+      if (requesttype.equals(ViewParameters.ACTION_REQUEST)) {
+        RequestSubmittedValueCache newvalues = new RequestSubmittedValueCache();
+        parseRequest(newvalues);
+        // Topologically sort the fresh values (which may be arbitrarily
+        // disordered through passing the request) in order of intrinsic
+        // dependency.
+        SVESorter sorter = new SVESorter(newvalues);
+        List sorted = sorter.getSortedRSVC();
+     
+        for (int i = 0; i < sorted.size(); ++i) {
+          requestrsvc.addEntry((SubmittedValueEntry) sorted.get(i));
+        }
       }
     }
-    return newvalues;
+    return requestrsvc;
   }
 
   public Map getNormalizedRequest() {
     return normalizedrequest;
   }
-  
+
   public static String decodeAction(Map normalizedrequest) {
     String[] actionmethods = (String[]) normalizedrequest
         .get(SubmittedValueEntry.FAST_TRACK_ACTION);

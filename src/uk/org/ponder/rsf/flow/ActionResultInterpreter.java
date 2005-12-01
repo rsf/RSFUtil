@@ -13,5 +13,5 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  */
 
 public interface ActionResultInterpreter {
-  public ARIResult interpretActionResult(ViewParameters incoming, String result);
+  public ARIResult interpretActionResult(ViewParameters incoming, Object result);
 }

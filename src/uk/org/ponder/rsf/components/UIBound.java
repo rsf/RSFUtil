@@ -15,7 +15,7 @@ package uk.org.ponder.rsf.components;
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  *
  */
-public abstract class UIBound extends UISimpleContainer {
+public abstract class UIBound extends UIComponent {
   /** The EL value reference that this component's value is bound to.
    * This will be a string of the form <code>#{rootbean.property1.property2}</code>
    */
@@ -58,14 +58,14 @@ public abstract class UIBound extends UISimpleContainer {
    * requests should override the constructor default in UIOutput with <code>true</code>.
    */
   public boolean fossilize = false;
-  /** The key/value pair that will be submitted to implement the fossilized
-   * binding. Component producers should NOT attempt to set this field, it will 
-   * be computed during a fixup.
-   */
-  public UIParameter fossilizedbinding;
   /** A field recording whether any input is expected to result from this
    * component. Note that if this flag is set to <code>true</code>, the
    * <code>fossilize</code> flag MUST also be set to true.
    */
   public boolean willinput = false;
+  /** The key/value pair that will be submitted to implement the fossilized
+   * binding. Component producers should NOT attempt to set this field, it will 
+   * be computed during a fixup.
+   */
+  public UIParameter fossilizedbinding;
 }

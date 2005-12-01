@@ -4,7 +4,9 @@
 package uk.org.ponder.rsf.renderer.html;
 
 import java.util.HashMap;
+import java.util.Map;
 
+import uk.org.ponder.rsf.components.ParameterList;
 import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UICommand;
@@ -23,15 +25,18 @@ import uk.org.ponder.rsf.renderer.StaticRendererCollection;
 import uk.org.ponder.rsf.state.FossilizedConverter;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.template.XMLLumpList;
+import uk.org.ponder.rsf.viewstate.URLUtil;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.stringutil.StringList;
+import uk.org.ponder.util.Logger;
 import uk.org.ponder.xml.XMLWriter;
 
 /**
- * The implementation of the standard XHTML rendering System. This class
- * is due for basic refactoring since it contains logic that belongs in a)
- * a "base System-independent" lookup bean, and b) in a number of individual
+ * The implementation of the standard XHTML rendering System. This class is due
+ * for basic refactoring since it contains logic that belongs in a) a "base
+ * System-independent" lookup bean, and b) in a number of individual
  * ComponentRenderer objects.
+ * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
@@ -41,20 +46,20 @@ import uk.org.ponder.xml.XMLWriter;
 // munger, which we hope at worse will issue a prefix and some additional
 // parameters. Unless of course they are absolute links...
 public class BasicHTMLRenderSystem implements RenderSystem {
-  private String declaration = "<!DOCTYPE html      " +
-        "PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"" + 
-     " \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
+  private String declaration = "<!DOCTYPE html      "
+      + "PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\""
+      + " \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
   private StaticRendererCollection scrc;
-  
+
   public String getDeclaration() {
     return declaration;
   }
-  
+
   // Request-scope dependency enters here. probably should try to remove it.
   public void setStaticRenderers(StaticRendererCollection scrc) {
     this.scrc = scrc;
   }
-   
+
   // No, this method will not stay like this forever! We plan on an architecture
   // with renderer-per-component "class" as before, plus interceptors.
   // Although a lot of the parameterisation now lies in the allowable tag
@@ -86,14 +91,15 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         StaticComponentRenderer scr = scrc.getSCR(scrname);
         if (scr != null) {
           int tagtype = scr.render(lumps, lumpindex, xmlw);
-          nextpos = tagtype == ComponentRenderer.LEAF_TAG? 
-              outerclose.lumpindex + 1 : outerendopen.lumpindex + 1;
+          nextpos = tagtype == ComponentRenderer.LEAF_TAG ? outerclose.lumpindex + 1
+              : outerendopen.lumpindex + 1;
         }
       }
-     
+
       if (lump.textEquals("<form ")) {
-        // Logger.log.info("Warning: skipping form with all children at lump
-        // index " + lumpindex);
+        // Logger.log.info("Warning: skipping form tag with all children at lump
+        // index "
+        // + lumpindex + " since no peer component");
       }
     }
     else {
@@ -111,93 +117,98 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       }
 
       String fullID = torendero.getFullID();
-      //HashMap attrcopy = (HashMap) uselump.attributemap.clone();
+      // HashMap attrcopy = (HashMap) uselump.attributemap.clone();
       HashMap attrcopy = new HashMap();
       attrcopy.putAll(uselump.attributemap);
       attrcopy.put("id", fullID);
       attrcopy.remove(XMLLump.ID_ATTRIBUTE);
       // ALWAYS dump the tag name, this can never be rewritten. (probably?!)
       pos.write(uselump.buffer, uselump.start, uselump.length);
-      // TODO: Note that these are actually BOUND now. Create some kind of 
+      // TODO: Note that these are actually BOUND now. Create some kind of
       // defaultBoundRenderer.
-      if (torendero.getClass() == UIOutput.class) {
-        String value = ((UIOutput) torendero).getValue();
-        if (value == null) {
-          RenderUtil.dumpTillLump(lumps, lumpindex + 1, close.lumpindex + 1,
-              pos);
-        }
-        else {
-          RenderUtil.dumpTillLump(lumps, lumpindex + 1, endopen.lumpindex + 1,
-              pos);
-          xmlw.write(value);
-          pos.write(close.buffer, close.start, close.length);
-        }
-      }
-      else if (torendero.getClass() == UIOutputMultiline.class) {
-        StringList value = ((UIOutputMultiline) torendero).getValue();
-        if (value == null) {
-          RenderUtil.dumpTillLump(lumps, lumpindex + 1, close.lumpindex + 1,
-              pos);
-        }
-        else {
-          RenderUtil.dumpTillLump(lumps, lumpindex + 1, endopen.lumpindex + 1,
-              pos);
-          for (int i = 0; i < value.size(); ++ i) {
-            if (i != 0) {
-              pos.print("<br/>");
-            }
-            xmlw.write(value.stringAt(i));
-          }
-          pos.write(close.buffer, close.start, close.length);
-        }
-      }
-      // factor out component-invariant processing of UIBound.
-      else if (torendero instanceof UIBound) {
+      if (torendero instanceof UIBound) {
         UIBound torender = (UIBound) torendero;
-        attrcopy.put("name", fullID);
-        //attrcopy.put("id", fullID);
-        String value = "";
-        String body = null;
-        if (torendero instanceof UIInput) {
-          value = ((UIInput) torender).getValue();
-          if (uselump.textEquals("<textarea ")) {
-            body = value;
+        if (!torender.willinput) {
+          if (torendero.getClass() == UIOutput.class) {
+            String value = ((UIOutput) torendero).getValue();
+            if (value == null) {
+              RenderUtil.dumpTillLump(lumps, lumpindex + 1,
+                  close.lumpindex + 1, pos);
+            }
+            else {
+              RenderUtil.dumpTillLump(lumps, lumpindex + 1,
+                  endopen.lumpindex + 1, pos);
+              xmlw.write(value);
+              pos.write(close.buffer, close.start, close.length);
+            }
           }
-          else {
-            attrcopy.put("value", value);
+          else if (torendero.getClass() == UIOutputMultiline.class) {
+            StringList value = ((UIOutputMultiline) torendero).getValue();
+            if (value == null) {
+              RenderUtil.dumpTillLump(lumps, lumpindex + 1,
+                  close.lumpindex + 1, pos);
+            }
+            else {
+              RenderUtil.dumpTillLump(lumps, lumpindex + 1,
+                  endopen.lumpindex + 1, pos);
+              for (int i = 0; i < value.size(); ++i) {
+                if (i != 0) {
+                  pos.print("<br/>");
+                }
+                xmlw.write(value.stringAt(i));
+              }
+              pos.write(close.buffer, close.start, close.length);
+            }
+          }
+        }
+        // factor out component-invariant processing of UIBound.
+        else { // Bound with willinput = true
+
+          attrcopy.put("name", fullID);
+          // attrcopy.put("id", fullID);
+          String value = "";
+          String body = null;
+          if (torender.willinput) {
+            value = ((UIInput) torender).getValue();
+            if (uselump.textEquals("<textarea ")) {
+              body = value;
+            }
+            else {
+              attrcopy.put("value", value);
+            }
+
+          }
+          else if (torendero instanceof UIBoundBoolean) {
+            if (((UIBoundBoolean) torender).getValue()) {
+              attrcopy.put("checked", "yes");
+              // this "value" is thrown away for checkboxes.
+              value = "true";
+            }
+            else {
+              value = "false";
+            }
+            // eh? What is the "value" attribute for one of these?
+            attrcopy.put("value", "true");
           }
 
-        }
-        else if (torendero instanceof UIBoundBoolean) {
-          if (((UIBoundBoolean) torender).getValue()) {
-            attrcopy.put("checked", "yes");
-            // this "value" is thrown away for checkboxes.
-            value = "true";
+          RenderUtil.dumpAttributes(attrcopy, xmlw);
+          pos.print(">");
+          if (body != null) {
+            xmlw.write(body);
+            pos.write(close.buffer, close.start, close.length);
           }
           else {
-            value = "false";
+            RenderUtil.dumpTillLump(lumps, endopen.lumpindex + 1,
+                close.lumpindex + 1, pos);
           }
-          // eh? What is the "value" attribute for one of these?
-          attrcopy.put("value", "true");
+          // dump any fossilized binding for this component.
+          if (torender.fossilizedbinding != null) {
+            RenderUtil.dumpHiddenField(torender.fossilizedbinding.name,
+                torender.fossilizedbinding.value, xmlw);
+          }
+          // unify hidden field processing? ANY parameter children found must
+          // be dumped as hidden fields.
         }
-
-        RenderUtil.dumpAttributes(attrcopy, xmlw);
-        pos.print(">");
-        if (body != null) {
-          xmlw.write(body);
-          pos.write(close.buffer, close.start, close.length);
-        }
-        else {
-          RenderUtil.dumpTillLump(lumps, endopen.lumpindex + 1,
-              close.lumpindex + 1, pos);
-        }
-        // dump any fossilized binding for this component.
-        if (torender.fossilizedbinding != null) {
-          RenderUtil.dumpHiddenField(torender.fossilizedbinding.name,
-              torender.fossilizedbinding.value, xmlw);
-        }
-        // unify hidden field processing? ANY parameter children found must
-        // be dumped as hidden fields.
       }
       else if (torendero instanceof UILink) {
         UILink torender = (UILink) torendero;
@@ -205,8 +216,8 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         attrcopy.put("href", torender.target);
         RenderUtil.dumpAttributes(attrcopy, xmlw);
         pos.print(">");
-        if (torender.getValue() != null) {
-          xmlw.write(torender.getValue());
+        if (torender.linktext != null) {
+          xmlw.write(torender.linktext);
           pos.write(close.buffer, close.start, close.length);
         }
         else {
@@ -220,9 +231,10 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         // any desired "attributes" decoded for JUST THIS ACTION must be
         // secretly
         // bundled as this special attribute.
-        attrcopy.put("name", FossilizedConverter.COMMAND_LINK_PARAMETERS + value);
-        if (lump.textEquals("<input ") && torender.getValue() != null) {
-          attrcopy.put("value", torender.getValue());
+        attrcopy.put("name", FossilizedConverter.COMMAND_LINK_PARAMETERS
+            + value);
+        if (lump.textEquals("<input ") && torender.commandtext != null) {
+          attrcopy.put("value", torender.commandtext);
         }
 
         RenderUtil.dumpAttributes(attrcopy, xmlw);
@@ -231,31 +243,40 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         }
         else {
           pos.print(">");
-          if (torender.getValue() != null && lump.textEquals("<button ")) {
-            xmlw.write(torender.getValue());
+          if (torender.commandtext != null && lump.textEquals("<button ")) {
+            xmlw.write(torender.commandtext);
             pos.write(close.buffer, close.start, close.length);
           }
           else {
             RenderUtil.dumpTillLump(lumps, endopen.lumpindex + 1,
-                close.lumpindex + 1, pos); 
+                close.lumpindex + 1, pos);
           }
         }
         // RenderUtil.dumpHiddenField(SubmittedValueEntry.ACTION_METHOD,
         // torender.actionhandler, pos);
       }
-   // Forms behave slightly oddly in the hierarchy - by the time they reach 
-   // the renderer, they have been "shunted out" of line with their children,
+      // Forms behave slightly oddly in the hierarchy - by the time they reach
+      // the renderer, they have been "shunted out" of line with their children,
       // i.e. any "submitting" controls, if indeed they ever were there.
       else if (torendero instanceof UIForm) {
         UIForm torender = (UIForm) torendero;
         attrcopy.put("method", "post"); // yes, we MEAN this!
         int qpos = torender.postURL.indexOf('?');
-        // guard against possibility of parameters coming through twice.
-        attrcopy.put("action", qpos == -1? torender.postURL: torender.postURL.substring(0, qpos));
+        // Ensure that any attributes on this postURL 
+        if (qpos == -1) {
+          attrcopy.put("action", torender.postURL);
+        }
+        else {
+          attrcopy.put("action", torender.postURL.substring(0, qpos));
+          String attrs = torender.postURL.substring(qpos + 1);
+          Map attrmap = URLUtil.paramsToMap(attrs, new HashMap());
+          ParameterList urlparams = URLUtil.mapToParamList(attrmap);
+          torender.parameters.addAll(urlparams);
+        }
         RenderUtil.dumpAttributes(attrcopy, xmlw);
         pos.println(">");
-        for (int i = 0; i < torender.hiddenfields.size(); ++ i) {
-          UIParameter param = torender.hiddenfields.parameterAt(i);
+        for (int i = 0; i < torender.parameters.size(); ++i) {
+          UIParameter param = torender.parameters.parameterAt(i);
           RenderUtil.dumpHiddenField(param.name, param.value, xmlw);
         }
         // override "nextpos" - form is expected to contain numerous nested
@@ -274,11 +295,10 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         RenderUtil.dumpTillLump(lumps, close.lumpindex + 1,
             outerclose.lumpindex + 1, pos);
       }
-   
+
     }
 
     return nextpos;
   }
-
 
 }

@@ -4,15 +4,34 @@
 package uk.org.ponder.rsf.viewstate;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import uk.org.ponder.rsf.components.ParameterList;
+import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.stringutil.StringList;
 import uk.org.ponder.util.Logger;
 
 public class URLUtil {
-  
+  public static ParameterList mapToParamList(Map toconvert) {
+    ParameterList togo = new ParameterList();
+    for (Iterator keyit = toconvert.keySet().iterator(); keyit.hasNext();) {
+      String key = (String) keyit.next();
+      Object value = toconvert.get(key);
+      if (value instanceof String) {
+        togo.add(new UIParameter(key, (String) value));
+      }
+      else if (value instanceof String[]) {
+        String[] values = (String[]) value;
+        for (int i = 0; i < values.length; ++ i) {
+          togo.add(new UIParameter(key, values[i]));
+        }
+      }
+    }
+    return togo;
+  }
 
   public static ViewParameters parse(ViewParametersParser parser, String reducedURL) {
     int qpos = reducedURL.indexOf('?');
@@ -24,7 +43,7 @@ public class URLUtil {
     return parser.parse(pathinfo, params); 
   }
 
-  public static void paramsToMap(String extraparams,
+  public static Map paramsToMap(String extraparams,
         Map target) {
       Logger.log
           .info("Action link requires extra parameters from " + extraparams);
@@ -39,6 +58,7 @@ public class URLUtil {
         Logger.log.info("Added extra parameter key " + key + " value " + value
             + " to command link");
       }
+      return target;
     }
 
   /** Returns the "mid-portion" of the URL corresponding to these parameters,

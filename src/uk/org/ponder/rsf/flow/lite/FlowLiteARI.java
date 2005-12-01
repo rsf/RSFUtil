@@ -3,21 +3,33 @@
  */
 package uk.org.ponder.rsf.flow.lite;
 
-import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.hashutil.EighteenIDGenerator;
-import uk.org.ponder.reflect.MethodInvokingProxy;
-import uk.org.ponder.reflect.ReflectiveCache;
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterpreter;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
-import uk.org.ponder.util.Logger;
+
+/** The ActionResultInterpreter in force when a "RSF Flow Lite" is governing
+ * the current request sequence. It is only invoked when non-empty contents
+ * are discovered in the FlowIDHolder by the FlowLiteARIResolver, and thus
+ * ensures that we only receive results from a FlowActionProxyBean, which
+ * returns ViewableState objects referring to the next view state to be shown. 
+ * @author Antranig Basman (antranig@caret.cam.ac.uk)
+ */
 
 public class FlowLiteARI implements ActionResultInterpreter {
-
   // less hassle to keep this here than manage as a dependency....
   private static EighteenIDGenerator idgenerator = new EighteenIDGenerator();
+  private ActionResultInterpreter defaultari;
 
-  public ARIResult interpretActionResult(ViewParameters incoming, String result) {
+  public void setDefaultARI(ActionResultInterpreter defaultari) {
+    this.defaultari = defaultari;
+  }
+  
+  public ARIResult interpretActionResult(ViewParameters incoming, Object result) {
+    if (!(result instanceof ViewableState)) {
+      return defaultari.interpretActionResult(incoming, result);
+    }
+    else {
     ARIResult togo = new ARIResult();
     togo.resultingview = incoming.copyBase();
     if (result.equals(ARIResult.FLOW_START)) {
@@ -26,8 +38,7 @@ public class FlowLiteARI implements ActionResultInterpreter {
     }
     else {
       // it is an error not to be passed a ViewableState
-      ViewableState state = (ViewableState) flow.stateFor(result);
-      togo.resultingview.viewID = state.viewID;
+      ViewableState state = (ViewableState) result;
       
       if (state instanceof EndState) {
         togo.propagatebeans = ARIResult.FLOW_END;
@@ -37,6 +48,7 @@ public class FlowLiteARI implements ActionResultInterpreter {
       }
     }
     return togo;
+  }
   }
 
 }

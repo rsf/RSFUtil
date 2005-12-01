@@ -49,7 +49,7 @@ public class SVESorter {
       SubmittedValueEntry entry = rsvc.entryAt(i);
       elmap.recordWrite(entry.valuebinding, entry);
       if (entry.newvalue instanceof String) {
-        String readel = BeanUtil.stripEL((String) entry.newvalue);
+        String readel = (String) entry.newvalue;
         if (readel != null) {
           elmap.recordRead(readel, entry);
         }
@@ -69,6 +69,7 @@ public class SVESorter {
   }
 
   private void attemptEvaluate(SubmittedValueEntry entry) {
+    emitted.add(entry);
     String readpath = elmap.getReadPath(entry);
     if (readpath != null) {
       scheduleWrites(readpath);
@@ -77,7 +78,6 @@ public class SVESorter {
     if (writepath != null) {
       scheduleWrites(writepath);
     }
-    emitted.add(entry);
     output.add(entry);
   }
 

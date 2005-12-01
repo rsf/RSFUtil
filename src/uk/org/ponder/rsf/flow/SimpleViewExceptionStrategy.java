@@ -8,7 +8,10 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParametersParser;
 
 /** A simple exception strategy which diverts to a specified view in the 
- * even of any exception
+ * event of any exception. The view is specified in the form of a "reduced URL"
+ * compactly specifying a ViewParameters object. This contains the "stub" portion
+ * of the URL starting at the part specifying the viewID, and including any 
+ * navigational parameters.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  *
  */

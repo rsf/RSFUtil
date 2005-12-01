@@ -20,7 +20,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
  */
 
 public class ViewGenerator {
-  private ViewCollection viewcollection;
+  private ViewResolver viewresolver;
   private View view;
   private ComponentChecker checker;
   private ViewParameters viewparams;
@@ -35,12 +35,8 @@ public class ViewGenerator {
     return view;
   }
 
-  public void setViewCollection(ViewCollection viewcollection) {
-    this.viewcollection = viewcollection;
-  }
-  
-  public ViewCollection getViewCollection() {
-    return viewcollection;
+  public void setViewResolver(ViewResolver viewlocator) {
+    this.viewresolver = viewlocator;
   }
   
   public void setComponentChecker(ComponentChecker checker) {
@@ -64,7 +60,7 @@ public class ViewGenerator {
   private View generateView(ViewParameters viewparams, ComponentChecker checker) {
     View view = new View();
     view.formmodel = formmodel;
-    List producers = viewcollection.getProducers(viewparams.viewID);
+    List producers = viewresolver.getProducers(viewparams.viewID);
 
     if (producers != null) {
       for (int i = 0; i < producers.size(); ++i) {

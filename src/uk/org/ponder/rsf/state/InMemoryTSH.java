@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Map;
 
 import uk.org.ponder.reflect.ReflectiveCache;
+import uk.org.ponder.util.Logger;
 
 /**
  * The repository of all inter-request state in RSF. This is held in entries of
@@ -26,23 +27,31 @@ public class InMemoryTSH implements TokenStateHolder {
   
   private int expiryseconds;
   
-  /** Returns any TokenRequestState object with the specified ID.
-   * @return The required TRS object, or <code>null</code> if none is stored.
-   */
-  public TokenState getTokenState(String tokenID) {
+  TokenState getTokenStateRaw(String tokenID) {
     return (TokenState) tokencache.get(tokenID);
   }
   
+  /** Returns any TokenRequestState object with the specified ID.
+   * @return The required TRS object, or <code>null</code> if none is stored.
+   */
+  public Object getTokenState(String tokenID) {
+    TokenState state = getTokenStateRaw(tokenID);
+    return state == null? null : state.payload;
+  }
+  
   /** Stores the supplied TokenRequestState object in the repository */
-  public void putTokenState(TokenState trs) {
+  public void putTokenState(String tokenID, Object payload) {
+    TokenState trs = new TokenState();
+    trs.payload = payload;
+    trs.tokenID = tokenID;
     Date current = new Date();
     long forwardsecs = current.getTime() + expiryseconds * 1000;
     trs.expiry = new Date(forwardsecs);
     tokencache.put(trs.tokenID, trs);
-  
   }
 
   public void clearTokenState(String tokenID) {
+    Logger.log.info("Token state cleared from InMemoryTSH for token " + tokenID);
     tokencache.remove(tokenID);
   }
   

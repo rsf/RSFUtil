@@ -41,7 +41,7 @@ public class RSFUtil {
     if (enclosing == null) {
       throw new AssertionException("Component " + local.getFullID() + " has no form parent!");
     }
-    enclosing.hiddenfields.add(new UIParameter(name, value));
+    enclosing.parameters.add(new UIParameter(name, value));
   }
   
   /** Determines whether the supplied component has a bound value, and hence
@@ -61,17 +61,18 @@ public class RSFUtil {
   public static String computeFullID(UIComponent tocompute) {
     StringBuffer togo = new StringBuffer();
     UIComponent move = tocompute;
-    while (move.parent != null) {
-      if (move instanceof UIContainer) {
+    if (!(move instanceof UIBranchContainer)) {
+      togo.insert(0, move.ID); // the tail part of an ID is always the component's
+                             // leaf ID itself.
+    }
+    while (move.parent != null) { // ignore the top-level viewroot Branch 
+      
+      if (move instanceof UIBranchContainer) {
         // only insert naming section for concrete container. 
-        if (move.getClass() == UIBranchContainer.class) {
+        //if (move.getClass() == UIBranchContainer.class) {
           UIBranchContainer movec = (UIBranchContainer)move;
           togo.insert(0, getFullIDSegment(movec.ID.toString(), movec.localID));
-        }
-      }
-      else {
-        // this will surely be the leaf and requires no colon to separate forwards.
-        togo.insert(0, move.ID);
+        //}
       }
       move = move.parent;
     }
