@@ -60,6 +60,16 @@
       <name>${pom.name} User List</name>
     </mailingList>
   </mailingLists>
+    <gumpRepositoryId>caret-saffron-svn</gumpRepositoryId>
+    <siteAddress>saffron.caret.cam.ac.uk</siteAddress>
+    <siteDirectory>/home/gump/project-websites/RSFUtil/</siteDirectory>
+    <distributionSite>saffron.caret.cam.ac.uk</distributionSite>
+    <distributionDirectory>/home/gump/project-downloads/RSFUtil</distributionDirectory>
+    <repository>
+        <connection>scm:svn:https://saffron.caret.cam.ac.uk/svn/projects/RSFUtil/trunk</connection>
+        <developerConnection>scm:svn:https://saffron.caret.cam.ac.uk/svn/projects/RSFUtil/trunk</developerConnection>
+        <url>https://saffron.caret.cam.ac.uk/cgi-bin/viewcvs.cgi/</url>
+    </repository>
   
   <build>
     <nagEmailAddress>andrew@caret.cam.ac.uk</nagEmailAddress>
