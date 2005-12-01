@@ -7,12 +7,19 @@ import uk.org.ponder.rsf.state.SubmittedValueEntry;
 
 /**
  * Represents a control that will cause a non-idempotent (POST) request to the
- * server.
+ * server. The basic case where the command is rendered using a piece of
+ * non-bound text is handled by filling in the "commandtext" field. For more
+ * complex command contents including bound ones, leave this field as null 
+ * and add rendering components as childen of the command. You may NOT set the
+ * (navigation) target of a UICommand, by RSF design it will ALWAYS (in the
+ * case of an HTTP/HTML render system) post to the same URL as the page on
+ * which it is contained.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
-public class UICommand extends UIBoundString {
+public class UICommand extends UISimpleContainer {
   public String methodbinding;
+  public String commandtext;
   /**
    * Creates a command link initiating the specified method binding on trigger,
    * but also backed by infrastructure to produce a GET redirect to the original
@@ -31,12 +38,11 @@ public class UICommand extends UIBoundString {
   public static UICommand make(UIContainer parent, String ID, String text,
       String methodbinding) {
     UICommand togo = new UICommand();
-    togo.setValue(text);
+    togo.commandtext = text;
     togo.ID = ID;
     togo.methodbinding = methodbinding;
     // TODO: do this at fixup
-    togo.parameters.add(new UIParameter(SubmittedValueEntry.FAST_TRACK_ACTION,
-        methodbinding));
+  
 //    if (parent.getActiveForm() == null) {
 //      throw new UniversalRuntimeException("Component " + parent
 //          + " does not have a form parent");

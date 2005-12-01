@@ -6,6 +6,7 @@
   <taghandler xmlname="id" xml-form="attribute">
     <fieldname>id</fieldname>
   </taghandler>
+  <taghandler xmlname="autowire" xml-form="attribute" access-type="ignore"/>
   <taghandler xmlname="view-state">
     <setmethod>addState</setmethod>
     <javaclass>uk.org.ponder.rsf.flow.lite.ViewState</javaclass>

@@ -16,6 +16,7 @@ public class SimpleViewParameters extends ViewParameters {
   private static FieldHash fieldhash = new FieldHash(SimpleViewParameters.class);
   static {
     fieldhash.addField("flowtoken");
+    fieldhash.addField("endflow");
     fieldhash.addField("errortoken");
     fieldhash.addField("errorredirect");
   }

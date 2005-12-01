@@ -78,10 +78,16 @@ public class BasicTemplateResolver implements TemplateResolver, ApplicationConte
         fullpath = basedir + viewparams.viewID + suffix;
         is = tryLoadTemplate(fullpath, true);
       }
+      try {
       template = new XMLViewTemplate();
       template.parse(is);
       template.setRelativePath(basedir.substring(1));
       templates.put(viewpath, template);
+      }
+      catch (Exception e) {
+        throw UniversalRuntimeException.accumulate(e, 
+            "Error parsing view template file " + fullpath);
+      }
     }
     return template;
   }

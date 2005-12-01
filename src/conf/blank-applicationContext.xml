@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
 	"http://www.springframework.org/dtd/spring-beans.dtd">
-<!-- The purpose of this file is to provide an "empty" implementation of
+<!-- The purpose of this file is to provide an "default" completion of
   the application scope portion of 
   RSF's Spring API, so that the project will validate self-consistently in,
-  for example, Spring IDE. It also serves as useful documentation for the 
-  application-defined dependencies of RSF. -->
+  for example, Spring IDE.  Dependencies resolved here are ones that clients
+  might well want to (and in many cases must) override, as opposed to more 
+  core dependencies in the main RSF configuration file rsf-config.xml. -->
 <beans>
   <bean id="messagelocator" class="uk.org.ponder.errorutil.BlankMessageLocator">
-  </bean>
-  
-  <bean id="viewcollection" class="uk.org.ponder.rsf.view.ViewCollection">
   </bean>
   
   <bean id="viewparamsexemplar"
@@ -24,18 +22,36 @@
     </property>
   </bean>
   
+  <bean id="xmlviewresolver" class="uk.org.ponder.rsf.view.XMLViewResolver">
+    <property name="basePath">
+      <value>/WEB-INF/producers/</value>
+    </property>
+    <property name="XMLProvider">
+      <ref bean="xmlprovider"/>
+    </property>
+    <property name="templateExpander">
+      <ref bean="templateexpander"/>
+    </property>
+  </bean>
+  
   <bean id="actionresultinterpreter"
     class="uk.org.ponder.rsf.flow.NullActionResultInterpreter">
   </bean>
   
-  <bean name="requestwriteablebeans" class="uk.org.ponder.stringutil.StringList">
+  <bean name="requestAddressibleBeans" class="uk.org.ponder.stringutil.StringList">
     <constructor-arg>
       <list>
-        
+        <value>flowLite-flowIDHolder</value>
       </list>
     </constructor-arg>
   </bean>
   
+  <bean id="staticviews" class="java.util.ArrayList">
+    <constructor-arg>
+      <list>
+      </list> 
+    </constructor-arg>
+  </bean>
   
   <!-- The two properties of sbup
   are only relevant to users of the direct UI, where the URL that it appears
@@ -63,22 +79,35 @@
     Override it with the following definition in your own requestScopeConfig and define
     the two URL values above in order to use static URL determination -->
   <bean id="staticbaseurlprovider"> 
-    <!-- CONFIG The URL under which JSF-rendered pages served directly by FlowTalk
+    <!-- CONFIG The URL under which RSF-rendered pages served directly 
     will be made visible -->
     <property name="baseURL">
       <ref bean="directuibaseurl"/>
     </property>
-    <!-- CONFIG The URL under which static resource served by FlowTalk will
-    be made visible -->
+    <!-- CONFIG The URL under which static resources will be made visible -->
     <property name="resourceBaseURL">
       <ref bean="directuiresourcebaseurl"/>
     </property>
   </bean>
 
+  <!-- This bean MUST be overriden with your default view, in reduced form
+    beginning with / -->
+  <bean id="defaultview" class="java.lang.String">
+    <constructor-arg>
+      <value>/DefaultView</value>
+    </constructor-arg>
+  </bean>
   
-  <bean id="viewexceptionstrategy" class="uk.org.ponder.rsf.flow.SimpleViewExceptionStrategy">
-    <property name="viewParametersParser">
-      <ref bean="viewparametersparser"/>
+  <bean id="URLPreservingBeanSpecs" class="uk.org.ponder.springutil.StringListFactory">
+    <property name="strings">
+      <value>flowstateid|flowLite-flowIDHolder.requestFlowStateID</value>
     </property>
   </bean>
+  
+  <bean id="copyPreservingBeans" class="uk.org.ponder.springutil.StringListFactory">
+    <property name="strings">
+      <value>flowLite-flowIDHolder</value>
+    </property>
+  </bean>
+  
 </beans>

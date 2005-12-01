@@ -1,10 +1,9 @@
 /*
  * Created on Nov 17, 2005
  */
-package uk.org.ponder.rsf.processor;
+package uk.org.ponder.rsf.componentprocessor;
 
 import uk.org.ponder.errorutil.MessageLocator;
-import uk.org.ponder.rsf.componentprocessor.ComponentProcessor;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIMessage;
 

@@ -1,9 +1,8 @@
 /*
  * Created on Nov 17, 2005
  */
-package uk.org.ponder.rsf.processor;
+package uk.org.ponder.rsf.componentprocessor;
 
-import uk.org.ponder.rsf.componentprocessor.ComponentProcessor;
 import uk.org.ponder.rsf.components.ParameterList;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIComponent;
@@ -23,7 +22,7 @@ public class BindingFixer implements ComponentProcessor {
   
   public void processComponent(UIComponent toprocess) {
     if (toprocess instanceof UIForm) {
-      processParameterList(((UIForm)toprocess).hiddenfields);
+      processParameterList(((UIForm)toprocess).parameters);
     }
     else if (toprocess instanceof UICommand) {
       processParameterList(((UICommand)toprocess).parameters);

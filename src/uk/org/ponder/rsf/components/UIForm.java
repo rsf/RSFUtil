@@ -28,7 +28,8 @@ public class UIForm extends UISimpleContainer {
   public ParameterList parameters = new ParameterList();
   /** A list of the FullIDs of the all controls to be submitted by this form.
    * If this is left blank(empty), it will be filled in by a FormFixer 
-   * (currently by looking for all nested controls that are bound).
+   * (currently by looking for all nested controls that are bound). Each of 
+   * these controls will be either a UICommand or a UIBound.
    */ 
   // TODO: The SAXalizer cannot cope with container members that are null,
   // but we would really like this being EMPTY = NULL to be the condition for

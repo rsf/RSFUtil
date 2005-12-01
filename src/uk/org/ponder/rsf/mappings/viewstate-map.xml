@@ -6,6 +6,7 @@
    <taghandler xmlname="view" xml-form="attribute">
     <fieldname>viewID</fieldname>
   </taghandler>
+  <taghandler xmlname="autowire" xml-form="attribute" access-type="ignore"/>
   <taghandler xmlname="transition">
     <fieldname>transitions</fieldname>
     <javaclass>uk.org.ponder.rsf.flow.lite.Transition</javaclass>

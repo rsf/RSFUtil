@@ -1,12 +1,11 @@
 /*
  * Created on Nov 1, 2005
  */
-package uk.org.ponder.rsf.processor;
+package uk.org.ponder.rsf.componentprocessor;
 
 import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.beanutil.BeanUtil;
-import uk.org.ponder.rsf.componentprocessor.ComponentProcessor;
 import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIParameter;
@@ -51,8 +50,8 @@ public class ValueFixer implements ComponentProcessor {
       if (sve != null) {
         toprocess.updateValue(sve.newvalue);
       }
-      else if (toprocess.valuebinding != null && toprocess.acquireValue() == null 
-          || UITypes.isPlaceholder(toprocess.acquireValue())) {
+      else if (toprocess.valuebinding != null && (toprocess.acquireValue() == null 
+          || UITypes.isPlaceholder(toprocess.acquireValue()))) {
         // a bound component ALWAYS contains a value of the correct type.
         Object oldvalue = toprocess.acquireValue();
         String stripbinding = BeanUtil.stripEL(toprocess.valuebinding);

@@ -64,7 +64,7 @@ public class RSVCApplier {
     darapplier.applyAlterations(rbl, toapply, errors);
   }
   
-  public String invokeAction(String actionbinding) {
-    return (String) darapplier.invokeBeanMethod(actionbinding, rbl);
+  public Object invokeAction(String actionbinding) {
+    return darapplier.invokeBeanMethod(actionbinding, rbl);
   }
 }

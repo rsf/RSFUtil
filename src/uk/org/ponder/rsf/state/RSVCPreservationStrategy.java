@@ -3,25 +3,25 @@
  */
 package uk.org.ponder.rsf.state;
 
+import org.springframework.beans.factory.BeanNameAware;
+
 import uk.org.ponder.beanutil.BeanLocator;
-import uk.org.ponder.beanutil.BeanUtil;
 import uk.org.ponder.beanutil.WriteableBeanLocator;
 import uk.org.ponder.stringutil.StringList;
 import uk.org.ponder.util.Logger;
+import uk.org.ponder.util.UniversalRuntimeException;
 
 // This seems itself to be a request-scope bean.
-public class RSVCPreservationStrategy implements StatePreservationStrategy {
+public class RSVCPreservationStrategy implements StatePreservationStrategy,
+  BeanNameAware{
 
   private TokenStateHolder holder;
   private StringList beannames;
 
   private RSVCApplier rsvcapplier;
   private RequestSubmittedValueCache requestrsvc;
-  
-  private static class RSVCTokenState extends TokenState {
-    RequestSubmittedValueCache rsvc = new RequestSubmittedValueCache();
-  }
-  
+  private String ourbeanname;
+    
   public void setPreservingBeans(StringList beannames) {
     this.beannames = beannames;
   }
@@ -40,45 +40,63 @@ public class RSVCPreservationStrategy implements StatePreservationStrategy {
   // This is called at the END of the request cycle, assuming there is an
   // ongoing request.
   public void preserve(BeanLocator source, String tokenid) {
+    String token = ourbeanname + tokenid;
     // OK. assume anything ALREADY there for this token needs continued 
     //preserving, with accretion.
-    RSVCTokenState tokenstate = (RSVCTokenState) holder.getTokenState(tokenid);
-    if (tokenstate != null) {
-      tokenstate = new RSVCTokenState();
-      tokenstate.tokenID = tokenid;
+    RequestSubmittedValueCache tokenstate = 
+      (RequestSubmittedValueCache) holder.getTokenState(ourbeanname + tokenid);
+    if (tokenstate == null) {
+      tokenstate = new RequestSubmittedValueCache();
     }
     int entries = requestrsvc.entries.size();
+    boolean[] done = new boolean[entries];
+    // the initial set of "dependent EL" is the set of bean names we were 
+    // asked to persist.
     StringList dependentel = beannames.copy();
-    for (int i = entries - 1; i >= 0; -- i) {
-      SubmittedValueEntry sve = requestrsvc.entryAt(i);
-      for (int j = 0; j < dependentel.size(); ++ i) {
-        if (sve.valuebinding.startsWith(dependentel.stringAt(j))) {
-          tokenstate.rsvc.addEntry(sve);
-        }
-        // "funnel outward" dependencies to everything (hopefully just transit
-        // beans) that have been used to initialise preserving beans.
-        if (sve.isEL) {
-          String el = BeanUtil.stripEL((String) sve.newvalue);
-          dependentel.add(el);
+    for (int i = 0; i < dependentel.size(); ++ i) {
+      String dep = dependentel.stringAt(i);
+      
+      for (int j = 0; j < entries; ++ j) {
+        if (done[j]) continue;
+        SubmittedValueEntry sve = requestrsvc.entryAt(j);
+        if (sve.valuebinding.startsWith(dep)) {
+          tokenstate.addEntry(sve);
+          Logger.log.info("RSVCPres saving SVE valuebinding " + sve.valuebinding + " newvalue " + sve.newvalue);
+          done[j] = true;
+          // "funnel outward" dependencies to everything (hopefully just transit
+          // beans) that have been used to initialise preserving beans.
+          if (sve.isEL) {
+            String el = (String) sve.newvalue;
+            dependentel.add(el);
+          }
         }
       }
-     
     }
-    holder.putTokenState(tokenstate);
+    holder.putTokenState(token, tokenstate);
+    Logger.log.info("RSVCPres saved " + tokenstate.entries.size() + " entries to token " + token);
   }
 
   public void restore(WriteableBeanLocator target, String tokenid) {
-    RSVCTokenState tokenstate = (RSVCTokenState) holder.getTokenState(tokenid);
+    String token = ourbeanname + tokenid;
+    RequestSubmittedValueCache tokenstate = 
+      (RequestSubmittedValueCache) holder.getTokenState(token);
     if (tokenstate == null) {
-      Logger.log.warn("Client requested restoration of expired flow state with ID " + tokenid);
+      throw UniversalRuntimeException.accumulate(new ExpiredFlowException(), 
+          "Client requested restoration of expired flow state with ID " + tokenid
+          +" which has expired");
     }
     else {
-      rsvcapplier.applyValues(tokenstate.rsvc);
+      Logger.log.info("RSVCPres recovered " + tokenstate.entries.size() + " entries from token " + token);
+      rsvcapplier.applyValues(tokenstate);
     }
   }
 
   public void clear(String tokenid) {
-    holder.clearTokenState(tokenid);    
+    holder.clearTokenState(ourbeanname + tokenid);    
+  }
+
+  public void setBeanName(String name) {
+    this.ourbeanname = name;
   }
 
 }

@@ -25,7 +25,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
-public class GetHandler {
+public class RenderHandler {
   private ViewExceptionStrategy ves;
   private ErrorStateManager errorstatemanager;
   private ViewParameters viewparams;
@@ -51,7 +51,7 @@ public class GetHandler {
     // YES, reach into the original request! somewhat bad...
     viewparams.errorredirect = null;
     try {
-      GetHandlerImpl gethandlerimpl = (GetHandlerImpl) beanlocator.locateBean("gethandlerimpl");
+      RenderHandlerImpl gethandlerimpl = (RenderHandlerImpl) beanlocator.locateBean("gethandlerimpl");
       gethandlerimpl.handle(pos);
     
     }

@@ -21,7 +21,7 @@ public class AutoBaseURLProvider implements BaseURLProvider {
   public void init() {
     sbup = new StaticBaseURLProvider();
     String baseurl = ServletUtil.getBaseURL2(request);
-    String resourcebaseurl = request.getServletPath();
+    String resourcebaseurl = ServletUtil.getContextBaseURL2(request);
     sbup.setBaseURL(baseurl);
     sbup.setResourceBaseURL(resourcebaseurl);
 

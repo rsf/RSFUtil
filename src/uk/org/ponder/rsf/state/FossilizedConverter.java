@@ -3,6 +3,9 @@
  */
 package uk.org.ponder.rsf.state;
 
+import org.springframework.beans.BeanUtils;
+
+import uk.org.ponder.beanutil.BeanUtil;
 import uk.org.ponder.conversion.ConvertUtil;
 import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIDeletionBinding;
@@ -68,11 +71,14 @@ public class FossilizedConverter {
     SubmittedValueEntry togo = new SubmittedValueEntry();
     togo.isEL = value.charAt(0) == EL_BINDING;
     int endcurly = value.indexOf('}');
-    togo.valuebinding = value.substring(1, endcurly + 1);
+    togo.valuebinding = value.substring(3, endcurly);
     if (key.equals(DELETION_KEY)) {
       togo.isdeletion = true;
     }
     togo.newvalue = value.substring(endcurly + 1);
+    if (togo.isEL) {
+      togo.newvalue = BeanUtil.stripEL((String) togo.newvalue);
+    }
     // such a binding will hit the data model via the RSVCApplier.
     return togo;
   }
@@ -92,12 +98,12 @@ public class FossilizedConverter {
     int firsthash = value.indexOf('#');
     String uitypename = value.substring(1, firsthash);
     int endcurly = value.indexOf('}');
-    togo.valuebinding = value.substring(firsthash, endcurly + 1);
+    togo.valuebinding = value.substring(firsthash + 2, endcurly);
     String oldvaluestring = value.substring(endcurly + 1);
     
     if (oldvaluestring.length() > 0) {
       UIType uitype = UITypes.forName(uitypename);
-      Class uiclass = uitype == null? null :uitype.getClass();
+      Class uiclass = uitype == null? null :uitype.getPlaceholder().getClass();
       togo.oldvalue = ConvertUtil.parse(oldvaluestring, xmlprovider, uiclass);
     }
     
@@ -117,10 +123,10 @@ public class FossilizedConverter {
   public void computeELBinding(UIELBinding binding) {
     binding.name = ELBINDING_KEY;
     if (binding.elrvalue != null) {
-      binding.value = EL_BINDING + binding.elrvalue;
+      binding.value = EL_BINDING + binding.valuebinding + binding.elrvalue;
     }
     else {
-      binding.value = OBJECT_BINDING + ConvertUtil.render(binding.objrvalue, xmlprovider);
+      binding.value = OBJECT_BINDING + binding.valuebinding + ConvertUtil.render(binding.objrvalue, xmlprovider);
     }
   }
   

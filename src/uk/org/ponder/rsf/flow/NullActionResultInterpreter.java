@@ -12,7 +12,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  */
 public class NullActionResultInterpreter implements ActionResultInterpreter {
 
-  public ARIResult interpretActionResult(ViewParameters incoming, String result) {
+  public ARIResult interpretActionResult(ViewParameters incoming, Object result) {
     ARIResult togo = new ARIResult();
     togo.resultingview = incoming; 
     togo.propagatebeans = ARIResult.FLOW_END;

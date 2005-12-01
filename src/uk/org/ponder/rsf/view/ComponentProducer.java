@@ -1,6 +1,5 @@
 package uk.org.ponder.rsf.view;
 
-import uk.org.ponder.errorutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 

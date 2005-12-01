@@ -6,4 +6,5 @@
   <taghandler xmlname="method" xml-form="attribute">
     <fieldname>method</fieldname>
   </taghandler>
+  <taghandler xmlname="autowire" xml-form="attribute" access-type="ignore"/>
 </mapperentry>

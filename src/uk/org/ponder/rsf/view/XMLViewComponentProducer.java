@@ -4,11 +4,13 @@
 package uk.org.ponder.rsf.view;
 
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.expander.TemplateExpander;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 public class XMLViewComponentProducer implements ViewComponentProducer {
   private String viewID;
-  private UIContainer container;
+  private UIContainer templatecontainer;
+  private TemplateExpander templateexpander;
   public void setViewID(String viewID) {
     this.viewID = viewID;
   }
@@ -16,14 +18,17 @@ public class XMLViewComponentProducer implements ViewComponentProducer {
     return viewID;
   }
 
-  public void setContainer(UIContainer container) {
-    this.container = container;
+  public void setTemplateExpander(TemplateExpander templateexpander) {
+    this.templateexpander = templateexpander;
+  }
+  
+  public void setTemplateContainer(UIContainer templatecontainer) {
+    this.templatecontainer = templatecontainer;
   }
   
   public void fillComponents(UIContainer tofill, 
       ViewParameters origviewparams, ComponentChecker checker) {
-    // TODO Auto-generated method stub
-    
+    templateexpander.expandTemplate(tofill, templatecontainer);
   }
 
 }

@@ -1,9 +1,8 @@
 /*
  * Created on Nov 2, 2005
  */
-package uk.org.ponder.rsf.processor;
+package uk.org.ponder.rsf.componentprocessor;
 
-import uk.org.ponder.rsf.componentprocessor.ComponentProcessor;
 import uk.org.ponder.rsf.components.ComponentList;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIComponent;
@@ -18,6 +17,8 @@ import uk.org.ponder.rsf.util.RSFUtil;
  * form model whereby ALL nested child controls of the form are submitted. 
  * This fixer will perform no action if it discovers that the "submittingcontrols"
  * fields of {@see uk.org.ponder.rsf.components.UIForm} has already been filled in.
+ * <p>
+ * This fixer is HTML/HTTP SPECIFIC, and should not execute for other idioms.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  *
  */
@@ -41,12 +42,18 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
       if (RSFUtil.isBound(child)) {
         toprocess.submittingcontrols.add(child.getFullID());
       }
+      // TODO: clarify UIForm/UICommand relationship for WAP-style forms. 
+      // Who is to be master!
+      // we expect that UIForm -> do, UICommand -> go 
+      // http://www.codehelp.co.uk/html/wap1.html
       else if (child instanceof UICommand) {
-        // TODO: clarify UIForm/UICommand relationship for WAP-style forms. 
-        // Who is to be master!
+        toprocess.submittingcontrols.add(child.getFullID());
+       // add the notation explaining which control is submitting, when it does
         UICommand command = (UICommand) child;
         command.parameters.add(new UIParameter(SubmittedValueEntry.SUBMITTING_CONTROL, 
-            toprocess.getFullID()));
+            child.getFullID()));
+        command.parameters.add(new UIParameter(SubmittedValueEntry.FAST_TRACK_ACTION,
+            command.methodbinding));
       }
       else if (child instanceof UIBranchContainer) {
         registerContainer(toprocess, (UIBranchContainer) child);

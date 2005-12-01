@@ -5,11 +5,16 @@ package uk.org.ponder.rsf.state;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+
+import org.springframework.beans.factory.BeanNameAware;
 
 import uk.org.ponder.beanutil.BeanLocator;
+import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.beanutil.WriteableBeanLocator;
 import uk.org.ponder.stringutil.StringList;
 import uk.org.ponder.util.Logger;
+import uk.org.ponder.util.UniversalRuntimeException;
 
 /** If the target beans are serializable, then so will be the entry sent 
  * to the tokenstateholder. If so this state may be passed to a 
@@ -20,13 +25,12 @@ import uk.org.ponder.util.Logger;
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  *
  */
-public class BeanCopyPreservationStrategy implements StatePreservationStrategy {
+public class BeanCopyPreservationStrategy implements StatePreservationStrategy,
+  BeanNameAware {
   private StringList beannames;
   private TokenStateHolder holder;
-
-  private static class BeanCopyTokenState extends TokenState {
-    HashMap beans = new HashMap();
-  }
+  private String ourbeanname;
+  private BeanModelAlterer alterer;
 
   public void setPreservingBeans(StringList beannames) {
     this.beannames = beannames;
@@ -36,32 +40,50 @@ public class BeanCopyPreservationStrategy implements StatePreservationStrategy {
     this.holder = holder;
   }
   
+  public void setBeanModelAlterer(BeanModelAlterer alterer) {
+    this.alterer = alterer;
+  }
+  
   public void preserve(BeanLocator source, String tokenid) {
-    BeanCopyTokenState bcts = new BeanCopyTokenState();
-    bcts.tokenID = tokenid;
-    
+    HashMap beans = new HashMap();
+    int saved = 0;
     for (int i = 0; i < beannames.size(); ++ i) {
       String beanname = beannames.stringAt(i);
-      bcts.beans.put(beanname, source.locateBean(beanname));
+      Object bean = alterer.getBeanValue(beanname, source);
+      if (bean != null) {
+        beans.put(beanname, bean);
+        Logger.log.info("BeanCopy preserved to path " + beanname + ": "+ bean);
+        ++saved;
+      }
     }
-    holder.putTokenState(bcts);
+    String token = ourbeanname + tokenid;
+    holder.putTokenState(token, beans);
+    Logger.log.info("BeanCopy saved " + saved + " beans to token " + token);
   }
 
   public void restore(WriteableBeanLocator target, String tokenid) {
-    BeanCopyTokenState bcts = (BeanCopyTokenState) holder.getTokenState(tokenid);
-    if (bcts == null) {
-      Logger.log.warn("Client requested restoration of expired flow state with ID " + tokenid);
+    String token = ourbeanname + tokenid;
+    Logger.log.info("BeanCopy looking for state token " + token);
+    Map beans = (Map) holder.getTokenState(token);
+    if (beans == null) {
+      throw UniversalRuntimeException.accumulate(new ExpiredFlowException(), 
+          "Client requested restoration of expired flow state with ID " + tokenid);
     }
     else {
-      for (Iterator keyit = bcts.beans.keySet().iterator(); keyit.hasNext();) {
+      for (Iterator keyit = beans.keySet().iterator(); keyit.hasNext();) {
         String beanname = (String) keyit.next();
-        target.set(beanname, bcts.beans.get(beanname));
+        Object bean = beans.get(beanname);
+        alterer.setBeanValue(beanname, target, bean);
       }
     }    
   }
 
   public void clear(String tokenid) {
-    holder.clearTokenState(tokenid);
+    holder.clearTokenState(ourbeanname + tokenid);
+  }
+
+  public void setBeanName(String name) {
+    this.ourbeanname = name;
   }
 
 }

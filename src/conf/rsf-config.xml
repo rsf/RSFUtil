@@ -31,18 +31,23 @@
 			<ref bean="mappablexmlprovider"></ref>
 		</property>
 	</bean>
-  <!--
-  <bean id="saxalizerMappingContext" factory-bean="mappingloadmanager"
-    factory-method="getSAXalizerMappingContext">   
-  </bean>
-  -->
+  
 	<bean id="xmlprovider" factory-bean="mappingloadmanager" 
     factory-method="getXMLProvider"></bean>
   
     
-  <bean id="darapplier" class="uk.org.ponder.mapping.DARApplier">
+  <bean id="DARApplier" class="uk.org.ponder.mapping.DARApplier">
     <property name="SAXalXMLProvider">
       <ref local="mappablexmlprovider"/>
+    </property>
+    <property name="reflectiveCache">
+      <ref bean="reflectivecache"/>
+    </property>
+  </bean>
+  
+  <bean id="deepbeancloner" class="uk.org.ponder.reflect.DeepBeanCloner">
+    <property name="mappingContext">
+      <ref bean="saxalizermappingcontext"/>
     </property>
     <property name="reflectiveCache">
       <ref bean="reflectivecache"/>
@@ -56,13 +61,13 @@
     </property>
   </bean>
   
-  <bean id="bindingfixer" class="uk.org.ponder.rsf.processor.BindingFixer">
+  <bean id="bindingfixer" class="uk.org.ponder.rsf.componentprocessor.BindingFixer">
     <property name="fossilizedConverter">
       <ref bean="fossilizedconverter"/>
     </property>
   </bean>
   
-  <bean id="messagefixer" class="uk.org.ponder.rsf.processor.MessageFixer">
+  <bean id="messagefixer" class="uk.org.ponder.rsf.componentprocessor.MessageFixer">
     <property name="messageLocator">
       <ref bean="messagelocator"/>
     </property>
@@ -74,14 +79,14 @@
   <bean id="rsacresourcelocator" class="uk.org.ponder.rsac.servlet.ServletRSACResourceLocator">
   </bean>
   
-  <bean id="rsacbeanfactoryfactory"
-    class="uk.org.ponder.rsac.RSACBeanFactoryFactory">
+  <bean id="rsacbeanlocatorfactory"
+    class="uk.org.ponder.rsac.RSACBeanLocatorFactory">
     <property name="RSACResourceLocator">
       <ref local="rsacresourcelocator"/>
     </property>
   </bean>
    
-  <bean id="rsacbeanlocator" factory-bean="rsacbeanfactoryfactory"
+  <bean id="rsacbeanlocator" factory-bean="rsacbeanlocatorfactory"
     factory-method="getRSACBeanLocator">
     <property name="reflectiveCache">
       <ref bean="reflectivecache"/>
@@ -113,7 +118,10 @@
     </property>
   </bean>
   
-  <bean id="errortokenstateholder" class="uk.org.ponder.rsf.state.InMemoryTSH">
+  <!-- The state holder used for "ephemeral" state designed to only persist
+    through about 1 client request - error messages, end flow messages,
+    data in transit to client storage -->
+  <bean id="bandgapstateholder" class="uk.org.ponder.rsf.state.InMemoryTSH">
     <property name="expirySeconds">
       <!-- deliberately short time for testing - all errors will expire after 
       10 seconds of disuse -->
@@ -121,11 +129,42 @@
     </property>
   </bean>
   
-  <!-- The default ActionResultInterpreter which directs to the same view-->
-  <bean id="actionresultinterpreter"
-    class="uk.org.ponder.rsf.flow.NullActionResultInterpreter">
+  <bean id="templateexpander" class="uk.org.ponder.rsf.expander.TemplateExpander">
+    <property name="DARApplier">
+      <ref bean="DARApplier"/>
+    </property>
+    <property name="deepBeanCloner">
+      <ref bean="deepbeancloner"/>
+    </property>
+    <property name="RSACBeanLocator">
+      <ref bean="rsacbeanlocator"/>
+    </property>
   </bean>
   
+  <bean id="viewresolver" class="uk.org.ponder.rsf.view.ConcreteViewResolver">
+    <property name="views">
+      <ref bean="staticviews"/>
+    </property>
+    <property name="viewResolvers">
+      <list>
+        <ref bean="xmlviewresolver"/>
+      </list>
+    </property>
+  </bean>
   
+  <!-- The default ActionResultInterpreter which directs to the same view-->
+  <bean id="nullActionResultInterpreter"
+    class="uk.org.ponder.rsf.flow.NullActionResultInterpreter">
+  </bean>
+  <!-- FlowLiteARI expects return codes from a FlowActionProxyBean of type
+    ViewState -->
+  <bean id="flowLiteARI" class="uk.org.ponder.rsf.flow.lite.FlowLiteARI">
+  </bean>
+  
+  <bean id="flowOnlyPreservingBeans" class="uk.org.ponder.springutil.StringListFactory">
+    <property name="strings">
+      <value>flowLite-flowIDHolder</value>
+    </property>
+  </bean>
   
 </beans>

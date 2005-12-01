@@ -10,8 +10,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import uk.org.ponder.beanutil.BeanLocator;
-import uk.org.ponder.rsf.processor.GetHandler;
-import uk.org.ponder.rsf.processor.PostHandler;
+import uk.org.ponder.rsf.components.ParameterList;
+import uk.org.ponder.rsf.processor.RenderHandler;
+import uk.org.ponder.rsf.processor.ActionHandler;
+import uk.org.ponder.rsf.renderer.RenderUtil;
+import uk.org.ponder.rsf.viewstate.URLUtil;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewStateHandler;
 import uk.org.ponder.streamutil.write.OutputStreamPOS;
@@ -31,11 +34,12 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * 
  */
 public class RootHandlerBean {
-
   private BeanLocator beanlocator;
   private String requesttype;
   private HttpServletRequest request;
   private HttpServletResponse response;
+  private ViewStateHandler viewstatehandler;
+  private ParameterList outgoingparams;
 
   public void setRequestBeanLocator(BeanLocator beanlocator) {
     this.beanlocator = beanlocator;
@@ -53,19 +57,27 @@ public class RootHandlerBean {
     this.requesttype = requesttype;
   }
   
+  public void setViewStateHandler(ViewStateHandler viewstatehandler) {
+    this.viewstatehandler = viewstatehandler;
+  }
+  
+  public void setOutgoingParams(ParameterList outgoingparams) {
+    this.outgoingparams = outgoingparams;
+  }
+  
   public void init() {
     if (requesttype.equals(ViewParameters.RENDER_REQUEST)) {
-      GetHandler gethandler = (GetHandler) beanlocator.locateBean("gethandler");
+      RenderHandler gethandler = (RenderHandler) beanlocator.locateBean("gethandler");
       handleGet(gethandler);
     }
     else {
-      PostHandler posthandler = (PostHandler) beanlocator
+      ActionHandler posthandler = (ActionHandler) beanlocator
           .locateBean("posthandler");
       handlePost(posthandler);
     }
   }
   
-  public void handleGet(GetHandler gethandler) {
+  public void handleGet(RenderHandler gethandler) {
     PrintOutputStream pos = setupResponseWriter(request, response);
     try {
       ViewParameters redirect = gethandler.handle(pos, beanlocator);
@@ -80,7 +92,7 @@ public class RootHandlerBean {
     pos.close();
   }
 
-  public void handlePost(PostHandler posthandler) {
+  public void handlePost(ActionHandler posthandler) {
 
     ViewParameters redirect = posthandler.handle();
 
@@ -94,8 +106,10 @@ public class RootHandlerBean {
   // maybe we can do this all with "request beans"?
   public void issueRedirect(ViewParameters viewparams,
       HttpServletResponse response) {
-    ViewStateHandler viewstatehandler = (ViewStateHandler) beanlocator.locateBean("viewstatehandler");
     String path = viewstatehandler.getFullURL(viewparams);
+    path = RenderUtil.appendAttributes(path, RenderUtil.makeURLAttributes(outgoingparams));
+    //TODO: This is a hack, pending a bit more thought.
+    
     Logger.log.info("Redirecting to " + path);
     try {
       response.sendRedirect(path);

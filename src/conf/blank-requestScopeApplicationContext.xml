@@ -1,14 +1,125 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
 	"http://www.springframework.org/dtd/spring-beans.dtd">
-<!-- The purpose of this file is to provide an "empty" implementation of
+<!-- The purpose of this file is to provide an "default" completion of
   the request scope portion of 
   RSF's Spring API, so that the project will validate self-consistently in,
-  for example, Spring IDE. It also serves as useful documentation for the 
-  application-defined dependencies of RSF. -->
+  for example, Spring IDE. Dependencies resolved here are ones that clients
+  might well want to override, as opposed to more core dependencies in the main
+  RSF configuration files. -->
 
 <beans>
- <!-- There are currently no such dependencies in RSF. Placeholder bean to
-   ensure that document validates! -->
-  <bean name="empty" class="java.lang.String"/> 
+ <!-- This standard bean name is given a default implementation to always
+   defer to the null ARI. However this will be overridden should the actual
+   action invokation ALREADY return an ARIResult, as with a FlowActionProxyBean. -->
+  <bean name="ARIResolver" class="uk.org.ponder.rsf.flow.NullARIResolver">
+    <property name="actionResultInterpreter">
+      <ref bean="defaultARI"/>
+    </property>
+  </bean>
+  
+  <bean name="defaultARI" class="uk.org.ponder.springutil.BeanReferenceFactoryBean">
+    <property name="targetBeanName">
+      <value>nullActionResultInterpreter</value>
+    </property>
+  </bean>
+  
+  <bean id="defaultRSVCPreserver"
+    class="uk.org.ponder.rsf.state.RSVCPreservationStrategy">
+    <property name="requestRSVC">
+      <ref bean="requestrsvc"/>
+    </property>
+    <property name="preservingBeans">
+      <ref bean="requestAddressibleBeans"/>
+    </property>
+    <property name="tokenStateHolder">
+      <ref bean="bandgapstateholder"/>
+    </property>
+    <property name="RSVCApplier">
+      <ref bean="rsvcapplier"/>
+    </property>
+  </bean>
+    
+  <bean id="defaultBeanCopyPreserver"
+    class="uk.org.ponder.rsf.state.BeanCopyPreservationStrategy">
+    <property name="preservingBeans">
+      <ref bean="copyPreservingBeans"/>
+    </property>
+    <property name="tokenStateHolder">
+      <ref bean="flowtokenstateholder"/>
+    </property>
+    <property name="beanModelAlterer">
+      <ref bean="DARApplier"/>
+    </property>
+  </bean>
+  
+  
+  <bean id="endFlowPreserver"
+     class="uk.org.ponder.rsf.state.BeanCopyPreservationStrategy">
+    <property name="preservingBeans">
+      <ref bean="copyPreservingBeans"/>
+    </property>
+    <property name="tokenStateHolder">
+      <ref bean="flowtokenstateholder"/>
+    </property>
+    <property name="beanModelAlterer">
+      <ref bean="DARApplier"/>
+    </property>
+  </bean>
+  
+  
+  <bean id="requestFlowStatePreserver" 
+    class="uk.org.ponder.rsf.state.InURLPreservationStrategy">
+    <property name="beanModelAlterer">
+      <ref bean="DARApplier"/>
+    </property>
+    <property name="requestMap"> 
+      <ref bean="requestMap"/>
+    </property>
+    <property name="preservingBeanSpecs">
+      <ref bean="URLPreservingBeanSpecs"/>
+    </property>
+    <property name="outgoingParams">
+      <ref bean="outgoingParams"/>
+    </property>
+  </bean>
+  
+  
+  <!-- Use this unless you are preserving the flowIDHolder by other means -->
+  <bean id="flowScopeFlowStatePreserver"
+    class="uk.org.ponder.rsf.state.BeanCopyPreservationStrategy">
+    <property name="tokenStateHolder">
+      <ref bean="flowtokenstateholder"/>
+    </property>
+    <property name="preservingBeans">
+      <ref bean="flowOnlyPreservingBeans"/>
+    </property>
+    <property name="beanModelAlterer">
+      <ref bean="DARApplier"/>
+    </property>
+  </bean>
+  
+  <bean id="statePreservationStrategies" class="uk.org.ponder.springutil.ListFactory">
+    <property name="list"><list>
+        <ref bean="flowScopeFlowStatePreserver"/> 
+        <ref bean="defaultBeanCopyPreserver"/>
+        <ref bean="requestFlowStatePreserver"/> 
+      </list></property>
+  </bean>
+  
+  <bean id="endFlowStatePreservationStrategies" class="uk.org.ponder.springutil.ListFactory">
+    <property name="list"><list>
+        <ref bean="endFlowPreserver"/>
+      </list></property>
+  </bean>
+  
+  <bean id="viewExceptionStrategy" class="uk.org.ponder.rsf.flow.SimpleViewExceptionStrategy">
+    <property name="viewParametersParser">
+      <ref bean="viewparametersparser"/>
+    </property>
+    <property name="defaultView">
+      <ref bean="defaultview"/>
+    </property>
+  </bean>
+  
 </beans>

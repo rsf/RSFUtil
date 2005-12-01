@@ -6,6 +6,7 @@ package uk.org.ponder.rsf.view;
 import java.util.List;
 
 import uk.org.ponder.rsf.componentprocessor.ComponentProcessor;
+import uk.org.ponder.rsf.componentprocessor.OrphanFinder;
 import uk.org.ponder.rsf.components.ComponentList;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIContainer;
@@ -48,6 +49,7 @@ public class ViewProcessor {
       UIComponent child = worklist.componentAt(compind);
       view.registerComponent(child);
     }
+    OrphanFinder finder = new OrphanFinder();
     for (int compind = 0; compind < worklist.size(); ++ compind) {
       UIComponent child = worklist.componentAt(compind);
       for (int procind = 0; procind < processors.size(); ++ procind) {
@@ -59,8 +61,9 @@ public class ViewProcessor {
           Logger.log.warn("Error processing component " + child.getFullID(), e);
         }
       }
+      finder.processComponent(child);
     }
-    
+    finder.report();
   }
   private void generateWorkList() {
     worklist = new ComponentList();

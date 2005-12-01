@@ -12,7 +12,7 @@ import java.util.Map;
 public class Flow {
   public String id;
   public String startstate;
-  
+  // A map from State ID to state.
   private Map states = new HashMap();
   
   public void addState(State toadd) {
@@ -24,7 +24,7 @@ public class Flow {
   }
   
   public Collection getStates() {
-    return Collections.unmodifiableCollection(states.keySet());
+    return Collections.unmodifiableCollection(states.values());
   }
   
   public void init() {

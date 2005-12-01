@@ -63,6 +63,8 @@ public abstract class ViewParameters implements Cloneable {
    * to set this field if flowtoken is also set.
    */
   public String endflow;
+
+  public Map preserved; 
   public abstract FieldHash getFieldHash();
   public abstract void clearParams();
   public abstract void parsePathInfo(String pathinfo);

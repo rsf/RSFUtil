@@ -7,10 +7,19 @@ import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.reflect.ReflectiveCache;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
+/** Given a Flow object (as read from disk or constructed) return a FlowProxy
+ * bean capable of intercepting attempted method invokation requests as part
+ * of the "invoke application" phase. Principally exists as a developer 
+ * convenience to avoid setting these dependencies on such proxy.
+ * @author Antranig Basman (antranig@caret.cam.ac.uk)
+ *
+ */
+
 public class FlowProxyFactory {
   private ReflectiveCache reflectivecache;
   private BeanLocator rbl;
   private ViewParameters viewparams;
+  private FlowIDHolder flowidholder;
   
   public void setReflectiveCache(ReflectiveCache reflectivecache) {
     this.reflectivecache = reflectivecache;
@@ -24,11 +33,16 @@ public class FlowProxyFactory {
     this.viewparams = viewparams;
   }
   
-  public FlowProxy getFlow()  {
-    FlowProxy togo = new FlowProxy();
+  public void setFlowIDHolder(FlowIDHolder flowidholder) {
+    this.flowidholder = flowidholder;
+  }
+  
+  public FlowActionProxyBean getFlowProxy()  {
+    FlowActionProxyBean togo = new FlowActionProxyBean();
     togo.setBeanLocator(rbl);
     togo.setReflectiveCache(reflectivecache);
     togo.setViewParameters(viewparams);
+    togo.setFlowIDHolder(flowidholder);
     return togo;
   }
 

@@ -20,7 +20,7 @@ public class FlowUtil {
       if (state instanceof ViewState) {
         validateTransitions(flow, ((ViewState)state).transitions, ViewState.class);
       }
-      else {
+      else if (state instanceof ActionState) {
         validateTransitions(flow, ((ActionState)state).transitions, ActionState.class); 
       }
     }
