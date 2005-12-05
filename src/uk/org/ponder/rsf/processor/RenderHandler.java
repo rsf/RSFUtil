@@ -50,6 +50,7 @@ public class RenderHandler {
     boolean iserrorredirect = viewparams.errorredirect != null;
     // YES, reach into the original request! somewhat bad...
     viewparams.errorredirect = null;
+    ThreadErrorState.beginRequest();
     try {
       RenderHandlerImpl gethandlerimpl = (RenderHandlerImpl) beanlocator.locateBean("gethandlerimpl");
       gethandlerimpl.handle(pos);

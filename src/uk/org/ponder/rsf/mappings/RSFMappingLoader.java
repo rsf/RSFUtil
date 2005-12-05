@@ -14,7 +14,11 @@ import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UIOutputMultiline;
+import uk.org.ponder.rsf.components.UIReplicator;
 import uk.org.ponder.rsf.components.UISimpleContainer;
+import uk.org.ponder.rsf.expander.DirectIndexStrategy;
+import uk.org.ponder.rsf.expander.IDRemapStrategy;
+import uk.org.ponder.rsf.flow.StaticActionErrorStrategy;
 import uk.org.ponder.saxalizer.SAXalizerMappingContext;
 import uk.org.ponder.saxalizer.mapping.MappableXMLProvider;
 import uk.org.ponder.saxalizer.mapping.MappingLoadManager;
@@ -25,7 +29,7 @@ public class RSFMappingLoader implements MappingLoader {
     UICommand.class, UIForm.class, UIInput.class, UIInternalLink.class,
     UILink.class, UIMessage.class, UIOutput.class, UIOutputMultiline.class,
     UIBranchContainer.class, UISimpleContainer.class, UIELBinding.class,
-    UIDeletionBinding.class
+    UIDeletionBinding.class, UIReplicator.class
   };
   
   public void loadExtendedMappings(SAXalizerMappingContext context) {
@@ -38,6 +42,9 @@ public class RSFMappingLoader implements MappingLoader {
       String nick = classname.substring(lastdotpos + 3).toLowerCase();
       context.classnamemanager.registerClass(nick, clazz);
     }
+    context.classnamemanager.registerClass("directindex", DirectIndexStrategy.class);
+    context.classnamemanager.registerClass("idremap", IDRemapStrategy.class);
+    context.classnamemanager.registerClass("staticstrategy", StaticActionErrorStrategy.class);
   }
 
   public void loadStandardMappings(MappableXMLProvider xmlprovider) {

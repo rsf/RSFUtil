@@ -5,15 +5,14 @@ package uk.org.ponder.rsf.processor;
 
 import java.util.Map;
 
-import uk.org.ponder.errorutil.CoreMessages;
-import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.rsf.flow.ARIResolver;
 import uk.org.ponder.rsf.flow.ARIResult;
+import uk.org.ponder.rsf.flow.ActionErrorStrategy;
 import uk.org.ponder.rsf.flow.ActionResultInterpreter;
 import uk.org.ponder.rsf.flow.ViewExceptionStrategy;
-import uk.org.ponder.rsf.state.RSVCApplier;
 import uk.org.ponder.rsf.state.ErrorStateManager;
+import uk.org.ponder.rsf.state.RSVCApplier;
 import uk.org.ponder.rsf.state.RequestSubmittedValueCache;
 import uk.org.ponder.rsf.state.StatePreservationManager;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
@@ -39,6 +38,7 @@ public class ActionHandler {
   private RSVCApplier rsvcapplier;
   private StatePreservationManager presmanager; // no, not that of OS/2
   private ViewExceptionStrategy ves;
+  private ActionErrorStrategy actionerrorstrategy;
 
   public void setErrorStateManager(ErrorStateManager errorstatemanager) {
     this.errorstatemanager = errorstatemanager;
@@ -75,14 +75,19 @@ public class ActionHandler {
   public void setViewExceptionStrategy(ViewExceptionStrategy ves) {
     this.ves = ves;
   }
+  
+  public void setActionErrorStrategy(ActionErrorStrategy actionerrorstrategy) {
+    this.actionerrorstrategy = actionerrorstrategy;
+  }
 
   // Since this entire bean is request scope, there is no difficulty with
   // letting
   // the action result escape from the wrapper into this instance variable.
   private Object actionresult = null;
+  private Exception exception;
 
   public ViewParameters handle() {
-
+    ThreadErrorState.beginRequest();
     final String actionmethod = PostDecoder.decodeAction(normalizedmap);
     ARIResult arires = null;
     try {
@@ -96,7 +101,15 @@ public class ActionHandler {
           rsvcapplier.applyValues(requestrsvc); // many errors possible here.
 
           if (actionmethod != null) {
-            actionresult = rsvcapplier.invokeAction(actionmethod);
+            try {
+              actionresult = rsvcapplier.invokeAction(actionmethod);
+            }
+            catch (Exception exception) {
+              ActionHandler.this.exception = exception;
+            }
+            actionerrorstrategy.handleError(
+                actionresult instanceof String ? (String) actionresult
+                    : null, exception, null, viewparams.viewID);
           }
         }
       }).run();
@@ -131,8 +144,8 @@ public class ActionHandler {
     }
     catch (Exception e) {
       Logger.log.error("Error invoking action", e);
-      ThreadErrorState.addError(new TargettedMessage(
-          CoreMessages.GENERAL_ACTION_ERROR));
+//      ThreadErrorState.addError(new TargettedMessage(
+//          CoreMessages.GENERAL_ACTION_ERROR));
       // Detect failure to fill out arires properly.
       if (arires == null || arires.resultingview == null) {
         arires = new ARIResult();

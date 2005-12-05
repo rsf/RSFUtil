@@ -15,7 +15,7 @@ import uk.org.ponder.rsf.util.SplitID;
 import uk.org.ponder.util.Logger;
 
 /** Performs a first "light" pass of the template and component tree to
- * resolve 
+ * resolve references by UIBranchContainer components to the correct tag targets.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  *
  */
@@ -38,6 +38,7 @@ public class BranchResolver {
   public static Map resolveBranches(XMLLumpMMap globalmap,
       UIBranchContainer basecontainer, XMLLump parentlump) {
     BranchResolver resolver = new BranchResolver(globalmap);
+    resolver.branchmap.put(basecontainer, parentlump);
     resolver.resolveRecurse(basecontainer, parentlump);
     return resolver.branchmap;
   }
@@ -51,7 +52,7 @@ public class BranchResolver {
         // ups! Do not resolve here if does not actually occur in parentlump.
         XMLLump resolved = resolveCall(parentlump, branch);
         if (Logger.log.isInfoEnabled()) {
-          System.out.println("Resolved call for component "
+          Logger.log.info("Resolved call for component "
               + branch.getClass().getName() + " fullID " + branch.getFullID()
               + " to ");
           // Logger.log.info("for component with ID " + child.ID + " to ");

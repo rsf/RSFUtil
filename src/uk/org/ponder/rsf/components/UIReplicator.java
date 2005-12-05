@@ -20,5 +20,5 @@ public class UIReplicator extends UIComponent {
   /** The container to be replicated by iteration over the container 
    * discovered at the above binding.
    */
-  public UIBranchContainer components;
+  public UIBranchContainer component;
 }

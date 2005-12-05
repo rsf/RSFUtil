@@ -17,6 +17,22 @@
       <ref bean="defaultARI"/>
     </property>
   </bean>
+   
+  <bean id="actionErrorStrategyManager" class="uk.org.ponder.rsf.flow.ActionErrorStrategyManager">
+    <property name="mergeStrategies">
+      <ref bean="xmlActionErrorStrategies"/>
+    </property>
+  </bean>
+  
+  <bean id="viewtemplateresolver"
+    class="uk.org.ponder.rsf.templateresolver.BasicTemplateResolver">
+    <property name="baseDirectory">
+      <value>/content/templates/</value>
+    </property> 
+  <property name="consumerInfo">
+    <ref bean="consumerInfo"/>
+    </property>
+  </bean>
   
   <bean name="defaultARI" class="uk.org.ponder.springutil.BeanReferenceFactoryBean">
     <property name="targetBeanName">
@@ -24,6 +40,24 @@
     </property>
   </bean>
   
+  <bean name="baseURLProvider" class="uk.org.ponder.springutil.BeanReferenceFactoryBean">
+    <property name="targetBeanName">
+      <value>autoBaseURLProvider</value>
+    </property>
+  </bean>
+  
+   <!-- A collection of static renderers that is expected to be dynamically
+  writeable - filters and the like might populate it before request handling
+  with consumer-specific rewriters. -->
+  <bean id="consumerStaticRenderers"
+    class="uk.org.ponder.rsf.renderer.StaticRendererCollection">
+  </bean>
+  
+  <!-- A null "consumertype" field in this object will be  treated as an 
+    empty object -->
+  <bean name="consumerInfo" class="uk.org.ponder.webapputil.ConsumerInfo">
+  </bean>
+
   <bean id="defaultRSVCPreserver"
     class="uk.org.ponder.rsf.state.RSVCPreservationStrategy">
     <property name="requestRSVC">
@@ -118,7 +152,7 @@
       <ref bean="viewparametersparser"/>
     </property>
     <property name="defaultView">
-      <ref bean="defaultview"/>
+      <ref bean="defaultView"/>
     </property>
   </bean>
   

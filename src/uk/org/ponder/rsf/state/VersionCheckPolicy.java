@@ -8,7 +8,7 @@ package uk.org.ponder.rsf.state;
  * In general if the version check fails, the method will throw some
  * form of exception, and in addition ought to add a TargettedMessage
  * to the current error state highlighting the erroneous value.
- * <b>For extreme customisability, this message could even be specifically
+ * <p>For extreme customisability, this message could even be specifically
  * detected by the ARI and MRS flow directed to another path.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  *

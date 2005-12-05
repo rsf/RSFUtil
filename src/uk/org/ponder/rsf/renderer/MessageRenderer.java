@@ -17,7 +17,8 @@ public class MessageRenderer {
   
   public UIComponent renderMessageList(TargettedMessageList messagelist) {
     UIOutputMultiline togo = new UIOutputMultiline();
-    StringList renderered = messagelist.render(messagelocator);
+    StringList renderered = messagelist == null? new StringList() : 
+      messagelist.render(messagelocator);
     togo.setValue(renderered);
     return togo;
   }

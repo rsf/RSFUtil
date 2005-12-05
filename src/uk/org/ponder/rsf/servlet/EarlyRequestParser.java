@@ -19,7 +19,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
 **/
 
 public class EarlyRequestParser {
-  private HttpServletRequest request;
+  protected HttpServletRequest request;
 
   public void setHttpServletRequest(HttpServletRequest request) {
     this.request = request;
@@ -40,9 +40,12 @@ public class EarlyRequestParser {
   public Map getRequestMap() {
     return request.getParameterMap();
   }
-
+/** The pathinfo as returned from the request. This INCLUDES an initial
+ * slash but no final slash.
+ */
   public String getPathInfo() {
-    return request.getPathInfo();
+    String pathinfo = request.getPathInfo();
+    return pathinfo == null ? "/" : pathinfo;
   }
 
   /**

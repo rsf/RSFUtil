@@ -16,7 +16,7 @@ import uk.org.ponder.rsf.view.ViewTemplate;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
-import uk.org.ponder.webapputil.ConsumerRequestInfo;
+import uk.org.ponder.webapputil.ConsumerInfo;
 
 /**
  * A basic template resolver that simply takes the viewID from the
@@ -44,6 +44,12 @@ public class BasicTemplateResolver implements TemplateResolver, ApplicationConte
   // this is a map of viewID onto template file.
   HashMap templates = new HashMap();
   private ApplicationContext context;
+  private ConsumerInfo ci;
+  
+  
+  public void setConsumerInfo(ConsumerInfo ci) {
+    this.ci = ci;
+  }
   
   private InputStream tryLoadTemplate(String fullpath, boolean lastditch) {
     Resource templateresource = context.getResource(fullpath);
@@ -65,9 +71,8 @@ public class BasicTemplateResolver implements TemplateResolver, ApplicationConte
   public ViewTemplate locateTemplate(ViewParameters viewparams) {
     String viewpath = viewparams.viewID;
     String consumerprefix = null;
-    ConsumerRequestInfo cri = ConsumerRequestInfo.getConsumerRequestInfo();
-    if (cri != null) {
-      consumerprefix = cri.ci.consumertype + CONSUMERTYPE_SEPARATOR; 
+    if (ci.consumertype != null) {
+      consumerprefix = ci.consumertype + CONSUMERTYPE_SEPARATOR; 
       viewpath = consumerprefix + viewparams.viewID; 
     }
     ViewTemplate template = (ViewTemplate) templates.get(viewpath);

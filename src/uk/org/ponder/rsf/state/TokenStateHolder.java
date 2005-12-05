@@ -3,7 +3,9 @@
  */
 package uk.org.ponder.rsf.state;
 
-/** The repository of all inter-request state in RSF. */
+/** The repository of all inter-request state in RSF, certainly on the
+ * server side. Some client-side storage strategies may bypass TSH and
+ * simply implement {@link StatePreservationStrategy} directly. */
 public interface TokenStateHolder {
   /** Returns any TokenRequestState object with the specified ID.
    * @return The required TRS object, or <code>null</code> if none is stored.

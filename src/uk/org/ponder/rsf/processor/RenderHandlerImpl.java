@@ -69,12 +69,14 @@ public class RenderHandlerImpl {
    * bean which needs to occur in a controlled exception context.
    */
   public void handle(PrintOutputStream pos) {
-    view = viewgenerator.getView();
     getwrapper.wrapRunnable(new Runnable() {
       public void run() {
         if (viewparams.flowtoken != null) {
           presmanager.restore(viewparams.flowtoken, viewparams.endflow != null);
         }
+        // this must now be AFTER restoration since the templateexpander may
+        // access the model. Shucks!!
+        view = viewgenerator.getView();
         viewprocessor.setView(view);
         view = viewprocessor.getProcessedView();
       }

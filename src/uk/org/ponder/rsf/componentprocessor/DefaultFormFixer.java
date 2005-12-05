@@ -10,6 +10,7 @@ import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.view.View;
 import uk.org.ponder.rsf.view.ViewGenerator;
+import uk.org.ponder.rsf.view.ViewReceiver;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewStateHandler;
 import uk.org.ponder.util.UniversalRuntimeException;
@@ -24,7 +25,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
  */
 // WHY do we treat forms in this strange way? We WOULD like IKAT to be
 // form-agnostic, and also form nesting is not a "given" for WAP &c.
-public class DefaultFormFixer implements ComponentProcessor {
+public class DefaultFormFixer implements ComponentProcessor, ViewReceiver {
   private ViewParameters viewparams;
   private ViewStateHandler viewstatehandler;
   private FormModel formmodel;

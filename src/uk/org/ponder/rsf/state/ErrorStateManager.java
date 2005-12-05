@@ -132,7 +132,7 @@ public class ErrorStateManager {
       }
     }
     finally {
-      ThreadErrorState.clearState();
+      ThreadErrorState.endRequest();
     }
 
   }

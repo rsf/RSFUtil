@@ -61,6 +61,12 @@
     </property>
   </bean>
   
+  <bean id="messageRenderer" class="uk.org.ponder.rsf.renderer.MessageRenderer">
+   <property name="messageLocator">
+      <ref bean="messagelocator"/>
+    </property>
+  </bean>
+  
   <bean id="bindingfixer" class="uk.org.ponder.rsf.componentprocessor.BindingFixer">
     <property name="fossilizedConverter">
       <ref bean="fossilizedconverter"/>
@@ -86,7 +92,7 @@
     </property>
   </bean>
    
-  <bean id="rsacbeanlocator" factory-bean="rsacbeanlocatorfactory"
+  <bean id="rsacBeanLocator" factory-bean="rsacbeanlocatorfactory"
     factory-method="getRSACBeanLocator">
     <property name="reflectiveCache">
       <ref bean="reflectivecache"/>
@@ -137,7 +143,7 @@
       <ref bean="deepbeancloner"/>
     </property>
     <property name="RSACBeanLocator">
-      <ref bean="rsacbeanlocator"/>
+      <ref bean="rsacBeanLocator"/>
     </property>
   </bean>
   
