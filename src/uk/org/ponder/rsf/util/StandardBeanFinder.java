@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.ListableBeanFactory;
 
+import uk.org.ponder.reflect.ReflectiveCache;
 import uk.org.ponder.saxalizer.XMLProvider;
 
 /** Locates standard RSF beans by name or type. 
@@ -33,6 +34,7 @@ public class StandardBeanFinder {
   
   public static SBFEntry[] entries = {
     new SBFEntry("xmlprovider", XMLProvider.class),
+    new SBFEntry("reflectivecache", ReflectiveCache.class)
   };
   
   public static Object findBean(Class clazz, ListableBeanFactory lbf) {

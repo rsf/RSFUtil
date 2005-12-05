@@ -74,7 +74,7 @@ public class ConcreteViewResolver implements ViewResolver {
   public List getProducers(String viewid) {
     List specific = get(viewid);
 
-    if (specific == null) {
+    if (specific == null && resolvers != null) {
       for (int i = 0; i < resolvers.size(); ++i) {
         ViewResolver resolver = (ViewResolver) resolvers.get(i);
         specific = resolver.getProducers(viewid);
