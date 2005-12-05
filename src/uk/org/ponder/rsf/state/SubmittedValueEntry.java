@@ -4,7 +4,6 @@
 package uk.org.ponder.rsf.state;
 
 /**
- * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * Represents a submitted value as received from a user submission. For 
  * full coverage, we must know 
  * <br>- the (full) ID of the component producing the submission
@@ -14,6 +13,7 @@ package uk.org.ponder.rsf.state;
  * {@see uk.org.ponder.rsf.state.RequestSubmittedValueCache}
  * In addition to encoding a component submission, an SVE may either 
  * represent a deletion binding or a pure EL binding.
+ * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
 public class SubmittedValueEntry {
  

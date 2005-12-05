@@ -5,6 +5,7 @@ package uk.org.ponder.rsf.flow.lite;
 
 import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.reflect.ReflectiveCache;
+import uk.org.ponder.rsf.flow.ActionErrorStrategy;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /** Given a Flow object (as read from disk or constructed) return a FlowProxy
@@ -20,6 +21,7 @@ public class FlowProxyFactory {
   private BeanLocator rbl;
   private ViewParameters viewparams;
   private FlowIDHolder flowidholder;
+  private ActionErrorStrategy actionerrorstrategy;
   
   public void setReflectiveCache(ReflectiveCache reflectivecache) {
     this.reflectivecache = reflectivecache;
@@ -37,12 +39,17 @@ public class FlowProxyFactory {
     this.flowidholder = flowidholder;
   }
   
+  public void setActionErrorStrategy(ActionErrorStrategy actionerrorstrategy) {
+    this.actionerrorstrategy = actionerrorstrategy;
+  }
+  
   public FlowActionProxyBean getFlowProxy()  {
     FlowActionProxyBean togo = new FlowActionProxyBean();
     togo.setBeanLocator(rbl);
     togo.setReflectiveCache(reflectivecache);
     togo.setViewParameters(viewparams);
     togo.setFlowIDHolder(flowidholder);
+    togo.setActionErrorStrategy(actionerrorstrategy);
     return togo;
   }
 

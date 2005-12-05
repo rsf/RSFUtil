@@ -24,7 +24,7 @@ public class XMLLump {
   public XMLLump open_end = null;        // lump containing " >"
   public XMLLump close_tag = null;       // lump containing "</close">
   // open and close will be the same for empty tag case " />"
-
+  // headlump has standard text of |<tagname | to allow easy identification.
   public XMLLumpMMap downmap = null;
   
   // map from attribute name to lump where value occurs.

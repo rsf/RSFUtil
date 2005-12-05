@@ -76,7 +76,9 @@ public class MessageTargetter {
         targetid = globalmessagetarget;
       }
       best.bestfor = DEAD_LETTERS;
-      UIComponent target = view.getComponent(message.targetid);
+      UIComponent target = view.getComponent(targetid);
+      // TODO: what if action has, despite errors, insisted on redirecting to
+      // a DIFFERENT view?
       if (target == null) {
         Logger.log.warn("Warning: Message " + message.messagecode
             + " queued for nonexistent component ID " + message.targetid);

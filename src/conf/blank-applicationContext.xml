@@ -8,18 +8,28 @@
   might well want to (and in many cases must) override, as opposed to more 
   core dependencies in the main RSF configuration file rsf-config.xml. -->
 <beans>
+  	<bean id="messagesource" 
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename">
+			<value>WEB-INF/messages/messages</value>
+		</property>
+		<property name="cacheSeconds">
+			<value>10</value>
+		</property>
+	</bean>
+	<bean id="messagelocator" 
+		class="uk.org.ponder.springutil.SpringMessageLocator">
+		<property name="messageSource">
+			<ref local="messagesource"/>
+		</property>
+	</bean>
+  <!--
   <bean id="messagelocator" class="uk.org.ponder.errorutil.BlankMessageLocator">
   </bean>
+    -->
   
   <bean id="viewparamsexemplar"
     class="uk.org.ponder.rsf.viewstate.SimpleViewParameters">
-  </bean>
-  
-  <bean id="viewtemplateresolver"
-    class="uk.org.ponder.rsf.templateresolver.BasicTemplateResolver">
-    <property name="baseDirectory">
-      <value>/content/templates/</value>
-    </property>
   </bean>
   
   <bean id="xmlviewresolver" class="uk.org.ponder.rsf.view.XMLViewResolver">
@@ -31,6 +41,16 @@
     </property>
     <property name="templateExpander">
       <ref bean="templateexpander"/>
+    </property>
+  </bean>
+  
+  <bean id="xmlActionErrorStrategies"
+    class="uk.org.ponder.rsf.util.XMLFactoryBean">
+    <property name="location">
+      <value>/WEB-INF/flows/actionErrorStrategies.xml</value>
+    </property>
+    <property name="objectType">
+      <value>uk.org.ponder.rsf.flow.ActionErrorStrategyManager</value>
     </property>
   </bean>
   
@@ -92,7 +112,7 @@
 
   <!-- This bean MUST be overriden with your default view, in reduced form
     beginning with / -->
-  <bean id="defaultview" class="java.lang.String">
+  <bean id="defaultView" class="java.lang.String">
     <constructor-arg>
       <value>/DefaultView</value>
     </constructor-arg>

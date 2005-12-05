@@ -6,6 +6,7 @@ package uk.org.ponder.rsf.expander;
 import java.util.Enumeration;
 
 import uk.org.ponder.beanutil.BeanLocator;
+import uk.org.ponder.beanutil.BeanUtil;
 import uk.org.ponder.mapping.DARApplier;
 import uk.org.ponder.reflect.DeepBeanCloner;
 import uk.org.ponder.rsac.RSACBeanLocator;
@@ -74,11 +75,11 @@ public class TemplateExpander {
   private String computeStump(UIReplicator replicator) {
     String stump = null;
     if (replicator.idstrategy instanceof DirectIndexStrategy) {
-      stump = replicator.valuebinding;
+      stump = BeanUtil.stripEL(replicator.valuebinding);
     }
     else {
       IDRemapStrategy remapstrategy = (IDRemapStrategy) replicator.idstrategy;
-      stump = remapstrategy.basepath;
+      stump = BeanUtil.stripEL(remapstrategy.basepath);
     }
     return stump;
   }
@@ -111,12 +112,14 @@ public class TemplateExpander {
         if (child instanceof UIBound) {
           UIBound bound = (UIBound) child;
           UIBound copy = (UIBound) deepcloner.cloneBean(bound);
-          if (copy.valuebinding.startsWith(UIReplicator.LOCALID_WILDCARD)) {
-            copy.valuebinding = state.stump
+          String stripped = BeanUtil.stripEL(copy.valuebinding);
+          if (stripped.startsWith(UIReplicator.LOCALID_WILDCARD)) {
+            stripped = state.stump
                 + "."
                 + state.localid
-                + copy.valuebinding.substring(UIReplicator.LOCALID_WILDCARD
+                + stripped.substring(UIReplicator.LOCALID_WILDCARD
                     .length());
+            copy.valuebinding = "#{" + stripped + "}";
           }
           target.addComponent(copy);
         }
@@ -150,21 +153,24 @@ public class TemplateExpander {
     BeanLocator safelocator = getSafeLocator();
     // TODO: work out how to remap recursively - currently old remapstate is
     // thrown away.
-    Object collection = darapplier.getBeanValue(replicator.valuebinding, safelocator);
+    String listbinding = BeanUtil.stripEL(replicator.valuebinding);
+    Object collection = darapplier.getBeanValue(listbinding, safelocator);
     int index = 0;
+    String value = replicator.valuebinding;
     for (Enumeration colit = EnumerationConverter.getEnumeration(collection); colit
         .hasMoreElements();) {
       Object bean = colit.nextElement();
       UIBranchContainer replicated = UIBranchContainer.make(target,
-          replicator.components.ID);
+          replicator.component.ID);
       String localid = computeLocalID(bean, replicator.idstrategy, index);
       replicated.localID = localid;
       String stump = computeStump(replicator);
       RemapState newstate = new RemapState(localid, stump);
 
-      expandTemplate(replicated, replicator.components, newstate);
+      expandTemplate(replicated, replicator.component, newstate);
+      ++index;
     }
-    String value = replicator.valuebinding;
+  
   }
 
 }

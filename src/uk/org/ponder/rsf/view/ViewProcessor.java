@@ -32,7 +32,7 @@ public class ViewProcessor {
   private ComponentList worklist;
   
   private View view;
-  
+  // This dependency is not set via RSAC since it would execute too early.
   public void setView(View view) {
     this.view = view;
   }
@@ -42,6 +42,13 @@ public class ViewProcessor {
   }
   
   private void performFixup() {
+    for (int procind = 0; procind < processors.size(); ++ procind) {
+      ComponentProcessor proc = (ComponentProcessor) processors.get(procind);
+      if (proc instanceof ViewReceiver) {
+        ((ViewReceiver)proc).setView(view);
+      }
+    }
+    
     generateWorkList();
     // ensure that the ID map is fully populated before any processors begin
     // to execute, which may be dependent on it.

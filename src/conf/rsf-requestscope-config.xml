@@ -5,45 +5,45 @@
   <!-- This file contains request scope beans which are specific to RSF -->
    
   <!-- A request scope bean locator locating beans from THIS container! -->
-  <bean id="requestbeanlocator" factory-bean="rsacbeanlocator"
+  <bean id="requestbeanlocator" factory-bean="rsacBeanLocator"
     factory-method="getBeanLocator">
-  </bean>
+  </bean> 
   
-  <bean id="deadRequestBeanLocator" factory-bean="rsacbeanlocator"
+  <bean id="deadRequestBeanLocator" factory-bean="rsacBeanLocator"
     factory-method="getDeadBeanLocator">
   </bean>
   
   <bean id="httpservletfactory" class="uk.org.ponder.rsac.servlet.HttpServletFactory">
   </bean>
    
-  <bean id="httpservletrequest" factory-bean="httpservletfactory"
+  <bean id="httpServletRequest" factory-bean="httpservletfactory"
     factory-method="getHttpServletRequest"/>
   
-  <bean id="httpservletresponse" factory-bean="httpservletfactory"
+  <bean id="httpServletResponse" factory-bean="httpservletfactory"
     factory-method="getHttpServletResponse"/>
   
-  <bean id="earlyrequestparser" class="uk.org.ponder.rsf.servlet.EarlyRequestParser">
+  <bean id="earlyRequestParser" class="uk.org.ponder.rsf.servlet.EarlyRequestParser">
     <property name="httpServletRequest">
-      <ref bean="httpservletrequest"/>
+      <ref bean="httpServletRequest"/>
     </property>
   </bean>
   
-  <bean id="requestMap" factory-bean="earlyrequestparser"
+  <bean id="requestMap" factory-bean="earlyRequestParser"
     factory-method="getRequestMap"/>
   
-  <bean id="requestpathinfo" factory-bean="earlyrequestparser"
+  <bean id="requestpathinfo" factory-bean="earlyRequestParser"
     factory-method="getPathInfo"/>
   
-  <bean id="requesttype" factory-bean="earlyrequestparser"
+  <bean id="requesttype" factory-bean="earlyRequestParser"
     factory-method="getRequestType"/>
   
-  <bean id="roothandlerbean" class="uk.org.ponder.rsf.servlet.RootHandlerBean"
+  <bean id="rootHandlerBean" class="uk.org.ponder.rsf.servlet.RootHandlerBean"
     init-method="init">
     <property name="httpServletRequest">
-      <ref bean="httpservletrequest"/>
+      <ref bean="httpServletRequest"/>
     </property>
     <property name="httpServletResponse">
-      <ref bean="httpservletresponse"/>
+      <ref bean="httpServletResponse"/>
     </property>
     <property name="requestType">
       <ref local="requesttype"/>
@@ -157,31 +157,26 @@
     </property>
   </bean>
   
-  <bean id="autobaseurlprovider" class="uk.org.ponder.rsf.servlet.AutoBaseURLProvider"
+  <bean id="autoBaseURLProvider" class="uk.org.ponder.rsf.servlet.AutoBaseURLProvider"
     init-method="init">
     <property name="httpServletRequest">
-      <ref bean="httpservletrequest"/>
+      <ref bean="httpServletRequest"/>
     </property>
   </bean>
   
   <bean name="outgoingParams" class="uk.org.ponder.rsf.components.ParameterList"></bean>
   
-  <!-- This "unreasonable" bean will be filled in by any consumer before 
-    request handling proper begins. A null "consumertype" field will be
-    treated as an empty object -->
-  <bean name="consumerInfo" class="uk.org.ponder.webapputil.ConsumerInfo">
-  </bean>
-  
-  <!-- The default viewstatehandler uses the autobaseurlprovider to infer
-  URLs. Clients may override it by referring to a static one of their
-  choosing. It is easier to ask them to override this whole bean than it is
-  to implement support for Spring bean aliases in RSAC :P -->
+  <!-- The default viewstatehandler uses the baseURLProvider (defaulted to 
+    autoBaseURLProvider in blank-config to infer URLs. Clients may override it 
+    by referring to another of their choosing.  -->
   <bean id="viewStateHandler"
     class="uk.org.ponder.rsf.viewstate.RSFServletViewStateHandler">
     <property name="baseURLProvider">
-      <ref bean="autobaseurlprovider"/>
+      <ref bean="baseURLProvider"/>
     </property>
-    
+    <property name="consumerInfo">
+      <ref bean="consumerInfo"/>
+    </property>
   </bean>
   
   <bean id="urlrewriter" class="uk.org.ponder.rsf.viewstate.URLRewriter">
@@ -199,20 +194,13 @@
     </property>
   </bean>
   
-  <!-- A collection of static renderers that is expected to be dynamically
-  writeable - filters and the like might populate it before request handling
-  with consumer-specific rewriters. -->
-  <bean id="consumerstaticrenderers"
-    class="uk.org.ponder.rsf.renderer.StaticRendererCollection">
-  </bean>
-  
   <!-- A set of static renderers to be used for this request -->
   <bean id="staticrenderers"
     class="uk.org.ponder.rsf.renderer.StaticRendererCollection">
     <property name="staticRenderers">
       <list>
         <ref local="urlrewritescr"/>
-        <ref local="consumerstaticrenderers"/>
+        <ref bean="consumerStaticRenderers"/>
       </list>
     </property>
   </bean>
@@ -252,6 +240,9 @@
     <property name="renderSystem">
       <ref local="rendersystem"/>
     </property>
+    <property name="messageRenderer">
+      <ref bean="messageRenderer"/>
+    </property>
   </bean>
   
   <!-- The default alteration wrapper performs no ORM-specific bracketing
@@ -287,6 +278,9 @@
     <property name="viewExceptionStrategy">
       <ref bean="viewExceptionStrategy"/>
     </property>
+    <property name="actionErrorStrategy">
+      <ref bean="actionErrorStrategyManager"/>
+    </property>
   </bean>
   
   <bean id="formmodel"
@@ -310,7 +304,10 @@
     <property name="flowIDHolder">
       <ref bean="flowLite-flowIDHolder"/>
     </property>
-  </bean>
+    <property name="actionErrorStrategy">
+      <ref bean="actionErrorStrategyManager"/>
+    </property>
+  </bean> 
   
   <bean id="flowLite-ARIResolver" class="uk.org.ponder.rsf.flow.lite.FlowLiteARIResolver">
     <property name="defaultARI"> 
@@ -342,9 +339,9 @@
       <ref bean="formmodel"/>
     </property>
   </bean>
-  
+  <!--
   <bean id="view" factory-bean="viewgenerator" factory-method="getView"/>
-  
+  -->
   
   <!-- Begin "fixer" beans - manipulate component tree in between generation
     and rendering -->
@@ -363,9 +360,10 @@
     <property name="viewStateHandler">
       <ref bean="viewStateHandler"/>
     </property>
+    <!--
     <property name="view">
       <ref bean="view"/>
-    </property>
+    </property>-->
     <property name="formModel">
       <ref bean="formmodel"/>
     </property>

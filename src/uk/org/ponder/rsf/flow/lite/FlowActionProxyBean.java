@@ -8,6 +8,7 @@ import uk.org.ponder.hashutil.EighteenIDGenerator;
 import uk.org.ponder.reflect.MethodInvokingProxy;
 import uk.org.ponder.reflect.ReflectiveCache;
 import uk.org.ponder.rsf.flow.ARIResult;
+import uk.org.ponder.rsf.flow.ActionErrorStrategy;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.Logger;
 
@@ -32,6 +33,7 @@ public class FlowActionProxyBean implements MethodInvokingProxy {
   // less hassle to keep this here than manage as a dependency....
   private static EighteenIDGenerator idgenerator = new EighteenIDGenerator();
   private Flow flow;
+  private ActionErrorStrategy actionerrorstrategy;
   
   private ReflectiveCache reflectivecache;
   private BeanLocator rbl;
@@ -41,10 +43,15 @@ public class FlowActionProxyBean implements MethodInvokingProxy {
 
   private boolean strict = false;
 
+// These two are user configured properties
   public void setFlow(Flow flow) {
     this.flow = flow;
   }
   
+  public void setStrict(boolean strict) {
+    this.strict  = strict;
+  }
+// The remainder are system configured properties
   public void setReflectiveCache(ReflectiveCache reflectivecache) {
     this.reflectivecache = reflectivecache;
   }
@@ -61,8 +68,8 @@ public class FlowActionProxyBean implements MethodInvokingProxy {
     this.flowidholder = flowidholder;
   }
   
-  public void setStrict(boolean strict) {
-    this.strict  = strict;
+  public void setActionErrorStrategy(ActionErrorStrategy actionerrorstrategy) {
+    this.actionerrorstrategy = actionerrorstrategy;
   }
   /**
    * Called in response to invocation of a command link. The "method" name
@@ -124,8 +131,17 @@ public class FlowActionProxyBean implements MethodInvokingProxy {
         throw new IllegalStateException("Bean with id " + action.bean
             + " not found in for action " + actionstate.id);
       }
-      String result = (String) reflectivecache
-          .invokeMethod(bean, action.method);
+      String result = null;
+      Exception exception = null;
+      try {
+        result = (String) reflectivecache.invokeMethod(bean, action.method);
+      }
+      catch (Exception e) {
+        exception = e;
+      }
+      actionerrorstrategy.handleError(result, exception, flowidholder.requestFlowStateID, 
+          viewparams.viewID);
+      
       Transition trans2 = actionstate.transitions.transitionOn(result);
       newstate = flow.stateFor(trans2.to);
       Logger.log.info("Transition from action state " + actionstate.id

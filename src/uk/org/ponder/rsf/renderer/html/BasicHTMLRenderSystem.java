@@ -60,6 +60,13 @@ public class BasicHTMLRenderSystem implements RenderSystem {
     this.scrc = scrc;
   }
 
+
+  private void closeTag(PrintOutputStream pos, XMLLump uselump) {
+    pos.print("</");
+    pos.write(uselump.buffer, uselump.start + 1, uselump.length - 2);
+    pos.print(">");
+  }
+  
   // No, this method will not stay like this forever! We plan on an architecture
   // with renderer-per-component "class" as before, plus interceptors.
   // Although a lot of the parameterisation now lies in the allowable tag
@@ -136,10 +143,10 @@ public class BasicHTMLRenderSystem implements RenderSystem {
                   close.lumpindex + 1, pos);
             }
             else {
-              RenderUtil.dumpTillLump(lumps, lumpindex + 1,
-                  endopen.lumpindex + 1, pos);
+              RenderUtil.dumpAttributes(attrcopy, xmlw);
+              pos.print(">");
               xmlw.write(value);
-              pos.write(close.buffer, close.start, close.length);
+              closeTag(pos, uselump);
             }
           }
           else if (torendero.getClass() == UIOutputMultiline.class) {
@@ -149,15 +156,15 @@ public class BasicHTMLRenderSystem implements RenderSystem {
                   close.lumpindex + 1, pos);
             }
             else {
-              RenderUtil.dumpTillLump(lumps, lumpindex + 1,
-                  endopen.lumpindex + 1, pos);
+              RenderUtil.dumpAttributes(attrcopy, xmlw);
+              pos.print(">");
               for (int i = 0; i < value.size(); ++i) {
                 if (i != 0) {
                   pos.print("<br/>");
                 }
                 xmlw.write(value.stringAt(i));
               }
-              pos.write(close.buffer, close.start, close.length);
+              closeTag(pos, uselump);
             }
           }
         }
@@ -218,7 +225,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         pos.print(">");
         if (torender.linktext != null) {
           xmlw.write(torender.linktext);
-          pos.write(close.buffer, close.start, close.length);
+          closeTag(pos, uselump);
         }
         else {
           RenderUtil.dumpTillLump(lumps, endopen.lumpindex + 1,
@@ -245,7 +252,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
           pos.print(">");
           if (torender.commandtext != null && lump.textEquals("<button ")) {
             xmlw.write(torender.commandtext);
-            pos.write(close.buffer, close.start, close.length);
+            closeTag(pos, uselump);
           }
           else {
             RenderUtil.dumpTillLump(lumps, endopen.lumpindex + 1,
@@ -300,5 +307,6 @@ public class BasicHTMLRenderSystem implements RenderSystem {
 
     return nextpos;
   }
+
 
 }

@@ -19,10 +19,11 @@ import uk.org.ponder.saxalizer.XMLProvider;
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
 
-public abstract class XMLFactoryBean implements FactoryBean, ApplicationContextAware {
+public class XMLFactoryBean implements FactoryBean, ApplicationContextAware {
   String location;
   private ApplicationContext applicationcontext;
   private XMLProvider xmlprovider;
+  private Class objecttype;
 
   public void setLocation(String location) {
     this.location = location;
@@ -32,6 +33,14 @@ public abstract class XMLFactoryBean implements FactoryBean, ApplicationContextA
     this.xmlprovider = xmlprovider;
   }
 
+  public void setObjectType(Class objecttype) {
+    this.objecttype = objecttype;
+  }
+
+  public Class getObjectType() {
+    return objecttype;
+  }
+  
   public Object getObject() throws Exception {
     Resource res = applicationcontext.getResource(location);
     InputStream is = res.getInputStream();
@@ -50,4 +59,5 @@ public abstract class XMLFactoryBean implements FactoryBean, ApplicationContextA
     this.xmlprovider = (XMLProvider) StandardBeanFinder.findBean(
         XMLProvider.class, applicationcontext);
   }
+
 }

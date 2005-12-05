@@ -56,7 +56,9 @@ public class ValueFixer implements ComponentProcessor {
         Object oldvalue = toprocess.acquireValue();
         String stripbinding = BeanUtil.stripEL(toprocess.valuebinding);
         Object flatvalue = alterer.getFlattenedValue(stripbinding, beanlocator, oldvalue.getClass());
-        toprocess.updateValue(flatvalue);
+        if (flatvalue != null) {
+          toprocess.updateValue(flatvalue);
+        }
       }
       // TODO: Think carefully whether we want these "encoded" bindings to
       // EVER appear in the component tree. Tradeoffs - we would need to create more
