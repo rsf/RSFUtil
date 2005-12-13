@@ -3,8 +3,6 @@
  */
 package uk.org.ponder.rsf.components;
 
-import uk.org.ponder.rsf.state.SubmittedValueEntry;
-
 /**
  * Represents a control that will cause a non-idempotent (POST) request to the
  * server. The basic case where the command is rendered using a piece of

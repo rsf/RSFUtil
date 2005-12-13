@@ -3,10 +3,8 @@
  */
 package uk.org.ponder.rsf.componentprocessor;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import uk.org.ponder.rsf.components.UIBound;
