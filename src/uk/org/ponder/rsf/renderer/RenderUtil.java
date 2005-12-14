@@ -67,7 +67,7 @@ public class RenderUtil {
   }
   
   public static String appendAttributes(String baseurl, String attributes) {
-    if (baseurl.indexOf('?') == -1) {
+    if (baseurl.indexOf('?') == -1 && attributes.length() > 0) {
       attributes = "?" + attributes.substring(1);
     }
     return baseurl + attributes;
