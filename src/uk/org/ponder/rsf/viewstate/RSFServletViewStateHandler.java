@@ -4,14 +4,12 @@
 package uk.org.ponder.rsf.viewstate;
 
 import uk.org.ponder.webapputil.ConsumerInfo;
-import uk.org.ponder.webapputil.ConsumerRequestInfo;
 
 /**
  * A "simple" ViewStateHandler which in addition to accepting statically
  * configured Spring information, also is able to look in the 
  * ConsumerRequestInfo threadlocal in order to discover relevant URL
- * rendering information. This should probably be made into a request bean
- * along with CRI, if we can be sure it will be cheap enough.
+ * rendering information. A request-scope bean.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
@@ -92,12 +90,6 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
        }
     return getFullURL(viewparams);
   }
-
-//  public String parseExtraInfo(String requesturl) {
-//    String pathinfo = JSFUtil.getHSRequest().getPathInfo();
-//    return pathinfo.substring(1); // remove leading / which is specced to be there
-//    //return JSFUtil.getRequestURL().substring(baseurl.length());
-//  }
 
 
 }

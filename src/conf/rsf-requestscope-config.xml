@@ -58,6 +58,15 @@
       <ref bean="outgoingParams"/>
     </property>
   </bean>
+  <!-- achieve two things here - renderHandler is not resolved in non-POST requests,
+    and ALSO is not resolved until first use, to allow exception bracketing -->
+  <bean id="lazyrenderhandler" class="org.springframework.aop.framework.ProxyFactoryBean">
+	<property name="targetSource">
+	<bean class="org.springframework.aop.target.LazyInitTargetSource">
+      <property name="targetBeanName"><idref bean="renderHandler"/></property>
+       </bean>
+     </property>
+   </bean>
   
   <!-- The "censored" bean locator into which it is safe to resolve EL
   expressions coming in over the request -->

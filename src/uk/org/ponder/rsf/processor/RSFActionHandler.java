@@ -20,12 +20,13 @@ import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.RunnableWrapper;
 
 /**
- * PostHandler is a request scope bean responsible for handling an HTTP POST
- * request, or other non-idempotent web service "action" cycle.
+ * ActionHandler is a request scope bean responsible for handling an HTTP POST
+ * request, or other non-idempotent web service "action" cycle. Defines the
+ * core logic for this processing cycle.
  * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
-public class ActionHandler {
+public class RSFActionHandler implements ActionHandler {
   // application-scope dependencies
   private ARIResolver ariresolver;
   private RunnableWrapper postwrapper;
@@ -81,8 +82,8 @@ public class ActionHandler {
   }
 
   // Since this entire bean is request scope, there is no difficulty with
-  // letting
-  // the action result escape from the wrapper into this instance variable.
+  // letting the action result escape from the wrapper into this instance 
+  // variable.
   private Object actionresult = null;
   private Exception exception;
 
@@ -105,7 +106,7 @@ public class ActionHandler {
               actionresult = rsvcapplier.invokeAction(actionmethod);
             }
             catch (Exception exception) {
-              ActionHandler.this.exception = exception;
+              RSFActionHandler.this.exception = exception;
             }
             actionerrorstrategy.handleError(
                 actionresult instanceof String ? (String) actionresult
