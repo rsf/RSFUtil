@@ -10,7 +10,9 @@ import uk.org.ponder.util.Logger;
 
 /** A simple parser of view parameters, which will always parse into the
  * same type of ViewParameters object. The type of the returned parameters
- * is determined by the "exemplar" object which is set as a property.
+ * is determined by the "exemplar" object which is set as a property. Here it
+ * is the parser which is Simple, not the parameters - will parse any statically
+ * determined ViewParameters.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  *
  */

@@ -21,7 +21,7 @@ import uk.org.ponder.util.RunnableWrapper;
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
-public class RenderHandlerImpl {
+public class RSFRenderHandlerImpl implements RenderHandler {
   // all request-scope dependencies
   private ViewGenerator viewgenerator;
   private ErrorStateManager errorstatemanager;

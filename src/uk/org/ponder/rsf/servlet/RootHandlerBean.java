@@ -11,10 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.rsf.components.ParameterList;
-import uk.org.ponder.rsf.processor.RenderHandler;
 import uk.org.ponder.rsf.processor.ActionHandler;
+import uk.org.ponder.rsf.processor.RSFRenderHandler;
 import uk.org.ponder.rsf.renderer.RenderUtil;
-import uk.org.ponder.rsf.viewstate.URLUtil;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewStateHandler;
 import uk.org.ponder.streamutil.write.OutputStreamPOS;
@@ -67,17 +66,18 @@ public class RootHandlerBean {
   
   public void init() {
     if (requesttype.equals(ViewParameters.RENDER_REQUEST)) {
-      RenderHandler gethandler = (RenderHandler) beanlocator.locateBean("gethandler");
+      RSFRenderHandler gethandler = 
+        (RSFRenderHandler) beanlocator.locateBean("RSFRenderHandler");
       handleGet(gethandler);
     }
     else {
       ActionHandler posthandler = (ActionHandler) beanlocator
-          .locateBean("posthandler");
+          .locateBean("actionHandler");
       handlePost(posthandler);
     }
   }
   
-  public void handleGet(RenderHandler gethandler) {
+  public void handleGet(RSFRenderHandler gethandler) {
     PrintOutputStream pos = setupResponseWriter(request, response);
     try {
       ViewParameters redirect = gethandler.handle(pos, beanlocator);
