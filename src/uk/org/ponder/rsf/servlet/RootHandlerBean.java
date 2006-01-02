@@ -13,6 +13,8 @@ import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.rsf.components.ParameterList;
 import uk.org.ponder.rsf.processor.ActionHandler;
 import uk.org.ponder.rsf.processor.RSFRenderHandler;
+import uk.org.ponder.rsf.processor.RenderHandler;
+import uk.org.ponder.rsf.processor.RenderHandlerBracketer;
 import uk.org.ponder.rsf.renderer.RenderUtil;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewStateHandler;
@@ -33,16 +35,13 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * 
  */
 public class RootHandlerBean {
-  private BeanLocator beanlocator;
   private String requesttype;
   private HttpServletRequest request;
   private HttpServletResponse response;
   private ViewStateHandler viewstatehandler;
   private ParameterList outgoingparams;
-
-  public void setRequestBeanLocator(BeanLocator beanlocator) {
-    this.beanlocator = beanlocator;
-  }
+  private RenderHandlerBracketer renderhandlerbracketer;
+  private ActionHandler actionhandler;
 
   public void setHttpServletRequest(HttpServletRequest request) {
     this.request = request;
@@ -64,37 +63,41 @@ public class RootHandlerBean {
     this.outgoingparams = outgoingparams;
   }
   
+  public void setRenderHandlerBracketer(RenderHandlerBracketer renderhandlerbracketer) {
+    this.renderhandlerbracketer = renderhandlerbracketer;
+  }
+  
+  public void setActionHandler(ActionHandler actionhandler) {
+    this.actionhandler = actionhandler;
+  }
+  
   public void init() {
     if (requesttype.equals(ViewParameters.RENDER_REQUEST)) {
-      RSFRenderHandler gethandler = 
-        (RSFRenderHandler) beanlocator.locateBean("RSFRenderHandler");
-      handleGet(gethandler);
+      handleGet();
     }
     else {
-      ActionHandler posthandler = (ActionHandler) beanlocator
-          .locateBean("actionHandler");
-      handlePost(posthandler);
+      handlePost();
     }
   }
   
-  public void handleGet(RSFRenderHandler gethandler) {
+  private void handleGet() {
     PrintOutputStream pos = setupResponseWriter(request, response);
     try {
-      ViewParameters redirect = gethandler.handle(pos, beanlocator);
+      ViewParameters redirect = renderhandlerbracketer.handle(pos);
 
       if (redirect != null) {
         issueRedirect(redirect, response);
       }
     }
     catch (Throwable t) {
-      gethandler.renderFatalError(t, pos);
+      renderhandlerbracketer.renderFatalError(t, pos);
     }
     pos.close();
   }
 
-  public void handlePost(ActionHandler posthandler) {
-
-    ViewParameters redirect = posthandler.handle();
+  private void handlePost() {
+    
+    ViewParameters redirect = actionhandler.handle();
 
     issueRedirect(redirect, response);
   }

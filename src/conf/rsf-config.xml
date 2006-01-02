@@ -14,10 +14,34 @@
     </property>
   </bean>
   
+  <bean id="streamResolver" class="uk.org.ponder.springutil.SpringStreamResolver">
+  </bean>
+  
+  <bean id="entityResolverStash" class="uk.org.ponder.saxalizer.EntityResolverStash">
+    <property name="streamResolver">
+      <ref bean="streamResolver"/>
+    </property>
+    <property name="entityResolvers">
+      <list>
+        <bean class="uk.org.ponder.saxalizer.LocalEntityResolver">
+          <property name="ID">
+            <value>-//SPRING//DTD WEBFLOW//EN</value>
+          </property>
+          <property name="path">
+            <value>classpath:/dtd/spring-webflow.dtd</value>
+          </property>
+        </bean>
+      </list>
+    </property>
+  </bean>
+  
   <bean id="mappablexmlprovider" class="uk.org.ponder.saxalizer.SAXalXMLProvider">
     <constructor-arg>
       <ref bean="saxalizermappingcontext"/>
     </constructor-arg>
+    <property name="entityResolverStash">
+      <ref bean="entityResolverStash"/>
+    </property>
   </bean>
   
   <bean id="rsfmappingloader" class="uk.org.ponder.rsf.mappings.RSFMappingLoader"/>
