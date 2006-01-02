@@ -10,12 +10,12 @@ package uk.org.ponder.rsf.processor;
  * 
  */
 public class DefaultHandlerResolver {
-  private RSFRenderHandlerImpl renderhandler;
-  private RSFActionHandler actionhandler;
-  public void setRSFActionHandlerImpl(RSFActionHandler actionhandler) {
+  private RenderHandler renderhandler;
+  private ActionHandler actionhandler;
+  public void setActionHandler(RSFActionHandler actionhandler) {
     this.actionhandler = actionhandler;
   }
-  public void setRSFRenderHandler(RSFRenderHandlerImpl renderhandler) {
+  public void setRenderHandler(RenderHandler renderhandler) {
     this.renderhandler = renderhandler;
   }
   
