@@ -37,6 +37,18 @@
   <bean id="requesttype" factory-bean="earlyRequestParser"
     factory-method="getRequestType"/>
   
+  <bean id="handlerResolver" class="uk.org.ponder.rsf.processor.DefaultHandlerResolver">
+    <property name="renderHandler">
+      <ref bean="RSFRenderHandler"/>
+    </property>
+    <property name="actionHandler">
+      <ref bean="RSFActionHandler"/>
+    </property>
+  </bean>
+  
+  <bean id="renderHandler" factory-bean="handlerResolver" factory-method="getRenderHandler"/>
+  <bean id="actionHandler" factory-bean="handlerResolver" factory-method="getActionHandler"/>
+  
   <bean id="rootHandlerBean" class="uk.org.ponder.rsf.servlet.RootHandlerBean"
     init-method="init">
     <property name="httpServletRequest">
@@ -48,25 +60,19 @@
     <property name="requestType">
       <ref local="requesttype"/>
     </property>
-    <property name="requestBeanLocator">
-      <ref local="requestbeanlocator"/>
-    </property>
     <property name="viewStateHandler">
       <ref bean="viewStateHandler"/>
     </property>
     <property name="outgoingParams">
       <ref bean="outgoingParams"/>
     </property>
+    <property name="renderHandlerBracketer">
+      <ref bean="renderHandlerBracketer"/>
+    </property>
+    <property name="actionHandler">
+      <ref bean="actionHandler"/>
+    </property>
   </bean>
-  <!-- achieve two things here - renderHandler is not resolved in non-POST requests,
-    and ALSO is not resolved until first use, to allow exception bracketing -->
-  <bean id="lazyrenderhandler" class="org.springframework.aop.framework.ProxyFactoryBean">
-	<property name="targetSource">
-	<bean class="org.springframework.aop.target.LazyInitTargetSource">
-      <property name="targetBeanName"><idref bean="renderHandler"/></property>
-       </bean>
-     </property>
-   </bean>
   
   <!-- The "censored" bean locator into which it is safe to resolve EL
   expressions coming in over the request -->
@@ -259,7 +265,7 @@
   <bean id="alterationwrapper" class="uk.org.ponder.util.NullRunnableWrapper">
   </bean>
   
-  <bean id="posthandler" class="uk.org.ponder.rsf.processor.RSFActionHandler"
+  <bean id="RSFActionHandler" class="uk.org.ponder.rsf.processor.RSFActionHandler"
   lazy-init="true">
     <property name="errorStateManager">
       <ref local="errorstatemanager"/>
@@ -419,7 +425,7 @@
     </property>
   </bean>
   
-  <bean id="gethandler" class="uk.org.ponder.rsf.processor.RSFRenderHandler">
+  <bean id="renderHandlerBracketer" class="uk.org.ponder.rsf.processor.RenderHandlerBracketer">
     <property name="errorStateManager">
       <ref local="errorstatemanager"/>
     </property>
@@ -429,9 +435,14 @@
     <property name="viewParameters">
       <ref local="viewparameters"/>
     </property>
+    <property name="renderHandler">
+      <ref bean="renderHandler"/>
+    </property>
   </bean>
   
-  <bean id="gethandlerimpl" class="uk.org.ponder.rsf.processor.RSFRenderHandlerImpl"
+  <!-- achieve two things here with laziness - renderHandler is not resolved in non-POST requests,
+    and ALSO is not resolved until first use, to allow exception bracketing -->
+  <bean id="RSFRenderHandler" class="uk.org.ponder.rsf.processor.RSFRenderHandler"
   lazy-init="true">
     <property name="errorStateManager">
       <ref local="errorstatemanager"/>
