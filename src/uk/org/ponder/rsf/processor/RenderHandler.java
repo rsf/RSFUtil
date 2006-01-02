@@ -10,9 +10,5 @@ import uk.org.ponder.streamutil.write.PrintOutputStream;
  * 
  */
 public interface RenderHandler {
-  /**
-   * The beanlocator is passed in to allow the late location of the ViewRender
-   * bean which needs to occur in a controlled exception context.
-   */
   public abstract void handle(PrintOutputStream pos);
 }

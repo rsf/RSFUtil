@@ -25,10 +25,11 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
-public class RSFRenderHandler {
+public class RenderHandlerBracketer {
   private ViewExceptionStrategy ves;
   private ErrorStateManager errorstatemanager;
   private ViewParameters viewparams;
+  private RenderHandler renderhandler;
 
   public void setViewExceptionStrategy(ViewExceptionStrategy ves) {
     this.ves = ves;
@@ -41,21 +42,21 @@ public class RSFRenderHandler {
   public void setViewParameters(ViewParameters viewparams) {
     this.viewparams = viewparams;
   }
+  // This is a lazy dependency
+  public void setRenderHandler(RenderHandler renderhandler) {
+    this.renderhandler = renderhandler;
+  }
 
   /** The beanlocator is passed in to allow the late location of the 
    * GetHandlerImpl bean which needs to occur in a controlled exception context.
    */
-  public ViewParameters handle(PrintOutputStream pos, BeanLocator beanlocator) {
-   
+  public ViewParameters handle(PrintOutputStream pos) {
     boolean iserrorredirect = viewparams.errorredirect != null;
     // YES, reach into the original request! somewhat bad...
     viewparams.errorredirect = null;
     ThreadErrorState.beginRequest();
     try {
-      RenderHandler renderhandler = 
-        (RenderHandler) beanlocator.locateBean("renderhandler");
       renderhandler.handle(pos);
-    
     }
     catch (Exception e) {
       // if a request comes in for an invalid view, redirect it onto a default
