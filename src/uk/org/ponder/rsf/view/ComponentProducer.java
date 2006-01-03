@@ -25,15 +25,4 @@ public interface ComponentProducer {
    */
   public void fillComponents(UIContainer tofill, ViewParameters origviewparams, 
       ComponentChecker checker);
-//
-//  protected MessageLocator messagelocator;
-//  
-//  public void setMessageLocator(MessageLocator messagelocator) {
-//    this.messagelocator = messagelocator;
-//  }
-//  
-//  public MessageLocator getMessageLocator() {
-//    return messagelocator;
-//  }
-
 }
