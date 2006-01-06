@@ -114,6 +114,10 @@ public class RSFActionHandler implements ActionHandler {
           }
         }
       }).run();
+      // oops - problem here! The wrapper MUST know about flow details in 
+      // order to know whether to commit - but this is not determined until
+      // presmanager call below!!!! ONLY a POST at FLOW_END will propagate.
+      // Lazy dependence on ARIres, which then goes into container??
 
       String submitting = PostDecoder.decodeSubmittingControl(normalizedmap);
       errorstatemanager.globaltargetid = submitting;
