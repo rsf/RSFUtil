@@ -126,14 +126,6 @@
     </property>
   </bean>
   
-  <bean id="viewparametersparser"
-    class="uk.org.ponder.rsf.viewstate.SimpleViewParametersParser">
-    <property name="viewParametersExemplar">
-      <!-- EXTERNAL DEPENDENCY! The application supplies the view params -->
-      <ref bean="viewparamsexemplar"/>
-    </property>
-  </bean>
-  
   <bean id="rendersystemstatic"
     class="uk.org.ponder.rsf.renderer.html.BasicHTMLRenderSystemStatic">
   </bean>

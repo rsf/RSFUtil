@@ -27,8 +27,16 @@
   <bean id="messagelocator" class="uk.org.ponder.errorutil.BlankMessageLocator">
   </bean>
     -->
+    
+  <bean id="viewParametersParser"
+    class="uk.org.ponder.rsf.viewstate.SimpleViewParametersParser">
+    <property name="viewParametersExemplar">
+      <!-- EXTERNAL DEPENDENCY! The application supplies the view params -->
+      <ref bean="viewParamsExemplar"/>
+    </property>
+  </bean>
   
-  <bean id="viewparamsexemplar"
+  <bean id="viewParamsExemplar"
     class="uk.org.ponder.rsf.viewstate.SimpleViewParameters">
   </bean>
   

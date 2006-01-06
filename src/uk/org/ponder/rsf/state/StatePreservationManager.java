@@ -4,12 +4,14 @@
 package uk.org.ponder.rsf.state;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.beanutil.WriteableBeanLocator;
 
-public class StatePreservationManager {
+public class StatePreservationManager implements FlowLockGetter {
   private List strategies;
   private List endflowstrategies;
 
@@ -23,6 +25,9 @@ public class StatePreservationManager {
 
   private WriteableBeanLocator wbl;
   private BeanLocator deadbl;
+  // Maps flow tokens onto lock objects, while they are active, principally for the use of 
+  // the FlowAlterationWrapper.
+  private Map flowlockmap = new HashMap();
 
   public void setWriteableBeanLocator(WriteableBeanLocator wbl) {
     this.wbl = wbl;
@@ -50,6 +55,9 @@ public class StatePreservationManager {
   }
 
   public void preserve(String tokenid) {
+    if (!flowlockmap.containsKey(tokenid)) {
+      flowlockmap.put(tokenid, new Object());
+    }
     for (int i = 0; i < strategies.size(); ++i) {
       strategyAt(i).preserve(deadbl, tokenid);
     }
@@ -85,5 +93,11 @@ public class StatePreservationManager {
     for (int i = 0; i < endflowstrategies.size(); ++i) {
       endStrategyAt(i).preserve(deadbl, tokenid);
     }
+    flowlockmap.remove(tokenid);
   }
+
+  public Object getFlowLock(String flowtoken) {
+    return flowlockmap.get(flowtoken);
+  }
+  
 }
