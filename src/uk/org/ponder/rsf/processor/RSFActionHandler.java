@@ -21,8 +21,8 @@ import uk.org.ponder.util.RunnableWrapper;
 
 /**
  * ActionHandler is a request scope bean responsible for handling an HTTP POST
- * request, or other non-idempotent web service "action" cycle. Defines the
- * core logic for this processing cycle.
+ * request, or other non-idempotent web service "action" cycle. Defines the core
+ * logic for this processing cycle.
  * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
@@ -72,17 +72,31 @@ public class RSFActionHandler implements ActionHandler {
   public void setStatePreservationManager(StatePreservationManager presmanager) {
     this.presmanager = presmanager;
   }
-  
+
   public void setViewExceptionStrategy(ViewExceptionStrategy ves) {
     this.ves = ves;
   }
-  
+
   public void setActionErrorStrategy(ActionErrorStrategy actionerrorstrategy) {
     this.actionerrorstrategy = actionerrorstrategy;
   }
 
+  private ARIResult ariresult = null;
+
+  /**
+   * The result of this post cycle will be of interest to some other request
+   * beans, in particular the alteration wrapper. This bean must however be
+   * propagated lazily since it is only constructed partway through this
+   * handler, if indeed it is a POST cycle at all.
+   * 
+   * @return
+   */
+  public ARIResult getARIResult() {
+    return ariresult;
+  }
+
   // Since this entire bean is request scope, there is no difficulty with
-  // letting the action result escape from the wrapper into this instance 
+  // letting the action result escape from the wrapper into this instance
   // variable.
   private Object actionresult = null;
   private Exception exception;
@@ -90,7 +104,7 @@ public class RSFActionHandler implements ActionHandler {
   public ViewParameters handle() {
     ThreadErrorState.beginRequest();
     final String actionmethod = PostDecoder.decodeAction(normalizedmap);
-    ARIResult arires = null;
+
     try {
       // invoke all state-altering operations within the runnable wrapper.
       postwrapper.wrapRunnable(new Runnable() {
@@ -112,36 +126,32 @@ public class RSFActionHandler implements ActionHandler {
                 actionresult instanceof String ? (String) actionresult
                     : null, exception, null, viewparams.viewID);
           }
+          // must interpret ARI INSIDE the wrapper, since it may need it
+          // on closure.
+          if (actionresult instanceof ARIResult) {
+            ariresult = (ARIResult) actionresult;
+          }
+          else {
+            ActionResultInterpreter ari = ariresolver
+                .getActionResultInterpreter();
+            ariresult = ari.interpretActionResult(viewparams, actionresult);
+          }
         }
       }).run();
-      // oops - problem here! The wrapper MUST know about flow details in 
-      // order to know whether to commit - but this is not determined until
-      // presmanager call below!!!! ONLY a POST at FLOW_END will propagate.
-      // Lazy dependence on ARIres, which then goes into container??
 
-      String submitting = PostDecoder.decodeSubmittingControl(normalizedmap);
-      errorstatemanager.globaltargetid = submitting;
-
-      if (actionresult instanceof ARIResult) {
-        arires = (ARIResult) actionresult;
-      }
-      else {
-        ActionResultInterpreter ari = ariresolver.getActionResultInterpreter();
-        arires = ari.interpretActionResult(viewparams, actionresult);
-      }
-      if (!arires.propagatebeans.equals(ARIResult.FLOW_END)) {
+      if (!ariresult.propagatebeans.equals(ARIResult.FLOW_END)) {
         // TODO: consider whether we want to allow ARI to allocate a NEW TOKEN
         // for a FLOW FORK. Some call this, "continuations".
-        if (arires.resultingview.flowtoken == null
-            && arires.propagatebeans.equals(ARIResult.FLOW_START)) {
+        if (ariresult.resultingview.flowtoken == null
+            && ariresult.propagatebeans.equals(ARIResult.FLOW_START)) {
           // if the ARI wanted one and hasn't allocated one, allocate flow
           // token.
-          arires.resultingview.flowtoken = errorstatemanager.allocateToken();
+          ariresult.resultingview.flowtoken = errorstatemanager.allocateToken();
         }
-        presmanager.preserve(arires.resultingview.flowtoken);
+        presmanager.preserve(ariresult.resultingview.flowtoken);
       }
       else { // it is a flow end.
-        arires.resultingview.endflow = "1";
+        ariresult.resultingview.endflow = "1";
         if (viewparams.flowtoken != null) {
           presmanager.flowEnd(viewparams.flowtoken);
         }
@@ -149,21 +159,24 @@ public class RSFActionHandler implements ActionHandler {
     }
     catch (Exception e) {
       Logger.log.error("Error invoking action", e);
-//      ThreadErrorState.addError(new TargettedMessage(
-//          CoreMessages.GENERAL_ACTION_ERROR));
+      // ThreadErrorState.addError(new TargettedMessage(
+      // CoreMessages.GENERAL_ACTION_ERROR));
       // Detect failure to fill out arires properly.
-      if (arires == null || arires.resultingview == null) {
-        arires = new ARIResult();
-        arires.propagatebeans = ARIResult.FLOW_END;
+      if (ariresult == null || ariresult.resultingview == null) {
+        ariresult = new ARIResult();
+        ariresult.propagatebeans = ARIResult.FLOW_END;
 
         ViewParameters defaultparameters = ves.handleException(e, viewparams);
-        arires.resultingview = defaultparameters;
+        ariresult.resultingview = defaultparameters;
       }
     }
+    String submitting = PostDecoder.decodeSubmittingControl(normalizedmap);
+    errorstatemanager.globaltargetid = submitting;
+
     String errortoken = errorstatemanager.requestComplete();
 
-    arires.resultingview.errortoken = errortoken;
-    return arires.resultingview;
+    ariresult.resultingview.errortoken = errortoken;
+    return ariresult.resultingview;
   }
 
 }

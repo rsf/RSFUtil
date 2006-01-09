@@ -12,6 +12,10 @@ import java.util.Map;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 /**
+ * A concrete implementation of ViewResolver which will resolve ComponentProducer
+ * requests into a fixed collection of configured beans, set up by the 
+ * setView() method. Can also fall back to a set of generic ViewResolvers
+ * should initial lookup fail. This is the default RSF ViewResolver.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */

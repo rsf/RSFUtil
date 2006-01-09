@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.rsf.viewstate;
 
+import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.webapputil.ConsumerInfo;
 
 /**
@@ -17,6 +18,7 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
 
   private BaseURLProvider urlprovider;
   private ConsumerInfo ci;
+  private BeanModelAlterer bma;
   public void setBaseURLProvider(BaseURLProvider urlprovider) {
     this.urlprovider = urlprovider;
   }
@@ -24,10 +26,14 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
   public void setConsumerInfo(ConsumerInfo ci) {
     this.ci = ci;
   }
+
+  public void setBeanModelAlterer(BeanModelAlterer bma) {
+    this.bma = bma;
+  }
   
   public String getFullURL(ViewParameters viewparams) {
     // toHTTPRequest provides leading slash, and baseurl includes trailing slash
-    String requestparams = URLUtil.toHTTPRequest(viewparams).substring(1);
+    String requestparams = URLUtil.toHTTPRequest(bma, viewparams).substring(1);
 
     String usebaseurl = urlprovider.getBaseURL();
     String extraparams = "";

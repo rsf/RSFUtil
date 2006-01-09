@@ -49,4 +49,11 @@ public class ARIResult {
    * three String values above (interned, so you may compare with ==).
    */
   public String propagatebeans;
+  /** An access method, for those who like that sort of thing. Certainly people
+   * who use AOP are rather keen on them...
+   * @return
+   */
+  public String getPropagateBeans() {
+    return propagatebeans;
+  }
 }

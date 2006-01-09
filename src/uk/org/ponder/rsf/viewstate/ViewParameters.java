@@ -3,16 +3,14 @@
  */
 package uk.org.ponder.rsf.viewstate;
 
-import java.util.Map;
-
-import uk.org.ponder.reflect.FieldHash;
+import uk.org.ponder.stringutil.StringList;
 
 /**
  * The base class abstracting common functionality for specifying a view
  * state of a web application, independent of any particular application 
  * or url mapping technology.
  * In order to get generate a complete external URL, you must use one of
- * the methods of {@see ViewStateHandler}.
+ * the methods of {@link uk.org.ponder.rsf.viewstate.ViewStateHandler}.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  *  
  */
@@ -64,22 +62,25 @@ public abstract class ViewParameters implements Cloneable {
    */
   public String endflow;
 
-  public Map preserved; 
-  public abstract FieldHash getFieldHash();
-  public abstract void clearParams();
-  public abstract void parsePathInfo(String pathinfo);
-  public abstract String toPathInfo();
-
-  /** Fill in the fields of the supplied view parameter object with data
-   * from the supplied URL (which may be null), the supplied parameter map
-   * and any other statically accessible sources of information.
+  /** Return a list of relative "bean paths" which will be mapped to 
+   * attributes of a specifying URL.
+   * @return
    */
-  public void fromRequest(String pathinfo, Map parameters) {
-    parsePathInfo(pathinfo);
-    getFieldHash().fromMap(parameters, this);
-  }
-  
-  
+  public abstract StringList getAttributeFields();
+   /** Parse the "extra path info" field as defined as the "URL stub" following
+   * the path that the handling servlet is mapped to, into correponding fields
+   * in this object. This will at least include parsing the portion following
+   * the initial forward slash (compulsory) up to the next one into the
+   * viewID field.
+   * @param pathinfo
+   */
+  public abstract void parsePathInfo(String pathinfo);
+  /** Invert the operation of parseParseInfo, and render any state in this 
+   * ViewParameters back into the corresponding URL stub. 
+   */
+  public abstract String toPathInfo();
+ 
+  public abstract void clearParams();
 // Note that copying does not copy the error token! All command links
 // take the original request, and all non-command links should not share
 // error state.

@@ -192,6 +192,9 @@
     <property name="consumerInfo">
       <ref bean="consumerInfo"/>
     </property>
+    <property name="beanModelAlterer">
+      <ref bean="DARApplier"/>
+    </property>
   </bean>
   
   <bean id="urlrewriter" class="uk.org.ponder.rsf.viewstate.URLRewriter">
@@ -305,9 +308,9 @@
     </property>
   </bean>
   
-  <bean id="formmodel"
-    class="uk.org.ponder.rsf.componentprocessor.BasicFormModel"> 
-  </bean>
+  <bean id="ARIResult" factory-bean = "actionHandler" factory-method="getARIResult"
+    lazy-init="true"/>
+  
 <!-- Begin beans for FlowLite -->  
    
   <bean id="flowLite-flowIDHolder" class="uk.org.ponder.rsf.flow.lite.FlowIDHolder"></bean>
@@ -357,9 +360,6 @@
     <property name="componentChecker">
       <ref local="viewtemplate"/>
     </property>
-    <property name="formModel">
-      <ref bean="formmodel"/>
-    </property>
   </bean>
   <!--
   <bean id="view" factory-bean="viewgenerator" factory-method="getView"/>
@@ -386,9 +386,6 @@
     <property name="view">
       <ref bean="view"/>
     </property>-->
-    <property name="formModel">
-      <ref bean="formmodel"/>
-    </property>
     <property name="outgoingParams">
       <ref bean="outgoingParams"/>
     </property>

@@ -149,7 +149,7 @@
   
   <bean id="viewExceptionStrategy" class="uk.org.ponder.rsf.flow.SimpleViewExceptionStrategy">
     <property name="viewParametersParser">
-      <ref bean="viewparametersparser"/>
+      <ref bean="viewParametersParser"/>
     </property>
     <property name="defaultView">
       <ref bean="defaultView"/>
