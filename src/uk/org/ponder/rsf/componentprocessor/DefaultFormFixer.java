@@ -28,7 +28,6 @@ import uk.org.ponder.util.UniversalRuntimeException;
 public class DefaultFormFixer implements ComponentProcessor, ViewReceiver {
   private ViewParameters viewparams;
   private ViewStateHandler viewstatehandler;
-  private FormModel formmodel;
   private View view;
   private ParameterList outgoingparams;
 
@@ -38,10 +37,6 @@ public class DefaultFormFixer implements ComponentProcessor, ViewReceiver {
   
   public void setViewStateHandler(ViewStateHandler viewstatehandler) {
     this.viewstatehandler = viewstatehandler;
-  }
-  
-  public void setFormModel(FormModel formmodel) {
-    this.formmodel = formmodel;
   }
   
   public void setView(View view) {

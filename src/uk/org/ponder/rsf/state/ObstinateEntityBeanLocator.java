@@ -9,7 +9,7 @@ import uk.org.ponder.beanutil.WriteableBeanLocator;
 /** A request-scope container managing a set of entities, probably managed
  * by some form of ORM solution. Note that the semantics of ALL the inherited
  * methods are somewhat specific.
- * <p> get(String ID) - The ID is interpreted as the rendered form of an underlying
+ * <p> locateBean(String ID) - The ID is interpreted as the rendered form of an underlying
  * database ID, UNLESS it begins with the special prefix BeanUtil.NEW_ENTITY_PREFIX.
  * If it is not a new entity, the actual ID type will be parsed, and the existing 
  * persistent entity of the type handled by this locator will be returned. If the
@@ -44,7 +44,7 @@ import uk.org.ponder.beanutil.WriteableBeanLocator;
  */
 
 public interface ObstinateEntityBeanLocator extends WriteableBeanLocator, 
-    IterableBeanLocator {
+   IterableBeanLocator {
   /** Adds a listener to be notified of the persistent IDs allocated to
    * objects by an end-request commit notified by the AlterationWrapper.
    * This class is expected to have a private relationship with the current

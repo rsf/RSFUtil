@@ -5,7 +5,6 @@ package uk.org.ponder.rsf.view;
 
 import java.util.List;
 
-import uk.org.ponder.rsf.componentprocessor.FormModel;
 import uk.org.ponder.rsf.util.ComponentDumper;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
@@ -24,7 +23,6 @@ public class ViewGenerator {
   private View view;
   private ComponentChecker checker;
   private ViewParameters viewparams;
-  private FormModel formmodel;
  // This method is called manually from GetHandler.
   public View getView() {
     if (view == null) {
@@ -47,10 +45,6 @@ public class ViewGenerator {
     this.viewparams = viewparams;
   }
   
-  public void setFormModel(FormModel formmodel) {
-    this.formmodel = formmodel;
-  }
-  
   /**
    * Returns the UIViewRoot for the view created by the View instance matching
    * the view ID. Any potentially recoverable errors are caught and a redirect
@@ -59,7 +53,6 @@ public class ViewGenerator {
    */
   private View generateView(ViewParameters viewparams, ComponentChecker checker) {
     View view = new View();
-    view.formmodel = formmodel;
     List producers = viewresolver.getProducers(viewparams.viewID);
 
     if (producers != null) {

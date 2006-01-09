@@ -35,5 +35,5 @@ public class View {
   public UIComponent getComponent(String fullID) {
     return (UIComponent) IDtocomponent.get(fullID);
   }
-  public FormModel formmodel;
+ // public FormModel formmodel;
 }

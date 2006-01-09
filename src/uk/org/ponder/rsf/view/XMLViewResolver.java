@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Level;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
@@ -22,7 +21,8 @@ import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 /** A view resolver which will return a component producer specified in
- * a static XML file.
+ * a static XML file. Will attempt to look up the supplied viewID, after
+ * prefixing and postfixing, as a Spring resource.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  *
  */
