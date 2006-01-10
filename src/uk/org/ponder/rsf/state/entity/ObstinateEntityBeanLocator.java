@@ -1,7 +1,7 @@
 /*
  * Created on 06-Jan-2006
  */
-package uk.org.ponder.rsf.state;
+package uk.org.ponder.rsf.state.entity;
 
 import uk.org.ponder.beanutil.IterableBeanLocator;
 import uk.org.ponder.beanutil.WriteableBeanLocator;
@@ -45,11 +45,5 @@ import uk.org.ponder.beanutil.WriteableBeanLocator;
 
 public interface ObstinateEntityBeanLocator extends WriteableBeanLocator, 
    IterableBeanLocator {
-  /** Adds a listener to be notified of the persistent IDs allocated to
-   * objects by an end-request commit notified by the AlterationWrapper.
-   * This class is expected to have a private relationship with the current
-   * AlterationWrapper established through registerPreCommitAction();
-   * @param eialistener The listener to be added.
-   */
-  public void addEntityIDListener(EntityIDAssignmentListener eialistener);
+ 
 }

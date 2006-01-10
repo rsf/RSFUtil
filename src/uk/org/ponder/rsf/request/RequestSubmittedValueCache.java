@@ -1,7 +1,7 @@
 /*
  * Created on Nov 23, 2004
  */
-package uk.org.ponder.rsf.state;
+package uk.org.ponder.rsf.request;
 
 import java.util.ArrayList;
 import java.util.HashMap;

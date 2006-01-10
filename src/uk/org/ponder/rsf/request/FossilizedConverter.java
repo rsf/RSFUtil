@@ -1,7 +1,7 @@
 /*
  * Created on Nov 11, 2005
  */
-package uk.org.ponder.rsf.state;
+package uk.org.ponder.rsf.request;
 
 import uk.org.ponder.beanutil.BeanUtil;
 import uk.org.ponder.conversion.ConvertUtil;

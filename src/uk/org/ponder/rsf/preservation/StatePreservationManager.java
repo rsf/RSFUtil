@@ -1,7 +1,7 @@
 /*
  * Created on Nov 15, 2005
  */
-package uk.org.ponder.rsf.state;
+package uk.org.ponder.rsf.preservation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,6 +10,7 @@ import java.util.Map;
 
 import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.beanutil.WriteableBeanLocator;
+import uk.org.ponder.rsf.state.FlowLockGetter;
 
 public class StatePreservationManager implements FlowLockGetter {
   private List strategies;

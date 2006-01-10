@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import uk.org.ponder.rsf.renderer.RenderSystemStatic;
-import uk.org.ponder.rsf.state.SubmittedValueEntry;
+import uk.org.ponder.rsf.request.SubmittedValueEntry;
 
 /** This class now disused in favour of PostDecoder **/
 

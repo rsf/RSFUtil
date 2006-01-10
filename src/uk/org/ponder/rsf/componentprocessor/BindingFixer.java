@@ -10,7 +10,7 @@ import uk.org.ponder.rsf.components.UIDeletionBinding;
 import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIParameter;
-import uk.org.ponder.rsf.state.FossilizedConverter;
+import uk.org.ponder.rsf.request.FossilizedConverter;
 
 public class BindingFixer implements ComponentProcessor {
 
