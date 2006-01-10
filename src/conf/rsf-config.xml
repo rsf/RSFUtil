@@ -7,7 +7,7 @@
   <bean id="reflectivecache" class="uk.org.ponder.reflect.JDKReflectiveCache">
   </bean>
   
-  <bean id="saxalizermappingcontext"
+  <bean id="saxalizerMappingContext"
     class="uk.org.ponder.saxalizer.SAXalizerMappingContext">
     <property name="reflectiveCache">
       <ref bean="reflectivecache"/>
@@ -37,7 +37,7 @@
   
   <bean id="mappablexmlprovider" class="uk.org.ponder.saxalizer.SAXalXMLProvider">
     <constructor-arg>
-      <ref bean="saxalizermappingcontext"/>
+      <ref bean="saxalizerMappingContext"/>
     </constructor-arg>
     <property name="entityResolverStash">
       <ref bean="entityResolverStash"/>
@@ -49,7 +49,7 @@
   <bean id="mappingloadmanager" 
 		class="uk.org.ponder.springutil.SpringXMLMappingLoader" init-method="init">
 		<property name="SAXalizerMappingContext">
-			<ref bean="saxalizermappingcontext"></ref>
+			<ref bean="saxalizerMappingContext"></ref>
 		</property>
 		<property name="mappableXMLProvider">
 			<ref bean="mappablexmlprovider"></ref>
@@ -71,7 +71,7 @@
   
   <bean id="deepbeancloner" class="uk.org.ponder.reflect.DeepBeanCloner">
     <property name="mappingContext">
-      <ref bean="saxalizermappingcontext"/>
+      <ref bean="saxalizerMappingContext"/>
     </property>
     <property name="reflectiveCache">
       <ref bean="reflectivecache"/>
@@ -79,7 +79,7 @@
   </bean>
   
   <bean id="fossilizedconverter"
-    class="uk.org.ponder.rsf.state.FossilizedConverter">
+    class="uk.org.ponder.rsf.request.FossilizedConverter">
     <property name="SAXalXMLProvider">
       <ref bean="mappablexmlprovider"/>
     </property>
@@ -122,7 +122,7 @@
       <ref bean="reflectivecache"/>
     </property>
     <property name="mappingContext">
-      <ref bean="saxalizermappingcontext"/>
+      <ref bean="saxalizerMappingContext"/>
     </property>
   </bean>
   

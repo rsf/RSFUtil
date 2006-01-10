@@ -3,7 +3,7 @@
  */
 package uk.org.ponder.rsf.viewstate;
 
-import uk.org.ponder.beanutil.EntityID;
+import uk.org.ponder.beanutil.entity.EntityID;
 import uk.org.ponder.stringutil.StringList;
 
 /**
@@ -26,6 +26,9 @@ public class EntityCentredViewParameters extends ViewParameters {
   
   public EntityID getEntity() {
     return entity;
+  }
+  public void setEntity(EntityID entity) {
+    this.entity = entity;
   }
   
   public void parsePathInfo(String pathinfo) {

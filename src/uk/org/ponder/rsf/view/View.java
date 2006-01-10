@@ -5,9 +5,8 @@ package uk.org.ponder.rsf.view;
 
 import java.util.HashMap;
 
-import uk.org.ponder.rsf.componentprocessor.FormModel;
-import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIBranchContainer;
+import uk.org.ponder.rsf.components.UIComponent;
 
 /**
  * The View holds the component tree while it is in transit between 

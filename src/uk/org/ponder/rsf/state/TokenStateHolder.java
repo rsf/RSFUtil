@@ -3,6 +3,8 @@
  */
 package uk.org.ponder.rsf.state;
 
+import uk.org.ponder.rsf.preservation.StatePreservationStrategy;
+
 /** The repository of all inter-request state in RSF, certainly on the
  * server side. Some client-side storage strategies may bypass TSH and
  * simply implement {@link StatePreservationStrategy} directly. */

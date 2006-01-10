@@ -3,7 +3,7 @@
  */
 package uk.org.ponder.rsf.renderer;
 
-import uk.org.ponder.rsf.state.SubmittedValueEntry;
+import uk.org.ponder.rsf.request.SubmittedValueEntry;
  
 import java.util.Map;
 

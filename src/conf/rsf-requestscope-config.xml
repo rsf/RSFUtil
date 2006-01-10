@@ -157,7 +157,7 @@
   </bean> 
   
   <bean id="statePreservationManager"
-    class="uk.org.ponder.rsf.state.StatePreservationManager">
+    class="uk.org.ponder.rsf.preservation.StatePreservationManager">
     <property name="strategies">
       <ref bean="statePreservationStrategies"/>
     </property>

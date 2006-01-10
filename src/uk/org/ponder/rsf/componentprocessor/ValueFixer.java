@@ -9,9 +9,9 @@ import uk.org.ponder.beanutil.BeanUtil;
 import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIParameter;
-import uk.org.ponder.rsf.state.FossilizedConverter;
-import uk.org.ponder.rsf.state.RequestSubmittedValueCache;
-import uk.org.ponder.rsf.state.SubmittedValueEntry;
+import uk.org.ponder.rsf.request.FossilizedConverter;
+import uk.org.ponder.rsf.request.RequestSubmittedValueCache;
+import uk.org.ponder.rsf.request.SubmittedValueEntry;
 import uk.org.ponder.rsf.uitype.UITypes;
 
 /** Fetches values from the request bean model that are referenced via EL

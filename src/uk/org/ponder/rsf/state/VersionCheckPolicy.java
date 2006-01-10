@@ -3,6 +3,8 @@
  */
 package uk.org.ponder.rsf.state;
 
+import uk.org.ponder.rsf.request.SubmittedValueEntry;
+
 /** Called for every RSVC entry just before its value is applied to the
  * model, to give a chance for an application-defined version check. 
  * In general if the version check fails, the method will throw some

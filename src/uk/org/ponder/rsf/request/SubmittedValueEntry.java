@@ -1,7 +1,7 @@
 /*
  * Created on Nov 23, 2004
  */
-package uk.org.ponder.rsf.state;
+package uk.org.ponder.rsf.request;
 
 /**
  * Represents a submitted value as received from a user submission. For 

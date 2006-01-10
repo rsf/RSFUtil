@@ -17,7 +17,7 @@
       <ref bean="defaultARI"/>
     </property>
   </bean>
-   
+
   <bean id="actionErrorStrategyManager" class="uk.org.ponder.rsf.flow.ActionErrorStrategyManager">
     <property name="mergeStrategies">
       <ref bean="xmlActionErrorStrategies"/>
@@ -59,7 +59,7 @@
   </bean>
 
   <bean id="defaultRSVCPreserver"
-    class="uk.org.ponder.rsf.state.RSVCPreservationStrategy">
+    class="uk.org.ponder.rsf.preservation.RSVCPreservationStrategy">
     <property name="requestRSVC">
       <ref bean="requestrsvc"/>
     </property>
@@ -75,7 +75,7 @@
   </bean>
     
   <bean id="defaultBeanCopyPreserver"
-    class="uk.org.ponder.rsf.state.BeanCopyPreservationStrategy">
+    class="uk.org.ponder.rsf.preservation.BeanCopyPreservationStrategy">
     <property name="preservingBeans">
       <ref bean="copyPreservingBeans"/>
     </property>
@@ -89,7 +89,7 @@
   
   
   <bean id="endFlowPreserver"
-     class="uk.org.ponder.rsf.state.BeanCopyPreservationStrategy">
+     class="uk.org.ponder.rsf.preservation.BeanCopyPreservationStrategy">
     <property name="preservingBeans">
       <ref bean="copyPreservingBeans"/>
     </property>
@@ -103,7 +103,7 @@
   
   
   <bean id="requestFlowStatePreserver" 
-    class="uk.org.ponder.rsf.state.InURLPreservationStrategy">
+    class="uk.org.ponder.rsf.preservation.InURLPreservationStrategy">
     <property name="beanModelAlterer">
       <ref bean="DARApplier"/>
     </property>
@@ -121,7 +121,7 @@
   
   <!-- Use this unless you are preserving the flowIDHolder by other means -->
   <bean id="flowScopeFlowStatePreserver"
-    class="uk.org.ponder.rsf.state.BeanCopyPreservationStrategy">
+    class="uk.org.ponder.rsf.preservation.BeanCopyPreservationStrategy">
     <property name="tokenStateHolder">
       <ref bean="flowtokenstateholder"/>
     </property>

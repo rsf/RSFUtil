@@ -7,8 +7,8 @@ import java.util.Map;
 
 import uk.org.ponder.rsf.renderer.RenderSystemStatic;
 import uk.org.ponder.rsf.renderer.RenderUtil;
-import uk.org.ponder.rsf.state.FossilizedConverter;
-import uk.org.ponder.rsf.state.SubmittedValueEntry;
+import uk.org.ponder.rsf.request.FossilizedConverter;
+import uk.org.ponder.rsf.request.SubmittedValueEntry;
 
 public class BasicHTMLRenderSystemStatic implements RenderSystemStatic {
 

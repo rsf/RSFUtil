@@ -1,13 +1,14 @@
 /*
  * Created on Nov 9, 2005
  */
-package uk.org.ponder.rsf.state;
+package uk.org.ponder.rsf.request;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
 import uk.org.ponder.beanutil.BeanUtil;
+import uk.org.ponder.rsf.state.ELDependencyMap;
 
 /** Applies a topological sorting to a collection of SubmittedValueEntry
  * objects, such that any read or write of an entry of the bean model is 

@@ -1,7 +1,7 @@
 /*
  * Created on Nov 15, 2005
  */
-package uk.org.ponder.rsf.state;
+package uk.org.ponder.rsf.preservation;
 
 import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.beanutil.WriteableBeanLocator;

@@ -4,6 +4,7 @@
 package uk.org.ponder.rsf.state;
 
 import uk.org.ponder.errorutil.TargettedMessageList;
+import uk.org.ponder.rsf.request.RequestSubmittedValueCache;
 
 public class ErrorTokenState extends TokenState{
   int redirectcount = 0;
