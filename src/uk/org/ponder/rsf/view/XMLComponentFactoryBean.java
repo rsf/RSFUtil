@@ -12,9 +12,7 @@ import uk.org.ponder.rsf.util.XMLFactoryBean;
  *
  */
 public class XMLComponentFactoryBean extends XMLFactoryBean {
-
-  public Class getObjectType() {
-    return UIBranchContainer.class;
+  public XMLComponentFactoryBean() {
+    setObjectType(UIBranchContainer.class);
   }
-
 }

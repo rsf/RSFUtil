@@ -36,6 +36,13 @@
     </property>
   </bean>
   
+  <bean id="siteMap" class="uk.org.ponder.rsf.viewstate.XMLSiteMapLoader" abstract="true">
+    <property name="location"><value>/WEB-INF/sitemap.xml</value></property>
+    <property name="beanModelAlterer">
+    <ref bean="DARApplier"/>
+    </property>
+  </bean>
+  
   <bean id="viewParamsExemplar"
     class="uk.org.ponder.rsf.viewstate.SimpleViewParameters">
   </bean>

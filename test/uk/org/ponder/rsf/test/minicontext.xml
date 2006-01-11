@@ -28,6 +28,15 @@
 		</property>
 	</bean>
   
+  <bean id="DARApplier" class="uk.org.ponder.mapping.DARApplier">
+    <property name="SAXalXMLProvider">
+      <ref local="mappablexmlprovider"/>
+    </property>
+    <property name="reflectiveCache">
+      <ref bean="reflectivecache"/>
+    </property>
+  </bean>
+  
   <bean id="rsfmappingloader" class="uk.org.ponder.rsf.mappings.RSFMappingLoader"/>
 
 	<bean id="xmlprovider" factory-bean="mappingloadmanager" 
@@ -40,4 +49,12 @@
   <bean id="viewtree" class="uk.org.ponder.rsf.view.XMLComponentFactoryBean">
 		<property name="location"><value>classpath:uk/org/ponder/rsf/test/flow/enterGuess.xml</value></property>
 	</bean>
+  
+  <bean id="viewParametersParser" class="uk.org.ponder.rsf.viewstate.XMLSiteMapLoader">
+    <property name="location"><value>classpath:uk/org/ponder/rsf/test/sitemap/sitemap.xml</value></property>
+    <property name="beanModelAlterer">
+    <ref bean="DARApplier"/>
+    </property>
+  </bean>
+  
 </beans>

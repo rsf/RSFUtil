@@ -84,6 +84,8 @@ public abstract class ViewParameters implements Cloneable {
 // Note that copying does not copy the error token! All command links
 // take the original request, and all non-command links should not share
 // error state.
+// This is rubbish. EVEN MORE argument that these fields should go, and this
+// operation should be replaced by a proper deepClone().
   public ViewParameters copyBase() {
     try {
       ViewParameters togo = (ViewParameters) clone(); 

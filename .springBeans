@@ -3,7 +3,6 @@
 	<configs>
 		<config>src/conf/blank-applicationContext.xml</config>
 		<config>src/conf/rsf-requestscope-config.xml</config>
-		<config>test/uk/org/ponder/rsf/test/flow/minicontext.xml</config>
 		<config>src/conf/blank-requestScopeApplicationContext.xml</config>
 		<config>src/conf/rsf-config.xml</config>
 	</configs>

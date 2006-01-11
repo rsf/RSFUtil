@@ -50,7 +50,7 @@ public class XMLFactoryBean implements FactoryBean, ApplicationContextAware {
     try {
       InputStream is = res.getInputStream();
     
-      togo = xmlprovider.readXML(getObjectType(), is);
+      togo = xmlprovider.readXML(objecttype, is);
     }
     catch (Exception e) {
       Logger.log.warn("Error loading object from path " + res +":  " + e.getMessage());
