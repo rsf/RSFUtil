@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<mapperentry targetclass="uk.org.ponder.beanutil.entity.EntityID">
+  <taghandler xmlname="name" xml-form="attribute">
+    <fieldname>entityname</fieldname>
+  </taghandler>
+   <taghandler xmlname="ID" xml-form="attribute">
+    <fieldname>ID</fieldname>
+  </taghandler>
+</mapperentry>

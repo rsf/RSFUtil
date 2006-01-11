@@ -19,6 +19,8 @@ import uk.org.ponder.rsf.components.UISimpleContainer;
 import uk.org.ponder.rsf.expander.DirectIndexStrategy;
 import uk.org.ponder.rsf.expander.IDRemapStrategy;
 import uk.org.ponder.rsf.flow.StaticActionErrorStrategy;
+import uk.org.ponder.rsf.viewstate.EntityCentredViewParameters;
+import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.saxalizer.SAXalizerMappingContext;
 import uk.org.ponder.saxalizer.mapping.MappableXMLProvider;
 import uk.org.ponder.saxalizer.mapping.MappingLoadManager;
@@ -45,6 +47,8 @@ public class RSFMappingLoader implements MappingLoader {
     context.classnamemanager.registerClass("directindex", DirectIndexStrategy.class);
     context.classnamemanager.registerClass("idremap", IDRemapStrategy.class);
     context.classnamemanager.registerClass("staticstrategy", StaticActionErrorStrategy.class);
+    context.classnamemanager.registerClass("entitycentred", EntityCentredViewParameters.class);
+    context.classnamemanager.registerClass("simple", SimpleViewParameters.class);
   }
 
   public void loadStandardMappings(MappableXMLProvider xmlprovider) {
@@ -68,6 +72,9 @@ public class RSFMappingLoader implements MappingLoader {
     "uk/org/ponder/rsf/mappings/simplecontainer-map.xml");
     MappingLoadManager.loadClasspathMapping(xmlprovider, 
     "uk/org/ponder/rsf/mappings/parameter-map.xml");
+    // mapping for EntityID - should really be in PonderUtilCore
+    MappingLoadManager.loadClasspathMapping(xmlprovider, 
+    "uk/org/ponder/rsf/mappings/entityid-map.xml");
   }
 
 }

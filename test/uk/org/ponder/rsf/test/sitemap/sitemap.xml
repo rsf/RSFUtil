@@ -1,0 +1,6 @@
+<sitemap>
+  <view key="recipe" type="entitycentred">
+    <entity name="Recipe"/>
+  </view>
+  <view key="recipes" type="simple"/>
+</sitemap>

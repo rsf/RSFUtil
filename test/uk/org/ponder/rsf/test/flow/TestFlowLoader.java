@@ -22,7 +22,7 @@ public class TestFlowLoader {
 //    XmlFlowFactoryBean xffb = new XmlFlowFactoryBean();
 //    
     FileSystemXmlApplicationContext fsxac = 
-      new FileSystemXmlApplicationContext("classpath:uk/org/ponder/rsf/test/flow/minicontext.xml");
+      new FileSystemXmlApplicationContext("classpath:uk/org/ponder/rsf/test/minicontext.xml");
 //    xffb.setXMLProvider(xmlprovider);
 //    xffb.setLocation("classpath:uk/org/ponder/rsf/test/flow/numberGuess-flow.xml");
      
