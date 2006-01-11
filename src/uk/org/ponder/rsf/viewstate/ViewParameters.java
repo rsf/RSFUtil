@@ -6,6 +6,11 @@ package uk.org.ponder.rsf.viewstate;
 import uk.org.ponder.stringutil.StringList;
 
 /**
+ * An RSF ViewParameters is a rule for extracting the relevant fields from
+ * a URL (or similar spec) that specify the content of a view and representing
+ * them in a typesafe way as an object. The actual work of parsing is
+ * done by the more stateful bean ViewParametersParser.
+ * <p> 
  * The base class abstracting common functionality for specifying a view
  * state of a web application, independent of any particular application 
  * or url mapping technology.
