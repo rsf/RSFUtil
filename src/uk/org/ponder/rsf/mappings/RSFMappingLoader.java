@@ -16,23 +16,39 @@ import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UIOutputMultiline;
 import uk.org.ponder.rsf.components.UIReplicator;
 import uk.org.ponder.rsf.components.UISimpleContainer;
+import uk.org.ponder.rsf.components.UISwitch;
 import uk.org.ponder.rsf.expander.DirectIndexStrategy;
 import uk.org.ponder.rsf.expander.IDRemapStrategy;
 import uk.org.ponder.rsf.flow.StaticActionErrorStrategy;
 import uk.org.ponder.rsf.viewstate.EntityCentredViewParameters;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParamsLeafParser;
 import uk.org.ponder.saxalizer.SAXalizerMappingContext;
 import uk.org.ponder.saxalizer.mapping.MappableXMLProvider;
 import uk.org.ponder.saxalizer.mapping.MappingLoadManager;
 import uk.org.ponder.saxalizer.mapping.MappingLoader;
+
+/** This somewhat "kitchen-sink" class is the central point of coordination for
+ * all (XML) mapping files required by RSF.
+ * @author Antranig Basman (amb26@ponder.org.uk)
+ *
+ */
 
 public class RSFMappingLoader implements MappingLoader {
   public static final Class[] allBuiltin = new Class[] {
     UICommand.class, UIForm.class, UIInput.class, UIInternalLink.class,
     UILink.class, UIMessage.class, UIOutput.class, UIOutputMultiline.class,
     UIBranchContainer.class, UISimpleContainer.class, UIELBinding.class,
-    UIDeletionBinding.class, UIReplicator.class
+    UIDeletionBinding.class, UIReplicator.class, UISwitch.class
   };
+  private ViewParamsLeafParser viewparamsleafparser;
+  
+  // do this in a somewhat ad hoc way, since leafparsers do not currently
+  // advertise their parsed types.
+  public void setViewParamsLeafParser(ViewParamsLeafParser viewparamsleafparser) {
+    this.viewparamsleafparser = viewparamsleafparser;
+  }
   
   public void loadExtendedMappings(SAXalizerMappingContext context) {
     context.setChainedInferrer(new ComponentMapperInferrer());
@@ -49,6 +65,8 @@ public class RSFMappingLoader implements MappingLoader {
     context.classnamemanager.registerClass("staticstrategy", StaticActionErrorStrategy.class);
     context.classnamemanager.registerClass("entitycentred", EntityCentredViewParameters.class);
     context.classnamemanager.registerClass("simple", SimpleViewParameters.class);
+    
+    context.saxleafparser.registerParser(ViewParameters.class, viewparamsleafparser);
   }
 
   public void loadStandardMappings(MappableXMLProvider xmlprovider) {
@@ -72,6 +90,8 @@ public class RSFMappingLoader implements MappingLoader {
     "uk/org/ponder/rsf/mappings/simplecontainer-map.xml");
     MappingLoadManager.loadClasspathMapping(xmlprovider, 
     "uk/org/ponder/rsf/mappings/parameter-map.xml");
+    MappingLoadManager.loadClasspathMapping(xmlprovider, 
+    "uk/org/ponder/rsf/mappings/idremapstrategy-map.xml");
     // mapping for EntityID - should really be in PonderUtilCore
     MappingLoadManager.loadClasspathMapping(xmlprovider, 
     "uk/org/ponder/rsf/mappings/entityid-map.xml");
