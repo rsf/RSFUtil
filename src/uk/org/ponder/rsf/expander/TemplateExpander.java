@@ -85,12 +85,14 @@ public class TemplateExpander {
   }
 
   private static class RemapState {
+    public String idwildcard;
     public String localid;
     public String stump;
 
-    public RemapState(String localid, String stump) {
+    public RemapState(String localid, String stump, String idwildcard) {
       this.localid = localid;
       this.stump = stump;
+      this.idwildcard = idwildcard;
     }
   }
 
@@ -113,11 +115,11 @@ public class TemplateExpander {
           UIBound bound = (UIBound) child;
           UIBound copy = (UIBound) deepcloner.cloneBean(bound);
           String stripped = BeanUtil.stripEL(copy.valuebinding);
-          if (stripped.startsWith(UIReplicator.LOCALID_WILDCARD)) {
+          if (stripped.startsWith(state.idwildcard)) {
             stripped = state.stump
                 + "."
                 + state.localid
-                + stripped.substring(UIReplicator.LOCALID_WILDCARD
+                + stripped.substring(state.idwildcard
                     .length());
             copy.valuebinding = "#{" + stripped + "}";
           }
@@ -165,7 +167,7 @@ public class TemplateExpander {
       String localid = computeLocalID(bean, replicator.idstrategy, index);
       replicated.localID = localid;
       String stump = computeStump(replicator);
-      RemapState newstate = new RemapState(localid, stump);
+      RemapState newstate = new RemapState(localid, stump, replicator.idwildcard);
 
       expandTemplate(replicated, replicator.component, newstate);
       ++index;

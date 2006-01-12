@@ -13,8 +13,10 @@ import uk.org.ponder.stringutil.StringList;
  * 
  */
 public class EntityCentredViewParameters extends ViewParameters {
+  public static final String MODE_NEW = "new";
+  public static final String MODE_EDIT = "edit";
   private static StringList attrfields = StringList.fromString("flowtoken, " +
-        "endflow, errortoken, errorredirect, entity.ID");
+        "endflow, errortoken, errorredirect, entity.ID, mode");
   public StringList getAttributeFields() {
    return attrfields;
   }
@@ -23,6 +25,7 @@ public class EntityCentredViewParameters extends ViewParameters {
   }
 
   public EntityID entity;
+  public String mode;
   
   public void parsePathInfo(String pathinfo) {
     String[] pathcomps = URLUtil.splitPathInfo(pathinfo);
@@ -36,6 +39,7 @@ public class EntityCentredViewParameters extends ViewParameters {
   }
   
   public ViewParameters copyBase() {
+    // TODO: replace all this with deepClone from BMA
     EntityCentredViewParameters togo = (EntityCentredViewParameters) super.copyBase();
     EntityID neweid = new EntityID();
     neweid.entityname = togo.entity.entityname;

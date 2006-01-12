@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<mapperentry targetclass="uk.org.ponder.rsf.expander.IDRemapStrategy">
+  <taghandler xmlname="basepath" xml-form="attribute">
+    <fieldname>basepath</fieldname>
+  </taghandler>
+   <taghandler xmlname="ID" xml-form="attribute">
+    <fieldname>ID</fieldname>
+  </taghandler>
+</mapperentry>

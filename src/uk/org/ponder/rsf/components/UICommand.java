@@ -58,5 +58,6 @@ public class UICommand extends UISimpleContainer {
   // map during submission. We maintain these as single-valued here for
   // simplicity, but they will be upgraded to the standard String[] values
   // on delivery.
-  public ParameterList parameters = new ParameterList();
+  // NOW GONE to superclass UIContainer!!!!
+  
 }
