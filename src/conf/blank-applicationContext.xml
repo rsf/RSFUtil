@@ -30,6 +30,9 @@
     
   <bean id="viewParametersParser"
     class="uk.org.ponder.rsf.viewstate.SimpleViewParametersParser">
+    <property name="beanModelAlterer">
+      <ref bean="DARApplier"/>
+    </property>
     <property name="viewParametersExemplar">
       <!-- EXTERNAL DEPENDENCY! The application supplies the view params -->
       <ref bean="viewParamsExemplar"/>
