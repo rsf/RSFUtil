@@ -69,6 +69,8 @@
     factory-method="getXMLProvider">
   </bean>
 
+  <bean id="mappingContext" factory-bean="mappingloadmanager"
+    factory-method="getSAXalizerMappingContext"></bean>
 
   <bean id="DARApplier" class="uk.org.ponder.mapping.DARApplier">
     <property name="SAXalXMLProvider">
@@ -81,10 +83,16 @@
 
   <bean id="deepbeancloner" class="uk.org.ponder.reflect.DeepBeanCloner">
     <property name="mappingContext">
-      <ref bean="saxalizerMappingContext" />
+      <ref bean="mappingContext" />
     </property>
     <property name="reflectiveCache">
       <ref bean="reflectivecache" />
+    </property>
+  </bean>
+
+  <bean id="fieldGetter" class="uk.org.ponder.beanutil.BeanFieldResolver">
+    <property name="mappingContext">
+      <ref bean="mappingContext"/>
     </property>
   </bean>
 

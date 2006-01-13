@@ -87,7 +87,8 @@
   </bean>
 
   <bean id="viewparameters"
-    class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    class="org.springframework.beans.factory.config.MethodInvokingFactoryBean"
+     lazy-init="true">
     <property name="singleton">
       <value>true</value>
     </property>
@@ -142,7 +143,7 @@
       <ref bean="DARApplier"/>
     </property>
   </bean>
-  
+  <!--  mark as lazy-init to make sure viewparameters do not trigger DARApplier... -->
   <bean id="errorstatemanager" class="uk.org.ponder.rsf.state.ErrorStateManager"
     init-method="init">
     <property name="TSHolder">

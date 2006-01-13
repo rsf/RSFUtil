@@ -3,6 +3,8 @@
  */
 package uk.org.ponder.rsf.mappings;
 
+import uk.org.ponder.rsf.components.ELReference;
+import uk.org.ponder.rsf.components.ELReferenceParser;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIDeletionBinding;
@@ -67,6 +69,7 @@ public class RSFMappingLoader implements MappingLoader {
     context.classnamemanager.registerClass("simple", SimpleViewParameters.class);
     
     context.saxleafparser.registerParser(ViewParameters.class, viewparamsleafparser);
+    context.saxleafparser.registerParser(ELReference.class, new ELReferenceParser());
   }
 
   public void loadStandardMappings(MappableXMLProvider xmlprovider) {
