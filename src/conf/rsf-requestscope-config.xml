@@ -87,8 +87,7 @@
   </bean>
 
   <bean id="viewparameters"
-    class="org.springframework.beans.factory.config.MethodInvokingFactoryBean"
-     lazy-init="true">
+    class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
     <property name="singleton">
       <value>true</value>
     </property>
@@ -145,7 +144,7 @@
   </bean>
   <!--  mark as lazy-init to make sure viewparameters do not trigger DARApplier... -->
   <bean id="errorstatemanager" class="uk.org.ponder.rsf.state.ErrorStateManager"
-    init-method="init">
+    init-method="init" lazy-init="true">
     <property name="TSHolder">
       <ref bean="bandgapstateholder"/>
     </property>
@@ -429,7 +428,7 @@
     </property>
   </bean>
   
-  <bean id="renderHandlerBracketer" class="uk.org.ponder.rsf.processor.RenderHandlerBracketer">
+  <bean id="renderHandlerBracketer" class="uk.org.ponder.rsf.processor.RenderHandlerBracketer" lazy-init="true">
     <property name="errorStateManager">
       <ref local="errorstatemanager"/>
     </property>

@@ -70,6 +70,10 @@ public class RootHandlerBean {
   }
   
   public void init() {
+    // This call has moved up here to avoid load-time issues wrt. ViewParameters
+    // and DARApplier's demand for the thread's errorstate. Might be an
+    // argument for destroying the last ThreadLocal.
+    ThreadErrorState.beginRequest();
     if (requesttype.equals(ViewParameters.RENDER_REQUEST)) {
       handleGet();
     }

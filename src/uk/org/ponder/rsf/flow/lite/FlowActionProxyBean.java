@@ -152,7 +152,9 @@ public class FlowActionProxyBean implements MethodInvokingProxy {
     flowidholder.flowStateID = newstate.id;
     togo.resultingview.viewID = viewstate.viewID;
     togo.resultingview.flowtoken = flowidholder.flowtoken;
+  
     if (togo.propagatebeans == null) { // if not filled in as FLOW_START
+    
       togo.propagatebeans = newstate instanceof EndState? ARIResult.FLOW_END :
         ARIResult.PROPAGATE;
     }

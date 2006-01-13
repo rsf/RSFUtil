@@ -15,7 +15,6 @@ import uk.org.ponder.rsf.preservation.StatePreservationManager;
 import uk.org.ponder.rsf.request.RequestSubmittedValueCache;
 import uk.org.ponder.rsf.state.ErrorStateManager;
 import uk.org.ponder.rsf.state.RSVCApplier;
-import uk.org.ponder.rsf.state.entity.NewEntityIDRewriter;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.RunnableWrapper;
@@ -103,7 +102,6 @@ public class RSFActionHandler implements ActionHandler {
   private Exception exception;
 
   public ViewParameters handle() {
-    ThreadErrorState.beginRequest();
     final String actionmethod = PostDecoder.decodeAction(normalizedmap);
 
     try {
@@ -149,7 +147,11 @@ public class RSFActionHandler implements ActionHandler {
           // token.
           ariresult.resultingview.flowtoken = errorstatemanager.allocateToken();
         }
-        presmanager.preserve(ariresult.resultingview.flowtoken);
+        // Do NOT preserve current bean state on a FLOW_START, since they may be
+        // hanging over as part of a FLOW_END!!!
+        if (!ariresult.propagatebeans.equals(ARIResult.FLOW_START)) {
+          presmanager.preserve(ariresult.resultingview.flowtoken);
+        }
       }
       else { // it is a flow end.
         ariresult.resultingview.endflow = "1";

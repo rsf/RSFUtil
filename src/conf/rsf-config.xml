@@ -161,17 +161,6 @@
     </property>
   </bean>
 
-  <!-- The state holder used for "ephemeral" state designed to only persist
-    through about 1 client request - error messages, end flow messages,
-    data in transit to client storage -->
-  <bean id="bandgapstateholder" class="uk.org.ponder.rsf.state.InMemoryTSH">
-    <property name="expirySeconds">
-      <!-- deliberately short time for testing - all errors will expire after 
-        10 seconds of disuse -->
-      <value>10</value>
-    </property>
-  </bean>
-
   <bean id="templateexpander"
     class="uk.org.ponder.rsf.expander.TemplateExpander">
     <property name="DARApplier">

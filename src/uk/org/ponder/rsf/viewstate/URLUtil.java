@@ -92,13 +92,17 @@ public class URLUtil {
     StringList attrs = toconvert.getAttributeFields();
     CharWrap togo = new CharWrap();
     togo.append(toconvert.toPathInfo());
+    boolean isfirst = true;
     for (int i = 0; i < attrs.size(); ++i) {
       String attrname = attrs.stringAt(i);
-      togo.append(i == 0? '?' : '&');
-      togo.append(attrname);
-      togo.append("=");
       String attrval = (String) bma.getFlattenedValue(attrname, toconvert, String.class);
-      togo.append(attrval);
+      if (attrval != null) {
+        togo.append(isfirst? '?' : '&');
+        togo.append(attrname);
+        togo.append("=");
+        togo.append(attrval);
+        isfirst = false;
+      }
     }
     return togo.toString();
   }
