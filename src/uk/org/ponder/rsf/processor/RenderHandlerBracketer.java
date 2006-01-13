@@ -3,7 +3,6 @@
  */
 package uk.org.ponder.rsf.processor;
 
-import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.errorutil.ConfigurationException;
 import uk.org.ponder.errorutil.CoreMessages;
 import uk.org.ponder.errorutil.ErrorUtil;
@@ -54,7 +53,6 @@ public class RenderHandlerBracketer {
     boolean iserrorredirect = viewparams.errorredirect != null;
     // YES, reach into the original request! somewhat bad...
     viewparams.errorredirect = null;
-    ThreadErrorState.beginRequest();
     try {
       renderhandler.handle(pos);
     }

@@ -8,60 +8,65 @@
   might well want to (and in many cases must) override, as opposed to more 
   core dependencies in the main RSF configuration file rsf-config.xml. -->
 <beans>
-  	<bean id="messagesource" 
-		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-		<property name="basename">
-			<value>WEB-INF/messages/messages</value>
-		</property>
-		<property name="cacheSeconds">
-			<value>10</value>
-		</property>
-	</bean>
-	<bean id="messagelocator" 
-		class="uk.org.ponder.springutil.SpringMessageLocator">
-		<property name="messageSource">
-			<ref local="messagesource"/>
-		</property>
-	</bean>
-  <!--
-  <bean id="messagelocator" class="uk.org.ponder.errorutil.BlankMessageLocator">
+  <bean id="messagesource"
+    class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+    <property name="basename">
+      <value>WEB-INF/messages/messages</value>
+    </property>
+    <property name="cacheSeconds">
+      <value>10</value>
+    </property>
   </bean>
-    -->
-    
+  <bean id="messagelocator"
+    class="uk.org.ponder.springutil.SpringMessageLocator">
+    <property name="messageSource">
+      <ref local="messagesource" />
+    </property>
+  </bean>
+  <!--
+    <bean id="messagelocator" class="uk.org.ponder.errorutil.BlankMessageLocator">
+    </bean>
+  -->
+
   <bean id="viewParametersParser"
     class="uk.org.ponder.rsf.viewstate.SimpleViewParametersParser">
     <property name="beanModelAlterer">
-      <ref bean="DARApplier"/>
+      <ref bean="DARApplier" />
     </property>
     <property name="viewParametersExemplar">
       <!-- EXTERNAL DEPENDENCY! The application supplies the view params -->
-      <ref bean="viewParamsExemplar"/>
+      <ref bean="viewParamsExemplar" />
     </property>
   </bean>
-  
-  <bean id="siteMap" class="uk.org.ponder.rsf.viewstate.XMLSiteMapLoader" abstract="true">
-    <property name="location"><value>/WEB-INF/sitemap.xml</value></property>
+
+  <bean id="siteMap"
+    class="uk.org.ponder.rsf.viewstate.XMLSiteMapLoader"
+    abstract="true">
+    <property name="location">
+      <value>/WEB-INF/sitemap.xml</value>
+    </property>
     <property name="beanModelAlterer">
-    <ref bean="DARApplier"/>
+      <ref bean="DARApplier" />
     </property>
   </bean>
-  
+
   <bean id="viewParamsExemplar"
     class="uk.org.ponder.rsf.viewstate.SimpleViewParameters">
   </bean>
-  
-  <bean id="xmlviewresolver" class="uk.org.ponder.rsf.view.XMLViewResolver">
+
+  <bean id="xmlviewresolver"
+    class="uk.org.ponder.rsf.view.XMLViewResolver">
     <property name="basePath">
       <value>/WEB-INF/producers/</value>
     </property>
     <property name="XMLProvider">
-      <ref bean="xmlprovider"/>
+      <ref bean="xmlprovider" />
     </property>
     <property name="templateExpander">
-      <ref bean="templateexpander"/>
+      <ref bean="templateexpander" />
     </property>
   </bean>
-  
+
   <bean id="xmlActionErrorStrategies"
     class="uk.org.ponder.rsf.util.XMLFactoryBean">
     <property name="location">
@@ -71,60 +76,63 @@
       <value>uk.org.ponder.rsf.flow.ActionErrorStrategyManager</value>
     </property>
   </bean>
-  
+
   <bean id="actionresultinterpreter"
     class="uk.org.ponder.rsf.flow.NullActionResultInterpreter">
   </bean>
-  
-  <bean name="requestAddressibleBeans" class="uk.org.ponder.stringutil.StringList">
+
+  <bean name="requestAddressibleBeans"
+    class="uk.org.ponder.stringutil.StringList">
     <constructor-arg>
       <list>
         <value>flowLite-flowIDHolder</value>
       </list>
     </constructor-arg>
   </bean>
-  
+
   <bean id="staticviews" class="java.util.ArrayList">
     <constructor-arg>
-      <list>
-      </list> 
+      <list></list>
     </constructor-arg>
   </bean>
-  
+
   <!-- The two properties of sbup
-  are only relevant to users of the direct UI, where the URL that it appears
-  at is somehow "unexpected". In order to use these values, it is necessary
-  to copy these two definitions into the application's application context
-  file, together with definitions for the referenced URLs. Given these URLs
-  will generally represent configuration relevant to the end user, these should
-  be placed in yet a 3rd application context file, suggestion: a file called
-  userconfig.xml which breaks out all such configurable dependencies.
-  These will be overridden for consumers of the remote web service.  -->
+    are only relevant to users of the direct UI, where the URL that it appears
+    at is somehow "unexpected". In order to use these values, it is necessary
+    to copy these two definitions into the application's application context
+    file, together with definitions for the referenced URLs. Given these URLs
+    will generally represent configuration relevant to the end user, these should
+    be placed in yet a 3rd application context file, suggestion: a file called
+    userconfig.xml which breaks out all such configurable dependencies.
+    These will be overridden for consumers of the remote web service.  -->
   <bean id="directuibaseurl" class="java.lang.String">
     <constructor-arg>
       <value>
-        http://www.unexpected.hosting.environment/servletcontext/faces/</value>
+        http://www.unexpected.hosting.environment/servletcontext/faces/
+      </value>
     </constructor-arg>
   </bean>
   <bean id="directuiresourcebaseurl" class="java.lang.String">
     <constructor-arg>
-      <value>http://www.unexpected.hosting.environment/servletcontext/</value>
+      <value>
+        http://www.unexpected.hosting.environment/servletcontext/
+      </value>
     </constructor-arg>
   </bean>
-  
-  
+
+
   <!-- This is now a request-scope bean defined in core RSF to use the auto-provider.
     Override it with the following definition in your own requestScopeConfig and define
     the two URL values above in order to use static URL determination -->
-  <bean id="staticbaseurlprovider"> 
+  <bean id="staticbaseurlprovider">
     <!-- CONFIG The URL under which RSF-rendered pages served directly 
-    will be made visible -->
+      will be made visible -->
     <property name="baseURL">
-      <ref bean="directuibaseurl"/>
+      <ref bean="directuibaseurl" />
     </property>
     <!-- CONFIG The URL under which static resources will be made visible -->
     <property name="resourceBaseURL">
-      <ref bean="directuiresourcebaseurl"/>
+      <ref bean="directuiresourcebaseurl" />
     </property>
   </bean>
 
@@ -135,17 +143,34 @@
       <value>/DefaultView</value>
     </constructor-arg>
   </bean>
-  
-  <bean id="URLPreservingBeanSpecs" class="uk.org.ponder.springutil.StringListFactory">
+
+  <bean id="URLPreservingBeanSpecs"
+    class="uk.org.ponder.springutil.StringListFactory">
     <property name="strings">
-      <value>flowstateid|flowLite-flowIDHolder.requestFlowStateID</value>
+      <value>
+        flowstateid|flowLite-flowIDHolder.requestFlowStateID
+      </value>
     </property>
   </bean>
-  
-  <bean id="copyPreservingBeans" class="uk.org.ponder.springutil.StringListFactory">
+
+  <bean id="copyPreservingBeans"
+    class="uk.org.ponder.springutil.StringListFactory">
     <property name="strings">
       <value>flowLite-flowIDHolder</value>
     </property>
   </bean>
-  
+
+
+  <!-- The state holder used for "ephemeral" state designed to only persist
+    through about 1 client request - error messages, end flow messages,
+    data in transit to client storage -->
+  <bean id="bandgapStateHolder"
+    class="uk.org.ponder.rsf.state.InMemoryTSH">
+    <property name="expirySeconds">
+      <!-- deliberately short time for testing - all errors will expire after 
+        10 seconds of disuse -->
+      <value>10</value>
+    </property>
+  </bean>
+
 </beans>

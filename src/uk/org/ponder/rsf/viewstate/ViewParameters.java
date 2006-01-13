@@ -96,6 +96,7 @@ public abstract class ViewParameters implements Cloneable {
       ViewParameters togo = (ViewParameters) clone(); 
       togo.flowtoken = null;
       togo.errortoken = null;
+      togo.endflow = null;
       return togo;
     }
     catch (Throwable t) {
