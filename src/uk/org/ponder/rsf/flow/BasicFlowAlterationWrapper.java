@@ -6,6 +6,7 @@ package uk.org.ponder.rsf.flow;
 import uk.org.ponder.rsf.flow.lite.FlowIDHolder;
 import uk.org.ponder.rsf.state.FlowLockGetter;
 import uk.org.ponder.util.RunnableWrapper;
+
 /** An alteration wrapper designed to prevent simultaneous access to flow-scoped data.
  * Only incurs a synchronized overhead if there is actually an active flow for the
  * current request. If another request in in the flow, this wrapper will simply 
@@ -14,11 +15,14 @@ import uk.org.ponder.util.RunnableWrapper;
  * however if under some (possibly failure) condition, normal request handling might take
  * an unbounded time - in this case you may want to replace this wrapper with an implementation
  * performing wait/notify with a timeout.
+ * <p> If operating in a clustered environment where handling of different 
+ * requests belonging to the same flow cannot be guaranteed to be passed to the
+ * same JVM, you will certainly require to replace this implementation.
  * @author Antranig Basman (amb26@ponder.org.uk)
  *
  */
 
-public class FlowAlterationWrapper implements RunnableWrapper {
+public class BasicFlowAlterationWrapper implements RunnableWrapper {
   private FlowLockGetter flowlockgetter;
   private FlowIDHolder flowidholder;
   public void setFlowLockGetter(FlowLockGetter flowlockgetter) {

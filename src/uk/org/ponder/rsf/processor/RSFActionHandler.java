@@ -147,11 +147,10 @@ public class RSFActionHandler implements ActionHandler {
           // token.
           ariresult.resultingview.flowtoken = errorstatemanager.allocateToken();
         }
-        // Do NOT preserve current bean state on a FLOW_START, since they may be
-        // hanging over as part of a FLOW_END!!!
-        if (!ariresult.propagatebeans.equals(ARIResult.FLOW_START)) {
-          presmanager.preserve(ariresult.resultingview.flowtoken);
-        }
+        // On a FLOW_START, **ONLY** the flow state itself is to be saved,
+        // since any other existing bean state will be non-flow or end-flow.
+        presmanager.preserve(ariresult.resultingview.flowtoken, 
+            ariresult.propagatebeans.equals(ARIResult.FLOW_START));
       }
       else { // it is a flow end.
         ariresult.resultingview.endflow = "1";

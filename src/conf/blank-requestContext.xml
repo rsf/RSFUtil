@@ -12,8 +12,7 @@
   <!-- This standard bean name is given a default implementation to always
     defer to the null ARI. However this will be overridden should the actual
     action invokation ALREADY return an ARIResult, as with a FlowActionProxyBean. -->
-  <bean name="ARIResolver"
-    class="uk.org.ponder.rsf.flow.NullARIResolver">
+  <bean name="ARIResolver" class="uk.org.ponder.rsf.flow.NullARIResolver">
     <property name="actionResultInterpreter">
       <ref bean="defaultARI" />
     </property>
@@ -59,8 +58,7 @@
 
   <!-- A null "consumertype" field in this object will be  treated as an 
     empty object -->
-  <bean name="consumerInfo"
-    class="uk.org.ponder.webapputil.ConsumerInfo">
+  <bean name="consumerInfo" class="uk.org.ponder.webapputil.ConsumerInfo">
   </bean>
 
   <bean id="defaultRSVCPreserver"
@@ -85,7 +83,7 @@
       <ref bean="copyPreservingBeans" />
     </property>
     <property name="tokenStateHolder">
-      <ref bean="flowtokenstateholder" />
+      <ref bean="flowTokenStateHolder" />
     </property>
     <property name="beanModelAlterer">
       <ref bean="DARApplier" />
@@ -128,7 +126,7 @@
   <bean id="flowScopeFlowStatePreserver"
     class="uk.org.ponder.rsf.preservation.BeanCopyPreservationStrategy">
     <property name="tokenStateHolder">
-      <ref bean="flowtokenstateholder" />
+      <ref bean="flowTokenStateHolder" />
     </property>
     <property name="preservingBeans">
       <ref bean="flowOnlyPreservingBeans" />
@@ -142,8 +140,16 @@
     class="uk.org.ponder.springutil.ListFactory">
     <property name="list">
       <list>
+        <ref bean="defaultBeanCopyPreserver" />     
+      </list>
+    </property>
+  </bean>
+
+  <bean id="startFlowStatePreservationStrategies"
+    class="uk.org.ponder.springutil.ListFactory">
+    <property name="list">
+      <list>
         <ref bean="flowScopeFlowStatePreserver" />
-        <ref bean="defaultBeanCopyPreserver" />
         <ref bean="requestFlowStatePreserver" />
       </list>
     </property>
@@ -155,6 +161,17 @@
       <list>
         <ref bean="endFlowPreserver" />
       </list>
+    </property>
+  </bean>
+  
+  <!-- The default alteration wrapper performs no ORM-specific bracketing
+  of alteration operations, unless a flow is active, in which case it will block. -->
+  <bean id="alterationWrapper" class="uk.org.ponder.rsf.flow.BasicFlowAlterationWrapper">
+    <property name="flowIDHolder">
+      <ref bean="flowLite-flowIDHolder"/>
+    </property>
+    <property name="flowLockGetter">
+      <ref bean="inMemoryFlowLockGetter"/>
     </property>
   </bean>
 

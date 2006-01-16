@@ -153,14 +153,6 @@
 
   <bean id="idgenerator" class="uk.org.ponder.hashutil.EighteenIDGenerator" />
 
-  <bean id="flowtokenstateholder" class="uk.org.ponder.rsf.state.InMemoryTSH">
-    <property name="expirySeconds">
-      <!-- deliberately short time for testing - all flows will expire after 
-        30 seconds of disuse -->
-      <value>30</value>
-    </property>
-  </bean>
-
   <bean id="templateexpander"
     class="uk.org.ponder.rsf.expander.TemplateExpander">
     <property name="DARApplier">
@@ -209,5 +201,7 @@
       <value>flowLite-flowIDHolder</value>
     </property>
   </bean>
+
+  <bean id="listenerConnector" class="uk.org.ponder.iocevent.BeetleConnector"/>
 
 </beans>
