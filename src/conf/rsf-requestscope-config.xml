@@ -146,7 +146,7 @@
   <bean id="errorstatemanager" class="uk.org.ponder.rsf.state.ErrorStateManager"
     init-method="init" lazy-init="true">
     <property name="TSHolder">
-      <ref bean="bandgapstateholder"/>
+      <ref bean="bandgapStateHolder"/>
     </property>
     <property name="viewParameters">
       <ref local="viewparameters"/>
@@ -160,6 +160,9 @@
     class="uk.org.ponder.rsf.preservation.StatePreservationManager">
     <property name="strategies">
       <ref bean="statePreservationStrategies"/>
+    </property>
+    <property name="startFlowStrategies">
+      <ref bean="startFlowStatePreservationStrategies"/>
     </property>
     <property name="endFlowStrategies">
       <ref bean="endFlowStatePreservationStrategies"/>
@@ -262,18 +265,7 @@
       <ref bean="messageRenderer"/>
     </property>
   </bean>
-  
-  <!-- The default alteration wrapper performs no ORM-specific bracketing
-  of alteration operations, unless a flow is active, in which case it will block. -->
-  <bean id="alterationWrapper" class="uk.org.ponder.rsf.flow.FlowAlterationWrapper">
-    <property name="flowLockGetter">
-      <ref bean="statePreservationManager"/>
-    </property>
-    <property name="flowIDHolder">
-      <ref bean="flowLite-flowIDHolder"/>
-    </property>
-  </bean>
-  
+    
   <bean id="RSFActionHandler" class="uk.org.ponder.rsf.processor.RSFActionHandler"
   lazy-init="true">
     <property name="errorStateManager">

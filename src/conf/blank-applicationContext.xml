@@ -160,6 +160,25 @@
     </property>
   </bean>
 
+  <bean id="inMemoryFlowLockGetter" class="uk.org.ponder.rsf.flow.InMemoryFlowLockGetter">
+   <property name="listenerTargetKey">
+      <ref bean="flowTokenStateHolder"/>
+    </property>
+    <property name="listenerReporter">
+       <ref bean="listenerConnector"/>
+    </property>
+  </bean>
+
+  <bean id="flowTokenStateHolder" class="uk.org.ponder.rsf.state.InMemoryTSH" init-method="init">
+    <property name="expirySeconds">
+      <!-- deliberately short time for testing - all flows will expire after 
+        30 seconds of disuse -->
+      <value>30</value>
+    </property>
+    <property name="listenerGetter">
+       <ref bean="listenerConnector"/>
+    </property>
+  </bean>
 
   <!-- The state holder used for "ephemeral" state designed to only persist
     through about 1 client request - error messages, end flow messages,
