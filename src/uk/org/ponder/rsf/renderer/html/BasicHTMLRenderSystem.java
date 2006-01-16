@@ -17,6 +17,7 @@ import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UIOutputMultiline;
 import uk.org.ponder.rsf.components.UIParameter;
+import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.renderer.ComponentRenderer;
 import uk.org.ponder.rsf.renderer.RenderSystem;
 import uk.org.ponder.rsf.renderer.RenderUtil;
@@ -167,6 +168,13 @@ public class BasicHTMLRenderSystem implements RenderSystem {
               closeTag(pos, uselump);
             }
           }
+          else if (torendero instanceof UISelect) {
+            attrcopy.put("name", fullID);
+            attrcopy.put("id", fullID);
+            UISelect select = (UISelect) torendero;
+            
+            
+          }
         }
         // factor out component-invariant processing of UIBound.
         else { // Bound with willinput = true
@@ -216,6 +224,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
           // unify hidden field processing? ANY parameter children found must
           // be dumped as hidden fields.
         }
+      
       }
       else if (torendero instanceof UILink) {
         UILink torender = (UILink) torendero;
@@ -232,6 +241,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
               close.lumpindex + 1, pos);
         }
       }
+    
       else if (torendero instanceof UICommand) {
         UICommand torender = (UICommand) torendero;
         String value = RenderUtil.makeURLAttributes(torender.parameters);
