@@ -94,7 +94,7 @@ public class InURLPreservationStrategy implements StatePreservationStrategy {
     for (Iterator specit = iupsspecs.values().iterator(); specit.hasNext();) {
       IUPSMapping spec = (IUPSMapping) specit.next();
       String converted = (String) bma.getFlattenedValue(spec.beanpath, source,
-          String.class);
+          String.class, null);
       outgoingparams.add(new UIParameter(spec.urlkey, converted));
     }
   }

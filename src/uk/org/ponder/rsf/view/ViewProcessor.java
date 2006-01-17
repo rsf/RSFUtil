@@ -10,6 +10,8 @@ import uk.org.ponder.rsf.componentprocessor.OrphanFinder;
 import uk.org.ponder.rsf.components.ComponentList;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UISelect;
+import uk.org.ponder.rsf.util.RSFUtil;
 import uk.org.ponder.util.Logger;
 
 /** A request-scope bean which processes a component tree (view) 
@@ -18,8 +20,9 @@ import uk.org.ponder.util.Logger;
  * objects, including applying the system's form model, resolving URLs and any
  * application-registered processing.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
- *
  */
+// TODO: This class is aware of the existence of UISelect! We might well
+// upgrade to a generic reflective architecture at some point.
 public class ViewProcessor {
   private List processors;
   
@@ -75,7 +78,6 @@ public class ViewProcessor {
   private void generateWorkList() {
     worklist = new ComponentList();
     appendContainer(view.viewroot);
-    
   }
   private void appendContainer(UIContainer toappend) {
     ComponentList thischildren = toappend.flattenChildren();
@@ -85,7 +87,16 @@ public class ViewProcessor {
       if (thischild instanceof UIContainer) {
         appendContainer((UIContainer) thischild);
       }
+      if (thischild instanceof UISelect) {
+        // TODO: Move this select dependency into a separate fixer!!
+        UISelect select = (UISelect) thischild;
+        RSFUtil.fixupSelect(select);
+        worklist.add(select);
+        worklist.add(select.selection);
+        if (select.names != null) {
+          worklist.add(select.names);
+        }
+      }
     }
   }
-  
 }

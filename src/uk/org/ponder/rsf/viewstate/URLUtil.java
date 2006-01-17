@@ -95,7 +95,7 @@ public class URLUtil {
     boolean isfirst = true;
     for (int i = 0; i < attrs.size(); ++i) {
       String attrname = attrs.stringAt(i);
-      String attrval = (String) bma.getFlattenedValue(attrname, toconvert, String.class);
+      String attrval = (String) bma.getFlattenedValue(attrname, toconvert, String.class, null);
       if (attrval != null) {
         togo.append(isfirst? '?' : '&');
         togo.append(attrname);
