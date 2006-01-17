@@ -142,9 +142,9 @@
       <ref bean="DARApplier"/>
     </property>
   </bean>
-  <!--  mark as lazy-init to make sure viewparameters do not trigger DARApplier... -->
+ 
   <bean id="errorstatemanager" class="uk.org.ponder.rsf.state.ErrorStateManager"
-    init-method="init" lazy-init="true">
+    init-method="init">
     <property name="TSHolder">
       <ref bean="bandgapStateHolder"/>
     </property>
@@ -420,7 +420,8 @@
     </property>
   </bean>
   
-  <bean id="renderHandlerBracketer" class="uk.org.ponder.rsf.processor.RenderHandlerBracketer" lazy-init="true">
+  <bean id="renderHandlerBracketer" class="uk.org.ponder.rsf.processor.RenderHandlerBracketer" 
+    lazy-init="true">
     <property name="errorStateManager">
       <ref local="errorstatemanager"/>
     </property>

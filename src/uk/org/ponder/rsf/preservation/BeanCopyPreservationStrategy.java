@@ -14,6 +14,8 @@ import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.beanutil.IterableBeanLocator;
 import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.beanutil.WriteableBeanLocator;
+import uk.org.ponder.errorutil.TargettedMessageList;
+import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.rsf.state.ExpiredFlowException;
 import uk.org.ponder.rsf.state.TokenStateHolder;
 import uk.org.ponder.stringutil.StringList;
@@ -88,7 +90,8 @@ public class BeanCopyPreservationStrategy implements StatePreservationStrategy,
       for (Iterator keyit = beans.keySet().iterator(); keyit.hasNext();) {
         String beanname = (String) keyit.next();
         Object bean = beans.get(beanname);
-        alterer.setBeanValue(beanname, target, bean);
+        TargettedMessageList messages = ThreadErrorState.getErrorState().errors;
+        alterer.setBeanValue(beanname, target, bean, messages);
       }
     }
   }

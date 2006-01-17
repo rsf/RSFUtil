@@ -63,7 +63,7 @@ public class URLUtil {
     for (int i = 0; i < pathlist.size(); ++ i) {
       String path = pathlist.stringAt(i);
       Object valueo = params.get(path);
-      bma.setBeanValue(path, target, valueo);
+      bma.setBeanValue(path, target, valueo, null);
     }
   }
   
