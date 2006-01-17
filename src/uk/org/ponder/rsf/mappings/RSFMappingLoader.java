@@ -11,12 +11,15 @@ import uk.org.ponder.rsf.components.UIDeletionBinding;
 import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
+import uk.org.ponder.rsf.components.UIInputMany;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.UIOutputMany;
 import uk.org.ponder.rsf.components.UIOutputMultiline;
 import uk.org.ponder.rsf.components.UIReplicator;
+import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISimpleContainer;
 import uk.org.ponder.rsf.components.UISwitch;
 import uk.org.ponder.rsf.expander.DirectIndexStrategy;
@@ -42,7 +45,8 @@ public class RSFMappingLoader implements MappingLoader {
     UICommand.class, UIForm.class, UIInput.class, UIInternalLink.class,
     UILink.class, UIMessage.class, UIOutput.class, UIOutputMultiline.class,
     UIBranchContainer.class, UISimpleContainer.class, UIELBinding.class,
-    UIDeletionBinding.class, UIReplicator.class, UISwitch.class
+    UIDeletionBinding.class, UIReplicator.class, UISwitch.class, UISelect.class,
+    UIInputMany.class, UIOutputMany.class
   };
   private ViewParamsLeafParser viewparamsleafparser;
   

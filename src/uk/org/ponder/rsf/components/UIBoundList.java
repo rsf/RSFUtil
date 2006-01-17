@@ -5,18 +5,13 @@ package uk.org.ponder.rsf.components;
 
 import uk.org.ponder.rsf.uitype.StringArrayUIType;
 
-/** Suitable for being the input-generating component for a multiple-selection list **/
+/** A bound array of Strings, suitable for being the backing for a selection
+ * list, or the selection control for a multiple selection list. Is capable
+ * of extracting the value field from a bean collection retrieved via EL. **/
 public class UIBoundList extends UIBound {
   public void setValue(String[] value) {
     this.value = value;
   }
-  /** An array of labels used for displaying these values in their rendered
-   * container. This must clearly be exactly as long as the list bound as "value".
-   */
-  public String[] labels;
-  /** An EL reference to a bean of type ValueLabelRenderer. If this is null,
-  *  the labels will just be duplicated from the list values directly.*/
-  public String labelrendererbinding;
   
   public String[] getValue() {
     return (String[]) value;
@@ -25,4 +20,9 @@ public class UIBoundList extends UIBound {
   public UIBoundList() {
     value = StringArrayUIType.instance.getPlaceholder();
   }
+  
+  /** An EL reference to a bean capable of resolving a list member to its
+   * submitted value, probably its ID.
+   */
+  public String fieldresolver;
 }

@@ -5,10 +5,13 @@ package uk.org.ponder.rsf.componentprocessor;
 
 import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.beanutil.BeanModelAlterer;
+import uk.org.ponder.beanutil.BeanResolver;
 import uk.org.ponder.beanutil.BeanUtil;
 import uk.org.ponder.rsf.components.UIBound;
+import uk.org.ponder.rsf.components.UIBoundList;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIParameter;
+import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.request.FossilizedConverter;
 import uk.org.ponder.rsf.request.RequestSubmittedValueCache;
 import uk.org.ponder.rsf.request.SubmittedValueEntry;
@@ -46,6 +49,7 @@ public class ValueFixer implements ComponentProcessor {
   public void processComponent(UIComponent toprocesso) {
     if (toprocesso instanceof UIBound) {
       UIBound toprocess = (UIBound) toprocesso;
+      // If there is a value in the SVE, return it to the control.
       SubmittedValueEntry sve = rsvc.byID(toprocess.getFullID());
       if (sve != null) {
         toprocess.updateValue(sve.newvalue);
@@ -55,11 +59,14 @@ public class ValueFixer implements ComponentProcessor {
         // a bound component ALWAYS contains a value of the correct type.
         Object oldvalue = toprocess.acquireValue();
         String stripbinding = BeanUtil.stripEL(toprocess.valuebinding);
-        Object flatvalue = alterer.getFlattenedValue(stripbinding, beanlocator, oldvalue.getClass());
+        BeanResolver resolver = getResolver(toprocess);
+        
+        Object flatvalue = alterer.getFlattenedValue(stripbinding, beanlocator, oldvalue.getClass(), resolver);
         if (flatvalue != null) {
           toprocess.updateValue(flatvalue);
         }
       }
+     
       // TODO: Think carefully whether we want these "encoded" bindings to
       // EVER appear in the component tree. Tradeoffs - we would need to create more
       // classes that renderer could recognise to compute bindings, and increase its
@@ -69,6 +76,13 @@ public class ValueFixer implements ComponentProcessor {
         toprocess.fossilizedbinding = fossilized;
       }
     }
+  }
+  private BeanResolver getResolver(UIBound toprocess) {
+    if (!(toprocess instanceof UIBoundList)) return null;
+    String resolverel = ((UIBoundList)toprocess).fieldresolver;
+    if (resolverel == null) return null;
+    resolverel = BeanUtil.stripEL(resolverel);
+    return (BeanResolver) alterer.getBeanValue(resolverel, beanlocator);
   }
 
 }

@@ -16,26 +16,11 @@ package uk.org.ponder.rsf.components;
  * @return
  */
 
-public class UISelect extends UIBound {
-  
-  
-  public UISelectItem[] getValue() {
-    return (UISelectItem[]) value;
-  }
-
-  public void setValue(UISelectItem[] value) {
-    this.value = value;
-  }
-  /** An EL reference to a bean capable of resolving a list member to its name
-   * required for the <code>text<code> field of the SelectItem.
-   */
-  public String nameresolver;
-  /** An EL reference to a bean capable of resolving a list member to its
-   * submitted value, probably its ID.
-   */
-  public String idresolver;
-  
-  /** The input component representing the actual selected value. May be
-   * <code>null</code> if this is an output-only selection control */
+public class UISelect extends UIBoundList {
+  /** A component representing the rendered labels for the list control */
+  public UIBoundList names;
+   
+  /** The input component representing the actual selected value. Expected
+   * to be either UIInput or UIInputMany */
   public UIBound selection;
 }

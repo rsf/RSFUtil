@@ -10,6 +10,7 @@ import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIParameter;
+import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.util.AssertionException;
 
@@ -18,6 +19,14 @@ import uk.org.ponder.util.AssertionException;
  *  
  */
 public class RSFUtil {
+  
+  public static void fixupSelect(UISelect tofix) {
+    if (tofix.names != null) {
+      if (tofix.names.valuebinding == null) {
+        tofix.names.valuebinding = tofix.valuebinding;
+      }
+    }
+  }
   
   /** This method returns an enclosing Form instance, where one is present
    * in the tree. Note that this only makes sense for HTML-style forms, and

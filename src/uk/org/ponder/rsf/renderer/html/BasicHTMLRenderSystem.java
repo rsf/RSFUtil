@@ -9,6 +9,8 @@ import java.util.Map;
 import uk.org.ponder.rsf.components.ParameterList;
 import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
+import uk.org.ponder.rsf.components.UIBoundList;
+import uk.org.ponder.rsf.components.UIBoundString;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIForm;
@@ -29,7 +31,7 @@ import uk.org.ponder.rsf.template.XMLLumpList;
 import uk.org.ponder.rsf.viewstate.URLUtil;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.stringutil.StringList;
-import uk.org.ponder.util.Logger;
+import uk.org.ponder.stringutil.StringSet;
 import uk.org.ponder.xml.XMLWriter;
 
 /**
@@ -169,11 +171,39 @@ public class BasicHTMLRenderSystem implements RenderSystem {
             }
           }
           else if (torendero instanceof UISelect) {
+            // All UISelect themselves are considered to have willinput = false,
+            // even if they have an inputting selection component. 
             attrcopy.put("name", fullID);
             attrcopy.put("id", fullID);
             UISelect select = (UISelect) torendero;
-            
-            
+            StringSet selected = new StringSet();
+            if (select.selection instanceof UIBoundList) {
+             selected.addAll( ((UIBoundList) select.selection).getValue());
+              attrcopy.put("multiple", "true");              
+            }
+            else if (select.selection instanceof UIBoundString) {
+              selected.add( ((UIBoundString) select.selection).getValue());
+            }
+            RenderUtil.dumpAttributes(attrcopy, xmlw);
+            pos.print(">");
+            String[] values = select.getValue();
+            String[] names = select.names == null? values : select.names.getValue();
+            for (int i = 0; i < names.length; ++ i) {
+              pos.print("<option value=\"");
+              xmlw.write(values[i]);
+              if (selected.contains(values[i])) {
+                pos.print("\" selected=\"true");
+              }
+              pos.print("\">");
+              xmlw.write(names[i]);
+              pos.print("</option>\n");
+            }
+            // dump the binding for the SELECTION itself - that for the parent
+            // list will be done below by default processing.
+            if (select.selection != null) {
+                RenderUtil.dumpHiddenField(select.selection.fossilizedbinding.name,
+                    select.selection.fossilizedbinding.value, xmlw);
+            }
           }
         }
         // factor out component-invariant processing of UIBound.
@@ -216,16 +246,16 @@ public class BasicHTMLRenderSystem implements RenderSystem {
             RenderUtil.dumpTillLump(lumps, endopen.lumpindex + 1,
                 close.lumpindex + 1, pos);
           }
-          // dump any fossilized binding for this component.
-          if (torender.fossilizedbinding != null) {
-            RenderUtil.dumpHiddenField(torender.fossilizedbinding.name,
-                torender.fossilizedbinding.value, xmlw);
-          }
+        
           // unify hidden field processing? ANY parameter children found must
           // be dumped as hidden fields.
         }
-      
-      }
+        // dump any fossilized binding for this component.
+        if (torender.fossilizedbinding != null) {
+          RenderUtil.dumpHiddenField(torender.fossilizedbinding.name,
+              torender.fossilizedbinding.value, xmlw);
+        }
+      } // end if UIBound
       else if (torendero instanceof UILink) {
         UILink torender = (UILink) torendero;
 
@@ -279,7 +309,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         UIForm torender = (UIForm) torendero;
         attrcopy.put("method", "post"); // yes, we MEAN this!
         int qpos = torender.postURL.indexOf('?');
-        // Ensure that any attributes on this postURL 
+        // Ensure that any attributes on this postURL
         if (qpos == -1) {
           attrcopy.put("action", torender.postURL);
         }
