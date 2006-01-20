@@ -32,6 +32,7 @@ import uk.org.ponder.rsf.viewstate.URLUtil;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.stringutil.StringList;
 import uk.org.ponder.stringutil.StringSet;
+import uk.org.ponder.xml.XMLUtil;
 import uk.org.ponder.xml.XMLWriter;
 
 /**
@@ -146,7 +147,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
                   close.lumpindex + 1, pos);
             }
             else {
-              RenderUtil.dumpAttributes(attrcopy, xmlw);
+              XMLUtil.dumpAttributes(attrcopy, xmlw);
               pos.print(">");
               xmlw.write(value);
               closeTag(pos, uselump);
@@ -159,7 +160,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
                   close.lumpindex + 1, pos);
             }
             else {
-              RenderUtil.dumpAttributes(attrcopy, xmlw);
+              XMLUtil.dumpAttributes(attrcopy, xmlw);
               pos.print(">");
               for (int i = 0; i < value.size(); ++i) {
                 if (i != 0) {
@@ -184,7 +185,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
             else if (select.selection instanceof UIBoundString) {
               selected.add( ((UIBoundString) select.selection).getValue());
             }
-            RenderUtil.dumpAttributes(attrcopy, xmlw);
+            XMLUtil.dumpAttributes(attrcopy, xmlw);
             pos.print(">");
             String[] values = select.getValue();
             String[] names = select.names == null? values : select.names.getValue();
@@ -236,7 +237,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
             attrcopy.put("value", "true");
           }
 
-          RenderUtil.dumpAttributes(attrcopy, xmlw);
+          XMLUtil.dumpAttributes(attrcopy, xmlw);
           pos.print(">");
           if (body != null) {
             xmlw.write(body);
@@ -260,7 +261,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         UILink torender = (UILink) torendero;
 
         attrcopy.put("href", torender.target);
-        RenderUtil.dumpAttributes(attrcopy, xmlw);
+        XMLUtil.dumpAttributes(attrcopy, xmlw);
         pos.print(">");
         if (torender.linktext != null) {
           xmlw.write(torender.linktext);
@@ -284,7 +285,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
           attrcopy.put("value", torender.commandtext);
         }
 
-        RenderUtil.dumpAttributes(attrcopy, xmlw);
+        XMLUtil.dumpAttributes(attrcopy, xmlw);
         if (endopen.lumpindex == close.lumpindex) {
           pos.print("/>");
         }
@@ -320,7 +321,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
           ParameterList urlparams = URLUtil.mapToParamList(attrmap);
           torender.parameters.addAll(urlparams);
         }
-        RenderUtil.dumpAttributes(attrcopy, xmlw);
+        XMLUtil.dumpAttributes(attrcopy, xmlw);
         pos.println(">");
         for (int i = 0; i < torender.parameters.size(); ++i) {
           UIParameter param = torender.parameters.parameterAt(i);

@@ -12,6 +12,7 @@ import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.view.ViewTemplate;
 import uk.org.ponder.rsf.viewstate.URLRewriter;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
+import uk.org.ponder.xml.XMLUtil;
 import uk.org.ponder.xml.XMLWriter;
 
 public class URLRewriteSCR implements StaticComponentRenderer {
@@ -65,7 +66,7 @@ public class URLRewriteSCR implements StaticComponentRenderer {
       RenderUtil.dumpTillLump(lumps, lumpindex + 1, close.lumpindex + 1, pos);
     }
     else {
-      RenderUtil.dumpAttributes(newattrs, xmlw);
+      XMLUtil.dumpAttributes(newattrs, xmlw);
       if (endopen == close) {
         pos.print("/>");
       }

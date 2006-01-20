@@ -13,6 +13,7 @@ import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.util.Logger;
+import uk.org.ponder.xml.XMLUtil;
 import uk.org.ponder.xml.XMLWriter;
 
 /**
@@ -45,25 +46,11 @@ public class RenderUtil {
     return renderindex;
   }
 
-  public static void dumpAttribute(String name, String value, XMLWriter xmlw) {
-    xmlw.writeRaw(" ").writeRaw(name).writeRaw("=\"");
-    xmlw.write(value);
-    xmlw.writeRaw("\"");
-  }
-  
   public static void dumpHiddenField(String name, String value, XMLWriter xmlw) {
     xmlw.writeRaw("<input type=\"hidden\" ");
-    dumpAttribute("name", name, xmlw);
-    dumpAttribute("value", value, xmlw);
+    XMLUtil.dumpAttribute("name", name, xmlw);
+    XMLUtil.dumpAttribute("value", value, xmlw);
     xmlw.writeRaw(" />\n");
-  }
-  
-  public static void dumpAttributes(Map attrs, XMLWriter xmlw) {
-    for (Iterator keyit = attrs.keySet().iterator(); keyit.hasNext(); ) {
-      String key = (String) keyit.next();
-        String attrvalue = (String) attrs.get(key);
-        dumpAttribute(key, attrvalue, xmlw);
-    }
   }
   
   public static String appendAttributes(String baseurl, String attributes) {
