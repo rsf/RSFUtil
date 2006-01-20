@@ -10,6 +10,7 @@ import java.util.Iterator;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.xml.NameValue;
+import uk.org.ponder.xml.XMLUtil;
 import uk.org.ponder.xml.XMLWriter;
 
 /** Class encapsulating a "static" (i.e. independent of any producer
@@ -85,7 +86,7 @@ public class BasicSCR implements StaticComponentRenderer {
     HashMap newattrs = new HashMap();
     newattrs.putAll(lump.attributemap);
     newattrs.putAll(attributemap);
-    RenderUtil.dumpAttributes(newattrs, xmlw);
+    XMLUtil.dumpAttributes(newattrs, xmlw);
     if (endopen == close && body == null) {
       pos.print("/>");
     }
