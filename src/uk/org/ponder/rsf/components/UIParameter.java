@@ -4,27 +4,15 @@
 package uk.org.ponder.rsf.components;
 
 /**
+ * A base class for any "pure" (componentless) bindings encoded in the 
+ * component tree. The base function is that the name/value pair recorded
+ * in this base class will be submitted as part of the request map.
  * These may appear as children of either UIForm components, or of UIComponent
- * components.
+ * components. Derived classes are UIELBinding, UIDeletionBinding etc.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
 public class UIParameter {
-  
-  // these parameters are optional, and ensure that a bean
-  // referenced by this component will be initialised with any context.
-  // the name is the EL, probably referring to the same bean as above,
-  // and the value will be assigned to it BEFORE any user values are applied.
-  
-  // However, on interpretation, fast_bind_name will be interpreted as an
-  // EL with #{ } escaping, so setting this fields is a method which technically
-  // allows arbitrary request parameters to be set when the field containing
-  // this form is submitted.
-  
-  // TODO: recall that we need to unambiguously tell what sort of value is
-  // on the RHS for a pure EL binding - need to create a UIPureELBinding
-  // type?? Somehow the RHS has an object in it? Same problem as for
-  // deletion bindings.
   public String name;
   public String value;
   public UIParameter() {}

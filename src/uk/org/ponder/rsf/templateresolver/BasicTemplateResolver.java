@@ -27,7 +27,7 @@ import uk.org.ponder.webapputil.ConsumerInfo;
  */
 public class BasicTemplateResolver implements TemplateResolver, ApplicationContextAware {
   private String basedir;
-  public String suffix = ".xhtml";
+  public String suffix = ".html";
   public static final String CONSUMERTYPE_SEPARATOR = "-";
 
   /**

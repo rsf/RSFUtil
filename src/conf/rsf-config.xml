@@ -176,8 +176,17 @@
       </list>
     </property>
   </bean>
+<!--  Lazy loading needed to break dependence cycle - SiteMap via BasicViewParamsParser
+  REQUIRES mapping to be loaded already!! -->
+ <bean id="viewParamsLeafParser" class="org.springframework.aop.framework.ProxyFactoryBean">
+   <property name="targetSource">
+     <bean class="org.springframework.aop.target.LazyInitTargetSource">
+       <property name="targetBeanName"><idref local="viewParamsLeafParserTarget"/></property>
+     </bean>
+   </property>
+ </bean>
 
-  <bean id="viewParamsLeafParser"
+  <bean id="viewParamsLeafParserTarget"
     class="uk.org.ponder.rsf.viewstate.ViewParamsLeafParser">
     <property name="beanModelAlterer">
       <ref bean="DARApplier" />

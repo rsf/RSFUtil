@@ -21,7 +21,9 @@ public class UITypes {
     registerType(BooleanUIType.instance);
   }
   public static boolean isPlaceholder(Object o) {
-    return types.containsKey(o);
+    UIType type = forObject(o);
+    // Must compare by REFERENCE!
+    return o == type.getPlaceholder();
   }
   /** Look up a UIType entry based on the class of the submitted object.
    * Returns <code>null</code> if this is not a recognised UIType.

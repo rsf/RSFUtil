@@ -89,9 +89,9 @@ public class URLUtil {
    * i.e. /view-id/more-path-info?param1=val&param2=val 
    */
   public static String toHTTPRequest(BeanModelAlterer bma, ViewParameters toconvert) {
-    StringList attrs = toconvert.getAttributeFields();
     CharWrap togo = new CharWrap();
     togo.append(toconvert.toPathInfo());
+    StringList attrs = toconvert.getAttributeFields();
     boolean isfirst = true;
     for (int i = 0; i < attrs.size(); ++i) {
       String attrname = attrs.stringAt(i);
@@ -103,6 +103,11 @@ public class URLUtil {
         togo.append(attrval);
         isfirst = false;
       }
+    }
+    String anchorfield = toconvert.getAnchorField();
+    if (anchorfield != null) {
+      String value = (String) bma.getFlattenedValue(anchorfield, toconvert, String.class, null);
+      togo.append("#").append(value);
     }
     return togo.toString();
   }

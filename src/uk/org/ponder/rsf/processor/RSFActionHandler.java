@@ -102,6 +102,7 @@ public class RSFActionHandler implements ActionHandler {
   private Exception exception;
 
   public ViewParameters handle() {
+    ThreadErrorState.beginRequest();
     final String actionmethod = PostDecoder.decodeAction(normalizedmap);
 
     try {

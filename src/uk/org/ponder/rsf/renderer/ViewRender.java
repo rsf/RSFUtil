@@ -87,6 +87,8 @@ public class ViewRender {
     pos.print(renderer.getDeclaration());
     this.pos = pos;
     rendereddeadletters = false;
+    // TODO: CORRECTLY determine how much of the initial text precedes the
+    // first open tag.
     renderRecurse(view.viewroot, rootlump, lumps[1]);
   }
 

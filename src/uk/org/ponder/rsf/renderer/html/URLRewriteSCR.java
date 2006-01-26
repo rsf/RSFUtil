@@ -45,7 +45,19 @@ public class URLRewriteSCR implements StaticComponentRenderer {
       attrcopy.put(name, resolved);
       return attrcopy;
     }
-
+  }
+  
+  public static String getLinkAttribute(XMLLump lump) {
+    if ((lump.textEquals("<a ") || lump.textEquals("<link "))
+        && lump.attributemap.containsKey("href")) {
+      return "href";
+    }
+    if ((lump.textEquals("<img ") || lump.textEquals("<frame ") ||
+        lump.textEquals("<script "))
+        && lump.attributemap.containsKey("src")) {
+      return "src";
+    }
+    return null;
   }
 
   public int render(XMLLump[] lumps, int lumpindex, XMLWriter xmlw) {
@@ -54,12 +66,9 @@ public class URLRewriteSCR implements StaticComponentRenderer {
     XMLLump lump = lumps[lumpindex];
     XMLLump close = lump.close_tag;
     XMLLump endopen = lump.open_end;
-    if ((lump.textEquals("<a ") || lump.textEquals("<link "))
-        && lump.attributemap.containsKey("href")) {
-      newattrs = getResolvedURLMap(lump.attributemap, "href");
-    }
-    if (lump.textEquals("<img ") && lump.attributemap.containsKey("src")) {
-      newattrs = getResolvedURLMap(lump.attributemap, "src");
+    String linkattr = getLinkAttribute(lump);
+    if (linkattr != null) {
+      newattrs = getResolvedURLMap(lump.attributemap, linkattr);
     }
     xmlw.writeRaw(lump.buffer, lump.start, lump.length);
     if (newattrs == null) {

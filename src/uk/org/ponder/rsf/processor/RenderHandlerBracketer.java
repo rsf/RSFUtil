@@ -53,6 +53,7 @@ public class RenderHandlerBracketer {
     boolean iserrorredirect = viewparams.errorredirect != null;
     // YES, reach into the original request! somewhat bad...
     viewparams.errorredirect = null;
+    ThreadErrorState.beginRequest();
     try {
       renderhandler.handle(pos);
     }
