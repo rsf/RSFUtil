@@ -34,6 +34,8 @@ public class UIForm extends UISimpleContainer {
   // TODO: The SAXalizer cannot cope with container members that are null,
   // but we would really like this being EMPTY = NULL to be the condition for
   // infilling.
+  // TODO further!: The DARApplier can now cope with this, but SAXalizer still
+  // can't. Should we think about sharing more core here?
   public StringList submittingcontrols = new StringList();
   
   

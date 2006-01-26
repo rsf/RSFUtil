@@ -7,8 +7,8 @@ import java.util.List;
 
 import uk.org.ponder.rsf.util.ComponentDumper;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
-import uk.org.ponder.streamutil.write.PrintOutputStream;
-import uk.org.ponder.streamutil.write.PrintStreamPOS;
+import uk.org.ponder.streamutil.write.StringPOS;
+import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 /** Invokes the list of ComponentProducers in the supplied ViewCollection to
@@ -27,8 +27,12 @@ public class ViewGenerator {
   public View getView() {
     if (view == null) {
       view = generateView(viewparams, checker);
-      PrintOutputStream dumppos = new PrintStreamPOS(System.out);
-      ComponentDumper.dumpContainer(view.viewroot, 0, dumppos);
+      if (Logger.log.isDebugEnabled()) {
+        StringPOS dumppos = new StringPOS();
+        dumppos.println("View component dump:");
+        ComponentDumper.dumpContainer(view.viewroot, 0, dumppos);
+        Logger.log.debug(dumppos);
+      }
     }
     return view;
   }

@@ -54,6 +54,9 @@ public class RenderUtil {
   }
   
   public static String appendAttributes(String baseurl, String attributes) {
+    // Replace a leading & by ? in the attributes, if there are no
+    // existing attributes in the URL
+    // TODO: hop into the URL before any anchors
     if (baseurl.indexOf('?') == -1 && attributes.length() > 0) {
       attributes = "?" + attributes.substring(1);
     }

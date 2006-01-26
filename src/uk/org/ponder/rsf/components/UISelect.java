@@ -37,11 +37,13 @@ public class UISelect extends UIBoundList {
     togo.ID = ID;
     togo.setValue(values);
     togo.names = new UIBoundList();
-    togo.ID = ID + NAMES_ID_SUFFIX;
+    togo.names.ID = ID + NAMES_ID_SUFFIX;
     togo.names.setValue(labels);
     togo.selection = new UIOutput();
     togo.selection.ID = ID + SELECTION_ID_SUFFIX;
-    ((UIOutput) togo.selection).setValue(value);
+    if (value != null) {
+      ((UIOutput) togo.selection).setValue(value);
+    }
     tofill.addComponent(togo);
     return togo;
   }

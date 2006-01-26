@@ -72,6 +72,11 @@ public abstract class ViewParameters implements Cloneable {
    * @return
    */
   public abstract StringList getAttributeFields();
+  
+  /** Return a field which will be used to form the "anchor" text */
+  public String getAnchorField() {
+    return null;
+  }
    /** Parse the "extra path info" field as defined as the "URL stub" following
    * the path that the handling servlet is mapped to, into correponding fields
    * in this object. This will at least include parsing the portion following

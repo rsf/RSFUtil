@@ -9,9 +9,9 @@ import java.io.OutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.rsf.components.ParameterList;
 import uk.org.ponder.rsf.processor.ActionHandler;
+import uk.org.ponder.rsf.processor.HandlerHook;
 import uk.org.ponder.rsf.processor.RenderHandlerBracketer;
 import uk.org.ponder.rsf.renderer.RenderUtil;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
@@ -32,7 +32,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
-public class RootHandlerBean {
+public class RootHandlerBean implements HandlerHook {
   private String requesttype;
   private HttpServletRequest request;
   private HttpServletResponse response;
@@ -40,6 +40,7 @@ public class RootHandlerBean {
   private ParameterList outgoingparams;
   private RenderHandlerBracketer renderhandlerbracketer;
   private ActionHandler actionhandler;
+  private HandlerHook handlerhook;
 
   public void setHttpServletRequest(HttpServletRequest request) {
     this.request = request;
@@ -52,35 +53,41 @@ public class RootHandlerBean {
   public void setRequestType(String requesttype) {
     this.requesttype = requesttype;
   }
-  
+
   public void setViewStateHandler(ViewStateHandler viewstatehandler) {
     this.viewstatehandler = viewstatehandler;
   }
-  
+
   public void setOutgoingParams(ParameterList outgoingparams) {
     this.outgoingparams = outgoingparams;
   }
-  
-  public void setRenderHandlerBracketer(RenderHandlerBracketer renderhandlerbracketer) {
+
+  public void setRenderHandlerBracketer(
+      RenderHandlerBracketer renderhandlerbracketer) {
     this.renderhandlerbracketer = renderhandlerbracketer;
   }
-  
+
   public void setActionHandler(ActionHandler actionhandler) {
     this.actionhandler = actionhandler;
   }
-  
-  public void init() {
-    // This call has moved up here to avoid load-time issues wrt. ViewParameters
-    // and DARApplier's demand for the thread's errorstate. Might be an
-    // argument for destroying the last ThreadLocal.
-    ThreadErrorState.beginRequest();
-    if (requesttype.equals(ViewParameters.RENDER_REQUEST)) {
-      handleGet();
+
+  public boolean handle() {
+    if (handlerhook == null || !handlerhook.handle()) {
+      if (requesttype.equals(ViewParameters.RENDER_REQUEST)) {
+        handleGet();
+      }
+      else {
+        handlePost();
+      }
     }
-    else {
-      handlePost();
-    }
+    return true;
   }
+
+  public void setHandlerHook(HandlerHook handlerhook) {
+    this.handlerhook = handlerhook;
+  }
+
+  
   
   private void handleGet() {
     PrintOutputStream pos = setupResponseWriter(request, response);
@@ -98,7 +105,7 @@ public class RootHandlerBean {
   }
 
   private void handlePost() {
-    
+
     ViewParameters redirect = actionhandler.handle();
 
     issueRedirect(redirect, response);
@@ -112,9 +119,10 @@ public class RootHandlerBean {
   public void issueRedirect(ViewParameters viewparams,
       HttpServletResponse response) {
     String path = viewstatehandler.getFullURL(viewparams);
-    path = RenderUtil.appendAttributes(path, RenderUtil.makeURLAttributes(outgoingparams));
-    //TODO: This is a hack, pending a bit more thought.
-    
+    path = RenderUtil.appendAttributes(path, RenderUtil
+        .makeURLAttributes(outgoingparams));
+    // TODO: This is a hack, pending a bit more thought.
+
     Logger.log.info("Redirecting to " + path);
     try {
       response.sendRedirect(path);

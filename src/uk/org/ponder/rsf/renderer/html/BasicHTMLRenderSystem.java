@@ -28,6 +28,7 @@ import uk.org.ponder.rsf.renderer.StaticRendererCollection;
 import uk.org.ponder.rsf.request.FossilizedConverter;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.template.XMLLumpList;
+import uk.org.ponder.rsf.uitype.UITypes;
 import uk.org.ponder.rsf.viewstate.URLUtil;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.stringutil.StringList;
@@ -142,7 +143,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         if (!torender.willinput) {
           if (torendero.getClass() == UIOutput.class) {
             String value = ((UIOutput) torendero).getValue();
-            if (value == null) {
+            if (UITypes.isPlaceholder(value)) {
               RenderUtil.dumpTillLump(lumps, lumpindex + 1,
                   close.lumpindex + 1, pos);
             }
@@ -180,7 +181,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
             StringSet selected = new StringSet();
             if (select.selection instanceof UIBoundList) {
              selected.addAll( ((UIBoundList) select.selection).getValue());
-              attrcopy.put("multiple", "true");              
+              attrcopy.put("multiple", "true");
             }
             else if (select.selection instanceof UIBoundString) {
               selected.add( ((UIBoundString) select.selection).getValue());
@@ -199,9 +200,10 @@ public class BasicHTMLRenderSystem implements RenderSystem {
               xmlw.write(names[i]);
               pos.print("</option>\n");
             }
+            closeTag(pos, uselump);
             // dump the binding for the SELECTION itself - that for the parent
             // list will be done below by default processing.
-            if (select.selection != null) {
+            if (select.selection != null && select.selection.fossilizedbinding != null) {
                 RenderUtil.dumpHiddenField(select.selection.fossilizedbinding.name,
                     select.selection.fossilizedbinding.value, xmlw);
             }
@@ -259,8 +261,9 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       } // end if UIBound
       else if (torendero instanceof UILink) {
         UILink torender = (UILink) torendero;
+        String attrname = URLRewriteSCR.getLinkAttribute(uselump);
 
-        attrcopy.put("href", torender.target);
+        attrcopy.put(attrname, torender.target);
         XMLUtil.dumpAttributes(attrcopy, xmlw);
         pos.print(">");
         if (torender.linktext != null) {

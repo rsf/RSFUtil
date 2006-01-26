@@ -4,10 +4,12 @@
 package uk.org.ponder.rsf.viewstate;
 
 
+import java.net.MalformedURLException;
 import java.util.Map;
 
 import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.util.Logger;
+import uk.org.ponder.util.UniversalRuntimeException;
 
 /** A simple parser of view parameters, which will parse into clones of
  * supplied "exmplar" objects. Here it is the parser which is Compound, 
@@ -35,6 +37,10 @@ public class BasicViewParametersParser implements ViewParametersParser {
       pathinfo.substring(1, firstslashpos);
       
     ViewParameters vpexemplar = (ViewParameters) exemplarmap.get(viewID);
+    if (vpexemplar == null) {
+      throw UniversalRuntimeException.accumulate(new MalformedURLException(), 
+          "View " + viewID + " unknown in BasicViewParametersParser");
+    }
     ViewParameters origrequest = vpexemplar.copyBase();
     URLUtil.parseViewParamAttributes(bma, origrequest, requestmap);
     origrequest.parsePathInfo(pathinfo);
