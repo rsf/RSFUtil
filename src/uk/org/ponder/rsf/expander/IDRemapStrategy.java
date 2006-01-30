@@ -3,6 +3,8 @@
  */
 package uk.org.ponder.rsf.expander;
 
+import uk.org.ponder.rsf.components.ELReference;
+
 /** One of the valid types that may appear in the "idstrategy" from the UIReplicator
  * placeholder component. For each bean found in the indexable container 
  * specified for the value binding, the EL for members of the replicated 
@@ -19,7 +21,7 @@ public class IDRemapStrategy {
    * container, at which the field value identified below retrieved from a 
    * replicating bean can be applied to retrieve it. 
    */
-  public String basepath;
+  public ELReference basepath;
   /** The name of the property from which the ID of a replicating bean may be 
    * read. This ID will be applied not only to the wildcard portion of the
    * replicated EL binding but also to the localID of the replicated container.

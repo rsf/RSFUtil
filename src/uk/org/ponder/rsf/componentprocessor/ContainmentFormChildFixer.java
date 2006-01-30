@@ -53,7 +53,7 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
         command.parameters.add(new UIParameter(SubmittedValueEntry.SUBMITTING_CONTROL, 
             child.getFullID()));
         command.parameters.add(new UIParameter(SubmittedValueEntry.FAST_TRACK_ACTION,
-            command.methodbinding));
+            command.methodbinding.value));
       }
       else if (child instanceof UIBranchContainer) {
         registerContainer(toprocess, (UIBranchContainer) child);

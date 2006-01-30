@@ -23,7 +23,7 @@ public class UIOutput extends UIBoundString {
     if (initvalue != null) {
       togo.setValue(initvalue);
     }
-    togo.valuebinding = binding;
+    togo.valuebinding = ELReference.make(binding);
     togo.ID = ID;
     parent.addComponent(togo);
     return togo;

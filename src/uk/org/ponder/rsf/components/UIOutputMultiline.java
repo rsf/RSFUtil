@@ -10,7 +10,7 @@ public class UIOutputMultiline extends UIBound {
       String binding, StringList value) {
     UIOutputMultiline togo = new UIOutputMultiline();
     togo.ID = ID;
-    togo.valuebinding = binding;
+    togo.valuebinding = ELReference.make(binding);
     // note that StringList is not a UIType, and hence can never give rise
     // to input, and hence has no placeholder type, and hence must always
     // be set here.

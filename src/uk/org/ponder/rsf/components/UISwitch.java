@@ -11,19 +11,14 @@ package uk.org.ponder.rsf.components;
  * @author Antranig Basman (amb26@ponder.org.uk)
  */
 public class UISwitch extends UIComponent {
-  /** An EL reference from which the object to form the left side of the comparison
-   * can be fetched from the request container.
+  /** The lvalue to form the basis of the comparison. If this is an instance of
+   * ELReference, this will cause the value to be fetched from the request container.
    */
-  public String lvalue;
-  /** An Object (specified in-line in the serialized form) which will form the 
-   * right-hand side of the comparison. If this is <code>null</code>, the
-   * object will instead be fetched via <code>elrvalue</code>.
+  public Object lvalue;
+  /** The rvalue to form the basis of the comparison. If this is an instance of
+   * ELReference, this will cause the value to be fetched from the request container.
    */
   public Object rvalue;
-  /** An EL reference from which the object to form the left side of the comparison
-   * can be fetched from the request container. Ignored if <code>lvalue</code> is not null.
-   */ 
-  public String elrvalue;
   
   /** The component to be rendered if the lvalue and rvalue compare equal */
   public UIComponent truecomponent;

@@ -5,6 +5,7 @@ package uk.org.ponder.rsf.renderer.html;
 
 import java.util.HashMap;
 
+import uk.org.ponder.htmlutil.HTMLConstants;
 import uk.org.ponder.rsf.renderer.ComponentRenderer;
 import uk.org.ponder.rsf.renderer.RenderUtil;
 import uk.org.ponder.rsf.renderer.StaticComponentRenderer;
@@ -48,14 +49,13 @@ public class URLRewriteSCR implements StaticComponentRenderer {
   }
   
   public static String getLinkAttribute(XMLLump lump) {
-    if ((lump.textEquals("<a ") || lump.textEquals("<link "))
-        && lump.attributemap.containsKey("href")) {
-      return "href";
-    }
-    if ((lump.textEquals("<img ") || lump.textEquals("<frame ") ||
-        lump.textEquals("<script "))
-        && lump.attributemap.containsKey("src")) {
-      return "src";
+    for (int i = 0; i < HTMLConstants.tagtoURL.length; ++ i) {
+      String[] tags = HTMLConstants.tagtoURL[i]; 
+      String tag = tags[0];
+      for (int j = 1; j < tags.length; ++ j) {
+        if (lump.textEquals(tags[j]) && lump.attributemap.containsKey(tag))
+          return tag;
+      }
     }
     return null;
   }

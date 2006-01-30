@@ -12,7 +12,7 @@ package uk.org.ponder.rsf.components;
 public class UIDeletionBinding extends UIParameter {
   public UIDeletionBinding() {}
   public UIDeletionBinding(String deletebinding, Object deletetarget) {
-    this.deletebinding = deletebinding;
+    this.deletebinding = ELReference.make(deletebinding);
     this.deletetarget = deletetarget;
   }
   /** An EL path (including #{}) 
@@ -21,6 +21,6 @@ public class UIDeletionBinding extends UIParameter {
    * the removal of the object specified by the tail portion of the path
    * (after the final ".").
    */
-  public String deletebinding;
+  public ELReference deletebinding;
   public Object deletetarget;
 }

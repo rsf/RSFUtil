@@ -20,7 +20,7 @@ public class UIReplicator extends UIComponent {
    * A reference to a single String will be considered to represent the ID
    * required by an IDRemapStrategy acting on the single bean with that ID.
    */
-  public String valuebinding;
+  public ELReference valuebinding;
   /** An object encapsulating the strategy to be used for mapping from objects
    * found in the targetted list to the EL path that they will be referenced
    * at. 

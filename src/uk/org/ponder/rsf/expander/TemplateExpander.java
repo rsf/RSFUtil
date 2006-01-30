@@ -6,16 +6,23 @@ package uk.org.ponder.rsf.expander;
 import java.util.Enumeration;
 
 import uk.org.ponder.beanutil.BeanLocator;
-import uk.org.ponder.beanutil.BeanUtil;
 import uk.org.ponder.mapping.DARApplier;
 import uk.org.ponder.reflect.DeepBeanCloner;
 import uk.org.ponder.rsac.RSACBeanLocator;
 import uk.org.ponder.rsf.components.ComponentList;
+import uk.org.ponder.rsf.components.ELReference;
+import uk.org.ponder.rsf.components.ParameterList;
 import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIDeletionBinding;
+import uk.org.ponder.rsf.components.UIELBinding;
+import uk.org.ponder.rsf.components.UIInternalLink;
+import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.components.UIReplicator;
+import uk.org.ponder.rsf.components.UISwitch;
+import uk.org.ponder.rsf.viewstate.EntityCentredViewParameters;
 import uk.org.ponder.saxalizer.MethodAnalyser;
 import uk.org.ponder.saxalizer.SAXAccessMethod;
 import uk.org.ponder.stringutil.StringList;
@@ -37,15 +44,13 @@ public class TemplateExpander {
   public void setDARApplier(DARApplier darapplier) {
     this.darapplier = darapplier;
   }
-// This is sadly a request-scope bean - if we wired it directly, the entire
-// tree becomes request scope. We have to use the RSACBeanLocator itself.
+// This is a request-scope bean until we move all view producers into request
+//  scope.
   public void setSafeBeanLocator(BeanLocator beanlocator) {
     //this.rbl = beanlocator;
   }
 
   private BeanLocator getSafeLocator() {
-    // Is there some Spring proxy magic coming that can help with this?
-    
     return (BeanLocator) rsacbeanlocator.getBeanLocator().locateBean("rsacsafebeanlocator");
   }
   
@@ -75,11 +80,11 @@ public class TemplateExpander {
   private String computeStump(UIReplicator replicator) {
     String stump = null;
     if (replicator.idstrategy instanceof DirectIndexStrategy) {
-      stump = BeanUtil.stripEL(replicator.valuebinding);
+      stump = replicator.valuebinding.value;
     }
     else {
       IDRemapStrategy remapstrategy = (IDRemapStrategy) replicator.idstrategy;
-      stump = BeanUtil.stripEL(remapstrategy.basepath);
+      stump = remapstrategy.basepath.value;
     }
     return stump;
   }
@@ -97,7 +102,7 @@ public class TemplateExpander {
   }
 
   public void expandTemplate(UIContainer target, UIContainer source) {
-    expandTemplate(target, source, null);
+    expandContainer(target, source, null);
   }
   
   private static StringList cloneexcept = new StringList();
@@ -105,42 +110,104 @@ public class TemplateExpander {
     cloneexcept.add("component");
   }
   
-  public void expandTemplate(UIContainer target, UIContainer source,
+  private static void rewritePossibleELRef(Object elrefo, RemapState state) {
+    if (elrefo instanceof ELReference) {
+      ELReference elref = (ELReference) elrefo;
+      if (elref.value.startsWith(state.idwildcard)) {
+        elref.value = state.stump
+            + "."
+            + state.localid
+            + elref.value.substring(state.idwildcard
+                .length());
+      }
+    }
+  }
+  
+  private static void rewriteParameterList(ParameterList parameters, RemapState state) {
+    for (int j = 0; j < parameters.size(); ++ j) {
+      UIParameter param = parameters.parameterAt(j);
+      if (param instanceof UIELBinding) {
+        UIELBinding elbinding = (UIELBinding) param;
+        rewritePossibleELRef(elbinding.valuebinding, state);
+        rewritePossibleELRef(elbinding.rvalue, state);
+      }
+      else if (param instanceof UIDeletionBinding) {
+        rewritePossibleELRef(((UIDeletionBinding)param).deletebinding, state);
+      }
+    }
+  }
+  
+  /** @param target A "to be live" container to receiver cloned (expanded) children correponding
+   * to child and any descendents.
+   * @param child A "template" component which is to be expanded into children of the target.
+   * @param state The current remapping state.
+   */
+  private void expandComponent(UIContainer target, UIComponent child, RemapState state) {
+    if (state != null) {
+      if (child instanceof UIBound) {
+        UIBound bound = (UIBound) child;
+        UIBound copy = (UIBound) deepcloner.cloneBean(bound);
+        rewritePossibleELRef(copy.valuebinding, state);
+        target.addComponent(copy);
+      }
+    }
+    // We *do* have the reflective power to avoid this special-casing, but
+    // it is unknown at this point what the performance/flexibility tradeoffs are.
+    else if (child instanceof UIInternalLink) {
+      UIInternalLink childlink = (UIInternalLink) child;
+      if (childlink.viewparams instanceof EntityCentredViewParameters) {
+        
+        UIInternalLink cloned = (UIInternalLink) deepcloner.cloneBean(child);
+        EntityCentredViewParameters ecvp = (EntityCentredViewParameters) cloned.viewparams;
+        if (ecvp.entity.ID.equals(state.idwildcard)) {
+          ecvp.entity.ID = state.localid;
+        }
+      }
+    }
+    else if (child instanceof UIReplicator) {
+      expandReplicator(target, (UIReplicator) child, state);
+    }
+    else if (child instanceof UISwitch) {
+      expandSwitch(target, (UISwitch) child, state);
+    }
+    else if (!(child instanceof UIContainer)) {
+      UIComponent clonechild = (UIComponent) deepcloner.cloneBean(child);
+      target.addComponent(clonechild);
+      
+    }
+    else {
+      UIContainer container = (UIContainer) deepcloner.cloneBean(child, cloneexcept);
+      rewriteParameterList(container.parameters, state);
+      target.addComponent(container);
+      expandContainer(container, (UIContainer) child, state);
+    }
+  }
+  
+  // the source is interpreted as DIRECTLY CORRESPONDING to the target, as
+  // opposed to expandComponent, where the source will become a CHILD of the 
+  // target.
+  private void expandContainer(UIContainer target, UIContainer source,
       RemapState state) {
     ComponentList children = source.flattenChildren();
     for (int i = 0; i < children.size(); ++i) {
       UIComponent child = (UIComponent) children.get(i);
-      if (state != null) {
-        if (child instanceof UIBound) {
-          UIBound bound = (UIBound) child;
-          UIBound copy = (UIBound) deepcloner.cloneBean(bound);
-          String stripped = BeanUtil.stripEL(copy.valuebinding);
-          if (stripped.startsWith(state.idwildcard)) {
-            stripped = state.stump
-                + "."
-                + state.localid
-                + stripped.substring(state.idwildcard
-                    .length());
-            copy.valuebinding = "#{" + stripped + "}";
-          }
-          target.addComponent(copy);
-        }
-      }
-      else if (child instanceof UIReplicator) {
-        expandReplicator(target, (UIReplicator) child, state);
-      }
-      else if (!(child instanceof UIContainer)) {
-        UIComponent clonechild = (UIComponent) deepcloner.cloneBean(child);
-        target.addComponent(clonechild);
-      }
-      else {
-        UIContainer container = (UIContainer) deepcloner.cloneBean(child, cloneexcept);        
-        target.addComponent(container);
-        expandTemplate(container, (UIContainer) child, state);
-      }
+      expandComponent(target, child, state);
     }
   }
 
+  private void expandSwitch(UIContainer target, UISwitch switch1, RemapState state) {
+    BeanLocator beanlocator = rsacbeanlocator.getBeanLocator();
+    Object lvalue = switch1.lvalue;
+    if (lvalue instanceof ELReference) {
+      lvalue = beanlocator.locateBean(((ELReference)lvalue).value);
+    }
+    Object rvalue = switch1.lvalue;
+    if (rvalue instanceof ELReference) {
+      lvalue = beanlocator.locateBean(((ELReference)rvalue).value);
+    }
+    UIComponent toadd = lvalue.equals(rvalue)? switch1.truecomponent : switch1.falsecomponent;
+    expandComponent(target, toadd, state);
+  }
   /**
    * Expands the supplied replicator, encountered as a roadblock in an expanding
    * prototemplate, into the target branch container in the accreting true
@@ -148,17 +215,18 @@ public class TemplateExpander {
    * 
    * @param target
    *          The branch container which will receive replicated instances of
-   *          the replicators container as replicated children.
+   *          the replicator's container as replicated children.
    */
   public void expandReplicator(UIContainer target, UIReplicator replicator,
       RemapState state) {
     BeanLocator safelocator = getSafeLocator();
     // TODO: work out how to remap recursively - currently old remapstate is
     // thrown away.
-    String listbinding = BeanUtil.stripEL(replicator.valuebinding);
+    String listbinding = replicator.valuebinding.value;
     Object collection = darapplier.getBeanValue(listbinding, safelocator);
     int index = 0;
-    String value = replicator.valuebinding;
+    // for each member of the object "list", instantiate a BranchContainer with
+    // corresponding localID, and then recurse further.
     for (Enumeration colit = EnumerationConverter.getEnumeration(collection); colit
         .hasMoreElements();) {
       Object bean = colit.nextElement();
@@ -169,7 +237,7 @@ public class TemplateExpander {
       String stump = computeStump(replicator);
       RemapState newstate = new RemapState(localid, stump, replicator.idwildcard);
 
-      expandTemplate(replicated, replicator.component, newstate);
+      expandContainer(replicated, replicator.component, newstate);
       ++index;
     }
   

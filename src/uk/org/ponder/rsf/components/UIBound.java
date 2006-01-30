@@ -19,7 +19,7 @@ public abstract class UIBound extends UIComponent {
   /** The EL value reference that this component's value is bound to.
    * This will be a string of the form <code>#{rootbean.property1.property2}</code>
    */
-  public String valuebinding;
+  public ELReference valuebinding;
   /** The "initial" or "current" value of the component. Since components in 
    * general only exist between production and rendering, this value is a transit 
    * between these processes and is not subject to any amusing processing.

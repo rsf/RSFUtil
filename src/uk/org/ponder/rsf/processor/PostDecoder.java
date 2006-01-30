@@ -119,7 +119,7 @@ public class PostDecoder {
         .get(SubmittedValueEntry.FAST_TRACK_ACTION);
     if (actionmethods != null) {
       String actionmethod = actionmethods[0];
-      actionmethod = BeanUtil.stripEL(actionmethod);
+      //actionmethod = BeanUtil.stripEL(actionmethod);
       return actionmethod;
     }
     return null;

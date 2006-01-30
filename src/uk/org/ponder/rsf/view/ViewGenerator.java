@@ -65,12 +65,14 @@ public class ViewGenerator {
 
         producer.fillComponents(view.viewroot, viewparams, checker);
       }
-      return view;
+    
     }
     else {
-      throw UniversalRuntimeException.accumulate(new ViewNotFoundException(), 
-          "Request intercepted for unknown view " + viewparams.viewID);
+// Probably can this error - since a componentless view may be actually desired.
+//      throw UniversalRuntimeException.accumulate(new ViewNotFoundException(), 
+//          "Request intercepted for unknown view " + viewparams.viewID);
     }
+    return view;
   }
 
 }

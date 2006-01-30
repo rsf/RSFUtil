@@ -11,7 +11,7 @@ public class ELReferenceParser implements LeafObjectParser {
 
   public Object parse(String toparse) {
     ELReference togo = new ELReference();
-    togo.value = BeanUtil.stripEL(toparse);
+    togo.value = BeanUtil.stripELNoisy(toparse);
     return togo;
   }
 
