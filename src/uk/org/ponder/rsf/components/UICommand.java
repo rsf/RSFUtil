@@ -16,7 +16,7 @@ package uk.org.ponder.rsf.components;
  * 
  */
 public class UICommand extends UISimpleContainer {
-  public String methodbinding;
+  public ELReference methodbinding;
   public String commandtext;
   /**
    * Creates a command link initiating the specified method binding on trigger,
@@ -38,7 +38,7 @@ public class UICommand extends UISimpleContainer {
     UICommand togo = new UICommand();
     togo.commandtext = text;
     togo.ID = ID;
-    togo.methodbinding = methodbinding;
+    togo.methodbinding = ELReference.make(methodbinding);
     // TODO: do this at fixup
   
 //    if (parent.getActiveForm() == null) {

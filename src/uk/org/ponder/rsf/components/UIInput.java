@@ -23,7 +23,7 @@ public class UIInput extends UIBoundString {
   public static UIInput make(UIContainer parent, String ID,
       String binding, String initvalue) {
     UIInput togo = new UIInput();
-    togo.valuebinding = binding;
+    togo.valuebinding = ELReference.make(binding);
     if (initvalue != null) {
       togo.setValue(initvalue);
     }

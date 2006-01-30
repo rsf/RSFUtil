@@ -58,7 +58,7 @@ public class ValueFixer implements ComponentProcessor {
           || UITypes.isPlaceholder(toprocess.acquireValue()))) {
         // a bound component ALWAYS contains a value of the correct type.
         Object oldvalue = toprocess.acquireValue();
-        String stripbinding = BeanUtil.stripEL(toprocess.valuebinding);
+        String stripbinding = toprocess.valuebinding.value;
         BeanResolver resolver = getResolver(toprocess);
         
         Object flatvalue = alterer.getFlattenedValue(stripbinding, beanlocator, oldvalue.getClass(), resolver);

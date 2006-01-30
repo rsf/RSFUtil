@@ -126,11 +126,11 @@ public class ViewRender {
 //            Logger.log.info("Resolved call from ");
 //            debugLump(lump);
               XMLLump targetlump = (XMLLump) branchmap.get(child);
-              if (Logger.log.isInfoEnabled()) {
-                System.out.println("Resolved call for component " + child.getClass().getName() + " fullID " + child.getFullID() + " to ");
+//              if (Logger.log.isInfoEnabled()) {
+//                System.out.println("Resolved call for component " + child.getClass().getName() + " fullID " + child.getFullID() + " to ");
 //                Logger.log.info("for component with ID " + child.ID + " to ");
-                System.out.println(debugLump(targetlump, lumps));
-                }
+//                System.out.println(debugLump(targetlump, lumps));
+//                }
               XMLLump firstchild = lumps[targetlump.open_end.lumpindex + 1];
               dumpContainerHead(targetlump, firstchild);
               renderRecurse((UIBranchContainer) child, targetlump, firstchild);

@@ -5,6 +5,7 @@ package uk.org.ponder.rsf.request;
 
 import uk.org.ponder.beanutil.BeanUtil;
 import uk.org.ponder.conversion.ConvertUtil;
+import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIDeletionBinding;
 import uk.org.ponder.rsf.components.UIELBinding;
@@ -115,16 +116,19 @@ public class FossilizedConverter {
     binding.name = DELETION_KEY;
     String converted = binding.deletetarget == null? "" :
       ConvertUtil.render(binding.deletetarget, xmlprovider);
-    binding.value = OBJECT_BINDING + binding.deletebinding + converted;
+    binding.value = OBJECT_BINDING + "#{" + binding.deletebinding + "}" + converted;
   }
   
   public void computeELBinding(UIELBinding binding) {
     binding.name = ELBINDING_KEY;
-    if (binding.elrvalue != null) {
-      binding.value = EL_BINDING + binding.valuebinding + binding.elrvalue;
+    if (binding.rvalue instanceof ELReference) {
+      ELReference elref = (ELReference) binding.rvalue;
+      binding.value = EL_BINDING + "#{" + binding.valuebinding.value + "}" + elref.value;
     }
     else {
-      binding.value = OBJECT_BINDING + binding.valuebinding + ConvertUtil.render(binding.objrvalue, xmlprovider);
+      // The value type will be inferred on delivery, for Object bindings.
+      binding.value = OBJECT_BINDING + "#{" +binding.valuebinding.value + "}" + 
+        ConvertUtil.render(binding.rvalue, xmlprovider);
     }
   }
   
@@ -158,7 +162,7 @@ public class FossilizedConverter {
     }
     String typestring = type == null? "" : type.getName();
     togo.value = (togenerate.willinput? INPUT_COMPONENT : OUTPUT_COMPONENT) + typestring 
-       + togenerate.valuebinding + oldvaluestring;
+       + "#{" + togenerate.valuebinding.value + "}" + oldvaluestring;
     return togo;
       
   }

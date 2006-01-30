@@ -72,6 +72,8 @@ public class RSFMappingLoader implements MappingLoader {
     context.classnamemanager.registerClass("entitycentred", EntityCentredViewParameters.class);
     context.classnamemanager.registerClass("simple", SimpleViewParameters.class);
     
+    context.classnamemanager.registerClass("elref", ELReference.class);
+    
     context.saxleafparser.registerParser(ViewParameters.class, viewparamsleafparser);
     context.saxleafparser.registerParser(ELReference.class, new ELReferenceParser());
   }
