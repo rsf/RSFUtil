@@ -1,4 +1,3 @@
-/*
  * Created on 12-Jan-2006
  */
 package uk.org.ponder.rsf.components;
