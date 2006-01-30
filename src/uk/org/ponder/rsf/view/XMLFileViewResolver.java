@@ -27,7 +27,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
  *
  */
 
-public class XMLViewResolver implements ViewResolver, ApplicationContextAware {
+public class XMLFileViewResolver implements ViewResolver, ApplicationContextAware {
   public static final String DEFAULT_EXTENSION = ".xml";
   private StringList viewnames;
   private String basepath;
