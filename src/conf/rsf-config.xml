@@ -124,7 +124,7 @@
     </property>
   </bean>
 
-  <bean id="baseurlprovider"></bean>
+  <bean id="baseurlprovider" abstract="true"></bean>
 
   <bean id="rsacresourcelocator"
     class="uk.org.ponder.rsac.servlet.ServletRSACResourceLocator">
