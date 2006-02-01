@@ -91,6 +91,9 @@
     <property name="permittedBeanRoots"> 
       <ref bean="requestAddressibleBeans"/>
     </property>
+    <property name="fallbackBeans">
+      <ref bean="fallbackBeans"/>
+    </property>
   </bean>
 
   <bean id="viewParameters"

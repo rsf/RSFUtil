@@ -3,6 +3,8 @@
  */
 package uk.org.ponder.rsf.processor;
 
+import java.net.MalformedURLException;
+
 import uk.org.ponder.errorutil.ConfigurationException;
 import uk.org.ponder.errorutil.CoreMessages;
 import uk.org.ponder.errorutil.ErrorUtil;
@@ -11,6 +13,7 @@ import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.rsf.flow.ViewExceptionStrategy;
 import uk.org.ponder.rsf.state.ErrorStateManager;
+import uk.org.ponder.rsf.viewstate.ErrorViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.util.Logger;
@@ -55,6 +58,10 @@ public class RenderHandlerBracketer {
     viewparams.errorredirect = null;
     ThreadErrorState.beginRequest();
     try {
+      if (viewparams instanceof ErrorViewParameters) {
+        throw UniversalRuntimeException.accumulate(new MalformedURLException(), 
+            "Request for bad view with ID " + viewparams.viewID + " ");
+      }
       renderhandler.handle(pos);
     }
     catch (Exception e) {

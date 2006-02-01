@@ -13,7 +13,7 @@ import uk.org.ponder.stringutil.StringList;
  * 
  */
 public class SimpleViewParameters extends ViewParameters {
-  private static StringList attrnames = 
+  static StringList attrnames = 
     StringList.fromString("flowtoken, endflow, errortoken, errorredirect");
   // NB - NONE of these parameters should appear in ViewParameters since they
   // are not "core state-defining". They should not be visible to client code

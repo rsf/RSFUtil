@@ -130,14 +130,14 @@
     class="uk.org.ponder.rsac.servlet.ServletRSACResourceLocator">
   </bean>
 
-  <bean id="rsacbeanlocatorfactory"
+  <bean id="rsacBeanLocatorFactory"
     class="uk.org.ponder.rsac.RSACBeanLocatorFactory">
     <property name="RSACResourceLocator">
       <ref local="rsacresourcelocator" />
     </property>
   </bean>
 
-  <bean id="rsacBeanLocator" factory-bean="rsacbeanlocatorfactory"
+  <bean id="rsacBeanLocator" factory-bean="rsacBeanLocatorFactory"
     factory-method="getRSACBeanLocator">
     <property name="reflectiveCache">
       <ref bean="reflectivecache" />
@@ -145,6 +145,10 @@
     <property name="mappingContext">
       <ref bean="saxalizerMappingContext" />
     </property>
+  </bean>
+
+  <bean id="fallbackBeans" factory-bean="rsacBeanLocator" 
+    factory-method="getFallbackBeans" lazy-init="true">
   </bean>
 
   <bean id="rendersystemstatic"
