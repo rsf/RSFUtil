@@ -38,8 +38,10 @@ public class BasicViewParametersParser implements ViewParametersParser {
       
     ViewParameters vpexemplar = (ViewParameters) exemplarmap.get(viewID);
     if (vpexemplar == null) {
-      throw UniversalRuntimeException.accumulate(new MalformedURLException(), 
-          "View " + viewID + " unknown in BasicViewParametersParser");
+      // we use this strategy since i) ViewParameters cannot be lazy, since of
+      // unknown type, and ii) cannot throw, since are generally requested
+      // FAR too early. 
+      vpexemplar = new ErrorViewParameters();
     }
     ViewParameters origrequest = vpexemplar.copyBase();
     URLUtil.parseViewParamAttributes(bma, origrequest, requestmap);
