@@ -75,9 +75,9 @@ public class FossilizedConverter {
       togo.isdeletion = true;
     }
     togo.newvalue = value.substring(endcurly + 1);
-    if (togo.isEL) {
-      togo.newvalue = BeanUtil.stripEL((String) togo.newvalue);
-    }
+//    if (togo.isEL) {
+//      togo.newvalue = BeanUtil.stripEL((String) togo.newvalue);
+//    }
     // such a binding will hit the data model via the RSVCApplier.
     return togo;
   }
