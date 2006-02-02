@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.rsf.view;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
  */
 
 public class XMLFileViewResolver implements ViewResolver, ApplicationContextAware {
+  public static final int NO_CACHE = -1;
   public static final String DEFAULT_EXTENSION = ".xml";
   private StringList viewnames;
   private String basepath;
@@ -37,6 +39,7 @@ public class XMLFileViewResolver implements ViewResolver, ApplicationContextAwar
   private List defaultviews = null;
   private TemplateExpander templateexpander;
   private XMLProvider xmlprovider;
+  private int cachesecs = NO_CACHE;
 
   /**
    * Sets the default extension (including period) that will be suffixed to a
@@ -81,6 +84,10 @@ public class XMLFileViewResolver implements ViewResolver, ApplicationContextAwar
   public void setTemplateExpander(TemplateExpander templateexpander) {
     this.templateexpander = templateexpander;
   }
+  
+  public void setCacheSeconds(int cachesecs) {
+    this.cachesecs = cachesecs;
+  }
 
   private XMLViewComponentProducer tryLoadProducer(String fullpath,
       String viewId) {
@@ -112,10 +119,12 @@ public class XMLFileViewResolver implements ViewResolver, ApplicationContextAwar
   public List getProducers(String viewId) {
     XMLViewComponentProducer producer = (XMLViewComponentProducer) views
         .get(viewId);
-    if (producer == null) {
+    if (producer == null || cachesecs >= 0) {
       if (viewnames == null || viewnames.contains(viewId)) {
         String fullpath = basepath + viewId + extension;
-        producer = tryLoadProducer(fullpath, viewId);
+        if (isCacheStale(fullpath, producer, cachesecs)) {
+          producer = tryLoadProducer(fullpath, viewId);
+        }
       }
     }
     if (producer != null) {
@@ -127,6 +136,23 @@ public class XMLFileViewResolver implements ViewResolver, ApplicationContextAwar
       return togo;
     }
     return null;
+  }
+
+  private static boolean isCacheStale(String fullpath, XMLViewComponentProducer producer, int cachesecs) {
+    if (producer == null) return true;
+    long now = System.currentTimeMillis();
+    boolean isstale = false;
+    
+    if (now > producer.lastchecked + cachesecs * 1000) {
+      File f = new File(fullpath);
+      long modtime = f.lastModified();
+      if (modtime > producer.modtime) {
+        producer.modtime = modtime;
+        isstale = true;
+      }
+    }
+    producer.lastchecked = now;
+    return isstale;
   }
 
   public void setApplicationContext(ApplicationContext applicationContext) {

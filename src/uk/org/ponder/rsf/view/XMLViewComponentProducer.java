@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.rsf.view;
 
+
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.expander.TemplateExpander;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
@@ -11,6 +12,8 @@ public class XMLViewComponentProducer implements ViewComponentProducer {
   private String viewID;
   private UIContainer templatecontainer;
   private TemplateExpander templateexpander;
+  public long lastchecked; // millisecond datestamp that filesystem freshness was checked
+  public long modtime; // modification time of the file giving rise to current tree
   public void setViewID(String viewID) {
     this.viewID = viewID;
   }

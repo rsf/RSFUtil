@@ -54,7 +54,18 @@
     class="uk.org.ponder.rsf.viewstate.SimpleViewParameters">
   </bean>
 
-  <bean id="xmlviewresolver" 
+  <bean id="viewresolver" class="uk.org.ponder.rsf.view.ConcreteViewResolver">
+    <property name="views">
+      <ref bean="staticviews" />
+    </property>
+    <property name="viewResolvers">
+      <list> 
+        <ref bean="XMLFileViewResolver" />
+      </list>
+    </property>
+  </bean>
+
+  <bean id="XMLFileViewResolver" 
     class="uk.org.ponder.rsf.view.XMLFileViewResolver">
     <property name="basePath">
       <value>/WEB-INF/producers/</value>
