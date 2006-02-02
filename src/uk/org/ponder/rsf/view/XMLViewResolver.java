@@ -13,6 +13,7 @@ import java.util.Map;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.expander.TemplateExpander;
@@ -21,19 +22,22 @@ import uk.org.ponder.stringutil.StringList;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
 
-/** A view resolver which will return a component producer specified in
- * a static XML file. Will attempt to look up the supplied viewID, after
- * prefixing and postfixing, as a Spring resource.
+/**
+ * A view resolver which will return a component producer specified in a static
+ * XML file. Will attempt to look up the supplied viewID, after prefixing and
+ * postfixing, as a Spring resource.
+ * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
- *
+ * 
  */
 
-public class XMLFileViewResolver implements ViewResolver, ApplicationContextAware {
+public class XMLViewResolver implements ViewResolver,
+    ApplicationContextAware {
   public static final int NO_CACHE = -1;
   public static final String DEFAULT_EXTENSION = ".xml";
   private StringList viewnames;
   private String basepath;
-  private ApplicationContext context;
+  private ResourceLoader resourceloader;
   private Map views = new HashMap();
   private String extension = DEFAULT_EXTENSION;
   private List defaultviews = null;
@@ -84,18 +88,29 @@ public class XMLFileViewResolver implements ViewResolver, ApplicationContextAwar
   public void setTemplateExpander(TemplateExpander templateexpander) {
     this.templateexpander = templateexpander;
   }
+
+  public void setResourceLoader(ResourceLoader resourceloader) {
+    this.resourceloader = resourceloader;
+  }
   
   public void setCacheSeconds(int cachesecs) {
     this.cachesecs = cachesecs;
   }
 
+  public void setApplicationContext(ApplicationContext applicationContext) {
+    if (resourceloader == null) {
+      this.resourceloader = applicationContext;
+    }
+  }
+
+  
   private XMLViewComponentProducer tryLoadProducer(String fullpath,
       String viewId) {
     XMLViewComponentProducer togo = null;
     if (Logger.log.isInfoEnabled()) {
       Logger.log.info("Loading view template from " + fullpath);
     }
-    Resource res = context.getResource(fullpath);
+    Resource res = resourceloader.getResource(fullpath);
     if (res.exists()) {
       try {
         InputStream is = res.getInputStream();
@@ -138,24 +153,29 @@ public class XMLFileViewResolver implements ViewResolver, ApplicationContextAwar
     return null;
   }
 
-  private static boolean isCacheStale(String fullpath, XMLViewComponentProducer producer, int cachesecs) {
-    if (producer == null) return true;
+  private boolean isCacheStale(String fullpath,
+      XMLViewComponentProducer producer, int cachesecs) {
+    if (producer == null)
+      return true;
     long now = System.currentTimeMillis();
     boolean isstale = false;
-    
+
     if (now > producer.lastchecked + cachesecs * 1000) {
-      File f = new File(fullpath);
-      long modtime = f.lastModified();
-      if (modtime > producer.modtime) {
-        producer.modtime = modtime;
-        isstale = true;
+      Resource res = resourceloader.getResource(fullpath);
+      try {
+        File f = res.getFile();
+        long modtime = f.lastModified();
+        if (modtime > producer.modtime) {
+          producer.modtime = modtime;
+          isstale = true;
+        }
       }
+      catch (Exception e) {
+
+      }
+
     }
     producer.lastchecked = now;
     return isstale;
-  }
-
-  public void setApplicationContext(ApplicationContext applicationContext) {
-    this.context = applicationContext;
   }
 }
