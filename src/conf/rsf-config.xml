@@ -170,16 +170,6 @@
     </property>
   </bean>
 
-  <bean id="viewresolver" class="uk.org.ponder.rsf.view.ConcreteViewResolver">
-    <property name="views">
-      <ref bean="staticviews" />
-    </property>
-    <property name="viewResolvers">
-      <list>
-        <ref bean="xmlviewresolver" />
-      </list>
-    </property>
-  </bean>
 <!--  Lazy loading needed to break dependence cycle - SiteMap via BasicViewParamsParser
   REQUIRES mapping to be loaded already!! -->
  <bean id="viewParamsLeafParser" class="org.springframework.aop.framework.ProxyFactoryBean">
