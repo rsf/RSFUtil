@@ -105,10 +105,6 @@ public class TemplateExpander {
     }
   }
 
-  public void expandTemplate(UIContainer target, UIContainer source) {
-    expandContainer(target, source, null);
-  }
-
   private static StringList cloneexcept = new StringList();
   static {
     cloneexcept.add("component");
@@ -213,7 +209,7 @@ public class TemplateExpander {
     if (lvalue instanceof ELReference) {
       lvalue = beanlocator.locateBean(((ELReference) lvalue).value);
     }
-    Object rvalue = switch1.lvalue;
+    Object rvalue = switch1.rvalue;
     if (rvalue instanceof ELReference) {
       lvalue = beanlocator.locateBean(((ELReference) rvalue).value);
     }
@@ -231,7 +227,7 @@ public class TemplateExpander {
    *          The branch container which will receive replicated instances of
    *          the replicator's container as replicated children.
    */
-  public void expandReplicator(UIContainer target, UIReplicator replicator,
+  private void expandReplicator(UIContainer target, UIReplicator replicator,
       RemapState state) {
     BeanLocator safelocator = getSafeLocator();
     // TODO: work out how to remap recursively - currently old remapstate is
@@ -244,18 +240,27 @@ public class TemplateExpander {
     for (Enumeration colit = EnumerationConverter.getEnumeration(collection); colit
         .hasMoreElements();) {
       Object bean = colit.nextElement();
-      UIBranchContainer replicated = UIBranchContainer.make(target,
-          replicator.component.ID);
       String localid = computeLocalID(bean, replicator.idstrategy, index);
-      replicated.localID = localid;
+      UIContainer expandtarget = target;
+
+      if (!replicator.elideparent) {
+        UIBranchContainer replicated = UIBranchContainer.make(target,
+            replicator.component.ID);
+        replicated.localID = localid;
+        expandtarget = replicated;
+      }
       String stump = computeStump(replicator);
       RemapState newstate = new RemapState(localid, stump,
           replicator.idwildcard);
 
-      expandContainer(replicated, replicator.component, newstate);
+      expandContainer(expandtarget, replicator.component, newstate);
       ++index;
     }
-
   }
 
+
+  public void expandTemplate(UIContainer target, UIContainer source) {
+    expandContainer(target, source, null);
+  }
+  
 }
