@@ -171,7 +171,8 @@ public class XMLViewResolver implements ViewResolver,
         }
       }
       catch (Exception e) {
-
+        // If it is not a File resource, assume that it is always stale.
+        return true;
       }
 
     }
