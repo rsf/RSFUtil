@@ -9,6 +9,7 @@ import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIDeletionBinding;
 import uk.org.ponder.rsf.components.UIELBinding;
+import uk.org.ponder.rsf.components.UIError;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInputMany;
@@ -46,7 +47,7 @@ public class RSFMappingLoader implements MappingLoader {
     UILink.class, UIMessage.class, UIOutput.class, UIOutputMultiline.class,
     UIBranchContainer.class, UISimpleContainer.class, UIELBinding.class,
     UIDeletionBinding.class, UIReplicator.class, UISwitch.class, UISelect.class,
-    UIInputMany.class, UIOutputMany.class
+    UIInputMany.class, UIOutputMany.class, UIError.class
   };
   private ViewParamsLeafParser viewparamsleafparser;
   

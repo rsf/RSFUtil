@@ -30,4 +30,8 @@ public class UIReplicator extends UIComponent {
    * discovered at the above binding.
    */
   public UIBranchContainer component;
+  /** If set to <code>true</code>, the parent branch container will be elided
+   * on replication, and its children added directly to the target parent.
+   */
+  public boolean elideparent;
 }
