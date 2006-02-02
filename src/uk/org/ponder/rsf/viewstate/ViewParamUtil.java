@@ -6,14 +6,13 @@ package uk.org.ponder.rsf.viewstate;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.rsf.components.ParameterList;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.stringutil.StringList;
-import uk.org.ponder.util.Logger;
+import uk.org.ponder.stringutil.URLUtil;
 
 /** Utilities for converting URL parameters to and from Objects (ViewParameters),
  * Maps, and Lists of various dizzying forms.
@@ -21,7 +20,7 @@ import uk.org.ponder.util.Logger;
  *
  */
 
-public class URLUtil {
+public class ViewParamUtil {
   public static ParameterList mapToParamList(Map toconvert) {
     ParameterList togo = new ParameterList();
     for (Iterator keyit = toconvert.keySet().iterator(); keyit.hasNext();) {
@@ -67,24 +66,6 @@ public class URLUtil {
     }
   }
   
-  public static Map paramsToMap(String extraparams,
-        Map target) {
-      Logger.log
-          .info("Action link requires extra parameters from " + extraparams);
-      StringTokenizer st = new StringTokenizer(extraparams, "&");
-      while (st.hasMoreTokens()) {
-        String token = st.nextToken();
-        int eqpos = token.indexOf("=");
-        String key = token.substring(0, eqpos);
-        String value = token.substring(eqpos + 1);
-        target.put(key, value);
-  //      target.add(new UIParameter(key, value));
-        Logger.log.info("Added extra parameter key " + key + " value " + value
-            + " to command link");
-      }
-      return target;
-    }
-
   /** Returns the "mid-portion" of the URL corresponding to these parameters,
    * i.e. /view-id/more-path-info?param1=val&param2=val 
    */
@@ -110,10 +91,6 @@ public class URLUtil {
       togo.append("#").append(value);
     }
     return togo.toString();
-  }
-
-  public static String[] splitPathInfo(String pathinfo) {
-    return pathinfo.split("/");
   }
   
 }

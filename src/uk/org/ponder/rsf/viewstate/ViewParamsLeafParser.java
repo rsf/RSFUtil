@@ -28,11 +28,11 @@ public class ViewParamsLeafParser implements LeafObjectParser {
   }
   
   public Object parse(String toparse) {
-    return URLUtil.parse(parser, toparse);
+    return ViewParamUtil.parse(parser, toparse);
   }
 
   public String render(Object torender) {
-    return URLUtil.toHTTPRequest(bma, (ViewParameters) torender);
+    return ViewParamUtil.toHTTPRequest(bma, (ViewParameters) torender);
   }
 
   public Object copy(Object tocopy) {

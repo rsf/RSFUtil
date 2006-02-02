@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import uk.org.ponder.errorutil.ErrorUtil;
 import uk.org.ponder.rsf.components.ParameterList;
 import uk.org.ponder.rsf.processor.ActionHandler;
 import uk.org.ponder.rsf.processor.HandlerHook;
@@ -99,13 +100,14 @@ public class RootHandlerBean implements HandlerHook {
       }
     }
     catch (Throwable t) {
-      renderhandlerbracketer.renderFatalError(t, pos);
+      // moved here to avoid triggering bean creation error.
+      renderFatalError(t, pos);
     }
     pos.close();
   }
 
   private void handlePost() {
-
+    
     ViewParameters redirect = actionhandler.handle();
 
     issueRedirect(redirect, response);
@@ -132,6 +134,19 @@ public class RootHandlerBean implements HandlerHook {
     }
   }
 
+
+  public void renderFatalError(Throwable t, PrintOutputStream pos) {
+    // We may have such a fatal misconfiguration that we can't even rely on
+    // IKAT to format this error message
+    Logger.log.fatal("Completely fatal error populating view root", t);
+
+    pos.println("<html><head><title>Internal Error</title></head></body><pre>");
+    pos.println("Fatal internal error handling request: " + t);
+    ErrorUtil.dumpStackTrace(t, pos);
+    pos.println("</pre></body></html>");
+    pos.close();
+  }
+  
   public static PrintOutputStream setupResponseWriter(
       HttpServletRequest request, HttpServletResponse response) {
     try {

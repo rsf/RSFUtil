@@ -5,6 +5,7 @@ package uk.org.ponder.rsf.viewstate;
 
 import uk.org.ponder.beanutil.entity.EntityID;
 import uk.org.ponder.stringutil.StringList;
+import uk.org.ponder.stringutil.URLUtil;
 
 /**
  * View parameters, which as well as defining the core viewID, are centred 
@@ -16,7 +17,7 @@ public class EntityCentredViewParameters extends ViewParameters {
   public static final String MODE_NEW = "new";
   public static final String MODE_EDIT = "edit";
   private static StringList attrfields = StringList.fromString("flowtoken, " +
-        "endflow, errortoken, errorredirect, entity.ID, mode");
+        "endflow, errortoken, errorredirect, mode");
   public StringList getAttributeFields() {
    return attrfields;
   }
@@ -35,7 +36,7 @@ public class EntityCentredViewParameters extends ViewParameters {
   }
 
   public String toPathInfo() {
-    return "/" + viewID;
+    return "/" + viewID + "/" + entity.ID;
   }
   
   public ViewParameters copyBase() {

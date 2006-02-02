@@ -33,7 +33,7 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
   
   public String getFullURL(ViewParameters viewparams) {
     // toHTTPRequest provides leading slash, and baseurl includes trailing slash
-    String requestparams = URLUtil.toHTTPRequest(bma, viewparams).substring(1);
+    String requestparams = ViewParamUtil.toHTTPRequest(bma, viewparams).substring(1);
 
     String usebaseurl = urlprovider.getBaseURL();
     String extraparams = "";
