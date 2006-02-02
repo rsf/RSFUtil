@@ -60,13 +60,13 @@
     </property>
     <property name="viewResolvers">
       <list> 
-        <ref bean="XMLFileViewResolver" />
+        <ref bean="XMLViewResolver" />
       </list>
     </property>
   </bean>
 
-  <bean id="XMLFileViewResolver" 
-    class="uk.org.ponder.rsf.view.XMLFileViewResolver">
+  <bean id="XMLViewResolver" 
+    class="uk.org.ponder.rsf.view.XMLViewResolver">
     <property name="basePath">
       <value>/WEB-INF/producers/</value>
     </property>
