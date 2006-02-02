@@ -35,13 +35,13 @@ public class SimpleViewParametersParser implements ViewParametersParser {
     // to stash away a parsed parameter object corresponding to our original
     // request.
     ViewParameters origrequest = vpexemplar.copyBase();
-    URLUtil.parseViewParamAttributes(bma, origrequest, requestmap);
+    ViewParamUtil.parseViewParamAttributes(bma, origrequest, requestmap);
     origrequest.parsePathInfo(pathinfo);
 
     // Map requestmap = req.
     // requestmap.put(ViewParameters.CURRENT_REQUEST, origrequest);
     Logger.log.info("Restoring view " + origrequest.viewID
-        + " from request parameters " + URLUtil.toHTTPRequest(bma, origrequest));
+        + " from request parameters " + ViewParamUtil.toHTTPRequest(bma, origrequest));
     return origrequest;
 
   }

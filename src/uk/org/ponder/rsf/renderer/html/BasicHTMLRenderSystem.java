@@ -29,10 +29,11 @@ import uk.org.ponder.rsf.request.FossilizedConverter;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.template.XMLLumpList;
 import uk.org.ponder.rsf.uitype.UITypes;
-import uk.org.ponder.rsf.viewstate.URLUtil;
+import uk.org.ponder.rsf.viewstate.ViewParamUtil;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.stringutil.StringList;
 import uk.org.ponder.stringutil.StringSet;
+import uk.org.ponder.stringutil.URLUtil;
 import uk.org.ponder.xml.XMLUtil;
 import uk.org.ponder.xml.XMLWriter;
 
@@ -321,7 +322,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
           attrcopy.put("action", torender.postURL.substring(0, qpos));
           String attrs = torender.postURL.substring(qpos + 1);
           Map attrmap = URLUtil.paramsToMap(attrs, new HashMap());
-          ParameterList urlparams = URLUtil.mapToParamList(attrmap);
+          ParameterList urlparams = ViewParamUtil.mapToParamList(attrmap);
           torender.parameters.addAll(urlparams);
         }
         XMLUtil.dumpAttributes(attrcopy, xmlw);

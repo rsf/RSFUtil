@@ -111,16 +111,5 @@ public class RenderHandlerBracketer {
     return defaultparameters;
   }
 
-  public void renderFatalError(Throwable t, PrintOutputStream pos) {
-    // We may have such a fatal misconfiguration that we can't even rely on
-    // IKAT to format this error message
-    Logger.log.fatal("Completely fatal error populating view root", t);
-
-    pos.println("<html><head><title>Internal Error</title></head></body><pre>");
-    pos.println("Fatal internal error handling request: " + t);
-    ErrorUtil.dumpStackTrace(t, pos);
-    pos.println("</pre></body></html>");
-    pos.close();
-  }
 
 }

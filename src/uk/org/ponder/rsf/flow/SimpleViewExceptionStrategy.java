@@ -3,7 +3,7 @@
  */
 package uk.org.ponder.rsf.flow;
 
-import uk.org.ponder.rsf.viewstate.URLUtil;
+import uk.org.ponder.rsf.viewstate.ViewParamUtil;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParametersParser;
 
@@ -25,7 +25,7 @@ public class SimpleViewExceptionStrategy implements ViewExceptionStrategy {
     this.parser = parser;
   }
   public ViewParameters handleException(Exception e, ViewParameters incoming) {
-    ViewParameters togo = URLUtil.parse(parser, view);
+    ViewParameters togo = ViewParamUtil.parse(parser, view);
     return togo;
   }
   
