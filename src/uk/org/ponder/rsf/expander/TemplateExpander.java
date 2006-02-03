@@ -111,7 +111,7 @@ public class TemplateExpander {
   }
 
   private static void rewritePossibleELRef(Object elrefo, RemapState state) {
-    if (elrefo instanceof ELReference) {
+    if (elrefo instanceof ELReference && state != null) {
       ELReference elref = (ELReference) elrefo;
       if (elref.value.startsWith(state.idwildcard)) {
         elref.value = state.stump + "." + state.localid
@@ -136,41 +136,40 @@ public class TemplateExpander {
   }
 
   /**
-   * @param target
-   *          A "to be live" container to receiver cloned (expanded) children
-   *          correponding to child and any descendents.
-   * @param child
-   *          A "template" component which is to be expanded into children of
-   *          the target.
-   * @param state
-   *          The current remapping state.
+   * @param target A "to be live" container to receiver cloned (expanded)
+   *          children correponding to child and any descendents.
+   * @param child A "template" component which is to be expanded into children
+   *          of the target.
+   * @param state The current remapping state.
    */
   private void expandComponent(UIContainer target, UIComponent child,
       RemapState state) {
-    if (state != null) {
-      if (child instanceof UIBound) {
-        UIBound bound = (UIBound) child;
-        UIBound copy = (UIBound) deepcloner.cloneBean(bound);
-        rewritePossibleELRef(copy.valuebinding, state);
-        target.addComponent(copy);
-      }
 
-      // We *do* have the reflective power to avoid this special-casing, but
-      // it is unknown at this point what the performance/flexibility tradeoffs
-      // are.
-      else if (child instanceof UIInternalLink) {
-        UIInternalLink childlink = (UIInternalLink) child;
-        if (childlink.viewparams instanceof EntityCentredViewParameters) {
+    if (child instanceof UIBound) {
+      UIBound bound = (UIBound) child;
+      UIBound copy = (UIBound) deepcloner.cloneBean(bound);
+      rewritePossibleELRef(copy.valuebinding, state);
+      target.addComponent(copy);
+    }
 
-          UIInternalLink cloned = (UIInternalLink) deepcloner.cloneBean(child);
-          EntityCentredViewParameters ecvp = (EntityCentredViewParameters) cloned.viewparams;
-          if (ecvp.entity.ID.equals(state.idwildcard)) {
-            ecvp.entity.ID = state.localid;
-          }
+    // We *do* have the reflective power to avoid this special-casing, but
+    // it is unknown at this point what the performance/flexibility tradeoffs
+    // are.
+    else if (child instanceof UIInternalLink) {
+      UIInternalLink childlink = (UIInternalLink) child;
+
+      UIInternalLink cloned = (UIInternalLink) deepcloner.cloneBean(child);
+      if (childlink.viewparams instanceof EntityCentredViewParameters
+          && state != null) {
+
+        EntityCentredViewParameters ecvp = (EntityCentredViewParameters) cloned.viewparams;
+        if (ecvp.entity.ID.equals(state.idwildcard)) {
+          ecvp.entity.ID = state.localid;
         }
       }
+      target.addComponent(cloned);
     }
-    if (child instanceof UIReplicator) {
+    else if (child instanceof UIReplicator) {
       expandReplicator(target, (UIReplicator) child, state);
     }
     else if (child instanceof UISwitch) {
@@ -207,11 +206,13 @@ public class TemplateExpander {
     BeanLocator beanlocator = rsacbeanlocator.getBeanLocator();
     Object lvalue = switch1.lvalue;
     if (lvalue instanceof ELReference) {
-      lvalue = beanlocator.locateBean(((ELReference) lvalue).value);
+      lvalue = darapplier.getBeanValue(((ELReference) lvalue).value,
+          beanlocator);
     }
     Object rvalue = switch1.rvalue;
     if (rvalue instanceof ELReference) {
-      lvalue = beanlocator.locateBean(((ELReference) rvalue).value);
+      rvalue = darapplier.getBeanValue(((ELReference) rvalue).value,
+          beanlocator);
     }
     UIComponent toadd = lvalue.equals(rvalue) ? switch1.truecomponent
         : switch1.falsecomponent;
@@ -223,9 +224,8 @@ public class TemplateExpander {
    * prototemplate, into the target branch container in the accreting true
    * template.
    * 
-   * @param target
-   *          The branch container which will receive replicated instances of
-   *          the replicator's container as replicated children.
+   * @param target The branch container which will receive replicated instances
+   *          of the replicator's container as replicated children.
    */
   private void expandReplicator(UIContainer target, UIReplicator replicator,
       RemapState state) {
@@ -258,9 +258,8 @@ public class TemplateExpander {
     }
   }
 
-
   public void expandTemplate(UIContainer target, UIContainer source) {
     expandContainer(target, source, null);
   }
-  
+
 }
