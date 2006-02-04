@@ -22,6 +22,8 @@ import uk.org.ponder.saxalizer.XMLProvider;
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  *
  */
+
+// RIP - SBF. HOW could I not understand about parent bean definitions for so long....
 public class StandardBeanFinder {
   public static class SBFEntry {
     String standardname;
