@@ -39,9 +39,8 @@
     </property>
   </bean>
 
-  <bean id="siteMap"
-    class="uk.org.ponder.rsf.viewstate.XMLSiteMapLoader"
-    abstract="true">
+  <bean id="siteMap" class="uk.org.ponder.rsf.viewstate.XMLSiteMapLoader"
+    parent="XMLFactoryBean" abstract="true">
     <property name="location">
       <value>/WEB-INF/sitemap.xml</value>
     </property>
@@ -59,27 +58,25 @@
       <ref bean="staticviews" />
     </property>
     <property name="viewResolvers">
-      <list> 
+      <list>
         <ref bean="XMLViewResolver" />
       </list>
     </property>
   </bean>
 
-  <bean id="XMLViewResolver" 
-    class="uk.org.ponder.rsf.view.XMLViewResolver">
+  <bean id="XMLViewResolver" class="uk.org.ponder.rsf.view.XMLViewResolver">
     <property name="basePath">
       <value>/WEB-INF/producers/</value>
     </property>
     <property name="XMLProvider">
-      <ref bean="xmlprovider" />
+      <ref bean="XMLProvider" />
     </property>
     <property name="templateExpander">
       <ref bean="templateexpander" />
     </property>
   </bean>
 
-  <bean id="xmlActionErrorStrategies"
-    class="uk.org.ponder.rsf.util.XMLFactoryBean">
+  <bean id="xmlActionErrorStrategies" parent="XMLFactoryBean">
     <property name="location">
       <value>/WEB-INF/flows/actionErrorStrategies.xml</value>
     </property>
@@ -125,9 +122,7 @@
   </bean>
   <bean id="directuiresourcebaseurl" class="java.lang.String">
     <constructor-arg>
-      <value>
-        http://www.unexpected.hosting.environment/servletcontext/
-      </value>
+      <value>http://www.unexpected.hosting.environment/servletcontext/</value>
     </constructor-arg>
   </bean>
 
@@ -158,9 +153,7 @@
   <bean id="URLPreservingBeanSpecs"
     class="uk.org.ponder.springutil.StringListFactory">
     <property name="strings">
-      <value>
-        flowstateid|flowLite-flowIDHolder.requestFlowStateID
-      </value>
+      <value>flowstateid|flowLite-flowIDHolder.requestFlowStateID</value>
     </property>
   </bean>
 
@@ -171,31 +164,32 @@
     </property>
   </bean>
 
-  <bean id="inMemoryFlowLockGetter" class="uk.org.ponder.rsf.flow.InMemoryFlowLockGetter">
-   <property name="listenerTargetKey">
-      <ref bean="flowTokenStateHolder"/>
+  <bean id="inMemoryFlowLockGetter"
+    class="uk.org.ponder.rsf.flow.InMemoryFlowLockGetter">
+    <property name="listenerTargetKey">
+      <ref bean="flowTokenStateHolder" />
     </property>
     <property name="listenerReporter">
-       <ref bean="listenerConnector"/>
+      <ref bean="listenerConnector" />
     </property>
   </bean>
 
-  <bean id="flowTokenStateHolder" class="uk.org.ponder.rsf.state.InMemoryTSH" init-method="init">
+  <bean id="flowTokenStateHolder" class="uk.org.ponder.rsf.state.InMemoryTSH"
+    init-method="init">
     <property name="expirySeconds">
       <!-- deliberately short time for testing - all flows will expire after 
         30 seconds of disuse -->
       <value>30</value>
     </property>
     <property name="listenerGetter">
-       <ref bean="listenerConnector"/>
+      <ref bean="listenerConnector" />
     </property>
   </bean>
 
   <!-- The state holder used for "ephemeral" state designed to only persist
     through about 1 client request - error messages, end flow messages,
     data in transit to client storage -->
-  <bean id="bandgapStateHolder"
-    class="uk.org.ponder.rsf.state.InMemoryTSH">
+  <bean id="bandgapStateHolder" class="uk.org.ponder.rsf.state.InMemoryTSH">
     <property name="expirySeconds">
       <!-- deliberately short time for testing - all errors will expire after 
         10 seconds of disuse -->

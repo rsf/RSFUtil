@@ -22,6 +22,7 @@ import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.components.UIReplicator;
 import uk.org.ponder.rsf.components.UISwitch;
+import uk.org.ponder.rsf.uitype.UITypes;
 import uk.org.ponder.rsf.viewstate.EntityCentredViewParameters;
 import uk.org.ponder.saxalizer.MethodAnalyser;
 import uk.org.ponder.saxalizer.SAXAccessMethod;
@@ -73,8 +74,8 @@ public class TemplateExpander {
     }
     else {
       IDRemapStrategy remapstrategy = (IDRemapStrategy) idstrategy;
-      MethodAnalyser ma = MethodAnalyser.getMethodAnalyser(bean, darapplier
-          .getMappingContext());
+      MethodAnalyser ma = darapplier
+       .getMappingContext().getAnalyser(bean.getClass()); 
       SAXAccessMethod sam = ma.getAccessMethod(remapstrategy.idfield);
       localid = sam.getChildObject(bean).toString();
     }
@@ -105,11 +106,10 @@ public class TemplateExpander {
     }
   }
 
-  private static StringList cloneexcept = new StringList();
-  static {
-    cloneexcept.add("component");
-  }
+  private static StringList component = StringList.fromString("component");
 
+  private static StringList value = StringList.fromString("value");
+  
   private static void rewritePossibleELRef(Object elrefo, RemapState state) {
     if (elrefo instanceof ELReference && state != null) {
       ELReference elref = (ELReference) elrefo;
@@ -147,7 +147,16 @@ public class TemplateExpander {
 
     if (child instanceof UIBound) {
       UIBound bound = (UIBound) child;
-      UIBound copy = (UIBound) deepcloner.cloneBean(bound);
+      UIBound copy = (UIBound) deepcloner.cloneBean(bound, value);
+      // use care when copying bound VALUE since placeholder values operate object
+      // handle identity semantics
+      if (UITypes.isPlaceholder(bound.acquireValue())) {
+        copy.updateValue(bound.acquireValue());
+      }
+      else {
+        Object valuecopy = deepcloner.cloneBean(bound.acquireValue());
+        copy.updateValue(valuecopy);
+      }
       rewritePossibleELRef(copy.valuebinding, state);
       target.addComponent(copy);
     }
@@ -182,7 +191,7 @@ public class TemplateExpander {
     }
     else {
       UIContainer container = (UIContainer) deepcloner.cloneBean(child,
-          cloneexcept);
+          component);
       rewriteParameterList(container.parameters, state);
       target.addComponent(container);
       expandContainer(container, (UIContainer) child, state);
