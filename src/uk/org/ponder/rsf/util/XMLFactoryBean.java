@@ -12,7 +12,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
 
 import uk.org.ponder.reflect.ReflectiveCache;
-import uk.org.ponder.rsf.util.StandardBeanFinder;
 import uk.org.ponder.saxalizer.XMLProvider;
 import uk.org.ponder.util.Logger;
 
@@ -36,6 +35,10 @@ public class XMLFactoryBean implements FactoryBean, ApplicationContextAware {
     this.xmlprovider = xmlprovider;
   }
 
+  public void setReflectiveCache(ReflectiveCache reflectivecache) {
+    this.reflectivecache = reflectivecache;
+  }
+  
   public void setObjectType(Class objecttype) {
     this.objecttype = objecttype;
   }
@@ -66,10 +69,6 @@ public class XMLFactoryBean implements FactoryBean, ApplicationContextAware {
   public void setApplicationContext(ApplicationContext applicationcontext)
       throws BeansException {
     this.applicationcontext = applicationcontext;
-    this.xmlprovider = (XMLProvider) StandardBeanFinder.findBean(
-        XMLProvider.class, applicationcontext);
-    this.reflectivecache = (ReflectiveCache) StandardBeanFinder.findBean(
-        ReflectiveCache.class, applicationcontext);
   }
 
 }

@@ -4,14 +4,25 @@
 <!-- This file is RSF-static configuration - common and invariant to 
   all applications using RSF -->
 <beans>
-  <bean id="reflectivecache" class="uk.org.ponder.reflect.JDKReflectiveCache">
+  <bean id="reflectiveCache" class="uk.org.ponder.reflect.JDKReflectiveCache">
   </bean>
 
-  <bean id="saxalizerMappingContext"
+  <bean id="staticLeafParser" class="uk.org.ponder.conversion.StaticLeafParser"/>
+
+  <bean id="protoSaxalizerMappingContext"
     class="uk.org.ponder.saxalizer.SAXalizerMappingContext">
-    <property name="reflectiveCache">
-      <ref bean="reflectivecache" />
-    </property>
+    <property name="reflectiveCache" ref="reflectiveCache"/>  
+    <property name="staticLeafParser" ref="staticLeafParser"/>
+  </bean>
+
+  <bean id="ELDefaultInferrer" class="uk.org.ponder.saxalizer.mapping.DefaultMapperInferrer">
+    <property name="depluralize" value="false"/>
+  </bean>
+
+  <bean id="ELMappingContext" class="uk.org.ponder.saxalizer.SAXalizerMappingContext">
+    <property name="reflectiveCache" ref="reflectiveCache"/>
+    <property name="defaultInferrer" ref="ELDefaultInferrer"/>
+    <property name="staticLeafParser" ref="staticLeafParser"/>
   </bean>
 
   <bean id="streamResolver"
@@ -37,10 +48,10 @@
     </property>
   </bean>
 
-  <bean id="mappablexmlprovider"
+  <bean id="mappableXMLProvider"
     class="uk.org.ponder.saxalizer.SAXalXMLProvider">
     <constructor-arg>
-      <ref bean="saxalizerMappingContext" />
+      <ref bean="protoSaxalizerMappingContext" />
     </constructor-arg>
     <property name="entityResolverStash">
       <ref bean="entityResolverStash" />
@@ -54,52 +65,49 @@
     </property>
   </bean>
 
-  <bean id="mappingloadmanager"
+  <bean id="mappingLoadManager"
     class="uk.org.ponder.springutil.SpringXMLMappingLoader"
     init-method="init">
     <property name="SAXalizerMappingContext">
-      <ref bean="saxalizerMappingContext"></ref>
+      <ref bean="protoSaxalizerMappingContext"/>
     </property>
-    <property name="mappableXMLProvider">
-      <ref bean="mappablexmlprovider"></ref>
-    </property>
+    <property name="mappableXMLProvider" ref="mappableXMLProvider"/>
   </bean>
 
-  <bean id="xmlprovider" factory-bean="mappingloadmanager"
+  <bean id="XMLProvider" factory-bean="mappingLoadManager"
     factory-method="getXMLProvider">
   </bean>
 
-  <bean id="mappingContext" factory-bean="mappingloadmanager"
+  <bean id="XMLMappingContext" factory-bean="mappingLoadManager"
     factory-method="getSAXalizerMappingContext"></bean>
 
   <bean id="DARApplier" class="uk.org.ponder.mapping.DARApplier">
     <property name="SAXalXMLProvider">
-      <ref local="mappablexmlprovider" />
+      <ref local="XMLProvider" />
     </property>
-    <property name="reflectiveCache">
-      <ref bean="reflectivecache" />
+    <property name="mappingContext">
+      <ref local="ELMappingContext"/>
     </property>
+    <property name="reflectiveCache" ref="reflectiveCache"/>
   </bean>
 
   <bean id="deepBeanCloner" class="uk.org.ponder.reflect.DeepBeanCloner">
     <property name="mappingContext">
-      <ref bean="mappingContext" />
+      <ref bean="ELMappingContext" />
     </property>
-    <property name="reflectiveCache">
-      <ref bean="reflectivecache" />
-    </property>
+    <property name="reflectiveCache" ref="reflectiveCache"/>
   </bean>
 
   <bean id="fieldGetter" class="uk.org.ponder.beanutil.BeanFieldResolver">
     <property name="mappingContext">
-      <ref bean="mappingContext"/>
+      <ref bean="ELMappingContext"/>
     </property>
   </bean>
 
   <bean id="fossilizedconverter"
     class="uk.org.ponder.rsf.request.FossilizedConverter">
     <property name="SAXalXMLProvider">
-      <ref bean="mappablexmlprovider" />
+      <ref bean="mappableXMLProvider" />
     </property>
   </bean>
 
@@ -139,11 +147,9 @@
 
   <bean id="rsacBeanLocator" factory-bean="rsacBeanLocatorFactory"
     factory-method="getRSACBeanLocator">
-    <property name="reflectiveCache">
-      <ref bean="reflectivecache" />
-    </property>
+    <property name="reflectiveCache" ref="reflectiveCache"/>
     <property name="mappingContext">
-      <ref bean="saxalizerMappingContext" />
+      <ref bean="ELMappingContext" />
     </property>
   </bean>
 
@@ -206,5 +212,16 @@
   </bean>
 
   <bean id="listenerConnector" class="uk.org.ponder.iocevent.BeetleConnector"/>
+  
+  <bean id="XMLFactoryBean" class="uk.org.ponder.rsf.util.XMLFactoryBean"
+    abstract="true">
+    <property name="XMLProvider" ref="XMLProvider"/>
+    <property name="reflectiveCache" ref="reflectiveCache"/>
+  </bean>
+  
+  <bean id="flowLite-flowDefinition" parent="XMLFactoryBean" 
+    class="uk.org.ponder.rsf.flow.lite.XMLFlowFactoryBean" abstract="true">
+    <property name="objectType" value="uk.org.ponder.rsf.flow.lite.Flow"/>
+  </bean>
 
 </beans>

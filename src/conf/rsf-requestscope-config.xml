@@ -317,11 +317,9 @@
    
   <bean id="flowLite-flowIDHolder" class="uk.org.ponder.rsf.flow.lite.FlowIDHolder"></bean>
   
-  <bean id="flowLite-flowProxyFactory"
-    class="uk.org.ponder.rsf.flow.lite.FlowProxyFactory">
-    <property name="reflectiveCache">
-      <ref bean="reflectivecache"/>
-    </property>
+  <bean id="flowLite-flowProxyBean"
+    class="uk.org.ponder.rsf.flow.lite.FlowActionProxyBean" abstract="true">
+    <property name="reflectiveCache" ref="reflectiveCache"/>
     <property name="beanLocator">
       <ref bean="requestbeanlocator"/>
     </property>

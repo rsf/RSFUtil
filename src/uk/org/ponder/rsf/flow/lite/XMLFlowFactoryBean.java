@@ -5,6 +5,12 @@ package uk.org.ponder.rsf.flow.lite;
 
 import uk.org.ponder.rsf.util.XMLFactoryBean;
 
+/** A factory bean for producing "FlowLite" Flow definition objects.
+ * Principally exists to call the init() method on the product.
+ * @author Antranig Basman (amb26@ponder.org.uk)
+ *
+ */
+
 public class XMLFlowFactoryBean extends XMLFactoryBean {
   public XMLFlowFactoryBean() {
     setObjectType(Flow.class);

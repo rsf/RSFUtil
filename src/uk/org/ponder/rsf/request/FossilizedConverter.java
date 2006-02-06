@@ -3,7 +3,6 @@
  */
 package uk.org.ponder.rsf.request;
 
-import uk.org.ponder.beanutil.BeanUtil;
 import uk.org.ponder.conversion.ConvertUtil;
 import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.UIBound;

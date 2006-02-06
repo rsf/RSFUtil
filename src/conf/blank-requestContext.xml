@@ -140,7 +140,7 @@
     class="uk.org.ponder.springutil.ListFactory">
     <property name="list">
       <list>
-        <ref bean="defaultBeanCopyPreserver" />     
+        <ref bean="defaultBeanCopyPreserver" />
       </list>
     </property>
   </bean>
@@ -163,15 +163,16 @@
       </list>
     </property>
   </bean>
-  
+
   <!-- The default alteration wrapper performs no ORM-specific bracketing
-  of alteration operations, unless a flow is active, in which case it will block. -->
-  <bean id="alterationWrapper" class="uk.org.ponder.rsf.flow.BasicFlowAlterationWrapper">
+    of alteration operations, unless a flow is active, in which case it will block. -->
+  <bean id="alterationWrapper"
+    class="uk.org.ponder.rsf.flow.BasicFlowAlterationWrapper">
     <property name="flowIDHolder">
-      <ref bean="flowLite-flowIDHolder"/>
+      <ref bean="flowLite-flowIDHolder" />
     </property>
     <property name="flowLockGetter">
-      <ref bean="inMemoryFlowLockGetter"/>
+      <ref bean="inMemoryFlowLockGetter" />
     </property>
   </bean>
 
@@ -183,6 +184,12 @@
     <property name="defaultView">
       <ref bean="defaultView" />
     </property>
+  </bean>
+  
+<!-- A template for BeanExploders -->
+  <bean id="beanExploder" class="uk.org.ponder.beanutil.entity.BeanExploder"
+    abstract="true">
+    <property name="deepBeanCloner" ref="deepBeanCloner"></property>
   </bean>
 
 </beans>

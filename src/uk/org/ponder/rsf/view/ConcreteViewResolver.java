@@ -34,7 +34,12 @@ public class ConcreteViewResolver implements ViewResolver {
   private Map views = new HashMap();
 
   private List resolvers = new ArrayList();
+  private boolean unknowniserror = false;
 
+  public void setUnknownViewIsError(boolean unknowniserror) {
+    this.unknowniserror  = unknowniserror;
+  }
+  
   /**
    * Sets a static list of ViewComponentProducers which will be used as a first
    * pass to resolve requests for incoming views. Any plain ComponentProducers
@@ -85,7 +90,7 @@ public class ConcreteViewResolver implements ViewResolver {
         if (specific != null) break;
       }
     }
-    if (specific == null) {
+    if (specific == null && unknowniserror) {
       throw UniversalRuntimeException.accumulate(new ViewNotFoundException(),
           "Unable to resolve request for component tree for view " + viewid);
     }
@@ -94,8 +99,9 @@ public class ConcreteViewResolver implements ViewResolver {
     if (allproducers != null) {
       togo.addAll(allproducers);
     }
-
-    togo.addAll(specific);
+    if (specific != null) {
+      togo.addAll(specific);
+    }
     return togo;
   }
 

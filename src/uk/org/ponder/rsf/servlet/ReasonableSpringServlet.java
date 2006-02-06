@@ -33,17 +33,19 @@ public class ReasonableSpringServlet extends HttpServlet {
   private ContextLoader contextLoader;
   private RSACBeanLocator rsacbeanlocator;
 
+  private ServletContext sc;
+
   public void init(ServletConfig config) {
-    
-    ServletContext sc = config.getServletContext();
-    Logger.log.warn("ReasonableSpringServlet starting up for context " + sc.getRealPath(""));
+    sc = config.getServletContext();
+    Logger.log.warn("ReasonableSpringServlet starting up for context "
+        + sc.getRealPath(""));
     contextLoader = new ContextLoader();
     WebApplicationContext wac = contextLoader.initWebApplicationContext(sc);
     rsacbeanlocator = (RSACBeanLocator) wac.getBean("rsacBeanLocator");
   }
 
   public void destroy() {
-    this.contextLoader.closeWebApplicationContext(getServletContext());
+    this.contextLoader.closeWebApplicationContext(sc);
   }
 
   protected void service(HttpServletRequest request,
