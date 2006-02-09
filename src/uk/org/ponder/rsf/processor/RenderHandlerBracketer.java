@@ -7,7 +7,6 @@ import java.net.MalformedURLException;
 
 import uk.org.ponder.errorutil.ConfigurationException;
 import uk.org.ponder.errorutil.CoreMessages;
-import uk.org.ponder.errorutil.ErrorUtil;
 import uk.org.ponder.errorutil.PermissionException;
 import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.ThreadErrorState;

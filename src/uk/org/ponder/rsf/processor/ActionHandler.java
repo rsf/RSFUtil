@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.rsf.processor;
 
+import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /**
@@ -20,5 +21,6 @@ public interface ActionHandler {
    * @return The resulting view state, which will be presented to the
    * RenderHandler on the next cycle.
    */
-  public abstract ViewParameters handle();
+  public ViewParameters handle();
+  public ARIResult getARIResult();
 }

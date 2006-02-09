@@ -44,6 +44,12 @@ public class ARIResult {
    * to the client via the client redirect.
    */
   public ViewParameters resultingview;
+  
+  /** Use this access method if loading via a proxy **/
+  
+  public ViewParameters getResultingView() {
+    return resultingview;
+  }
   /** A result code indicating the propagation status of any multi-request state
    * required by the next view to be rendered. This code is chosen from one of the
    * three String values above (interned, so you may compare with ==).

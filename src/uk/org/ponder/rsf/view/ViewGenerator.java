@@ -9,7 +9,6 @@ import uk.org.ponder.rsf.util.ComponentDumper;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.streamutil.write.StringPOS;
 import uk.org.ponder.util.Logger;
-import uk.org.ponder.util.UniversalRuntimeException;
 
 /** Invokes the list of ComponentProducers in the supplied ViewCollection to
  * populate the view tree for this request. A request-scope bean, but is 

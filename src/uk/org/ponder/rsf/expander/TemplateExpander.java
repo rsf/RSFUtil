@@ -18,7 +18,6 @@ import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIDeletionBinding;
 import uk.org.ponder.rsf.components.UIELBinding;
-import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.components.UIReplicator;
 import uk.org.ponder.rsf.components.UISwitch;
@@ -26,7 +25,6 @@ import uk.org.ponder.rsf.uitype.UITypes;
 import uk.org.ponder.rsf.viewstate.EntityCentredViewParameters;
 import uk.org.ponder.saxalizer.MethodAnalyser;
 import uk.org.ponder.saxalizer.SAXAccessMethod;
-import uk.org.ponder.stringutil.StringList;
 import uk.org.ponder.util.EnumerationConverter;
 import uk.org.ponder.util.UniversalRuntimeException;
 
@@ -273,8 +271,7 @@ public class TemplateExpander {
       UIContainer expandtarget = target;
 
       if (!replicator.elideparent) {
-        UIBranchContainer replicated = new UIBranchContainer();
-        replicated.ID = replicator.component.ID;
+        UIBranchContainer replicated = UIBranchContainer.make(target, replicator.component.ID);
         replicated.localID = localid;
         expandtarget = replicated;
       }
