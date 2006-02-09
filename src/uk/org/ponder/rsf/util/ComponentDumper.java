@@ -26,7 +26,7 @@ public class ComponentDumper {
       }
       else if (component instanceof UIBound) {
         XMLWriter.indent(indent, pos);
-        pos.println("Value binding: " + ((UIBound)component).valuebinding);
+        pos.println("Value binding: " + ((UIBound)component).valuebinding.value);
       }
       if (component instanceof UIBoundString) {
         XMLWriter.indent(indent, pos);
