@@ -19,7 +19,9 @@ import uk.org.ponder.util.AssertionException;
  *  
  */
 public class RSFUtil {
-  
+  /** Defaults the "name" binding for a select to be the same as its value
+   * binding, if none was supplied.
+   */
   public static void fixupSelect(UISelect tofix) {
     if (tofix.names != null) {
       if (tofix.names.valuebinding == null) {

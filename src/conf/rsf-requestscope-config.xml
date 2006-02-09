@@ -34,7 +34,7 @@
   <bean id="requestpathinfo" factory-bean="earlyRequestParser"
     factory-method="getPathInfo"/>
   
-  <bean id="requesttype" factory-bean="earlyRequestParser"
+  <bean id="requestType" factory-bean="earlyRequestParser"
     factory-method="getRequestType"/>
   
   <bean id="handlerResolver" class="uk.org.ponder.rsf.processor.DefaultHandlerResolver">
@@ -62,7 +62,7 @@
       <ref bean="httpServletResponse"/>
     </property>
     <property name="requestType">
-      <ref local="requesttype"/>
+      <ref local="requestType"/>
     </property>
     <property name="viewStateHandler">
       <ref bean="viewStateHandler"/>
@@ -123,10 +123,10 @@
       <ref bean="requestMap"/>
     </property>
     <property name="requestType">
-      <ref bean="requesttype"/>
+      <ref bean="requestType"/>
     </property>
     <property name="fossilizedConverter">
-      <ref bean="fossilizedconverter"/>
+      <ref bean="fossilizedConverter"/>
     </property>
   </bean>
   
@@ -402,7 +402,7 @@
       <ref bean="DARApplier"/>
     </property>
     <property name="fossilizedConverter">
-      <ref bean="fossilizedconverter"/>
+      <ref bean="fossilizedConverter"/>
     </property>
   </bean>
   

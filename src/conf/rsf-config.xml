@@ -104,7 +104,7 @@
     </property>
   </bean>
 
-  <bean id="fossilizedconverter"
+  <bean id="fossilizedConverter"
     class="uk.org.ponder.rsf.request.FossilizedConverter">
     <property name="SAXalXMLProvider">
       <ref bean="mappableXMLProvider" />
@@ -121,7 +121,7 @@
   <bean id="bindingfixer"
     class="uk.org.ponder.rsf.componentprocessor.BindingFixer">
     <property name="fossilizedConverter">
-      <ref bean="fossilizedconverter" />
+      <ref bean="fossilizedConverter" />
     </property>
   </bean>
 

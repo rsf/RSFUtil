@@ -26,5 +26,5 @@ public class IDRemapStrategy {
    * read. This ID will be applied not only to the wildcard portion of the
    * replicated EL binding but also to the localID of the replicated container.
    */
-  public String idfield = "ID";
+  public String idfield = "id";
 }

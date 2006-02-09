@@ -16,7 +16,7 @@ public class NewEntityIDRewriter {
     MethodAnalyser ma = smc.getAnalyser(target.getClass());
     for (int i = 0; i < ma.allgetters.length; ++i) {
       SAXAccessMethod getter = ma.allgetters[i];
-      if (EntityID.class.isAssignableFrom(getter.getAccessedType())) {
+      if (EntityID.class.isAssignableFrom(getter.getDeclaredType())) {
         EntityID entityid = (EntityID) getter.getChildObject(target);
         idprocessor.postCommit(entityid);
       }
