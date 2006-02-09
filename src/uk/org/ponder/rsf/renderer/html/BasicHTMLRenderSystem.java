@@ -66,13 +66,12 @@ public class BasicHTMLRenderSystem implements RenderSystem {
     this.scrc = scrc;
   }
 
-
   private void closeTag(PrintOutputStream pos, XMLLump uselump) {
     pos.print("</");
     pos.write(uselump.buffer, uselump.start + 1, uselump.length - 2);
     pos.print(">");
   }
-  
+
   // No, this method will not stay like this forever! We plan on an architecture
   // with renderer-per-component "class" as before, plus interceptors.
   // Although a lot of the parameterisation now lies in the allowable tag
@@ -175,23 +174,24 @@ public class BasicHTMLRenderSystem implements RenderSystem {
           }
           else if (torendero instanceof UISelect) {
             // All UISelect themselves are considered to have willinput = false,
-            // even if they have an inputting selection component. 
+            // even if they have an inputting selection component.
             attrcopy.put("name", fullID);
             attrcopy.put("id", fullID);
             UISelect select = (UISelect) torendero;
             StringSet selected = new StringSet();
             if (select.selection instanceof UIBoundList) {
-             selected.addAll( ((UIBoundList) select.selection).getValue());
+              selected.addAll(((UIBoundList) select.selection).getValue());
               attrcopy.put("multiple", "true");
             }
             else if (select.selection instanceof UIBoundString) {
-              selected.add( ((UIBoundString) select.selection).getValue());
+              selected.add(((UIBoundString) select.selection).getValue());
             }
             XMLUtil.dumpAttributes(attrcopy, xmlw);
             pos.print(">");
             String[] values = select.getValue();
-            String[] names = select.names == null? values : select.names.getValue();
-            for (int i = 0; i < names.length; ++ i) {
+            String[] names = select.names == null ? values
+                : select.names.getValue();
+            for (int i = 0; i < names.length; ++i) {
               pos.print("<option value=\"");
               xmlw.write(values[i]);
               if (selected.contains(values[i])) {
@@ -204,9 +204,11 @@ public class BasicHTMLRenderSystem implements RenderSystem {
             closeTag(pos, uselump);
             // dump the binding for the SELECTION itself - that for the parent
             // list will be done below by default processing.
-            if (select.selection != null && select.selection.fossilizedbinding != null) {
-                RenderUtil.dumpHiddenField(select.selection.fossilizedbinding.name,
-                    select.selection.fossilizedbinding.value, xmlw);
+            if (select.selection != null
+                && select.selection.fossilizedbinding != null) {
+              RenderUtil.dumpHiddenField(
+                  select.selection.fossilizedbinding.name,
+                  select.selection.fossilizedbinding.value, xmlw);
             }
           }
         }
@@ -250,7 +252,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
             RenderUtil.dumpTillLump(lumps, endopen.lumpindex + 1,
                 close.lumpindex + 1, pos);
           }
-        
+
           // unify hidden field processing? ANY parameter children found must
           // be dumped as hidden fields.
         }
@@ -276,7 +278,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
               close.lumpindex + 1, pos);
         }
       }
-    
+
       else if (torendero instanceof UICommand) {
         UICommand torender = (UICommand) torendero;
         String value = RenderUtil.makeURLAttributes(torender.parameters);
@@ -352,6 +354,5 @@ public class BasicHTMLRenderSystem implements RenderSystem {
 
     return nextpos;
   }
-
 
 }
