@@ -44,6 +44,7 @@ public class FossilizedConverter {
    */
   public static final String BINDING_SUFFIX = "-binding";
   public static final String DELETION_KEY = "deletion"+BINDING_SUFFIX;
+  public static final String VALUE_DELETION_KEY = "valuedeletion"+BINDING_SUFFIX;
   public static final String ELBINDING_KEY = "el"+BINDING_SUFFIX;
   
   private SAXalXMLProvider xmlprovider;
@@ -70,13 +71,14 @@ public class FossilizedConverter {
     togo.isEL = value.charAt(0) == EL_BINDING;
     int endcurly = value.indexOf('}');
     togo.valuebinding = value.substring(3, endcurly);
+    togo.newvalue = value.substring(endcurly + 1);
     if (key.equals(DELETION_KEY)) {
       togo.isdeletion = true;
+      togo.newvalue = null;
     }
-    togo.newvalue = value.substring(endcurly + 1);
-//    if (togo.isEL) {
-//      togo.newvalue = BeanUtil.stripEL((String) togo.newvalue);
-//    }
+    else if (key.equals(VALUE_DELETION_KEY)) {
+      togo.isdeletion = true;
+    }
     // such a binding will hit the data model via the RSVCApplier.
     return togo;
   }
@@ -112,10 +114,10 @@ public class FossilizedConverter {
   }
   
   public void computeDeletionBinding(UIDeletionBinding binding) {
-    binding.name = DELETION_KEY;
     String converted = binding.deletetarget == null? "" :
       ConvertUtil.render(binding.deletetarget, xmlprovider);
-    binding.value = OBJECT_BINDING + "#{" + binding.deletebinding + "}" + converted;
+    binding.name = binding.deletetarget == null? DELETION_KEY : VALUE_DELETION_KEY;
+    binding.value = OBJECT_BINDING + "#{" + binding.deletebinding.value + "}" + converted;
   }
   
   public void computeELBinding(UIELBinding binding) {

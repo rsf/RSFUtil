@@ -352,7 +352,7 @@
   <bean id="viewgenerator" class="uk.org.ponder.rsf.view.ViewGenerator">
     <!-- EXTERNAL DEPENDENCY! The application supplies the view collection -->
     <property name="viewResolver">
-      <ref bean="viewresolver"/>
+      <ref bean="viewResolver"/>
     </property>
     <property name="viewParameters">
       <ref local="viewParameters"/>

@@ -8,7 +8,7 @@
   might well want to (and in many cases must) override, as opposed to more 
   core dependencies in the main RSF configuration file rsf-config.xml. -->
 <beans>
-  <bean id="messagesource"
+  <bean id="messageSource"
     class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
     <property name="basename">
       <value>WEB-INF/messages/messages</value>
@@ -17,10 +17,10 @@
       <value>10</value>
     </property>
   </bean>
-  <bean id="messagelocator"
+  <bean id="messageLocator"
     class="uk.org.ponder.springutil.SpringMessageLocator">
     <property name="messageSource">
-      <ref local="messagesource" />
+      <ref local="messageSource" />
     </property>
   </bean>
   <!--
@@ -58,7 +58,7 @@
     class="uk.org.ponder.rsf.viewstate.SimpleViewParameters">
   </bean>
 
-  <bean id="viewresolver" class="uk.org.ponder.rsf.view.ConcreteViewResolver">
+  <bean id="viewResolver" class="uk.org.ponder.rsf.view.ConcreteViewResolver">
     <property name="views">
       <ref bean="staticviews" />
     </property>
@@ -77,7 +77,7 @@
       <ref bean="XMLProvider" />
     </property>
     <property name="templateExpander">
-      <ref bean="templateexpander" />
+      <ref bean="templateExpander" />
     </property>
   </bean>
 
@@ -135,7 +135,7 @@
   <!-- This is now a request-scope bean defined in core RSF to use the auto-provider.
     Override it with the following definition in your own requestScopeConfig and define
     the two URL values above in order to use static URL determination -->
-  <bean id="staticbaseurlprovider" abstract="true">
+  <bean id="staticBaseURLProvider" abstract="true">
     <!-- CONFIG The URL under which RSF-rendered pages served directly 
       will be made visible -->
     <property name="baseURL">

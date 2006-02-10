@@ -242,7 +242,7 @@ public class TemplateExpander {
         UIComponent cloned = cloneComponent(child, state);
         target.addComponent(cloned);
       }
-
+      
     }
   }
 
@@ -280,6 +280,10 @@ public class TemplateExpander {
           replicator.idwildcard);
 
       cloneChildren(expandtarget, replicator.component, newstate);
+      // parameters of all other containers are taken care of in cloneComponent.
+      ParameterList clonedparams = (ParameterList) deepcloner.cloneBean(replicator.component.parameters);
+      rewriteParameterList(clonedparams, newstate);
+      expandtarget.parameters = clonedparams;
       ++index;
     }
   }

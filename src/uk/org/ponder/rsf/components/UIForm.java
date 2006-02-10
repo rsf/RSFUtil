@@ -22,10 +22,7 @@ public class UIForm extends UISimpleContainer {
    * field need not be filled in by the user.
    */
   public String postURL;
-  /** A list of key/value pairs to appear in the request map once this form
-   * is submitted. This will accrete 
-   */
-  public ParameterList parameters = new ParameterList();
+  
   /** A list of the FullIDs of the all controls to be submitted by this form.
    * If this is left blank(empty), it will be filled in by a FormFixer 
    * (currently by looking for all nested controls that are bound). Each of 
@@ -36,7 +33,7 @@ public class UIForm extends UISimpleContainer {
   // infilling.
   // TODO further!: The DARApplier can now cope with this, but SAXalizer still
   // can't. Should we think about sharing more core here?
-  public StringList submittingcontrols = new StringList();
+  public StringList submittingcontrols;
   
   
   public static UIForm make(UIBranchContainer parent, String ID) {

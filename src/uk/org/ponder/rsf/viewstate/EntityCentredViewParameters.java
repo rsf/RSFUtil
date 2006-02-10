@@ -45,6 +45,7 @@ public class EntityCentredViewParameters extends ViewParameters {
     EntityID neweid = new EntityID();
     neweid.entityname = togo.entity.entityname;
     neweid.ID = togo.entity.ID;
+    togo.entity = neweid;
     return togo;
   }
 
