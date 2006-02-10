@@ -18,6 +18,13 @@
     </property>
   </bean>
 
+  <bean id="JSFNavigationARI"
+    class="uk.org.ponder.rsf.flow.jsfnav.JSFNavActionResultInterpreter"
+    abstract="true">
+    <property name="navigationMap" ref="JSFNavigationMap" />
+  </bean>
+
+
   <bean id="actionErrorStrategyManager"
     class="uk.org.ponder.rsf.flow.ActionErrorStrategyManager">
     <property name="mergeStrategies">
@@ -35,19 +42,9 @@
     </property>
   </bean>
 
-  <bean name="defaultARI"
-    class="uk.org.ponder.springutil.BeanReferenceFactoryBean">
-    <property name="targetBeanName">
-      <value>nullActionResultInterpreter</value>
-    </property>
-  </bean>
+  <bean name="defaultARI" parent="nullActionResultInterpreter" />
 
-  <bean name="baseURLProvider"
-    class="uk.org.ponder.springutil.BeanReferenceFactoryBean">
-    <property name="targetBeanName">
-      <value>autoBaseURLProvider</value>
-    </property>
-  </bean>
+  <bean name="baseURLProvider" parent="autoBaseURLProvider" />
 
   <!-- A collection of static renderers that is expected to be dynamically
     writeable - filters and the like might populate it before request handling
@@ -185,8 +182,8 @@
       <ref bean="defaultView" />
     </property>
   </bean>
-  
-<!-- A template for BeanExploders -->
+
+  <!-- A template for BeanExploders -->
   <bean id="beanExploder" class="uk.org.ponder.beanutil.entity.BeanExploder"
     abstract="true">
     <property name="deepBeanCloner" ref="deepBeanCloner"></property>

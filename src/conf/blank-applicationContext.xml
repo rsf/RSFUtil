@@ -49,6 +49,11 @@
     </property>
   </bean>
 
+  <bean id="JSFNavigationMap" parent="XMLFactoryBean" lazy-init="true">
+    <property name="location" value="/WEB-INF/navigation-map.xml"/>
+    <property name="objectType" value="uk.org.ponder.rsf.flow.jsfnav.NavigationMap"/>
+  </bean>
+
   <bean id="viewParamsExemplar"
     class="uk.org.ponder.rsf.viewstate.SimpleViewParameters">
   </bean>
@@ -84,11 +89,11 @@
       <value>uk.org.ponder.rsf.flow.ActionErrorStrategyManager</value>
     </property>
   </bean>
-
-  <bean id="actionresultinterpreter"
+  <!--  Replaced by ARIResolver arch
+  <bean id="actionResultInterpreter"
     class="uk.org.ponder.rsf.flow.NullActionResultInterpreter">
   </bean>
-
+-->
   <bean name="requestAddressibleBeans"
     class="uk.org.ponder.stringutil.StringList">
     <constructor-arg>

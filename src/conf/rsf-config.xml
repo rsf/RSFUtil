@@ -4,8 +4,7 @@
 <!-- This file is RSF-static configuration - common and invariant to 
   all applications using RSF -->
 <beans>
-  <bean id="reflectiveCache" class="uk.org.ponder.reflect.JDKReflectiveCache">
-  </bean>
+  <bean id="reflectiveCache" class="uk.org.ponder.reflect.JDKReflectiveCache"/>
 
   <bean id="staticLeafParser" class="uk.org.ponder.conversion.StaticLeafParser"/>
 
