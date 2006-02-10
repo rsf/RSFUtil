@@ -93,6 +93,13 @@ public class RSFMappingLoader implements MappingLoader {
     "uk/org/ponder/rsf/mappings/action-map.xml");
     MappingLoadManager.loadClasspathMapping(xmlprovider, 
     "uk/org/ponder/rsf/mappings/transition-map.xml");
+    // mappings for JSFNav
+    MappingLoadManager.loadClasspathMapping(xmlprovider, 
+    "uk/org/ponder/rsf/mappings/navigation-map-map.xml");
+    MappingLoadManager.loadClasspathMapping(xmlprovider, 
+    "uk/org/ponder/rsf/mappings/navigation-case-map.xml");
+    MappingLoadManager.loadClasspathMapping(xmlprovider, 
+    "uk/org/ponder/rsf/mappings/navigation-rule-map.xml");
     // mappings for components
     MappingLoadManager.loadClasspathMapping(xmlprovider, 
     "uk/org/ponder/rsf/mappings/branchcontainer-map.xml");
@@ -105,6 +112,7 @@ public class RSFMappingLoader implements MappingLoader {
     // mapping for EntityID - should really be in PonderUtilCore
     MappingLoadManager.loadClasspathMapping(xmlprovider, 
     "uk/org/ponder/rsf/mappings/entityid-map.xml");
+    
   }
 
 }

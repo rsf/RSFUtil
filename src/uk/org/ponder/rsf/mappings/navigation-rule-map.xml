@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<mapperentry targetclass="uk.org.ponder.rsf.flow.jsfnav.NavigationRule">
+  <taghandler xmlname="from-view-id" xml-form="attribute">
+    <fieldname>fromViewId</fieldname>
+  </taghandler>
+  <taghandler xmlname="navigation-case">
+    <fieldname>navigationCases</fieldname>
+    <javaclass>uk.org.ponder.rsf.flow.jsfnav.NavigationCase</javaclass>
+  </taghandler>
+</mapperentry>

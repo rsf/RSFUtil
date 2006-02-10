@@ -62,7 +62,9 @@ public class ViewParamUtil {
     for (int i = 0; i < pathlist.size(); ++ i) {
       String path = pathlist.stringAt(i);
       Object valueo = params.get(path);
-      bma.setBeanValue(path, target, valueo, null);
+      if (valueo != null) {
+        bma.setBeanValue(path, target, valueo, null);
+      }
     }
   }
   

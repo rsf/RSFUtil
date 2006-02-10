@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<mapperentry targetclass="uk.org.ponder.rsf.flow.jsfnav.NavigationMap">
+  <taghandler xmlname="navigation-rule">
+    <fieldname>navigationRules</fieldname>
+    <javaclass>uk.org.ponder.rsf.flow.jsfnav.NavigationRule</javaclass>
+  </taghandler>
+</mapperentry>
