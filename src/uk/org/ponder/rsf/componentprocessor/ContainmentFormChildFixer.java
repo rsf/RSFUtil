@@ -12,6 +12,7 @@ import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.request.SubmittedValueEntry;
 import uk.org.ponder.rsf.util.RSFUtil;
+import uk.org.ponder.stringutil.StringList;
 
 /**
  * A fixer to be run BEFORE the main form fixer, which implements the HTML/HTTP
@@ -30,7 +31,8 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
   public void processComponent(UIComponent toprocesso) {
     if (toprocesso instanceof UIForm) {
       UIForm toprocess = (UIForm) toprocesso;
-      if (toprocess.submittingcontrols.size() == 0) {
+      if (toprocess.submittingcontrols == null) {
+        toprocess.submittingcontrols = new StringList();
         // we would really like this to be a check for NULL, but the SAXalizer
         // could not cope with this.
         registerContainer(toprocess, toprocess);

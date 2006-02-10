@@ -9,7 +9,7 @@
   <bean id="staticLeafParser" class="uk.org.ponder.conversion.StaticLeafParser"/>
 
   <bean id="protoSaxalizerMappingContext"
-    class="uk.org.ponder.saxalizer.SAXalizerMappingContext">
+      class="uk.org.ponder.saxalizer.SAXalizerMappingContext">
     <property name="reflectiveCache" ref="reflectiveCache"/>  
     <property name="staticLeafParser" ref="staticLeafParser"/>
   </bean>
@@ -113,7 +113,7 @@
   <bean id="messageRenderer"
     class="uk.org.ponder.rsf.renderer.MessageRenderer">
     <property name="messageLocator">
-      <ref bean="messagelocator" />
+      <ref bean="messageLocator" />
     </property>
   </bean>
 
@@ -127,7 +127,7 @@
   <bean id="messagefixer"
     class="uk.org.ponder.rsf.componentprocessor.MessageFixer">
     <property name="messageLocator">
-      <ref bean="messagelocator" />
+      <ref bean="messageLocator" />
     </property>
   </bean>
 
@@ -162,7 +162,7 @@
 
   <bean id="idgenerator" class="uk.org.ponder.hashutil.EighteenIDGenerator" />
 
-  <bean id="templateexpander"
+  <bean id="templateExpander"
     class="uk.org.ponder.rsf.expander.TemplateExpander">
     <property name="DARApplier">
       <ref bean="DARApplier" />
