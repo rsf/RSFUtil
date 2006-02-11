@@ -195,14 +195,6 @@
     </property>
   </bean>
 
-  <!-- The default ActionResultInterpreter which directs to the same view-->
-  <bean id="nullActionResultInterpreter"
-    class="uk.org.ponder.rsf.flow.NullActionResultInterpreter">
-  </bean>
-  <!-- FlowLiteARI expects return codes from a FlowActionProxyBean of type
-    ViewState -->
-  <bean id="flowLiteARI" class="uk.org.ponder.rsf.flow.lite.FlowLiteARI"></bean>
-
   <bean id="flowOnlyPreservingBeans"
     class="uk.org.ponder.springutil.StringListFactory">
     <property name="strings">

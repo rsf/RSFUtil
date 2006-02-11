@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.rsf.mappings;
 
+import uk.org.ponder.conversion.DateParser;
 import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.ELReferenceParser;
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -74,6 +75,8 @@ public class RSFMappingLoader implements MappingLoader {
     context.classnamemanager.registerClass("simple", SimpleViewParameters.class);
     
     context.classnamemanager.registerClass("elref", ELReference.class);
+    context.classnamemanager.registerClass("dateparser", DateParser.class);
+    
     
     context.saxleafparser.registerParser(ViewParameters.class, viewparamsleafparser);
     context.saxleafparser.registerParser(ELReference.class, new ELReferenceParser());
