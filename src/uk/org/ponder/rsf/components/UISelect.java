@@ -26,7 +26,7 @@ public class UISelect extends UIBoundList {
 
   /**
    * The input component representing the actual selected value. Expected to be
-   * either UIInput or UIInputMany
+   * either UIInput or UIInputMany.
    */
   public UIBound selection;
 

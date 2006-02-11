@@ -42,5 +42,5 @@ public class UIOutput extends UIBoundString {
   public static UIOutput make(UIContainer parent, String ID) {
     return make(parent, ID, null, null);
   }
- 
+  
 }
