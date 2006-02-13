@@ -75,7 +75,7 @@ public class ViewProcessor {
           proc.processComponent(child);
         }
         catch (Exception e) {
-          Logger.log.warn("Error processing component " + child.getFullID(), e);
+          Logger.log.warn("Error processing component " + child + " with ID " + child.getFullID(), e);
         }
       }
       finder.processComponent(child);

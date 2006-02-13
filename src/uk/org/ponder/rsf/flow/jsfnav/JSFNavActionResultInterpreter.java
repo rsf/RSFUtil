@@ -47,9 +47,9 @@ public class JSFNavActionResultInterpreter implements ActionResultInterpreter {
       NavigationRule rule = (NavigationRule) map.navigationRules.get(i);
       if (rule.fromViewId.viewID.equals(incoming.viewID)) {
         processCaseList(rule.navigationCases, togo, result);
-        processCaseList((List) fromviews.get(incoming.viewID), togo, result);
       }
     }
+    processCaseList((List) fromviews.get(incoming.viewID), togo, result);
     return togo;
   }
 
