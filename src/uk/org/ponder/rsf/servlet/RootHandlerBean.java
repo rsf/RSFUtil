@@ -103,7 +103,9 @@ public class RootHandlerBean implements HandlerHook {
       // moved here to avoid triggering bean creation error.
       renderFatalError(t, pos);
     }
-    pos.close();
+    finally {
+      pos.close();
+    }
   }
 
   private void handlePost() {
