@@ -14,17 +14,19 @@ package uk.org.ponder.rsf.components;
  */
 public class UILink extends UISimpleContainer {
   /** A string representing the target of this link - e.g. in an HTML system,
-   * a URL.
+   * a URL. For an InternalLink this will be filled in by a fixup from the
+   * ViewParameters member.
    */
   public String target;
   
-  public String linktext;
+  public UIOutput linktext;
   
   public static UILink make(UIContainer parent, String ID, String text, String target) {
     UILink togo = new UILink();
     togo.ID = ID;
     togo.target = target;
-    togo.linktext = text;
+    togo.linktext = new UIOutput();
+    togo.linktext.setValue(text);
     parent.addComponent(togo);    
     return togo;
   }

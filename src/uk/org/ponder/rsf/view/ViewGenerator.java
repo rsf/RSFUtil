@@ -5,6 +5,7 @@ package uk.org.ponder.rsf.view;
 
 import java.util.List;
 
+import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReceiver;
 import uk.org.ponder.rsf.util.ComponentDumper;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.streamutil.write.StringPOS;
@@ -22,10 +23,14 @@ public class ViewGenerator {
   private View view;
   private ComponentChecker checker;
   private ViewParameters viewparams;
+  private NavigationCaseReceiver navreceiver;
  // This method is called manually from GetHandler.
   public View getView() {
     if (view == null) {
       view = generateView(viewparams, checker);
+      if (view.viewroot.navigationCases != null) {
+        navreceiver.reportNavigationCase(viewparams.viewID, view.viewroot.navigationCases);
+      }
       if (Logger.log.isDebugEnabled()) {
         StringPOS dumppos = new StringPOS();
         dumppos.println("View component dump:");
@@ -36,6 +41,10 @@ public class ViewGenerator {
     return view;
   }
 
+  public void setNavigationCaseReceiver(NavigationCaseReceiver navreceiver) {
+    this.navreceiver = navreceiver;
+  }
+  
   public void setViewResolver(ViewResolver viewlocator) {
     this.viewresolver = viewlocator;
   }

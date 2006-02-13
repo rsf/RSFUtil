@@ -215,4 +215,7 @@
     <property name="objectType" value="uk.org.ponder.rsf.flow.lite.Flow"/>
   </bean>
 
+  <bean id="navigationCasePooler" class="uk.org.ponder.rsf.flow.jsfnav.NavigationCasePooler">
+    <property name="reflectiveCache" ref="reflectiveCache"/>
+  </bean>
 </beans>

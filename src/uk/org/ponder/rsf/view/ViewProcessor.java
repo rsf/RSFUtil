@@ -12,6 +12,7 @@ import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIBoundString;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.util.RSFUtil;
 import uk.org.ponder.util.Logger;
@@ -89,6 +90,9 @@ public class ViewProcessor {
 
   private void appendComponent(UIBound toappend) {
     if (toappend != null) {
+      if (toappend instanceof UIBoundString) {
+        appendComponent(((UIBoundString) toappend).renderer);
+      }
       worklist.add(toappend);
     }
   }
@@ -107,6 +111,9 @@ public class ViewProcessor {
         RSFUtil.fixupSelect(select);
         appendComponent(select.selection);
         appendComponent(select.names);
+      }
+      else if (thischild instanceof UILink) {
+        appendComponent(((UILink)thischild).linktext);
       }
       else if (thischild instanceof UIBoundString) {
         appendComponent(((UIBoundString) thischild).renderer);

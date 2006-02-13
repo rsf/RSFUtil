@@ -27,7 +27,7 @@ public class XMLFactoryBean implements FactoryBean, ApplicationContextAware {
   private ApplicationContext applicationcontext;
   private XMLProvider xmlprovider;
   private Class objecttype;
-  private ReflectiveCache reflectivecache;
+  protected ReflectiveCache reflectivecache;
 
   public void setLocation(String location) {
     this.location = location;

@@ -105,6 +105,8 @@ public class RSFMappingLoader implements MappingLoader {
     "uk/org/ponder/rsf/mappings/navigation-rule-map.xml");
     // mappings for components
     MappingLoadManager.loadClasspathMapping(xmlprovider, 
+    "uk/org/ponder/rsf/mappings/viewroot-map.xml");
+    MappingLoadManager.loadClasspathMapping(xmlprovider, 
     "uk/org/ponder/rsf/mappings/branchcontainer-map.xml");
     MappingLoadManager.loadClasspathMapping(xmlprovider, 
     "uk/org/ponder/rsf/mappings/simplecontainer-map.xml");
