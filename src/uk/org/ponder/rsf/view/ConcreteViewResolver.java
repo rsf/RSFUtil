@@ -9,13 +9,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import uk.org.ponder.rsf.viewstate.ViewParamsReceiver;
+import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 /**
- * A concrete implementation of ViewResolver which will resolve ComponentProducer
- * requests into a fixed collection of configured beans, set up by the 
- * setView() method. Can also fall back to a set of generic ViewResolvers
- * should initial lookup fail. This is the default RSF ViewResolver.
+ * A concrete implementation of ViewResolver which will resolve
+ * ComponentProducer requests into a fixed collection of configured beans, set
+ * up by the setView() method. Can also fall back to a set of generic
+ * ViewResolvers should initial lookup fail. This is the default RSF
+ * ViewResolver.
+ * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
@@ -35,11 +39,16 @@ public class ConcreteViewResolver implements ViewResolver {
 
   private List resolvers = new ArrayList();
   private boolean unknowniserror = false;
+  private ViewParamsReceiver vpreceiver;
 
   public void setUnknownViewIsError(boolean unknowniserror) {
-    this.unknowniserror  = unknowniserror;
+    this.unknowniserror = unknowniserror;
   }
-  
+
+  public void setViewParametersReceiver(ViewParamsReceiver vpreceiver) {
+    this.vpreceiver = vpreceiver;
+  }
+
   /**
    * Sets a static list of ViewComponentProducers which will be used as a first
    * pass to resolve requests for incoming views. Any plain ComponentProducers
@@ -52,7 +61,15 @@ public class ConcreteViewResolver implements ViewResolver {
       String key = ALL_VIEW_PRODUCER;
       if (view instanceof ViewComponentProducer) {
         key = ((ViewComponentProducer) view).getViewID();
+        if (view instanceof ViewParamsReporter) {
+          ViewParamsReporter vpreporter = (ViewParamsReporter) view;
+          vpreceiver.setViewParamsExemplar(key, vpreporter.getViewParameters());
+          if (vpreporter.isDefaultView()) {
+            vpreceiver.setDefaultView(key);
+          }
+        }
       }
+
       addView(key, view);
 
     }
@@ -87,7 +104,8 @@ public class ConcreteViewResolver implements ViewResolver {
       for (int i = 0; i < resolvers.size(); ++i) {
         ViewResolver resolver = (ViewResolver) resolvers.get(i);
         specific = resolver.getProducers(viewid);
-        if (specific != null) break;
+        if (specific != null)
+          break;
       }
     }
     if (specific == null && unknowniserror) {

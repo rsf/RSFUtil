@@ -18,12 +18,10 @@ import uk.org.ponder.rsf.components.UIComponent;
  * 
  */
 public class View {
-  public static final String VIEWROOT_ID = "  viewroot  ";
   public View() {
-    viewroot = new UIBranchContainer();
-    viewroot.ID = VIEWROOT_ID;
+    viewroot = new ViewRoot();
   }
-  public UIBranchContainer viewroot;
+  public ViewRoot viewroot;
   
    // This is a map of full component IDs to components.
   private HashMap IDtocomponent = new HashMap();

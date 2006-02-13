@@ -360,6 +360,9 @@
     <property name="componentChecker">
       <ref local="viewtemplate"/>
     </property>
+    <property name="navigationCaseReceiver">
+      <ref bean="navigationCasePooler"/>
+    </property>      
   </bean>
   <!--
   <bean id="view" factory-bean="viewgenerator" factory-method="getView"/>

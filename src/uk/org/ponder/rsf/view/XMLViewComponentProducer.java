@@ -31,6 +31,11 @@ public class XMLViewComponentProducer implements ViewComponentProducer {
   
   public void fillComponents(UIContainer tofill, 
       ViewParameters origviewparams, ComponentChecker checker) {
+    if (tofill instanceof ViewRoot && templatecontainer instanceof ViewRoot) {
+      ViewRoot fillroot = (ViewRoot) tofill;
+      ViewRoot templateroot = (ViewRoot) templatecontainer;
+      fillroot.navigationCases = templateroot.navigationCases;
+    }
     templateexpander.expandTemplate(tofill, templatecontainer);
   }
 

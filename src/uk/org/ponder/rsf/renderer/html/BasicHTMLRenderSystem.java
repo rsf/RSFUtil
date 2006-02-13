@@ -270,7 +270,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         XMLUtil.dumpAttributes(attrcopy, xmlw);
         pos.print(">");
         if (torender.linktext != null) {
-          xmlw.write(torender.linktext);
+          xmlw.write(torender.linktext.getValue());
           closeTag(pos, uselump);
         }
         else {

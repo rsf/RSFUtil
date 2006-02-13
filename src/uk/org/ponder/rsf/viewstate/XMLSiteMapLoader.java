@@ -3,7 +3,8 @@
  */
 package uk.org.ponder.rsf.viewstate;
 
-import uk.org.ponder.beanutil.BeanModelAlterer;
+import java.util.Iterator;
+
 import uk.org.ponder.rsf.util.XMLFactoryBean;
 
 /** A Spring FactoryBean that will embody a BasicViewParametersParser
@@ -13,25 +14,27 @@ import uk.org.ponder.rsf.util.XMLFactoryBean;
  */
 
 public class XMLSiteMapLoader extends XMLFactoryBean {
-  private BeanModelAlterer bma;
+  private ViewParamsReceiver vpreceiver;
 
   public XMLSiteMapLoader() {
     setObjectType(SiteMap.class);
   }
   
-  public void setBeanModelAlterer(BeanModelAlterer bma) {
-    this.bma = bma;
+  public Class getObjectType() {
+    return SiteMap.class;
   }
   
-  public Class getObjectType() {
-    return BasicViewParametersParser.class;
+  public void setViewParametersReceiver(ViewParamsReceiver vpreceiver) {
+    this.vpreceiver = vpreceiver;
   }
-
+  
   public Object getObject() throws Exception {
     SiteMap sitemap = (SiteMap) super.getObject();
-    BasicViewParametersParser togo = new BasicViewParametersParser();
-    togo.setViewParametersMap(sitemap.view);
-    togo.setBeanModelAlterer(bma);
-    return togo;
+    for (Iterator vpit = sitemap.view.keySet().iterator(); vpit.hasNext();) {
+      String viewid = (String) vpit.next();
+      ViewParameters viewparams = (ViewParameters) sitemap.view.get(viewid);
+      vpreceiver.setViewParamsExemplar(viewid, viewparams);
+    }
+    return sitemap;
   }
 }

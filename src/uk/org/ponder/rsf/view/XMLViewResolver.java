@@ -15,9 +15,10 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
-import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.expander.TemplateExpander;
+import uk.org.ponder.rsf.viewstate.ViewParamsReceiver;
 import uk.org.ponder.saxalizer.XMLProvider;
+import uk.org.ponder.stringutil.FilenameUtil;
 import uk.org.ponder.stringutil.StringList;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
@@ -31,8 +32,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * 
  */
 
-public class XMLViewResolver implements ViewResolver,
-    ApplicationContextAware {
+public class XMLViewResolver implements ViewResolver, ApplicationContextAware {
   public static final int NO_CACHE = -1;
   public static final String DEFAULT_EXTENSION = ".xml";
   private StringList viewnames;
@@ -44,6 +44,7 @@ public class XMLViewResolver implements ViewResolver,
   private TemplateExpander templateexpander;
   private XMLProvider xmlprovider;
   private int cachesecs = NO_CACHE;
+  private ViewParamsReceiver vpreceiver;
 
   /**
    * Sets the default extension (including period) that will be suffixed to a
@@ -92,18 +93,45 @@ public class XMLViewResolver implements ViewResolver,
   public void setResourceLoader(ResourceLoader resourceloader) {
     this.resourceloader = resourceloader;
   }
-  
+
   public void setCacheSeconds(int cachesecs) {
     this.cachesecs = cachesecs;
+  }
+
+  public void setViewParamsReceiver(ViewParamsReceiver vpreceiver) {
+    this.vpreceiver = vpreceiver;
+  }
+
+  private String getFullPath(String viewId) {
+    String fullpath = basepath + viewId + extension;
+    return fullpath;
   }
 
   public void setApplicationContext(ApplicationContext applicationContext) {
     if (resourceloader == null) {
       this.resourceloader = applicationContext;
     }
+    // make an initial attempt to load ALL producers, both for validation and
+    // also to discover viewparameter types.
+    String allpath = basepath + "*" + extension;
+    Resource[] resources = null;
+    try {
+      resources = applicationContext.getResources(allpath);
+      if (resources == null)
+        resources = new Resource[0];
+    }
+    catch (Exception e) {
+      throw UniversalRuntimeException.accumulate(e,
+          "Error getting resource list for pattern " + allpath);
+    }
+    for (int i = 0; i < resources.length; ++i) {
+      String filename = resources[i].getFilename();
+      String viewid = FilenameUtil.getStem(filename);
+      String fullpath = getFullPath(viewid);
+      tryLoadProducer(fullpath, viewid);
+    }
   }
 
-  
   private XMLViewComponentProducer tryLoadProducer(String fullpath,
       String viewId) {
     XMLViewComponentProducer togo = null;
@@ -115,12 +143,15 @@ public class XMLViewResolver implements ViewResolver,
       try {
         InputStream is = res.getInputStream();
 
-        UIBranchContainer container = (UIBranchContainer) xmlprovider.readXML(
-            UIBranchContainer.class, is);
+        ViewRoot viewroot = (ViewRoot) xmlprovider.readXML(ViewRoot.class, is);
+        vpreceiver.setViewParamsExemplar(viewId, viewroot.viewParameters);
+        if (viewroot.defaultview) {
+          vpreceiver.setDefaultView(viewId);
+        }
         togo = new XMLViewComponentProducer();
         togo.setTemplateExpander(templateexpander);
         togo.setViewID(viewId);
-        togo.setTemplateContainer(container);
+        togo.setTemplateContainer(viewroot);
         views.put(viewId, togo);
       }
       catch (Exception e) {

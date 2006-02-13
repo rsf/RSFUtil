@@ -33,6 +33,7 @@
     class="uk.org.ponder.rsf.flow.jsfnav.JSFNavActionResultInterpreter"
     abstract="true">
     <property name="navigationMap" ref="JSFNavigationMap" />
+    <property name="navigationCasePooler" ref="navigationCasePooler"/>
   </bean>
 
   <bean id="actionErrorStrategyManager"
