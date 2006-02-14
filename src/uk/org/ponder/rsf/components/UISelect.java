@@ -18,12 +18,11 @@ package uk.org.ponder.rsf.components;
  * @return
  */
 
-public class UISelect extends UIBoundList {
-  public static final String NAMES_ID_SUFFIX = "-names";
-  public static final String SELECTION_ID_SUFFIX = "-selection";
+public class UISelect extends UIComponent implements FixableComponent {
+  public UIBoundList optionlist;
+  
   /** A component representing the rendered labels for the list control */
-  public UIBoundList names;
-
+  public UIBoundList optionnames;
   /**
    * The input component representing the actual selected value. Expected to be
    * either UIInput or UIInputMany.
@@ -34,17 +33,25 @@ public class UISelect extends UIBoundList {
   public static UISelect make(UIContainer tofill, String ID, String[] values,
       String[] labels, String value) {
     UISelect togo = new UISelect();
+    togo.optionlist = new UIBoundList();
     togo.ID = ID;
-    togo.setValue(values);
-    togo.names = new UIBoundList();
-    togo.names.ID = ID + NAMES_ID_SUFFIX;
-    togo.names.setValue(labels);
+    togo.optionlist.setValue(values);
+    togo.optionnames = new UIBoundList();
+    togo.optionnames.setValue(labels);
     togo.selection = new UIOutput();
-    togo.selection.ID = ID + SELECTION_ID_SUFFIX;
     if (value != null) {
       ((UIOutput) togo.selection).setValue(value);
     }
     tofill.addComponent(togo);
     return togo;
+  }
+  
+  public void fixupComponent() {
+    String fullID = getFullID();
+    if (optionnames != null) {
+      if (optionnames.valuebinding == null) {
+        optionnames.valuebinding = optionlist.valuebinding;
+      }
+    }
   }
 }

@@ -46,11 +46,7 @@ import uk.org.ponder.xml.XMLWriter;
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
-// assumes that all values are now set, link target for href is fixed up.
-// so - fixups must i) traverse bean model and try to create stuff
-// ii) resolve links, well! links will always be emitted by the global
-// munger, which we hope at worse will issue a prefix and some additional
-// parameters. Unless of course they are absolute links...
+
 public class BasicHTMLRenderSystem implements RenderSystem {
   private String declaration = "<!DOCTYPE html      "
       + "PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\""
@@ -70,6 +66,19 @@ public class BasicHTMLRenderSystem implements RenderSystem {
     pos.print("</");
     pos.write(uselump.buffer, uselump.start + 1, uselump.length - 2);
     pos.print(">");
+  }
+
+  private void dumpBoundFields(UIBound torender, XMLWriter xmlw) {
+    if (torender != null) {
+      if (torender.fossilizedbinding != null) {
+        RenderUtil.dumpHiddenField(torender.fossilizedbinding.name,
+            torender.fossilizedbinding.value, xmlw);
+      }
+      if (torender.fossilizedshaper != null) {
+        RenderUtil.dumpHiddenField(torender.fossilizedshaper.name,
+            torender.fossilizedshaper.value, xmlw);
+      }
+    }
   }
 
   // No, this method will not stay like this forever! We plan on an architecture
@@ -172,49 +181,9 @@ public class BasicHTMLRenderSystem implements RenderSystem {
               closeTag(pos, uselump);
             }
           }
-          else if (torendero instanceof UISelect) {
-            // All UISelect themselves are considered to have willinput = false,
-            // even if they have an inputting selection component.
-            attrcopy.put("name", fullID);
-            attrcopy.put("id", fullID);
-            UISelect select = (UISelect) torendero;
-            StringSet selected = new StringSet();
-            if (select.selection instanceof UIBoundList) {
-              selected.addAll(((UIBoundList) select.selection).getValue());
-              attrcopy.put("multiple", "true");
-            }
-            else if (select.selection instanceof UIBoundString) {
-              selected.add(((UIBoundString) select.selection).getValue());
-            }
-            XMLUtil.dumpAttributes(attrcopy, xmlw);
-            pos.print(">");
-            String[] values = select.getValue();
-            String[] names = select.names == null ? values
-                : select.names.getValue();
-            for (int i = 0; i < names.length; ++i) {
-              pos.print("<option value=\"");
-              xmlw.write(values[i]);
-              if (selected.contains(values[i])) {
-                pos.print("\" selected=\"true");
-              }
-              pos.print("\">");
-              xmlw.write(names[i]);
-              pos.print("</option>\n");
-            }
-            closeTag(pos, uselump);
-            // dump the binding for the SELECTION itself - that for the parent
-            // list will be done below by default processing.
-            if (select.selection != null
-                && select.selection.fossilizedbinding != null) {
-              RenderUtil.dumpHiddenField(
-                  select.selection.fossilizedbinding.name,
-                  select.selection.fossilizedbinding.value, xmlw);
-            }
-          }
         }
         // factor out component-invariant processing of UIBound.
         else { // Bound with willinput = true
-
           attrcopy.put("name", fullID);
           // attrcopy.put("id", fullID);
           String value = "";
@@ -257,15 +226,43 @@ public class BasicHTMLRenderSystem implements RenderSystem {
           // be dumped as hidden fields.
         }
         // dump any fossilized binding for this component.
-        if (torender.fossilizedbinding != null) {
-          RenderUtil.dumpHiddenField(torender.fossilizedbinding.name,
-              torender.fossilizedbinding.value, xmlw);
-        }
-        if (torender.fossilizedshaper != null) {
-          RenderUtil.dumpHiddenField(torender.fossilizedshaper.name,
-              torender.fossilizedshaper.value, xmlw);
-        }
+        dumpBoundFields(torender, xmlw);
       } // end if UIBound
+      
+      else if (torendero instanceof UISelect) {
+        UISelect select = (UISelect) torendero;
+        // The HTML submitted value from a <select> actually corresponds
+        // with the selection member, not the top-level component.
+        attrcopy.put("name", select.selection.getFullID());
+        attrcopy.put("id", select.selection.getFullID());
+        StringSet selected = new StringSet();
+        if (select.selection instanceof UIBoundList) {
+          selected.addAll(((UIBoundList) select.selection).getValue());
+          attrcopy.put("multiple", "true");
+        }
+        else if (select.selection instanceof UIBoundString) {
+          selected.add(((UIBoundString) select.selection).getValue());
+        }
+        XMLUtil.dumpAttributes(attrcopy, xmlw);
+        pos.print(">");
+        String[] values = select.optionlist.getValue();
+        String[] names = select.optionnames == null ? values
+            : select.optionnames.getValue();
+        for (int i = 0; i < names.length; ++i) {
+          pos.print("<option value=\"");
+          xmlw.write(values[i]);
+          if (selected.contains(values[i])) {
+            pos.print("\" selected=\"true");
+          }
+          pos.print("\">");
+          xmlw.write(names[i]);
+          pos.print("</option>\n");
+        }
+        closeTag(pos, uselump);
+        dumpBoundFields(select.selection, xmlw);
+        dumpBoundFields(select.optionlist, xmlw);
+        dumpBoundFields(select.optionnames, xmlw);
+      }
       else if (torendero instanceof UILink) {
         UILink torender = (UILink) torendero;
         String attrname = URLRewriteSCR.getLinkAttribute(uselump);

@@ -3,11 +3,14 @@
  */
 package uk.org.ponder.rsf.view;
 
+import java.util.Iterator;
 import java.util.List;
 
+import uk.org.ponder.rsf.componentprocessor.ComponentChildIterator;
 import uk.org.ponder.rsf.componentprocessor.ComponentProcessor;
 import uk.org.ponder.rsf.componentprocessor.OrphanFinder;
 import uk.org.ponder.rsf.components.ComponentList;
+import uk.org.ponder.rsf.components.FixableComponent;
 import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIBoundString;
 import uk.org.ponder.rsf.components.UIComponent;
@@ -15,6 +18,7 @@ import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.util.RSFUtil;
+import uk.org.ponder.saxalizer.SAXalizerMappingContext;
 import uk.org.ponder.util.Logger;
 
 /**
@@ -40,6 +44,8 @@ public class ViewProcessor {
   private ComponentList worklist;
 
   private View view;
+  
+  private SAXalizerMappingContext mappingcontext;
 
   // This dependency is not set via RSAC since it would execute too early.
   public void setView(View view) {
@@ -49,6 +55,10 @@ public class ViewProcessor {
   public View getProcessedView() {
     performFixup();
     return view;
+  }
+  
+  public void setMappingContext(SAXalizerMappingContext mappingcontext) {
+    this.mappingcontext = mappingcontext;
   }
 
   private void performFixup() {
@@ -105,17 +115,13 @@ public class ViewProcessor {
       if (thischild instanceof UIContainer) {
         appendContainer((UIContainer) thischild);
       }
-      if (thischild instanceof UISelect) {
-        // TODO: Move this select dependency into a separate fixer!!
-        UISelect select = (UISelect) thischild;
-        RSFUtil.fixupSelect(select);
-        // selection control itself is given same ID as whole component, since
-        // this is what HTML will submit. Untenable to have this child! For some reason...
-        appendComponent(select.selection, select.getFullID());
-        appendComponent(select.names, select.getFullID() + "-names");
+      if (thischild instanceof FixableComponent) {
+        ((FixableComponent)thischild).fixupComponent();
       }
-      else if (thischild instanceof UILink) {
-        appendComponent(((UILink)thischild).linktext, thischild.getFullID() +"-linktext");
+      ComponentChildIterator children = new ComponentChildIterator(thischild, mappingcontext);
+      for (Iterator childit = children.iterator(); childit.hasNext(); ) {
+        String childname = (String) childit.next();
+        appendComponent((UIBound) children.locateBean(childname), thischild.getFullID() + "-" + childname);
       }
     }
     // add the actual children later, to ensure dependent components resolved
