@@ -72,19 +72,14 @@
     <property name="viewParamsReceiver" ref="viewParametersParser"/>
   </bean>
 
-  <bean id="xmlActionErrorStrategies" parent="XMLFactoryBean">
-    <property name="location">
-      <value>/WEB-INF/flows/actionErrorStrategies.xml</value>
-    </property>
+  <bean id="XMLActionErrorStrategyDef" parent="XMLFactoryBean" abstract="true">
     <property name="objectType">
       <value>uk.org.ponder.rsf.flow.ActionErrorStrategyManager</value>
     </property>
   </bean>
-  <!--  Replaced by ARIResolver arch
-  <bean id="actionResultInterpreter"
-    class="uk.org.ponder.rsf.flow.NullActionResultInterpreter">
-  </bean>
--->
+
+  <bean id="XMLActionErrorStrategies" parent="XMLActionErrorStrategyDef"/>
+
   <bean name="requestAddressibleBeans"
     class="uk.org.ponder.stringutil.StringList">
     <constructor-arg>
@@ -107,7 +102,7 @@
     file, together with definitions for the referenced URLs. Given these URLs
     will generally represent configuration relevant to the end user, these should
     be placed in yet a 3rd application context file, suggestion: a file called
-    userconfig.xml which breaks out all such configurable dependencies.
+    userConfig.xml which breaks out all such configurable dependencies.
     These will be overridden for consumers of the remote web service.  -->
   <bean id="directuibaseurl" class="java.lang.String">
     <constructor-arg>
