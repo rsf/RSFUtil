@@ -6,18 +6,16 @@ package uk.org.ponder.rsf.componentprocessor;
 import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.beanutil.BeanResolver;
-import uk.org.ponder.beanutil.BeanUtil;
 import uk.org.ponder.conversion.LeafObjectParser;
+import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.UIBound;
-import uk.org.ponder.rsf.components.UIBoundList;
-import uk.org.ponder.rsf.components.UIBoundObject;
-import uk.org.ponder.rsf.components.UIBoundString;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.request.FossilizedConverter;
 import uk.org.ponder.rsf.request.RequestSubmittedValueCache;
 import uk.org.ponder.rsf.request.SubmittedValueEntry;
 import uk.org.ponder.rsf.uitype.UITypes;
+import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 /**
@@ -70,9 +68,16 @@ public class ValueFixer implements ComponentProcessor {
         Object oldvalue = toprocess.acquireValue();
         String stripbinding = toprocess.valuebinding.value;
         BeanResolver resolver = getResolver(toprocess);
-
-        Object flatvalue = alterer.getFlattenedValue(stripbinding, beanlocator,
-            oldvalue.getClass(), resolver);
+        Object flatvalue = null;
+        try {
+          flatvalue = alterer.getFlattenedValue(stripbinding, beanlocator,
+              oldvalue.getClass(), resolver);
+        }
+        catch (Exception e) {
+          // don't let a bad bean model prevent the correct reference being
+          // encoded
+          Logger.log.warn("Error resolving EL reference " + stripbinding, e);
+        }
         if (flatvalue != null) {
           toprocess.updateValue(flatvalue);
         }
@@ -89,41 +94,41 @@ public class ValueFixer implements ComponentProcessor {
             .computeFossilizedBinding(toprocess);
         toprocess.fossilizedbinding = fossilized;
       }
+      if (toprocess.darreshaper != null) {
+        toprocess.fossilizedshaper = fossilizedconverter.computeReshaperBinding(toprocess);
+      }
     }
   }
 
   private BeanResolver getResolver(UIBound toprocess) {
-    if (toprocess instanceof UIBoundString) {
-      UIBoundObject boundrenderer = ((UIBoundString) toprocess).renderer;
-      if (boundrenderer == null) {
-        return null;
-      }
-      final Object renderer = boundrenderer.getValue();
-     
-      if (renderer instanceof BeanResolver) {
-        return (BeanResolver) renderer;
-      }
-      else if (renderer instanceof LeafObjectParser) {
-        return new BeanResolver() {
-          public String resolveBean(Object bean) {
-            return ((LeafObjectParser) renderer).render(bean);
-          }
-        };
-      }
-      else
-        throw UniversalRuntimeException.accumulate(
-            new IllegalArgumentException(), "Renderer object for "
-                + toprocess.getFullID() + " of unrecognised "
-                + renderer.getClass()
-                + " (expected BeanResolver or LeafObjectParser)");
+    Object renderer = toprocess.resolver;
+
+    if (renderer == null) {
+      return null;
     }
-    else if (!(toprocess instanceof UIBoundList))
-      return null;
-    String resolverel = ((UIBoundList) toprocess).fieldresolver;
-    if (resolverel == null)
-      return null;
-    resolverel = BeanUtil.stripEL(resolverel);
-    return (BeanResolver) alterer.getBeanValue(resolverel, beanlocator);
+    
+    if (renderer instanceof ELReference) {
+      renderer = alterer.getBeanValue(((ELReference) renderer).value,
+          beanlocator);
+    }
+    final Object finalrenderer = renderer;
+
+    if (renderer instanceof BeanResolver) {
+      return (BeanResolver) renderer;
+    }
+    else if (renderer instanceof LeafObjectParser) {
+      return new BeanResolver() {
+        public String resolveBean(Object bean) {
+          return ((LeafObjectParser) finalrenderer).render(bean);
+        }
+      };
+    }
+    else
+      throw UniversalRuntimeException.accumulate(
+          new IllegalArgumentException(), "Renderer object for "
+              + toprocess.getFullID() + " of unrecognised "
+              + renderer.getClass()
+              + " (expected BeanResolver or LeafObjectParser)");
   }
 
 }

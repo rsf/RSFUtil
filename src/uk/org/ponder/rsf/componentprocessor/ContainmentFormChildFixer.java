@@ -12,6 +12,9 @@ import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.request.SubmittedValueEntry;
 import uk.org.ponder.rsf.util.RSFUtil;
+import uk.org.ponder.saxalizer.MethodAnalyser;
+import uk.org.ponder.saxalizer.SAXAccessMethod;
+import uk.org.ponder.saxalizer.SAXalizerMappingContext;
 import uk.org.ponder.stringutil.StringList;
 
 /**
@@ -28,44 +31,65 @@ import uk.org.ponder.stringutil.StringList;
  */
 public class ContainmentFormChildFixer implements ComponentProcessor {
 
+  private SAXalizerMappingContext mappingcontext;
+
+  public void setMappingContext(SAXalizerMappingContext mappingcontext) {
+    this.mappingcontext = mappingcontext;
+  }
+  
   public void processComponent(UIComponent toprocesso) {
     if (toprocesso instanceof UIForm) {
       UIForm toprocess = (UIForm) toprocesso;
       if (toprocess.submittingcontrols == null) {
         toprocess.submittingcontrols = new StringList();
-        // we would really like this to be a check for NULL, but the SAXalizer
-        // could not cope with this.
         registerContainer(toprocess, toprocess);
       }
     }
   }
 
+  private void registerComponent(UIForm toprocess, UIComponent child) {
+    if (RSFUtil.isBound(child)) {
+      toprocess.submittingcontrols.add(child.getFullID());
+    }
+    // TODO: clarify UIForm/UICommand relationship for WAP-style forms.
+    // Who is to be master!
+    // we expect that UIForm -> do, UICommand -> go
+    // http://www.codehelp.co.uk/html/wap1.html
+    else if (child instanceof UICommand) {
+      toprocess.submittingcontrols.add(child.getFullID());
+      // add the notation explaining which control is submitting, when it does
+      UICommand command = (UICommand) child;
+      command.parameters.add(new UIParameter(
+          SubmittedValueEntry.SUBMITTING_CONTROL, child.getFullID()));
+      if (command.methodbinding != null) {
+        command.parameters.add(new UIParameter(
+            SubmittedValueEntry.FAST_TRACK_ACTION,
+            command.methodbinding.value));
+      }
+    }
+    if (child instanceof UIContainer) {
+      registerContainer(toprocess, (UIContainer) child);
+    }
+    MethodAnalyser ma = mappingcontext.getAnalyser(child.getClass());
+    for (int i = 0; i < ma.allgetters.length; ++ i) {
+      SAXAccessMethod sam = ma.allgetters[i];
+      if (sam.tagname.equals("parent")) continue;
+      if (UIComponent.class.isAssignableFrom(sam.getDeclaredType())) {
+        // we expect there will not again be a container, after meeting a plain component.
+        // TODO: Convert this code into a general iteration structure soon!
+        UIComponent nested = (UIComponent) sam.getChildObject(child);
+        if (nested != null) {
+          registerComponent(toprocess, nested);
+        }
+      }
+    }
+  }
+  
   private void registerContainer(UIForm toprocess, UIContainer toregister) {
     ComponentList children = toregister.flattenChildren();
     for (int i = 0; i < children.size(); ++i) {
       UIComponent child = children.componentAt(i);
-      if (RSFUtil.isBound(child)) {
-        toprocess.submittingcontrols.add(child.getFullID());
-      }
-      // TODO: clarify UIForm/UICommand relationship for WAP-style forms.
-      // Who is to be master!
-      // we expect that UIForm -> do, UICommand -> go
-      // http://www.codehelp.co.uk/html/wap1.html
-      else if (child instanceof UICommand) {
-        toprocess.submittingcontrols.add(child.getFullID());
-        // add the notation explaining which control is submitting, when it does
-        UICommand command = (UICommand) child;
-        command.parameters.add(new UIParameter(
-            SubmittedValueEntry.SUBMITTING_CONTROL, child.getFullID()));
-        if (command.methodbinding != null) {
-          command.parameters.add(new UIParameter(
-              SubmittedValueEntry.FAST_TRACK_ACTION,
-              command.methodbinding.value));
-        }
-      }
-      else if (child instanceof UIBranchContainer) {
-        registerContainer(toprocess, (UIBranchContainer) child);
-      }
+      registerComponent(toprocess, child);
     }
   }
 }

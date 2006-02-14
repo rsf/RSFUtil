@@ -32,8 +32,13 @@ public class SubmittedValueEntry {
   /** The EL path (without #{}) that is the l-value target of this binding.
    */
   public String valuebinding;
+  /** The EL path (without #{}) that may be used to look up a reshaper
+   * to be applied before converting this SVE into a DAR.
+   */
+  public String reshaperbinding;
   /** The full ID of the component giving rise to this submission. 
    * This will be null for a non-component binding. */
+  
   public String componentid;
   /** The value held by the component at the time the view holding it was
    * rendered. This was the initial value seen by the user at render time.
@@ -58,5 +63,5 @@ public class SubmittedValueEntry {
    * in which case newvalue will be <code>null</code>
    */
   public boolean isdeletion = false;
-  
+ 
 }

@@ -30,7 +30,7 @@ public class FlowUtil {
     for (int i = 0; i < list.size(); ++ i) {
       String to = list.transitionAt(i).to;
       State tostate = flow.stateFor(to);
-      if (to == null) {
+      if (tostate == null) {
         throw new IllegalArgumentException("Target state " + to + " of transition not found");
       }
   

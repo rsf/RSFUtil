@@ -43,6 +43,7 @@ public class FossilizedConverter {
    * UIDeletionBinding and UIELBinding.
    */
   public static final String BINDING_SUFFIX = "-binding";
+  public static final String RESHAPER_SUFFIX = "-reshaper";
   public static final String DELETION_KEY = "deletion"+BINDING_SUFFIX;
   public static final String VALUE_DELETION_KEY = "valuedeletion"+BINDING_SUFFIX;
   public static final String ELBINDING_KEY = "el"+BINDING_SUFFIX;
@@ -60,11 +61,11 @@ public class FossilizedConverter {
   public boolean isFossilisedBinding(String key) {
     return key.endsWith(FOSSIL_SUFFIX);
   }
- 
 
   public boolean isNonComponentBinding(String key) {
     return key.endsWith(BINDING_SUFFIX);
   }
+  
   /** Parse a "non-component binding" key/value pair **/
   public SubmittedValueEntry parseBinding(String key, String value) {
     SubmittedValueEntry togo = new SubmittedValueEntry();
@@ -165,8 +166,24 @@ public class FossilizedConverter {
     togo.value = (togenerate.willinput? INPUT_COMPONENT : OUTPUT_COMPONENT) + typestring 
        + "#{" + togenerate.valuebinding.value + "}" + oldvaluestring;
     return togo;
-      
   }
+  
+  public String getReshaperKey(String componentid) {
+    return componentid + RESHAPER_SUFFIX;
+  }
+  
+  public UIParameter computeReshaperBinding(UIBound togenerate) {
+    if (togenerate.darreshaper == null) {
+      return null;
+    }
+    else {
+      UIParameter togo = new UIParameter();
+      togo.name = getReshaperKey(togenerate.getFullID());
+      togo.value = togenerate.darreshaper.value;
+      return togo;
+    }
+  }
+  
   /** Fixes up the supplied "new value" relative to information discovered 
    * in the fossilized binding. After this point, newvalue is authoritatively
    * not null for every component which was marked as "expecting input", and
@@ -175,7 +192,7 @@ public class FossilizedConverter {
   public void fixupNewValue(SubmittedValueEntry sve, RenderSystemStatic rendersystemstatic, 
       String key, String value) {
     if (key.charAt(0) == INPUT_COMPONENT) {
-      rendersystemstatic .fixupUIType(sve);
+      rendersystemstatic.fixupUIType(sve);
       Class requiredclass = sve.oldvalue.getClass();
       UIType type = UITypes.forObject(sve.oldvalue);
       if (type != null && sve.newvalue.getClass() != requiredclass) {

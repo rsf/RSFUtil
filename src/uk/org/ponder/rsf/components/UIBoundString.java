@@ -18,9 +18,4 @@ public class UIBoundString extends UIBound {
     value = StringUIType.instance.getPlaceholder();
   }
 
-  /** A reference to an object, or an object that can be converted to, a 
-   * "LeafRenderer" that can render the bound value above to and from a 
-   * String representation.  
-   */
-  public UIBoundObject renderer;
 }

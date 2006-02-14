@@ -131,6 +131,13 @@
     </property>
   </bean>
 
+  <!-- Used when operating an HTML-like form system whereby submitting controls
+  are defined by nesting within an element -->
+  <bean id="containmentformfixer"
+    class="uk.org.ponder.rsf.componentprocessor.ContainmentFormChildFixer">
+    <property name="mappingContext" ref="ELMappingContext"/>
+  </bean>
+
   <bean id="baseurlprovider" abstract="true"></bean>
 
   <bean id="rsacresourcelocator"

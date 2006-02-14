@@ -88,10 +88,10 @@ public class ViewProcessor {
     appendContainer(view.viewroot);
   }
 
-  private void appendComponent(UIBound toappend) {
+  private void appendComponent(UIBound toappend, String fullID) {
     if (toappend != null) {
-      if (toappend instanceof UIBoundString) {
-        appendComponent(((UIBoundString) toappend).renderer);
+      if (fullID != null) {
+        toappend.updateFullID(fullID);
       }
       worklist.add(toappend);
     }
@@ -109,14 +109,13 @@ public class ViewProcessor {
         // TODO: Move this select dependency into a separate fixer!!
         UISelect select = (UISelect) thischild;
         RSFUtil.fixupSelect(select);
-        appendComponent(select.selection);
-        appendComponent(select.names);
+        // selection control itself is given same ID as whole component, since
+        // this is what HTML will submit. Untenable to have this child! For some reason...
+        appendComponent(select.selection, select.getFullID());
+        appendComponent(select.names, select.getFullID() + "-names");
       }
       else if (thischild instanceof UILink) {
-        appendComponent(((UILink)thischild).linktext);
-      }
-      else if (thischild instanceof UIBoundString) {
-        appendComponent(((UIBoundString) thischild).renderer);
+        appendComponent(((UILink)thischild).linktext, thischild.getFullID() +"-linktext");
       }
     }
     // add the actual children later, to ensure dependent components resolved
