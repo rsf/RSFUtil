@@ -40,7 +40,8 @@ public class BasicViewParametersParser implements ViewParametersParser, ViewPara
    */
   public String getDefaultView() {
     if (defaultview == null) {
-      Logger.log.warn("Warning: no view has been marked as default during initialisation");
+      Logger.log.warn("Warning: no view has been marked as default during initialisation -"
+          +"\nDid you remember to define ViewProducers?");
     }
     return "/"+defaultview;
   }

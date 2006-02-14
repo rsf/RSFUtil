@@ -39,7 +39,7 @@
   <bean id="actionErrorStrategyManager"
     class="uk.org.ponder.rsf.flow.ActionErrorStrategyManager">
     <property name="mergeStrategies">
-      <ref bean="xmlActionErrorStrategies" />
+      <ref bean="XMLActionErrorStrategies" />
     </property>
   </bean>
 

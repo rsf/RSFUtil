@@ -17,8 +17,11 @@ import uk.org.ponder.saxalizer.XMLProvider;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
 
-/** A very useful base class for any bean constructed out of an XML
- * representation.
+/**
+ * A very useful base class for any bean constructed out of an XML
+ * representation. Will provide a default-constructed object of the required
+ * type if the location field is blank or refers to a nonexistent file.
+ * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
 
@@ -40,7 +43,7 @@ public class XMLFactoryBean implements FactoryBean, ApplicationContextAware {
   public void setReflectiveCache(ReflectiveCache reflectivecache) {
     this.reflectivecache = reflectivecache;
   }
-  
+
   public void setObjectType(Class objecttype) {
     this.objecttype = objecttype;
   }
@@ -48,23 +51,30 @@ public class XMLFactoryBean implements FactoryBean, ApplicationContextAware {
   public Class getObjectType() {
     return objecttype;
   }
-  
+
   public Object getObject() throws Exception {
-    Resource res = applicationcontext.getResource(location);
     Object togo = null;
-    try {
-      InputStream is = res.getInputStream();
-      togo = xmlprovider.readXML(objecttype, is);
+    if (location != null) {
+      Resource res = applicationcontext.getResource(location);
+      try {
+        InputStream is = res.getInputStream();
+        togo = xmlprovider.readXML(objecttype, is);
+      }
+      catch (Exception e) {
+        UniversalRuntimeException tothrow = UniversalRuntimeException
+            .accumulate(e, "Error loading object from path " + res + ":  ");
+        if (tothrow.getTargetException() instanceof IOException) {
+          Logger.log.warn(tothrow.getTargetException().getClass().getName()
+              + ": " + tothrow.getMessage());
+          togo = reflectivecache.construct(objecttype);
+        }
+        else {
+          throw tothrow;
+        }
+      }
     }
-    catch (Exception e) {
-      UniversalRuntimeException tothrow = UniversalRuntimeException.accumulate(e, "Error loading object from path " + res +":  ");
-      if (tothrow.getTargetException() instanceof IOException) {
-        Logger.log.warn(tothrow.getTargetException().getClass().getName() + ": " +tothrow.getMessage());
-        togo = reflectivecache.construct(objecttype);
-      }
-      else {
-        throw tothrow;
-      }
+    else {
+      togo = reflectivecache.construct(objecttype);
     }
     return togo;
   }
