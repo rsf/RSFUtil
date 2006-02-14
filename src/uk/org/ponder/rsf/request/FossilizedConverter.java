@@ -10,6 +10,7 @@ import uk.org.ponder.rsf.components.UIDeletionBinding;
 import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.renderer.RenderSystemStatic;
+import uk.org.ponder.rsf.uitype.StringUIType;
 import uk.org.ponder.rsf.uitype.UIType;
 import uk.org.ponder.rsf.uitype.UITypes;
 import uk.org.ponder.saxalizer.SAXalXMLProvider;
@@ -191,10 +192,10 @@ public class FossilizedConverter {
    */
   public void fixupNewValue(SubmittedValueEntry sve, RenderSystemStatic rendersystemstatic, 
       String key, String value) {
-    if (key.charAt(0) == INPUT_COMPONENT) {
+    if (value.charAt(0) == INPUT_COMPONENT) {
       rendersystemstatic.fixupUIType(sve);
-      Class requiredclass = sve.oldvalue.getClass();
-      UIType type = UITypes.forObject(sve.oldvalue);
+      Class requiredclass = sve.oldvalue == null? String.class : sve.oldvalue.getClass();
+      UIType type = sve.oldvalue == null ? StringUIType.instance : UITypes.forObject(sve.oldvalue);
       if (type != null && sve.newvalue.getClass() != requiredclass) {
         // no attempt to catch the exceptions from the next two lines since they
         // all represent assertion errors. 

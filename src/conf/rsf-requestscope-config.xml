@@ -411,6 +411,7 @@
   <!-- End "fixer" beans" -->
   
   <bean id="viewprocessor" class="uk.org.ponder.rsf.view.ViewProcessor">
+    <property name="mappingContext" ref="ELMappingContext"/>
     <property name="componentProcessors">
       <list>
           <!-- This must execute before formfixer-->

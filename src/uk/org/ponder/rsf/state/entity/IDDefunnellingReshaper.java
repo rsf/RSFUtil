@@ -8,6 +8,8 @@ import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.beanutil.BeanUtil;
 import uk.org.ponder.mapping.DARReshaper;
 import uk.org.ponder.mapping.DataAlterationRequest;
+import uk.org.ponder.saxalizer.MethodAnalyser;
+import uk.org.ponder.saxalizer.SAXAccessMethod;
 import uk.org.ponder.saxalizer.SAXalizerMappingContext;
 
 /** A "DataAlterationRequest" reshaper that does the work of reprocessing
@@ -48,8 +50,14 @@ public class IDDefunnellingReshaper implements DARReshaper {
   public DataAlterationRequest reshapeDAR(DataAlterationRequest toshape) {
     if (toshape.type.equals(DataAlterationRequest.ADD)) {
       String cutback = BeanUtil.getContainingPath(toshape.path);
-      Object lastentity = bma.getBeanValue(cutback, rbl);
-      String entityname = eni.getEntityName(lastentity.getClass());
+      // cutback may be null! so examine methods of cutback2. This MUST
+      // be a concrete object!!
+      String cutback2 = BeanUtil.getContainingPath(cutback);
+      String membername = BeanUtil.getTail(cutback);
+      Object lastentity = bma.getBeanValue(cutback2, rbl);
+      MethodAnalyser ma = mappingcontext.getAnalyser(lastentity.getClass());
+      SAXAccessMethod sam = ma.getAccessMethod(membername);
+      String entityname = eni.getEntityName(sam.getDeclaredType());
       // data has already been conformed in type to "oldvalue" and so is at least scalar
       String newentitypath = BeanUtil.composeEL(entityname, (String)toshape.data);
       Object newentity = bma.getBeanValue(newentitypath, rbl);

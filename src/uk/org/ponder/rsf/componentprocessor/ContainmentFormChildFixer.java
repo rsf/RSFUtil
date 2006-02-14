@@ -3,11 +3,13 @@
  */
 package uk.org.ponder.rsf.componentprocessor;
 
+import java.util.Iterator;
+
+import uk.org.ponder.beanutil.IterableBeanLocator;
 import uk.org.ponder.rsf.components.ComponentList;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIContainer;
-import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.request.SubmittedValueEntry;
@@ -70,18 +72,10 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
     if (child instanceof UIContainer) {
       registerContainer(toprocess, (UIContainer) child);
     }
-    MethodAnalyser ma = mappingcontext.getAnalyser(child.getClass());
-    for (int i = 0; i < ma.allgetters.length; ++ i) {
-      SAXAccessMethod sam = ma.allgetters[i];
-      if (sam.tagname.equals("parent")) continue;
-      if (UIComponent.class.isAssignableFrom(sam.getDeclaredType())) {
-        // we expect there will not again be a container, after meeting a plain component.
-        // TODO: Convert this code into a general iteration structure soon!
-        UIComponent nested = (UIComponent) sam.getChildObject(child);
-        if (nested != null) {
-          registerComponent(toprocess, nested);
-        }
-      }
+    IterableBeanLocator children = new ComponentChildIterator(child, mappingcontext);
+    for (Iterator childit = children.iterator(); childit.hasNext();) {
+      UIComponent nested = (UIComponent) children.locateBean((String) childit.next());
+      registerComponent(toprocess, nested);
     }
   }
   
