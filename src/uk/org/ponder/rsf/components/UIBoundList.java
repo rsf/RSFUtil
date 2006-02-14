@@ -21,8 +21,4 @@ public class UIBoundList extends UIBound {
     value = StringArrayUIType.instance.getPlaceholder();
   }
   
-  /** An EL reference to a bean capable of resolving a list member to its
-   * submitted value, probably its ID.
-   */
-  public String fieldresolver;
 }

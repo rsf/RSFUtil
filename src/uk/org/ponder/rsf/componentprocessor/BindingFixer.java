@@ -4,6 +4,7 @@
 package uk.org.ponder.rsf.componentprocessor;
 
 import uk.org.ponder.rsf.components.ParameterList;
+import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIDeletionBinding;
@@ -11,6 +12,11 @@ import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.request.FossilizedConverter;
+
+/** A fixer which converts deletion and EL bindings to their "raw" form
+ * as fossilized key/value pairs.
+ * @author Antranig Basman (amb26@ponder.org.uk)
+ */
 
 public class BindingFixer implements ComponentProcessor {
 

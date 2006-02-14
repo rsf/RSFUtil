@@ -44,6 +44,18 @@ public class UIComponent {
     }
     return fullID;
   }
+  
+  /** Updates the full ID of this component with the supplied value. This
+   * is an "emergency" method to be used only as a last resort. Within RSF
+   * it is necessary to ensure that UIBound components arising as direct children
+   * of "composite" parents can have their IDs set correctly before value
+   * fixup.
+   */
+  
+  public void updateFullID(String fullID) {
+    this.fullID = fullID;
+  }
+  
   /** The containing parent of this component, or <code>null</code> for the
    * UIContainer representing the view root.
    */

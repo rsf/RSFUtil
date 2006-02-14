@@ -368,16 +368,9 @@
   <bean id="view" factory-bean="viewgenerator" factory-method="getView"/>
   -->
   
-  <!-- Begin "fixer" beans - manipulate component tree in between generation
-    and rendering -->
-  
-  
-  <!-- Used when operating an HTML-like form system whereby submitting controls
-  are defined by nesting within an element -->
-  <bean id="containmentformfixer"
-    class="uk.org.ponder.rsf.componentprocessor.ContainmentFormChildFixer">
-  </bean>
-  
+  <!-- Begin request scope "fixer" beans - manipulate component tree in between
+   generation and rendering -->
+    
   <bean id="formfixer" class="uk.org.ponder.rsf.componentprocessor.DefaultFormFixer">
     <property name="viewParameters">
       <ref local="viewParameters"/>

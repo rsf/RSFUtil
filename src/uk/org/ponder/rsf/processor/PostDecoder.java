@@ -57,9 +57,7 @@ public class PostDecoder {
 
   // This method is expected to be called by accreteRSVC
   public void parseRequest(RequestSubmittedValueCache rsvc) {
-    // NB checks for value size are needed for default JSF parameter
-    // implementation
-    // which synthesises hidden fields for every key/value set within a form.
+   // Firstly acquire all non-component ("pure") bindings
     for (Iterator keyit = normalizedrequest.keySet().iterator(); keyit
         .hasNext();) {
       String key = (String) keyit.next();
@@ -78,10 +76,18 @@ public class PostDecoder {
         SubmittedValueEntry sve = fossilizedconverter.parseFossil(key,
             values[0]);
 
+        // Grab dependent values which we can now deduce may be in the request
         String[] newvalue = (String[]) normalizedrequest.get(sve.componentid);
         sve.newvalue = newvalue;
         fossilizedconverter.fixupNewValue(sve, rendersystemstatic, key,
             values[0]);
+        
+        String[] reshaper = 
+          (String[]) normalizedrequest.get(fossilizedconverter.getReshaperKey(sve.componentid));
+        if (reshaper != null) {
+          sve.reshaperbinding = reshaper[0];
+        }
+        
         Logger.log.info("Discovered fossilised binding for " + sve.valuebinding
             + " for component " + sve.componentid + " with old value "
             + sve.oldvalue);

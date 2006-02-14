@@ -261,6 +261,10 @@ public class BasicHTMLRenderSystem implements RenderSystem {
           RenderUtil.dumpHiddenField(torender.fossilizedbinding.name,
               torender.fossilizedbinding.value, xmlw);
         }
+        if (torender.fossilizedshaper != null) {
+          RenderUtil.dumpHiddenField(torender.fossilizedshaper.name,
+              torender.fossilizedshaper.value, xmlw);
+        }
       } // end if UIBound
       else if (torendero instanceof UILink) {
         UILink torender = (UILink) torendero;

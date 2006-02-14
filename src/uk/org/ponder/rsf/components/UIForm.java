@@ -27,14 +27,12 @@ public class UIForm extends UISimpleContainer {
    * If this is left blank(empty), it will be filled in by a FormFixer 
    * (currently by looking for all nested controls that are bound). Each of 
    * these controls will be either a UICommand or a UIBound.
+   * <p> For the HTML submission model, this field is not strictly required
+   * since hidden fields are rendered "alongside" their corresponding controls,
+   * but is useful for general consistency and bookkeeping. More relevant, say,
+   * for "WAP-like" submission models.
    */ 
-  // TODO: The SAXalizer cannot cope with container members that are null,
-  // but we would really like this being EMPTY = NULL to be the condition for
-  // infilling.
-  // TODO further!: The DARApplier can now cope with this, but SAXalizer still
-  // can't. Should we think about sharing more core here?
   public StringList submittingcontrols;
-  
   
   public static UIForm make(UIBranchContainer parent, String ID) {
     UIForm togo = new UIForm();
