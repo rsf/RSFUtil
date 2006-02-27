@@ -217,6 +217,11 @@
     <property name="reflectiveCache" ref="reflectiveCache"/>
   </bean>
   
+  <bean id="RSACBridgeProxy" class="uk.org.ponder.rsac.RSACBridgeProxy" 
+      abstract="true">
+    <property name="RSACBeanLocator" ref="rsacBeanLocator"/>
+  </bean>
+  
   <bean id="flowLite-flowDefinition" parent="XMLFactoryBean" 
     class="uk.org.ponder.rsf.flow.lite.XMLFlowFactoryBean" abstract="true">
     <property name="objectType" value="uk.org.ponder.rsf.flow.lite.Flow"/>
