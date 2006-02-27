@@ -13,6 +13,11 @@ import uk.org.ponder.stringutil.StringList;
  * 
  */
 public class SimpleViewParameters extends ViewParameters {
+  public SimpleViewParameters() {}
+  
+  public SimpleViewParameters(String viewID) {
+    this.viewID = viewID;
+  }
   static StringList attrnames = 
     StringList.fromString("flowtoken, endflow, errortoken, errorredirect");
   // NB - NONE of these parameters should appear in ViewParameters since they

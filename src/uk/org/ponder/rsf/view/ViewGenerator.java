@@ -10,10 +10,11 @@ import uk.org.ponder.rsf.util.ComponentDumper;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.streamutil.write.StringPOS;
 import uk.org.ponder.util.Logger;
+import uk.org.ponder.util.UniversalRuntimeException;
 
 /** Invokes the list of ComponentProducers in the supplied ViewCollection to
  * populate the view tree for this request. A request-scope bean, but is 
- * currently invoked manually.
+ * currently invoked manually (from RSFRenderHandler).
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  *
  */
@@ -76,9 +77,8 @@ public class ViewGenerator {
     
     }
     else {
-// Probably can this error - since a componentless view may be actually desired.
-//      throw UniversalRuntimeException.accumulate(new ViewNotFoundException(), 
-//          "Request intercepted for unknown view " + viewparams.viewID);
+      throw UniversalRuntimeException.accumulate(new ViewNotFoundException(), 
+          "Request intercepted for unknown view " + viewparams.viewID);
     }
     return view;
   }

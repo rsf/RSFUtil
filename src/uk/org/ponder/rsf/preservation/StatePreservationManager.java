@@ -4,14 +4,11 @@
 package uk.org.ponder.rsf.preservation;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.beanutil.NullBeanLocator;
 import uk.org.ponder.beanutil.WriteableBeanLocator;
-import uk.org.ponder.rsf.state.FlowLockGetter;
 
 /** The central manager of all PreservationStrategies. This is a request-scope
  * bean which is called directly by the ActionHandler in order to be notified

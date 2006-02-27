@@ -17,21 +17,19 @@
       <value>10</value>
     </property>
   </bean>
+
   <bean id="messageLocator"
     class="uk.org.ponder.springutil.SpringMessageLocator">
     <property name="messageSource">
       <ref local="messageSource" />
     </property>
   </bean>
-  <!--
-    <bean id="messagelocator" class="uk.org.ponder.errorutil.BlankMessageLocator">
-    </bean>
-  -->
 
   <bean id="viewParametersParser"
-    class="uk.org.ponder.rsf.viewstate.BasicViewParametersParser" init-method="init">
+    class="uk.org.ponder.rsf.viewstate.BasicViewParametersParser"
+    init-method="init">
     <property name="beanModelAlterer" ref="DARApplier" />
-    <property name="reflectiveCache" ref="reflectiveCache"/>
+    <property name="reflectiveCache" ref="reflectiveCache" />
   </bean>
 
   <bean id="siteMapDef" class="uk.org.ponder.rsf.viewstate.XMLSiteMapLoader"
@@ -39,46 +37,62 @@
     <property name="location">
       <value>/WEB-INF/sitemap.xml</value>
     </property>
-    <property name="viewParametersReceiver" ref="viewParametersParser"/>
+    <property name="viewParametersReceiver" ref="viewParametersParser" />
   </bean>
 
   <bean id="JSFNavigationMap" parent="XMLFactoryBean" lazy-init="true">
-    <property name="location" value="/WEB-INF/navigation-map.xml"/>
-    <property name="objectType" value="uk.org.ponder.rsf.flow.jsfnav.NavigationMap"/>
+    <!-- 
+      <property name="location" value="/WEB-INF/navigation-map.xml"/>
+    -->
+    <property name="objectType"
+      value="uk.org.ponder.rsf.flow.jsfnav.NavigationMap" />
   </bean>
 
   <bean id="viewParamsExemplar"
     class="uk.org.ponder.rsf.viewstate.SimpleViewParameters">
   </bean>
 
-  <bean id="viewResolver" class="uk.org.ponder.rsf.view.ConcreteViewResolver">
+  <bean id="autoComponentProducerManager"
+    class="uk.org.ponder.rsf.view.AutoComponentProducerManager"
+    init-method="init">
+    <property name="reflectiveCache" ref="reflectiveCache" />
+    <property name="RSACBeanLocator" ref="rsacBeanLocator" />
+
+  </bean>
+
+  <bean id="viewResolver" class="uk.org.ponder.rsf.view.ConcreteViewResolver"
+    init-method="init">
     <property name="views">
       <ref bean="staticviews" />
     </property>
+    <property name="autoComponentProducerManager"
+      ref="autoComponentProducerManager" />
     <property name="viewResolvers">
       <list>
         <ref bean="XMLViewResolver" />
       </list>
     </property>
-    <property name="viewParametersReceiver" ref="viewParametersParser"/>
+    <property name="viewParametersReceiver" ref="viewParametersParser" />
   </bean>
-  
-  <bean id="XMLViewResolver" class="uk.org.ponder.rsf.view.NullViewResolver"/>
 
-  <bean id="XMLViewResolverDef" class="uk.org.ponder.rsf.view.XMLViewResolver" 
-     abstract = "true">
+  <!--  override this bean with a concrete bean derived from XmlViewResolverDef -->
+  <bean id="XMLViewResolver" class="uk.org.ponder.rsf.view.NullViewResolver" />
+
+  <bean id="XMLViewResolverDef" class="uk.org.ponder.rsf.view.XMLViewResolver"
+    abstract="true">
     <property name="XMLProvider" ref="XMLProvider" />
     <property name="templateExpander" ref="templateExpander" />
-    <property name="viewParamsReceiver" ref="viewParametersParser"/>
+    <property name="viewParamsReceiver" ref="viewParametersParser" />
   </bean>
 
-  <bean id="XMLActionErrorStrategyDef" parent="XMLFactoryBean" abstract="true">
+  <bean id="XMLActionErrorStrategyDef" parent="XMLFactoryBean"
+    abstract="true">
     <property name="objectType">
       <value>uk.org.ponder.rsf.flow.ActionErrorStrategyManager</value>
     </property>
   </bean>
 
-  <bean id="XMLActionErrorStrategies" parent="XMLActionErrorStrategyDef"/>
+  <bean id="XMLActionErrorStrategies" parent="XMLActionErrorStrategyDef" />
 
   <bean name="requestAddressibleBeans"
     class="uk.org.ponder.stringutil.StringList">
@@ -137,8 +151,8 @@
     beginning with /  , otherwise it will be inferred from a view which reports
     itself as a default. Do not try to get the value of this bean as an
     application-scope dependency -->
-  <bean id="defaultView" factory-bean="viewParametersParser" 
-  factory-method="getDefaultView" lazy-init="true"/>
+  <bean id="defaultView" factory-bean="viewParametersParser"
+    factory-method="getDefaultView" lazy-init="true" />
 
   <bean id="URLPreservingBeanSpecs"
     class="uk.org.ponder.springutil.StringListFactory">

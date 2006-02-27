@@ -10,15 +10,16 @@ import java.util.List;
 import java.util.Map;
 
 import uk.org.ponder.rsf.viewstate.ViewParamsReceiver;
-import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
+import uk.org.ponder.rsf.viewstate.ViewParamsGetter;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 /**
  * A concrete implementation of ViewResolver which will resolve
  * ComponentProducer requests into a fixed collection of configured beans, set
- * up by the setView() method. Can also fall back to a set of generic
+ * up by the setViews() method. Can also fall back to a set of generic
  * ViewResolvers should initial lookup fail. This is the default RSF
- * ViewResolver.
+ * ViewResolver - it is an application scope bean, although it collaborates
+ * with the AutoComponentProducerManager to accept request-scope producers.
  * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
@@ -29,17 +30,13 @@ public class ConcreteViewResolver implements ViewResolver {
   // how we might actually want to locate view templates and component
   // producers relative to views (view IDs or in general, ViewParams)
   public static final String ALL_VIEW_PRODUCER = "  all views  ";
-  // private MessageLocator messagelocator;
-  //  
-  // public void setMessageLocator(MessageLocator messagelocator) {
-  // this.messagelocator = messagelocator;
-  // }
 
   private Map views = new HashMap();
 
   private List resolvers = new ArrayList();
   private boolean unknowniserror = false;
   private ViewParamsReceiver vpreceiver;
+  private AutoComponentProducerManager automanager;
 
   public void setUnknownViewIsError(boolean unknowniserror) {
     this.unknowniserror = unknowniserror;
@@ -48,33 +45,43 @@ public class ConcreteViewResolver implements ViewResolver {
   public void setViewParametersReceiver(ViewParamsReceiver vpreceiver) {
     this.vpreceiver = vpreceiver;
   }
-
+  
+  private List pendingviews = new ArrayList();
+// Apologies for this lack of abstraction. There is currently only one of these,
+// and we do use it for two purposes...
+  public void setAutoComponentProducerManager(AutoComponentProducerManager requestmanager) {
+    this.automanager = requestmanager;
+    pendingviews.addAll(requestmanager.getProducers());
+  }
+  
   /**
    * Sets a static list of ViewComponentProducers which will be used as a first
    * pass to resolve requests for incoming views. Any plain ComponentProducers
    * will be added as default producers to execute for all views.
    */
   public void setViews(List viewlist) {
-    for (Iterator it = viewlist.iterator(); it.hasNext();) {
-      ComponentProducer view = (ComponentProducer) it.next();
+    pendingviews.addAll(viewlist);
+  }
+  
+  public void init() {
+    for (int i = 0; i < pendingviews.size(); ++ i) {
+      ComponentProducer view = (ComponentProducer) pendingviews.get(i);
       // view.setMessageLocator(messagelocator);
       String key = ALL_VIEW_PRODUCER;
       if (view instanceof ViewComponentProducer) {
         key = ((ViewComponentProducer) view).getViewID();
-        if (view instanceof ViewParamsReporter) {
-          ViewParamsReporter vpreporter = (ViewParamsReporter) view;
+        if (view instanceof ViewParamsGetter) {
+          ViewParamsGetter vpreporter = (ViewParamsGetter) view;
           vpreceiver.setViewParamsExemplar(key, vpreporter.getViewParameters());
-          if (vpreporter.isDefaultView()) {
-            vpreceiver.setDefaultView(key);
-          }
+        }
+        if (view instanceof DefaultView) {
+          vpreceiver.setDefaultView(key);
         }
       }
-
       addView(key, view);
-
     }
+    pendingviews.clear();
   }
-
   /**
    * Sets a list of slave ViewResolvers which will be polled in sequence should
    * no static producer be registered, until the first which returns a non-null
@@ -120,7 +127,15 @@ public class ConcreteViewResolver implements ViewResolver {
     if (specific != null) {
       togo.addAll(specific);
     }
+    mapProducers(togo);
     return togo;
+  }
+
+  private void mapProducers(List producers) {
+    for (int i = 0; i < producers.size(); ++ i) {
+      ComponentProducer producer = (ComponentProducer) producers.get(i);
+      producers.set(i, automanager.wrapProducer(producer));
+    }
   }
 
 }
