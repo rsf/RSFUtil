@@ -18,8 +18,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  */
 public interface ComponentProducer {
   /** @param tofill The container into which produced components will be inserted.
-   *  @param origviewparams The view parameters specifying the currently rendering 
-   *  view
+   *  @param viewparams The view parameters specifying the currently rendering  view
    *  @param checker A ComponentChecker (actually an interface into a ViewTemplate)
    *  that can be used by the producer to "short-circuit" the production of 
    *  potentially expensive components if they are not present in the chosen
@@ -27,6 +26,6 @@ public interface ComponentProducer {
    *  is currently only economic to check components that are present at the root
    *  level of the template, but these are the most likely to be expensive.
    */
-  public void fillComponents(UIContainer tofill, ViewParameters origviewparams, 
+  public void fillComponents(UIContainer tofill, ViewParameters viewparams, 
       ComponentChecker checker);
 }

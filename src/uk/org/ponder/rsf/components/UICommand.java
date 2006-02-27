@@ -54,6 +54,9 @@ public class UICommand extends UISimpleContainer {
     return make(parent, ID, null, methodbinding);
   }
 
+  public static UICommand make(UIContainer parent, String ID) {
+    return make(parent, ID, null, null);
+  }
   // a map of param/values to be surreptitiously added to the parameter
   // map during submission. We maintain these as single-valued here for
   // simplicity, but they will be upgraded to the standard String[] values
