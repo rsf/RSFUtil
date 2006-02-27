@@ -25,6 +25,13 @@ public class EntityCentredViewParameters extends ViewParameters {
   public void clearParams() {
   }
 
+  public EntityCentredViewParameters(String viewid, EntityID entity, String mode) {
+    this.viewID = viewid;
+    this.entity = entity;
+    this.mode = mode;
+  }
+  public EntityCentredViewParameters() {}
+  
   public EntityID entity;
   public String mode;
   

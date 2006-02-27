@@ -15,6 +15,9 @@ public class UIDeletionBinding extends UIParameter {
     this.deletebinding = ELReference.make(deletebinding);
     this.deletetarget = deletetarget;
   }
+  public UIDeletionBinding(String deletebinding) {
+    this(deletebinding, null);
+  }
   /** An EL path (including #{}) 
    * specifying the location in the bean model the deletion
    * is to occur. If the target field is left blank, this binding specifies

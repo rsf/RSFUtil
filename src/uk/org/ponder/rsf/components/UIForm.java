@@ -4,6 +4,7 @@
 package uk.org.ponder.rsf.components;
 
 import uk.org.ponder.stringutil.StringList;
+import uk.org.ponder.util.UniversalRuntimeException;
 
 
 /**
@@ -34,14 +35,18 @@ public class UIForm extends UISimpleContainer {
    */ 
   public StringList submittingcontrols;
   
-  public static UIForm make(UIBranchContainer parent, String ID) {
+  public static UIForm make(UIContainer parent, String ID) {
+    if (!(parent instanceof UIBranchContainer)) {
+      throw UniversalRuntimeException.accumulate(new 
+          IllegalArgumentException("Immediate parent of UIForm must be a branch container"));
+    }
     UIForm togo = new UIForm();
     togo.ID = ID;
     parent.addComponent(togo);
     return togo;
   }
   
-  public static UIForm make(UIBranchContainer parent) {
+  public static UIForm make(UIContainer parent) {
     return make(parent, BasicComponentIDs.BASIC_FORM);
   }
   

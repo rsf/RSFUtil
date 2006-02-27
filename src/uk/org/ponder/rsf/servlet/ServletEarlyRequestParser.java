@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import uk.org.ponder.rsf.request.EarlyRequestParser;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
@@ -18,7 +19,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
 * type and parameter map. 
 **/
 
-public class EarlyRequestParser {
+public class ServletEarlyRequestParser implements EarlyRequestParser {
   protected HttpServletRequest request;
 
   public void setHttpServletRequest(HttpServletRequest request) {
