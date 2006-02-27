@@ -138,21 +138,21 @@
     <property name="mappingContext" ref="ELMappingContext"/>
   </bean>
 
-  <bean id="baseurlprovider" abstract="true"></bean>
+  <bean id="baseURLProvider" abstract="true"></bean>
 
-  <bean id="rsacresourcelocator"
+  <bean id="rsacResourceLocator"
     class="uk.org.ponder.rsac.servlet.ServletRSACResourceLocator">
   </bean>
 
   <bean id="rsacBeanLocatorFactory"
     class="uk.org.ponder.rsac.RSACBeanLocatorFactory">
     <property name="RSACResourceLocator">
-      <ref local="rsacresourcelocator" />
+      <ref local="rsacResourceLocator" />
     </property>
   </bean>
 
   <bean id="rsacBeanLocator" factory-bean="rsacBeanLocatorFactory"
-    factory-method="getRSACBeanLocator">
+    factory-method="getRSACBeanLocator" init-method="init">
     <property name="reflectiveCache" ref="reflectiveCache"/>
     <property name="mappingContext">
       <ref bean="ELMappingContext" />

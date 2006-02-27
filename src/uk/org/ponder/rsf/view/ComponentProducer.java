@@ -5,12 +5,16 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 // This honorary comment left in honour of Hans Bergsten, who suggested
 // as loudly as he could that JSF could be better (see Chapter 15!).
-/**
- * This interface must be implemented by classes representing a view for the
- * ClassViewHandler.
- * 
- * @author Hans Bergsten, Gefion Software <hans@gefionsoftware.com>
- * @version 1.0
+///**
+// * This interface must be implemented by classes representing a view for the
+// * ClassViewHandler.
+// * 
+// * @author Hans Bergsten, Gefion Software <hans@gefionsoftware.com>
+// * @version 1.0
+// */
+/** A "static", that is, application scope component producer. The common 
+ * arguments are supplied to give the producer as good a chance as possible
+ * of not requiring any request-scope dependencies. 
  */
 public interface ComponentProducer {
   /** @param tofill The container into which produced components will be inserted.

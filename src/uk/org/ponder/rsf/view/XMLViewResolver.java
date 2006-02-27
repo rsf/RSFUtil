@@ -26,7 +26,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
 /**
  * A view resolver which will return a component producer specified in a static
  * XML file. Will attempt to look up the supplied viewID, after prefixing and
- * postfixing, as a Spring resource.
+ * postfixing, as a Spring resource. This is an application scope bean.
  * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 

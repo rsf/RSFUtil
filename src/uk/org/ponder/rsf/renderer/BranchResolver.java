@@ -151,8 +151,8 @@ public class BranchResolver {
     // that are NOT ISSUED by producer. This is a balance between resolution
     // cost here (extra hashmap) and cost of searching for each template child
     // later. There may also be some layout issues.
-    if (Logger.log.isInfoEnabled()) {
-      Logger.log.info("Call to lump index " + lump.lumpindex + " line "
+    if (Logger.log.isDebugEnabled()) {
+      Logger.log.debug("Call to lump index " + lump.lumpindex + " line "
           + lump.line + " column " + lump.column + " deficit " + deficit);
     }
     return deficit;
