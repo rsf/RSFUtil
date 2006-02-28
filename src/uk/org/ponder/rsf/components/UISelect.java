@@ -45,9 +45,15 @@ public class UISelect extends UIComponent implements FixableComponent {
     tofill.addComponent(togo);
     return togo;
   }
+  /** A "skeleton" make method to prepare for more complex constructions */
+  public static UISelect make(UIContainer tofill, String ID) {
+    UISelect togo = new UISelect();
+    tofill.addComponent(togo);
+    togo.ID = ID;
+    return togo;
+  }
   
   public void fixupComponent() {
-    String fullID = getFullID();
     if (optionnames != null) {
       if (optionnames.valuebinding == null) {
         optionnames.valuebinding = optionlist.valuebinding;

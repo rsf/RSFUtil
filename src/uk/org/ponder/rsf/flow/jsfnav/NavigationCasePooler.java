@@ -34,8 +34,7 @@ public class NavigationCasePooler implements NavigationCaseReceiver {
     pooledmap = reflectivecache.getConcurrentMap(1);
   }
   
-  public void reportNavigationCase(String viewid, List navigationCases) {
-    
+  public void receiveNavigationCases(String viewid, List navigationCases) {
     if (navigationCases != null) {
       Object oldcases = pooledmap.get(viewid);
       if (navigationCases != oldcases) {

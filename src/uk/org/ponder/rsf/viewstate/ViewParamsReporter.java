@@ -3,6 +3,6 @@
  */
 package uk.org.ponder.rsf.viewstate;
 
-public interface ViewParamsGetter {
+public interface ViewParamsReporter {
   public ViewParameters getViewParameters();
 }

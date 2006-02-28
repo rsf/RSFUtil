@@ -59,13 +59,18 @@ public class UIBranchContainer extends UIContainer {
 
   // NB - the parent of an IKATContainer WILL BE an IKATContainer when it is
   // fixed up - but intermediately, it may be something like a Form...
-  public static UIBranchContainer make(UIContainer parent, String ID) {
+  public static UIBranchContainer make(UIContainer parent, String ID, String localID) {
     UIBranchContainer togo = new UIBranchContainer();
     togo.ID = ID;
+    togo.localID = localID;
     parent.addComponent(togo);
     return togo;
   }
 
+  public static UIBranchContainer make(UIContainer parent, String ID) {
+    return make(parent, ID, "");
+  }
+  
   /**
    * Return the single component with the given ID. This should be an ID without
    * colon designating a leaf child.

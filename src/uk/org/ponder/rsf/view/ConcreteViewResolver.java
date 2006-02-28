@@ -5,12 +5,13 @@ package uk.org.ponder.rsf.view;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReceiver;
+import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.viewstate.ViewParamsReceiver;
-import uk.org.ponder.rsf.viewstate.ViewParamsGetter;
+import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 /**
@@ -36,6 +37,7 @@ public class ConcreteViewResolver implements ViewResolver {
   private List resolvers = new ArrayList();
   private boolean unknowniserror = false;
   private ViewParamsReceiver vpreceiver;
+  private NavigationCaseReceiver ncreceiver;
   private AutoComponentProducerManager automanager;
 
   public void setUnknownViewIsError(boolean unknowniserror) {
@@ -44,6 +46,10 @@ public class ConcreteViewResolver implements ViewResolver {
 
   public void setViewParametersReceiver(ViewParamsReceiver vpreceiver) {
     this.vpreceiver = vpreceiver;
+  }
+  
+  public void setNavigationCaseReceiver(NavigationCaseReceiver ncreceiver) {
+    this.ncreceiver = ncreceiver;
   }
   
   private List pendingviews = new ArrayList();
@@ -70,12 +76,15 @@ public class ConcreteViewResolver implements ViewResolver {
       String key = ALL_VIEW_PRODUCER;
       if (view instanceof ViewComponentProducer) {
         key = ((ViewComponentProducer) view).getViewID();
-        if (view instanceof ViewParamsGetter) {
-          ViewParamsGetter vpreporter = (ViewParamsGetter) view;
+        if (view instanceof ViewParamsReporter) {
+          ViewParamsReporter vpreporter = (ViewParamsReporter) view;
           vpreceiver.setViewParamsExemplar(key, vpreporter.getViewParameters());
         }
         if (view instanceof DefaultView) {
           vpreceiver.setDefaultView(key);
+        }
+        if (view instanceof NavigationCaseReporter) {
+          ncreceiver.receiveNavigationCases(key, ((NavigationCaseReporter)view).reportNavigationCases());
         }
       }
       addView(key, view);

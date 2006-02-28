@@ -12,6 +12,15 @@ package uk.org.ponder.rsf.components;
  */
 
 public class UIELBinding extends UIParameter {
+  public UIELBinding() {}
+  public UIELBinding(String lvalue, String rvalue) {
+    valuebinding = new ELReference(lvalue);
+    this.rvalue = new ELReference(rvalue); 
+  }
+  public UIELBinding(String lvalue, Object rvalue) {
+    valuebinding = new ELReference(lvalue);
+    this.rvalue = rvalue; 
+  }
   /** The "target" of this binding - an EL bean path that will be written
    * when this binding is received. Includes #{}.
    */

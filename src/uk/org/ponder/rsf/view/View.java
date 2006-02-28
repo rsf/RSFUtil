@@ -5,7 +5,6 @@ package uk.org.ponder.rsf.view;
 
 import java.util.HashMap;
 
-import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIComponent;
 
 /**
@@ -32,5 +31,4 @@ public class View {
   public UIComponent getComponent(String fullID) {
     return (UIComponent) IDtocomponent.get(fullID);
   }
- // public FormModel formmodel;
 }

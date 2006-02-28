@@ -17,14 +17,15 @@ public class UILink extends UISimpleContainer {
    * a URL. For an InternalLink this will be filled in by a fixup from the
    * ViewParameters member.
    */
-  public String target;
+  public UIOutput target;
   
   public UIOutput linktext;
   
   public static UILink make(UIContainer parent, String ID, String text, String target) {
     UILink togo = new UILink();
     togo.ID = ID;
-    togo.target = target;
+    togo.target = new UIOutput();
+    togo.target.setValue(target);
     togo.linktext = new UIOutput();
     togo.linktext.setValue(text);
     parent.addComponent(togo);    

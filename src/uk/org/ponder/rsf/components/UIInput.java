@@ -32,4 +32,9 @@ public class UIInput extends UIBoundString {
     //RSFUtil.setFossilisedBinding(parent, togo, binding, initvalue);
     return togo;
   }
+  
+  public static UIInput make(UIContainer parent, String ID,
+      String binding) {
+    return make(parent, ID, binding, null);
+  }
 }
