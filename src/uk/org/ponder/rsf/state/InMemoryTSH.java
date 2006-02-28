@@ -4,10 +4,8 @@
 package uk.org.ponder.rsf.state;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
-import uk.org.ponder.iocevent.ListenerGetter;
 import uk.org.ponder.reflect.ReflectiveCache;
 import uk.org.ponder.util.Logger;
 
@@ -36,28 +34,6 @@ public class InMemoryTSH implements TokenStateHolder {
     return (TokenState) tokencache.get(tokenID);
   }
 
-  private List listeners;
-  private ListenerGetter listenergetter;
-  private Object targetkey;
-
-  public void setListenerTargetKey(Object targetkey) {
-    this.targetkey = targetkey;
-  }
-
-  public void setListenerGetter(ListenerGetter listenergetter) {
-    this.listenergetter = listenergetter;
-  }
-
-  public void init() {
-    if (targetkey == null) {
-      targetkey = this;
-    }
-    if (listenergetter != null) {
-      listeners = listenergetter.getListeners(TokenLifetimeAware.class,
-          targetkey);
-    }
-  }
-
   // TODO: The plan is that this thread is JVM-wide, and InMemoryTSH
   // are in charge of attaching and detaching their caches to it on init and
   // destruction. Managing the necessary IPC will be an annoyance. ANDY!!
@@ -78,9 +54,7 @@ public class InMemoryTSH implements TokenStateHolder {
 
   /** Stores the supplied TokenRequestState object in the repository */
   public void putTokenState(String tokenID, Object payload) {
-    if (getTokenStateRaw(tokenID) == null) {
-      startLifetime(tokenID);
-    }
+  
     TokenState trs = new TokenState();
     trs.payload = payload;
     trs.tokenID = tokenID;
@@ -91,27 +65,12 @@ public class InMemoryTSH implements TokenStateHolder {
   }
 
   public void clearTokenState(String tokenID) {
-    endLifetime(tokenID);
+
     Logger.log
         .info("Token state cleared from InMemoryTSH for token " + tokenID);
     tokencache.remove(tokenID);
   }
 
-  private void startLifetime(String tokenID) {
-    if (listeners != null) {
-      for (int i = 0; i < listeners.size(); ++i) {
-        ((TokenLifetimeAware) listeners.get(i)).lifetimeStart(tokenID);
-      }
-    }
-  }
-
-  private void endLifetime(String tokenID) {
-    if (listeners != null) {
-      for (int i = 0; i < listeners.size(); ++i) {
-        ((TokenLifetimeAware) listeners.get(i)).lifetimeEnd(tokenID);
-      }
-    }
-  }
 
   public void setExpirySeconds(int seconds) {
     this.expiryseconds = seconds;

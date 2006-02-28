@@ -4,7 +4,7 @@
   <artifactId>rsfutil</artifactId>
   <name>J-RSFUtil</name>
   <groupId>rsfutil</groupId>
-  <currentVersion>0.6</currentVersion>
+  <currentVersion>${rsfutil.version}</currentVersion>
   <organization>
     <name>CARET, University of Cambridge</name>
     <url>http://www.caret.cam.ac.uk/</url>
@@ -94,13 +94,13 @@
     <dependency>
       <groupId>ponderutilcore</groupId>
       <artifactId>ponderutilcore</artifactId>
-      <version>1.0</version>
+      <version>${ponderutilcore.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>j-servletutil</groupId>
       <artifactId>j-servletutil</artifactId>
-      <version>1.0</version>
+      <version>${jservletutil.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
