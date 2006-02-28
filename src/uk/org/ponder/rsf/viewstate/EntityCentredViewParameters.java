@@ -3,6 +3,8 @@
  */
 package uk.org.ponder.rsf.viewstate;
 
+import uk.org.ponder.beanutil.BeanGetter;
+import uk.org.ponder.beanutil.BeanUtil;
 import uk.org.ponder.beanutil.entity.EntityID;
 import uk.org.ponder.stringutil.StringList;
 import uk.org.ponder.stringutil.URLUtil;
@@ -30,6 +32,10 @@ public class EntityCentredViewParameters extends ViewParameters {
     this.entity = entity;
     this.mode = mode;
   }
+  public EntityCentredViewParameters(String viewid, EntityID entity) {
+    this(viewid, entity, null);
+  }
+  
   public EntityCentredViewParameters() {}
   
   public EntityID entity;
@@ -56,5 +62,13 @@ public class EntityCentredViewParameters extends ViewParameters {
     return togo;
   }
 
+  public String getELPath() {
+    return BeanUtil.composeEL(entity.entityname, entity.ID);
+  }
+  
+  /** Fetch the references entity from the supplied beangetter */
+  public Object fetch(BeanGetter beangetter) {
+    return beangetter.getBean(getELPath());
+  }
 
 }

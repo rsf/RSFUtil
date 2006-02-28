@@ -53,7 +53,9 @@ public class UICommand extends UISimpleContainer {
       String methodbinding) {
     return make(parent, ID, null, methodbinding);
   }
-
+/** Construct an "actionless" command link, suitable for a CRUD-type application
+ * where the data alteration constitutes the entire action.
+ */
   public static UICommand make(UIContainer parent, String ID) {
     return make(parent, ID, null, null);
   }

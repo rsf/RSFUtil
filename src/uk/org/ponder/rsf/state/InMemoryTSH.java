@@ -3,7 +3,6 @@
  */
 package uk.org.ponder.rsf.state;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +20,7 @@ import uk.org.ponder.util.Logger;
  * High-requirement applications would presumably reimplement this class to push
  * this state into a database or some sort of clustered broadcast.
  * 
+ * NB!! Expiry not yet implemented! Do not use this class in production!
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
 public class InMemoryTSH implements TokenStateHolder {

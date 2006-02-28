@@ -73,6 +73,7 @@
       </list>
     </property>
     <property name="viewParametersReceiver" ref="viewParametersParser" />
+    <property name="navigationCaseReceiver" ref="navigationCasePooler" />
   </bean>
 
   <!--  override this bean with a concrete bean derived from XmlViewResolverDef -->
@@ -178,6 +179,13 @@
     </property>
   </bean>
 
+  <!--  Should probably replace both of these StateHolders with InSessionTSH:-->
+  
+  <!-- 
+  <bean id="flowTokenStateHolder" class="uk.org.ponder.rsf.servlet.InSessionTSH">
+    <property name="session" ref="httpSession"/>
+  </bean> -->
+  
   <bean id="flowTokenStateHolder" class="uk.org.ponder.rsf.state.InMemoryTSH"
     init-method="init">
     <property name="expirySeconds">

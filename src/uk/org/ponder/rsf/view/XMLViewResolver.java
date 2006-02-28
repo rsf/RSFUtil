@@ -35,8 +35,9 @@ import uk.org.ponder.util.UniversalRuntimeException;
 public class XMLViewResolver implements ViewResolver, ApplicationContextAware {
   public static final int NO_CACHE = -1;
   public static final String DEFAULT_EXTENSION = ".xml";
+  public static final String BASEPATH_DEFAULT = new String("");
   private StringList viewnames;
-  private String basepath;
+  private String basepath = BASEPATH_DEFAULT;
   private ResourceLoader resourceloader;
   private Map views = new HashMap();
   private String extension = DEFAULT_EXTENSION;
@@ -111,24 +112,26 @@ public class XMLViewResolver implements ViewResolver, ApplicationContextAware {
     if (resourceloader == null) {
       this.resourceloader = applicationContext;
     }
-    // make an initial attempt to load ALL producers, both for validation and
-    // also to discover viewparameter types.
-    String allpath = basepath + "*" + extension;
-    Resource[] resources = null;
-    try {
-      resources = applicationContext.getResources(allpath);
-      if (resources == null)
-        resources = new Resource[0];
-    }
-    catch (Exception e) {
-      throw UniversalRuntimeException.accumulate(e,
-          "Error getting resource list for pattern " + allpath);
-    }
-    for (int i = 0; i < resources.length; ++i) {
-      String filename = resources[i].getFilename();
-      String viewid = FilenameUtil.getStem(filename);
-      String fullpath = getFullPath(viewid);
-      tryLoadProducer(fullpath, viewid);
+    if (basepath != BASEPATH_DEFAULT) {
+      // make an initial attempt to load ALL producers, both for validation and
+      // also to discover viewparameter types.
+      String allpath = basepath + "*" + extension;
+      Resource[] resources = null;
+      try {
+        resources = applicationContext.getResources(allpath);
+        if (resources == null)
+          resources = new Resource[0];
+      }
+      catch (Exception e) {
+        throw UniversalRuntimeException.accumulate(e,
+            "Error getting resource list for pattern " + allpath);
+      }
+      for (int i = 0; i < resources.length; ++i) {
+        String filename = resources[i].getFilename();
+        String viewid = FilenameUtil.getStem(filename);
+        String fullpath = getFullPath(viewid);
+        tryLoadProducer(fullpath, viewid);
+      }
     }
   }
 

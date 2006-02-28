@@ -8,7 +8,6 @@ import java.util.Enumeration;
 import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.mapping.DARApplier;
 import uk.org.ponder.reflect.DeepBeanCloner;
-import uk.org.ponder.rsac.RSACBeanLocator;
 import uk.org.ponder.rsf.components.ComponentList;
 import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.ParameterList;
@@ -39,32 +38,22 @@ import uk.org.ponder.util.UniversalRuntimeException;
 
 public class TemplateExpander {
   private DARApplier darapplier;
-  // private BeanLocator rbl;
+  private BeanLocator rbl;
   private DeepBeanCloner deepcloner;
-  private RSACBeanLocator rsacbeanlocator;
 
   public void setDARApplier(DARApplier darapplier) {
     this.darapplier = darapplier;
   }
 
-  // This is a request-scope bean until we move all view producers into request
-  // scope.
+  // This is a proxied request-scope dependency!!
   public void setSafeBeanLocator(BeanLocator beanlocator) {
-    // this.rbl = beanlocator;
-  }
-
-  private BeanLocator getSafeLocator() {
-    return (BeanLocator) rsacbeanlocator.getBeanLocator().locateBean(
-        "rsacsafebeanlocator");
+    this.rbl = beanlocator;
   }
 
   public void setDeepBeanCloner(DeepBeanCloner deepcloner) {
     this.deepcloner = deepcloner;
   }
 
-  public void setRSACBeanLocator(RSACBeanLocator rsacbeanlocator) {
-    this.rsacbeanlocator = rsacbeanlocator;
-  }
 
   private String computeLocalID(Object bean, Object idstrategy, int index) {
     String localid = null;
@@ -130,18 +119,16 @@ public class TemplateExpander {
     }
   }
 
-
   private UIComponent resolveSwitch(UISwitch switchh, RemapState state) {
-    BeanLocator beanlocator = rsacbeanlocator.getBeanLocator();
     Object lvalue = switchh.lvalue;
     if (lvalue instanceof ELReference) {
       lvalue = darapplier.getBeanValue(((ELReference) lvalue).value,
-          beanlocator);
+          rbl);
     }
     Object rvalue = switchh.rvalue;
     if (rvalue instanceof ELReference) {
       rvalue = darapplier.getBeanValue(((ELReference) rvalue).value,
-          beanlocator);
+          rbl);
     }
     UIComponent toadd = lvalue.equals(rvalue) ? switchh.truecomponent
         : switchh.falsecomponent;
@@ -256,11 +243,10 @@ public class TemplateExpander {
    */
   private void expandReplicator(UIContainer target, UIReplicator replicator,
       RemapState state) {
-    BeanLocator safelocator = getSafeLocator();
     // TODO: work out how to remap recursively - currently old remapstate is
     // thrown away.
     String listbinding = replicator.valuebinding.value;
-    Object collection = darapplier.getBeanValue(listbinding, safelocator);
+    Object collection = darapplier.getBeanValue(listbinding, rbl);
     int index = 0;
     // for each member of the object "list", instantiate a BranchContainer with
     // corresponding localID, and then recurse further.
@@ -271,8 +257,8 @@ public class TemplateExpander {
       UIContainer expandtarget = target;
 
       if (!replicator.elideparent) {
-        UIBranchContainer replicated = UIBranchContainer.make(target, replicator.component.ID);
-        replicated.localID = localid;
+        UIBranchContainer replicated = UIBranchContainer.make(target,
+            replicator.component.ID, localid);
         expandtarget = replicated;
       }
       String stump = computeStump(replicator);

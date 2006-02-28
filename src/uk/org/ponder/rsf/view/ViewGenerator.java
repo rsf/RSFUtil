@@ -30,7 +30,7 @@ public class ViewGenerator {
     if (view == null) {
       view = generateView(viewparams, checker);
       if (view.viewroot.navigationCases != null) {
-        navreceiver.reportNavigationCase(viewparams.viewID, view.viewroot.navigationCases);
+        navreceiver.receiveNavigationCases(viewparams.viewID, view.viewroot.navigationCases);
       }
       if (Logger.log.isDebugEnabled()) {
         StringPOS dumppos = new StringPOS();

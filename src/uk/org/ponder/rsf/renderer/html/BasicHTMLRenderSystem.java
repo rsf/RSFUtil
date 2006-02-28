@@ -267,7 +267,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         UILink torender = (UILink) torendero;
         String attrname = URLRewriteSCR.getLinkAttribute(uselump);
 
-        attrcopy.put(attrname, torender.target);
+        attrcopy.put(attrname, torender.target.getValue());
         XMLUtil.dumpAttributes(attrcopy, xmlw);
         pos.print(">");
         if (torender.linktext != null) {

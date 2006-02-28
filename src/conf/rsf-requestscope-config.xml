@@ -29,6 +29,8 @@
       <ref bean="httpServletRequest" />
     </property>
   </bean>
+  
+  <bean id="httpSession" factory-bean="httpServletRequest" factory-method="getSession"/>
 
   <bean id="requestMap" factory-bean="earlyRequestParser"
     factory-method="getRequestMap" />

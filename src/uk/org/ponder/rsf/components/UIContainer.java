@@ -13,6 +13,5 @@ public abstract class UIContainer extends UIComponent {
    * UICommand's list will ONLY be submitted if the command is the submitting
    * control.
    */
-  //TODO: mapping!!!
   public ParameterList parameters = new ParameterList();
 }

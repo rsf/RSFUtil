@@ -4,24 +4,28 @@
 <!-- This file is RSF-static configuration - common and invariant to 
   all applications using RSF -->
 <beans>
-  <bean id="reflectiveCache" class="uk.org.ponder.reflect.JDKReflectiveCache"/>
+  <bean id="reflectiveCache"
+    class="uk.org.ponder.reflect.JDKReflectiveCache" />
 
-  <bean id="staticLeafParser" class="uk.org.ponder.conversion.StaticLeafParser"/>
+  <bean id="staticLeafParser"
+    class="uk.org.ponder.conversion.StaticLeafParser" />
 
   <bean id="protoSaxalizerMappingContext"
-      class="uk.org.ponder.saxalizer.SAXalizerMappingContext">
-    <property name="reflectiveCache" ref="reflectiveCache"/>  
-    <property name="staticLeafParser" ref="staticLeafParser"/>
+    class="uk.org.ponder.saxalizer.SAXalizerMappingContext">
+    <property name="reflectiveCache" ref="reflectiveCache" />
+    <property name="staticLeafParser" ref="staticLeafParser" />
   </bean>
 
-  <bean id="ELDefaultInferrer" class="uk.org.ponder.saxalizer.mapping.DefaultMapperInferrer">
-    <property name="depluralize" value="false"/>
+  <bean id="ELDefaultInferrer"
+    class="uk.org.ponder.saxalizer.mapping.DefaultMapperInferrer">
+    <property name="depluralize" value="false" />
   </bean>
 
-  <bean id="ELMappingContext" class="uk.org.ponder.saxalizer.SAXalizerMappingContext">
-    <property name="reflectiveCache" ref="reflectiveCache"/>
-    <property name="defaultInferrer" ref="ELDefaultInferrer"/>
-    <property name="staticLeafParser" ref="staticLeafParser"/>
+  <bean id="ELMappingContext"
+    class="uk.org.ponder.saxalizer.SAXalizerMappingContext">
+    <property name="reflectiveCache" ref="reflectiveCache" />
+    <property name="defaultInferrer" ref="ELDefaultInferrer" />
+    <property name="staticLeafParser" ref="staticLeafParser" />
   </bean>
 
   <bean id="streamResolver"
@@ -68,9 +72,9 @@
     class="uk.org.ponder.springutil.SpringXMLMappingLoader"
     init-method="init">
     <property name="SAXalizerMappingContext">
-      <ref bean="protoSaxalizerMappingContext"/>
+      <ref bean="protoSaxalizerMappingContext" />
     </property>
-    <property name="mappableXMLProvider" ref="mappableXMLProvider"/>
+    <property name="mappableXMLProvider" ref="mappableXMLProvider" />
   </bean>
 
   <bean id="XMLProvider" factory-bean="mappingLoadManager"
@@ -78,28 +82,31 @@
   </bean>
 
   <bean id="XMLMappingContext" factory-bean="mappingLoadManager"
-    factory-method="getSAXalizerMappingContext"></bean>
+    factory-method="getSAXalizerMappingContext">
+  </bean>
 
   <bean id="DARApplier" class="uk.org.ponder.mapping.DARApplier">
     <property name="SAXalXMLProvider">
       <ref local="XMLProvider" />
     </property>
     <property name="mappingContext">
-      <ref local="ELMappingContext"/>
+      <ref local="ELMappingContext" />
     </property>
-    <property name="reflectiveCache" ref="reflectiveCache"/>
+    <property name="reflectiveCache" ref="reflectiveCache" />
   </bean>
 
-  <bean id="deepBeanCloner" class="uk.org.ponder.reflect.DeepBeanCloner">
+  <bean id="deepBeanCloner"
+    class="uk.org.ponder.reflect.DeepBeanCloner">
     <property name="mappingContext">
       <ref bean="ELMappingContext" />
     </property>
-    <property name="reflectiveCache" ref="reflectiveCache"/>
+    <property name="reflectiveCache" ref="reflectiveCache" />
   </bean>
 
-  <bean id="fieldGetter" class="uk.org.ponder.beanutil.BeanFieldResolver">
+  <bean id="fieldGetter"
+    class="uk.org.ponder.beanutil.BeanFieldResolver">
     <property name="mappingContext">
-      <ref bean="ELMappingContext"/>
+      <ref bean="ELMappingContext" />
     </property>
   </bean>
 
@@ -132,10 +139,10 @@
   </bean>
 
   <!-- Used when operating an HTML-like form system whereby submitting controls
-  are defined by nesting within an element -->
+    are defined by nesting within an element -->
   <bean id="containmentformfixer"
     class="uk.org.ponder.rsf.componentprocessor.ContainmentFormChildFixer">
-    <property name="mappingContext" ref="ELMappingContext"/>
+    <property name="mappingContext" ref="ELMappingContext" />
   </bean>
 
   <bean id="baseURLProvider" abstract="true"></bean>
@@ -153,13 +160,13 @@
 
   <bean id="rsacBeanLocator" factory-bean="rsacBeanLocatorFactory"
     factory-method="getRSACBeanLocator" init-method="init">
-    <property name="reflectiveCache" ref="reflectiveCache"/>
+    <property name="reflectiveCache" ref="reflectiveCache" />
     <property name="mappingContext">
       <ref bean="ELMappingContext" />
     </property>
   </bean>
 
-  <bean id="fallbackBeans" factory-bean="rsacBeanLocator" 
+  <bean id="fallbackBeans" factory-bean="rsacBeanLocator"
     factory-method="getFallbackBeans" lazy-init="true">
   </bean>
 
@@ -167,7 +174,8 @@
     class="uk.org.ponder.rsf.renderer.html.BasicHTMLRenderSystemStatic">
   </bean>
 
-  <bean id="idgenerator" class="uk.org.ponder.hashutil.EighteenIDGenerator" />
+  <bean id="idgenerator"
+    class="uk.org.ponder.hashutil.EighteenIDGenerator" />
 
   <bean id="templateExpander"
     class="uk.org.ponder.rsf.expander.TemplateExpander">
@@ -177,20 +185,30 @@
     <property name="deepBeanCloner">
       <ref bean="deepBeanCloner" />
     </property>
-    <property name="RSACBeanLocator">
-      <ref bean="rsacBeanLocator" />
+    <property name="safeBeanLocator">
+      <ref bean="RSACSafeBeanLocatorProxy" />
     </property>
   </bean>
 
-<!--  Lazy loading needed to break dependence cycle - SiteMap via BasicViewParamsParser
-  REQUIRES mapping to be loaded already!! -->
- <bean id="viewParamsLeafParser" class="org.springframework.aop.framework.ProxyFactoryBean">
-   <property name="targetSource">
-     <bean class="org.springframework.aop.target.LazyInitTargetSource">
-       <property name="targetBeanName"><idref local="viewParamsLeafParserTarget"/></property>
-     </bean>
-   </property>
- </bean>
+  <bean id="RSACSafeBeanLocatorProxy" parent="RSACBridgeProxy">
+    <property name="targetBeanName">
+      <idref bean="rsacSafeBeanLocator" />
+    </property>
+  </bean>
+
+  <!--  Lazy loading needed to break dependence cycle - SiteMap via BasicViewParamsParser
+    REQUIRES mapping to be loaded already!! -->
+  <bean id="viewParamsLeafParser"
+    class="org.springframework.aop.framework.ProxyFactoryBean">
+    <property name="targetSource">
+      <bean
+        class="org.springframework.aop.target.LazyInitTargetSource">
+        <property name="targetBeanName">
+          <idref local="viewParamsLeafParserTarget" />
+        </property>
+      </bean>
+    </property>
+  </bean>
 
   <bean id="viewParamsLeafParserTarget"
     class="uk.org.ponder.rsf.viewstate.ViewParamsLeafParser">
@@ -209,25 +227,29 @@
     </property>
   </bean>
 
-  <bean id="listenerConnector" class="uk.org.ponder.iocevent.BeetleConnector"/>
-  
-  <bean id="XMLFactoryBean" class="uk.org.ponder.rsf.util.XMLFactoryBean"
-    abstract="true">
-    <property name="XMLProvider" ref="XMLProvider"/>
-    <property name="reflectiveCache" ref="reflectiveCache"/>
-  </bean>
-  
-  <bean id="RSACBridgeProxy" class="uk.org.ponder.rsac.RSACBridgeProxy" 
-      abstract="true">
-    <property name="RSACBeanLocator" ref="rsacBeanLocator"/>
-  </bean>
-  
-  <bean id="flowLite-flowDefinition" parent="XMLFactoryBean" 
-    class="uk.org.ponder.rsf.flow.lite.XMLFlowFactoryBean" abstract="true">
-    <property name="objectType" value="uk.org.ponder.rsf.flow.lite.Flow"/>
+  <bean id="listenerConnector"
+    class="uk.org.ponder.iocevent.BeetleConnector" />
+
+  <bean id="XMLFactoryBean"
+    class="uk.org.ponder.rsf.util.XMLFactoryBean" abstract="true">
+    <property name="XMLProvider" ref="XMLProvider" />
+    <property name="reflectiveCache" ref="reflectiveCache" />
   </bean>
 
-  <bean id="navigationCasePooler" class="uk.org.ponder.rsf.flow.jsfnav.NavigationCasePooler">
-    <property name="reflectiveCache" ref="reflectiveCache"/>
+  <bean id="RSACBridgeProxy" class="uk.org.ponder.rsac.RSACBridgeProxy"
+    abstract="true">
+    <property name="RSACBeanLocator" ref="rsacBeanLocator" />
+  </bean>
+
+  <bean id="flowLite-flowDefinition" parent="XMLFactoryBean"
+    class="uk.org.ponder.rsf.flow.lite.XMLFlowFactoryBean"
+    abstract="true">
+    <property name="objectType"
+      value="uk.org.ponder.rsf.flow.lite.Flow" />
+  </bean>
+
+  <bean id="navigationCasePooler"
+    class="uk.org.ponder.rsf.flow.jsfnav.NavigationCasePooler">
+    <property name="reflectiveCache" ref="reflectiveCache" />
   </bean>
 </beans>

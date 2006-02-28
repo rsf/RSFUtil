@@ -6,5 +6,5 @@ package uk.org.ponder.rsf.flow.jsfnav;
 import java.util.List;
 
 public interface NavigationCaseReceiver {
-  public void reportNavigationCase(String viewid, List navigationCases);
+  public void receiveNavigationCases(String viewid, List navigationCases);
 }

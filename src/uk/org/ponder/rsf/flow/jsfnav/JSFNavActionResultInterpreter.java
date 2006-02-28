@@ -10,6 +10,14 @@ import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterpreter;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
+/** An ActionResultInterpreter implementing "JSF-style" navigation semantics.
+ * Encodes a one-step (contextless) rule mapping action result to resulting
+ * view, by matching one of a set of "NavigationRules" which may map on
+ * String result and/or source view. 
+ * @author Antranig Basman (antranig@caret.cam.ac.uk)
+ *
+ */
+
 public class JSFNavActionResultInterpreter implements ActionResultInterpreter {
 
   private NavigationMap map;
