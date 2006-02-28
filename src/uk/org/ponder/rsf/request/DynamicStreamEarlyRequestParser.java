@@ -4,7 +4,11 @@ import java.util.Map;
 
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
-
+/** A default concrete implementation of EarlyRequestParser that is a simple
+ * repository for set values.
+ * @author Raymond Chan (raymond@caret.cam.ac.uk)
+ *
+ */
 public class DynamicStreamEarlyRequestParser implements EarlyRequestParser {
 
 	private String pathInfo;
@@ -16,8 +20,8 @@ public class DynamicStreamEarlyRequestParser implements EarlyRequestParser {
 	}
 	
 	/*
-	 * It is your responsibility to make sure this isn't null
-	 * by the time you want RSF to use this...
+	 * A parameter map from which request parameters can be read. RSF expects
+     * this to be the standard map of String to String[].
 	 */
     public Map getRequestMap() {
         return requestMap;

@@ -171,37 +171,44 @@
 
   <bean id="inMemoryFlowLockGetter"
     class="uk.org.ponder.rsf.flow.InMemoryFlowLockGetter">
-    <property name="listenerTargetKey">
-      <ref bean="flowTokenStateHolder" />
-    </property>
-    <property name="listenerReporter">
-      <ref bean="listenerConnector" />
-    </property>
   </bean>
-
-  <!--  Should probably replace both of these StateHolders with InSessionTSH:-->
   
-  <!-- 
   <bean id="flowTokenStateHolder" class="uk.org.ponder.rsf.servlet.InSessionTSH">
-    <property name="session" ref="httpSession"/>
-  </bean> -->
-  
-  <bean id="flowTokenStateHolder" class="uk.org.ponder.rsf.state.InMemoryTSH"
-    init-method="init">
+    <property name="session" ref="httpSessionProxy"/>
     <property name="expirySeconds">
       <!-- deliberately short time for testing - all flows will expire after 
         30 seconds of disuse -->
       <value>30</value>
     </property>
-    <property name="listenerGetter">
-      <ref bean="listenerConnector" />
+  </bean>
+  
+   <bean id="bandgapStateHolder" class="uk.org.ponder.rsf.servlet.InSessionTSH">
+    <property name="session" ref="httpSessionProxy"/>
+    <property name="expirySeconds">
+      <!-- deliberately short time for testing - all errors will expire after 
+        10 seconds of disuse -->
+      <value>10</value>
+    </property>
+  </bean>
+  
+  <bean id="httpSessionProxy" parent="RSACBridgeProxy">
+    <property name="targetBeanName">
+      <idref bean="httpSession"/>
+    </property>
+  </bean>
+  
+  <bean id="flowTokenStateHolder-memory" class="uk.org.ponder.rsf.state.InMemoryTSH">
+    <property name="expirySeconds">
+      <!-- deliberately short time for testing - all flows will expire after 
+        30 seconds of disuse -->
+      <value>30</value>
     </property>
   </bean>
 
   <!-- The state holder used for "ephemeral" state designed to only persist
     through about 1 client request - error messages, end flow messages,
     data in transit to client storage -->
-  <bean id="bandgapStateHolder" class="uk.org.ponder.rsf.state.InMemoryTSH">
+  <bean id="bandgapStateHolder-memory" class="uk.org.ponder.rsf.state.InMemoryTSH">
     <property name="expirySeconds">
       <!-- deliberately short time for testing - all errors will expire after 
         10 seconds of disuse -->

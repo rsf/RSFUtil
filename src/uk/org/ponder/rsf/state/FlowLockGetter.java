@@ -12,4 +12,5 @@ package uk.org.ponder.rsf.state;
 
 public interface FlowLockGetter {
   public Object getFlowLock(String flowtoken);
+  public void returnFlowLock(String flowtoken);
 }
