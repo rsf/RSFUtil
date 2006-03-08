@@ -194,7 +194,7 @@
   <bean id="httpSessionProxy" parent="RSACBridgeProxy">
     <property name="targetBeanName">
       <idref bean="httpSession"/>
-    </property>
+    </property> 
   </bean>
   
   <bean id="flowTokenStateHolder-memory" class="uk.org.ponder.rsf.state.InMemoryTSH">

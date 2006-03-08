@@ -55,10 +55,13 @@ public class ReasonableSpringServlet extends HttpServlet {
     try {
       rsacbeanlocator.getBeanLocator().locateBean("rootHandlerBean");
     }
-    catch (Exception e) {
+    catch (Throwable t) {
       // Catch and log this here because Tomcat's stack rendering is
       // non-standard and crummy.
-      Logger.log.error("Error servicing RSAC request: ", e);
+      Logger.log.error("Error servicing RSAC request: ", t);
+      if (t instanceof Error) {
+        throw ((Error)t);
+      }
     }
     finally {
       rsacbeanlocator.endRequest();

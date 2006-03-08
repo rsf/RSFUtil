@@ -96,7 +96,7 @@ public class BasicViewParametersParser implements ViewParametersParser, ViewPara
 
     // Map requestmap = req.
     // requestmap.put(ViewParameters.CURRENT_REQUEST, origrequest);
-    Logger.log.info("Restoring view " + origrequest.viewID
+    Logger.log.info("Parsed view " + origrequest.viewID
         + " from request parameters " + ViewParamUtil.toHTTPRequest(bma, origrequest));
     return origrequest;
 

@@ -28,7 +28,6 @@ public class DynamicStreamEarlyRequestParser implements EarlyRequestParser {
     }
 
     /*
-     * FAKE pathinfo:
      * This INCLUDES an initial slash but no final slash,
      * e.g. "/thingy/foobar"
      */
@@ -37,7 +36,6 @@ public class DynamicStreamEarlyRequestParser implements EarlyRequestParser {
     }
     
     /*
-     * FAKE pathinfo as set-up by you earlier.
      * This INCLUDES an initial slash but no final slash,
      * e.g. "/thingy/foobar"
      */

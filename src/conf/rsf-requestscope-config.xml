@@ -223,38 +223,38 @@
     </property>
   </bean>
 
-  <bean id="urlrewriter"
+  <bean id="URLRewriter"
     class="uk.org.ponder.rsf.viewstate.URLRewriter">
     <property name="viewStateHandler">
       <ref bean="viewStateHandler" />
     </property>
   </bean>
 
-  <bean id="urlrewritescr"
+  <bean id="URLRewriteSCR"
     class="uk.org.ponder.rsf.renderer.html.URLRewriteSCR">
     <property name="URLRewriter">
-      <ref bean="urlrewriter" />
+      <ref bean="URLRewriter" />
     </property>
     <property name="viewTemplate">
-      <ref bean="viewtemplate" />
+      <ref bean="viewTemplate" />
     </property>
   </bean>
 
   <!-- A set of static renderers to be used for this request -->
-  <bean id="staticrenderers"
+  <bean id="staticRenderers"
     class="uk.org.ponder.rsf.renderer.StaticRendererCollection">
     <property name="staticRenderers">
       <list>
-        <ref local="urlrewritescr" />
+        <ref local="URLRewriteSCR" />
         <ref bean="consumerStaticRenderers" />
       </list>
     </property>
   </bean>
 
-  <bean id="rendersystem"
+  <bean id="renderSystem"
     class="uk.org.ponder.rsf.renderer.html.BasicHTMLRenderSystem">
     <property name="staticRenderers">
-      <ref local="staticrenderers" />
+      <ref local="staticRenderers" />
     </property>
   </bean>
 
@@ -262,20 +262,20 @@
     LoaderBean returns a template. This is a factory bean -->
   <!-- Get rid of this and turn the TemplateResolver itself into a 
     request-scope bean -->
-  <bean id="viewtemplate"
+  <bean id="viewTemplate"
     class="uk.org.ponder.rsf.templateresolver.TemplateLoaderBean">
     <!-- EXTERNAL DEPENDENCY! The application supplies the template resolver -->
     <property name="templateResolver">
-      <ref bean="viewtemplateresolver" />
+      <ref bean="viewTemplateResolver" />
     </property>
     <property name="viewParameters">
       <ref local="viewParameters" />
     </property>
   </bean>
 
-  <bean id="viewrender" class="uk.org.ponder.rsf.renderer.ViewRender">
+  <bean id="viewRender" class="uk.org.ponder.rsf.renderer.ViewRender">
     <property name="viewTemplate">
-      <ref local="viewtemplate" />
+      <ref local="viewTemplate" />
     </property>
     <!-- This dependence is injected manually, since the alterationwrapper must
       bracket restoration, and access to the model by fixup -->
@@ -284,7 +284,7 @@
       <ref local="view"/>
       </property>-->
     <property name="renderSystem">
-      <ref local="rendersystem" />
+      <ref local="renderSystem" />
     </property>
     <property name="messageRenderer">
       <ref bean="messageRenderer" />
@@ -369,7 +369,7 @@
   <!-- End beans for FlowLite -->
 
 
-  <bean id="viewgenerator"
+  <bean id="viewGenerator"
     class="uk.org.ponder.rsf.view.ViewGenerator">
     <!-- EXTERNAL DEPENDENCY! The application supplies the view collection -->
     <property name="viewResolver">
@@ -379,7 +379,7 @@
       <ref local="viewParameters" />
     </property>
     <property name="componentChecker">
-      <ref local="viewtemplate" />
+      <ref local="viewTemplate" />
     </property>
     <property name="navigationCaseReceiver">
       <ref bean="navigationCasePooler" />
@@ -392,7 +392,7 @@
   <!-- Begin request scope "fixer" beans - manipulate component tree in between
     generation and rendering -->
 
-  <bean id="formfixer"
+  <bean id="formFixer"
     class="uk.org.ponder.rsf.componentprocessor.DefaultFormFixer">
     <property name="viewParameters">
       <ref local="viewParameters" />
@@ -409,7 +409,7 @@
     </property>
   </bean>
 
-  <bean id="valuefixer"
+  <bean id="valueFixer"
     class="uk.org.ponder.rsf.componentprocessor.ValueFixer">
     <property name="requestRSVC">
       <ref local="requestrsvc" />
@@ -425,7 +425,7 @@
     </property>
   </bean>
 
-  <bean id="viewparamsfixer"
+  <bean id="viewParamsFixer"
     class="uk.org.ponder.rsf.componentprocessor.ViewParamsFixer">
     <property name="viewStateHandler">
       <ref bean="viewStateHandler" />
@@ -434,18 +434,18 @@
 
   <!-- End "fixer" beans" -->
 
-  <bean id="viewprocessor"
+  <bean id="viewProcessor"
     class="uk.org.ponder.rsf.view.ViewProcessor">
     <property name="mappingContext" ref="ELMappingContext" />
     <property name="componentProcessors">
       <list>
         <!-- This must execute before formfixer-->
-        <ref bean="containmentformfixer" />
-        <ref bean="formfixer" />
-        <ref bean="viewparamsfixer" />
-        <ref bean="messagefixer" />
-        <ref bean="bindingfixer" />
-        <ref bean="valuefixer" />
+        <ref bean="containmentFormFixer" />
+        <ref bean="formFixer" />
+        <ref bean="viewParamsFixer" />
+        <ref bean="messageFixer" />
+        <ref bean="bindingFixer" />
+        <ref bean="valueFixer" />
       </list>
     </property>
   </bean>
@@ -479,7 +479,7 @@
       <ref local="viewParameters" />
     </property>
     <property name="viewGenerator">
-      <ref bean="viewgenerator" />
+      <ref bean="viewGenerator" />
     </property>
     <property name="alterationWrapper">
       <ref bean="alterationWrapper" />
@@ -488,10 +488,10 @@
       <ref local="statePreservationManager" />
     </property>
     <property name="viewProcessor">
-      <ref bean="viewprocessor" />
+      <ref bean="viewProcessor" />
     </property>
     <property name="viewRender">
-      <ref bean="viewrender" />
+      <ref bean="viewRender" />
     </property>
   </bean>
 </beans>
