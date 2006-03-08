@@ -33,7 +33,7 @@ public class UISelect extends UIComponent implements FixableComponent {
   public static UISelect make(UIContainer tofill, String ID, String[] values,
       String[] labels, String value) {
     UISelect togo = new UISelect();
-    togo.optionlist = new UIBoundList();
+    togo.optionlist = new UIOutputMany();
     togo.ID = ID;
     togo.optionlist.setValue(values);
     togo.optionnames = new UIBoundList();
@@ -59,5 +59,18 @@ public class UISelect extends UIComponent implements FixableComponent {
         optionnames.valuebinding = optionlist.valuebinding;
       }
     }
+  }
+  /** Constructs a simple selection control, where the submitted values are 
+   * identical with the rendered labels
+   */
+  public static UISelect make(UIContainer tofill, String ID, String[] options, 
+      String valuebinding, String initvalue) {
+    UISelect togo = new UISelect();
+    togo.ID = ID;
+    togo.optionlist = togo.optionnames = UIOutputMany.make(options);
+    togo.selection = UIInput.make(valuebinding);
+    tofill.addComponent(togo);
+    return togo;
+    
   }
 }

@@ -10,7 +10,7 @@
 
 <beans>
 
-  <bean id="viewtemplateresolver"
+  <bean id="viewTemplateResolver" 
     class="uk.org.ponder.rsf.templateresolver.BasicTemplateResolver">
     <property name="baseDirectory">
       <value>/content/templates/</value>

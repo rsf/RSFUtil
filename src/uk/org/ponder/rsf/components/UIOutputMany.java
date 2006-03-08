@@ -12,4 +12,11 @@ public class UIOutputMany extends UIBoundList {
     togo.resolver = new ELReference(resolver);
     return togo;
   }
+  
+  /** Another constructor for selection lists, where these have been precomputed **/
+  public static UIOutputMany make(String[] values) {
+    UIOutputMany togo = new UIOutputMany();
+    togo.setValue(values);
+    return togo;
+  }
 }

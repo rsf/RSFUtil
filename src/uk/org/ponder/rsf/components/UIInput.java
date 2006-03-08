@@ -37,4 +37,13 @@ public class UIInput extends UIBoundString {
       String binding) {
     return make(parent, ID, binding, null);
   }
+  
+  /** A "bare" constructor suitable for the selection member of a single 
+   * selection control (UIInput);
+   */
+  public static UIInput make(String valuebinding) {
+    UIInput togo = new UIInput();
+    togo.valuebinding = new ELReference(valuebinding);
+    return togo;
+  }
 }

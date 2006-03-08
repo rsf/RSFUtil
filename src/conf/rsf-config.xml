@@ -77,8 +77,12 @@
     <property name="mappableXMLProvider" ref="mappableXMLProvider" />
   </bean>
 
+<!--  lazy-init is fix for Spring 1.2.2+ "behaviour" whereby ABF.getType() 
+will actually try to load the bean!!
+http://opensource2.atlassian.com/projects/spring/browse/SPR-1116
+-->
   <bean id="XMLProvider" factory-bean="mappingLoadManager"
-    factory-method="getXMLProvider">
+    factory-method="getXMLProvider" lazy-init="true">
   </bean>
 
   <bean id="XMLMappingContext" factory-bean="mappingLoadManager"
@@ -124,14 +128,14 @@
     </property>
   </bean>
 
-  <bean id="bindingfixer"
+  <bean id="bindingFixer"
     class="uk.org.ponder.rsf.componentprocessor.BindingFixer">
     <property name="fossilizedConverter">
       <ref bean="fossilizedConverter" />
     </property>
   </bean>
 
-  <bean id="messagefixer"
+  <bean id="messageFixer"
     class="uk.org.ponder.rsf.componentprocessor.MessageFixer">
     <property name="messageLocator">
       <ref bean="messageLocator" />
@@ -140,7 +144,7 @@
 
   <!-- Used when operating an HTML-like form system whereby submitting controls
     are defined by nesting within an element -->
-  <bean id="containmentformfixer"
+  <bean id="containmentFormFixer"
     class="uk.org.ponder.rsf.componentprocessor.ContainmentFormChildFixer">
     <property name="mappingContext" ref="ELMappingContext" />
   </bean>
