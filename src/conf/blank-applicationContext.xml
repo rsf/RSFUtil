@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
 	"http://www.springframework.org/dtd/spring-beans.dtd">
-<!-- The purpose of this file is to provide an "default" completion of
+<!-- The purpose of this file is to provide reasonable "default" completion of
   the application scope portion of 
   RSF's Spring API, so that the project will validate self-consistently in,
   for example, Spring IDE.  Dependencies resolved here are ones that clients
-  might well want to (and in many cases must) override, as opposed to more 
+  might well want to override, as opposed to more 
   core dependencies in the main RSF configuration file rsf-config.xml. -->
 <beans>
   <bean id="messageSource"
@@ -56,14 +56,14 @@
     class="uk.org.ponder.rsf.view.AutoComponentProducerManager"
     init-method="init">
     <property name="reflectiveCache" ref="reflectiveCache" />
-    <property name="RSACBeanLocator" ref="rsacBeanLocator" />
+    <property name="RSACBeanLocator" ref="RSACBeanLocator" />
 
   </bean>
 
   <bean id="viewResolver" class="uk.org.ponder.rsf.view.ConcreteViewResolver"
     init-method="init">
     <property name="views">
-      <ref bean="staticviews" />
+      <ref bean="staticViews" />
     </property>
     <property name="autoComponentProducerManager"
       ref="autoComponentProducerManager" />
@@ -95,6 +95,16 @@
 
   <bean id="XMLActionErrorStrategies" parent="XMLActionErrorStrategyDef" />
 
+  <bean id="viewExceptionStrategy"
+    class="uk.org.ponder.rsf.flow.SimpleViewExceptionStrategy">
+    <property name="viewParametersParser">
+      <ref bean="viewParametersParser" />
+    </property>
+    <property name="defaultView">
+      <ref bean="defaultView" />
+    </property>
+  </bean>
+
   <bean name="requestAddressibleBeans"
     class="uk.org.ponder.stringutil.StringList">
     <constructor-arg>
@@ -104,7 +114,13 @@
     </constructor-arg>
   </bean>
 
-  <bean id="staticviews" class="java.util.ArrayList">
+  <bean id="staticViews" class="java.util.ArrayList">
+    <constructor-arg>
+      <list></list>
+    </constructor-arg>
+  </bean>
+  
+   <bean id="ultimateRenderers" class="java.util.ArrayList">
     <constructor-arg>
       <list></list>
     </constructor-arg>
@@ -180,7 +196,7 @@
         30 seconds of disuse -->
       <value>30</value>
     </property>
-  </bean>
+  </bean> 
   
    <bean id="bandgapStateHolder" class="uk.org.ponder.rsf.servlet.InSessionTSH">
     <property name="session" ref="httpSessionProxy"/>

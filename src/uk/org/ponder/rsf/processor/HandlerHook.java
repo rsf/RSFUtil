@@ -11,6 +11,9 @@ package uk.org.ponder.rsf.processor;
  *
  */
 // cf. HandlerInterceptor!!
+// Looks like we could replace this with FetchBracketer now. Only problem is
+// ORDERING, we REALLY need to think of a way round this "unrenamable bean"
+// rubbish.
 public interface HandlerHook {
   public boolean handle();
   public void setHandlerHook(HandlerHook handlerhook);

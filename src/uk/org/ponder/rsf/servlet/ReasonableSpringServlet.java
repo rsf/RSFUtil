@@ -41,7 +41,7 @@ public class ReasonableSpringServlet extends HttpServlet {
         + sc.getRealPath(""));
     contextLoader = new ContextLoader();
     WebApplicationContext wac = contextLoader.initWebApplicationContext(sc);
-    rsacbeanlocator = (RSACBeanLocator) wac.getBean("rsacBeanLocator");
+    rsacbeanlocator = (RSACBeanLocator) wac.getBean("RSACBeanLocator");
   }
 
   public void destroy() {

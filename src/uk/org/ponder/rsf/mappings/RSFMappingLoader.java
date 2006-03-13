@@ -6,6 +6,7 @@ package uk.org.ponder.rsf.mappings;
 import uk.org.ponder.conversion.DateParser;
 import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.ELReferenceParser;
+import uk.org.ponder.rsf.components.UIAnchor;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIDeletionBinding;
@@ -48,7 +49,7 @@ public class RSFMappingLoader implements MappingLoader {
     UILink.class, UIMessage.class, UIOutput.class, UIOutputMultiline.class,
     UIBranchContainer.class, UISimpleContainer.class, UIELBinding.class,
     UIDeletionBinding.class, UIReplicator.class, UISwitch.class, UISelect.class,
-    UIInputMany.class, UIOutputMany.class, UIError.class
+    UIInputMany.class, UIOutputMany.class, UIError.class, UIAnchor.class
   };
   private ViewParamsLeafParser viewparamsleafparser;
   

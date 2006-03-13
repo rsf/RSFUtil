@@ -159,6 +159,9 @@ public class RSFActionHandler implements ActionHandler {
           presmanager.flowEnd(viewparams.flowtoken);
         }
       }
+      // moved inside since this may itself cause an error!
+      String submitting = PostDecoder.decodeSubmittingControl(normalizedmap);
+      errorstatemanager.globaltargetid = submitting;
     }
     catch (Exception e) {
       Logger.log.error("Error invoking action", e);
@@ -173,8 +176,6 @@ public class RSFActionHandler implements ActionHandler {
         ariresult.resultingview = defaultparameters;
       }
     }
-    String submitting = PostDecoder.decodeSubmittingControl(normalizedmap);
-    errorstatemanager.globaltargetid = submitting;
 
     String errortoken = errorstatemanager.requestComplete();
 

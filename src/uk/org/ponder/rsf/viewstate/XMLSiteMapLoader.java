@@ -5,7 +5,7 @@ package uk.org.ponder.rsf.viewstate;
 
 import java.util.Iterator;
 
-import uk.org.ponder.rsf.util.XMLFactoryBean;
+import uk.org.ponder.springutil.XMLFactoryBean;
 
 /** A Spring FactoryBean that will embody a BasicViewParametersParser
  * object based on the contents of an XML-formatted sitemap file.
