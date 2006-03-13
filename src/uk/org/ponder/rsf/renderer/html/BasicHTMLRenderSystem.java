@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import uk.org.ponder.rsf.components.ParameterList;
+import uk.org.ponder.rsf.components.UIAnchor;
 import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBoundList;
@@ -179,6 +180,20 @@ public class BasicHTMLRenderSystem implements RenderSystem {
                 xmlw.write(value.stringAt(i));
               }
               closeTag(pos, uselump);
+            }
+          }
+          else if (torender.getClass() == UIAnchor.class) {
+            String value = ((UIAnchor) torendero).getValue();
+            if (UITypes.isPlaceholder(value)) {
+              RenderUtil.dumpTillLump(lumps, lumpindex + 1,
+                  close.lumpindex + 1, pos);
+            }
+            else {
+              attrcopy.put("name", value);
+              XMLUtil.dumpAttributes(attrcopy, xmlw);
+              pos.print(">");
+              RenderUtil.dumpTillLump(lumps, endopen.lumpindex + 1,
+                  close.lumpindex + 1, pos);
             }
           }
         }

@@ -61,7 +61,7 @@
     </property>
   </bean>
 
-  <bean id="rsfmappingloader"
+  <bean id="RSFMappingLoader"
     class="uk.org.ponder.rsf.mappings.RSFMappingLoader">
     <property name="viewParamsLeafParser">
       <ref bean="viewParamsLeafParser" />
@@ -151,18 +151,18 @@ http://opensource2.atlassian.com/projects/spring/browse/SPR-1116
 
   <bean id="baseURLProvider" abstract="true"></bean>
 
-  <bean id="rsacResourceLocator"
+  <bean id="RSACResourceLocator"
     class="uk.org.ponder.rsac.servlet.ServletRSACResourceLocator">
   </bean>
 
-  <bean id="rsacBeanLocatorFactory"
+  <bean id="RSACBeanLocatorFactory"
     class="uk.org.ponder.rsac.RSACBeanLocatorFactory">
     <property name="RSACResourceLocator">
-      <ref local="rsacResourceLocator" />
+      <ref local="RSACResourceLocator" />
     </property>
   </bean>
 
-  <bean id="rsacBeanLocator" factory-bean="rsacBeanLocatorFactory"
+  <bean id="RSACBeanLocator" factory-bean="RSACBeanLocatorFactory"
     factory-method="getRSACBeanLocator" init-method="init">
     <property name="reflectiveCache" ref="reflectiveCache" />
     <property name="mappingContext">
@@ -170,15 +170,15 @@ http://opensource2.atlassian.com/projects/spring/browse/SPR-1116
     </property>
   </bean>
 
-  <bean id="fallbackBeans" factory-bean="rsacBeanLocator"
+  <bean id="fallbackBeans" factory-bean="RSACBeanLocator"
     factory-method="getFallbackBeans" lazy-init="true">
   </bean>
 
-  <bean id="rendersystemstatic"
+  <bean id="renderSystemStatic"
     class="uk.org.ponder.rsf.renderer.html.BasicHTMLRenderSystemStatic">
   </bean>
 
-  <bean id="idgenerator"
+  <bean id="IDGenerator"
     class="uk.org.ponder.hashutil.EighteenIDGenerator" />
 
   <bean id="templateExpander"
@@ -196,7 +196,7 @@ http://opensource2.atlassian.com/projects/spring/browse/SPR-1116
 
   <bean id="RSACSafeBeanLocatorProxy" parent="RSACBridgeProxy">
     <property name="targetBeanName">
-      <idref bean="rsacSafeBeanLocator" />
+      <idref bean="RSACSafeBeanLocator" />
     </property>
   </bean>
 
@@ -235,14 +235,14 @@ http://opensource2.atlassian.com/projects/spring/browse/SPR-1116
     class="uk.org.ponder.iocevent.BeetleConnector" />
 
   <bean id="XMLFactoryBean"
-    class="uk.org.ponder.rsf.util.XMLFactoryBean" abstract="true">
+    class="uk.org.ponder.springutil.XMLFactoryBean" abstract="true">
     <property name="XMLProvider" ref="XMLProvider" />
     <property name="reflectiveCache" ref="reflectiveCache" />
   </bean>
 
   <bean id="RSACBridgeProxy" class="uk.org.ponder.rsac.RSACBridgeProxy"
     abstract="true">
-    <property name="RSACBeanLocator" ref="rsacBeanLocator" />
+    <property name="RSACBeanLocator" ref="RSACBeanLocator" />
   </bean>
 
   <bean id="flowLite-flowDefinition" parent="XMLFactoryBean"

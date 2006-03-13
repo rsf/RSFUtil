@@ -3,7 +3,7 @@
  */
 package uk.org.ponder.rsf.view;
 
-import uk.org.ponder.rsf.util.XMLFactoryBean;
+import uk.org.ponder.springutil.XMLFactoryBean;
 
 /** A bean which will load an XML-specified components tree into a
  * "proto-container" UIBranchContainer component root.

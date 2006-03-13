@@ -5,11 +5,11 @@
   <!-- This file contains request scope beans which are specific to RSF -->
 
   <!-- A request scope bean locator locating beans from THIS container! -->
-  <bean id="requestbeanlocator" factory-bean="rsacBeanLocator"
+  <bean id="requestBeanLocator" factory-bean="RSACBeanLocator"
     factory-method="getBeanLocator">
   </bean>
 
-  <bean id="deadRequestBeanLocator" factory-bean="rsacBeanLocator"
+  <bean id="deadRequestBeanLocator" factory-bean="RSACBeanLocator"
     factory-method="getDeadBeanLocator">
   </bean>
 
@@ -35,7 +35,7 @@
   <bean id="requestMap" factory-bean="earlyRequestParser"
     factory-method="getRequestMap" />
 
-  <bean id="requestpathinfo" factory-bean="earlyRequestParser"
+  <bean id="requestPathInfo" factory-bean="earlyRequestParser"
     factory-method="getPathInfo" />
 
   <bean id="requestType" factory-bean="earlyRequestParser"
@@ -92,15 +92,15 @@
 
   <!-- The "censored" bean locator into which it is safe to resolve EL
     expressions coming in over the request -->
-  <bean id="rsacSafeBeanLocator"
+  <bean id="RSACSafeBeanLocator"
     class="uk.org.ponder.beanutil.BeanContainerWrapper">
-    <property name="beanLocator" ref="requestbeanlocator" />
+    <property name="beanLocator" ref="requestBeanLocator" />
     <property name="permittedBeanRoots" ref="requestAddressibleBeans" />
     <property name="fallbackBeans" ref="fallbackBeans" />
   </bean>
 
   <bean id="ELEvaluator" class="uk.org.ponder.beanutil.ELEvaluator">
-    <property name="beanLocator" ref="rsacSafeBeanLocator" />
+    <property name="beanLocator" ref="RSACSafeBeanLocator" />
     <property name="beanModelAlterer" ref="DARApplier" />
   </bean>
 
@@ -117,16 +117,16 @@
     </property>
     <property name="arguments">
       <list>
-        <ref local="requestpathinfo" />
+        <ref local="requestPathInfo" />
         <ref local="requestMap" />
       </list>
     </property>
   </bean>
 
-  <bean id="postdecoder" class="uk.org.ponder.rsf.processor.PostDecoder"
+  <bean id="postDecoder" class="uk.org.ponder.rsf.processor.PostDecoder"
     init-method="init">
     <property name="renderSystemStatic">
-      <ref bean="rendersystemstatic" />
+      <ref bean="renderSystemStatic" />
     </property>
     <property name="requestMap">
       <ref bean="requestMap" />
@@ -139,30 +139,30 @@
     </property>
   </bean>
 
-  <bean id="normalizedrequest" factory-bean="postdecoder"
+  <bean id="normalizedRequest" factory-bean="postDecoder"
     factory-method="getNormalizedRequest" />
 
   <bean id="outgoingMap" class="java.util.HashMap"></bean>
 
-  <bean id="requestrsvc" factory-bean="postdecoder"
+  <bean id="requestRSVC" factory-bean="postDecoder"
     factory-method="getRequestRSVC" />
 
-  <bean id="versioncheckpolicy"
+  <bean id="versionCheckPolicy"
     class="uk.org.ponder.rsf.state.NullVersionCheckPolicy" />
 
-  <bean id="rsvcapplier" class="uk.org.ponder.rsf.state.RSVCApplier">
+  <bean id="RSVCApplier" class="uk.org.ponder.rsf.state.RSVCApplier">
     <property name="versionCheckPolicy">
-      <ref bean="versioncheckpolicy" />
+      <ref bean="versionCheckPolicy" />
     </property>
     <property name="rootBeanLocator">
-      <ref bean="rsacSafeBeanLocator" />
+      <ref bean="RSACSafeBeanLocator" />
     </property>
     <property name="beanModelAlterer">
       <ref bean="DARApplier" />
     </property>
   </bean>
 
-  <bean id="errorstatemanager"
+  <bean id="errorStateManager"
     class="uk.org.ponder.rsf.state.ErrorStateManager"
     init-method="init">
     <property name="TSHolder">
@@ -172,7 +172,7 @@
       <ref local="viewParameters" />
     </property>
     <property name="requestRSVC">
-      <ref local="requestrsvc" />
+      <ref local="requestRSVC" />
     </property>
   </bean>
 
@@ -188,7 +188,7 @@
       <ref bean="endFlowStatePreservationStrategies" />
     </property>
     <property name="writeableBeanLocator">
-      <ref local="rsacSafeBeanLocator" />
+      <ref local="RSACSafeBeanLocator" />
     </property>
     <property name="deadBeanLocator">
       <ref local="deadRequestBeanLocator" />
@@ -207,21 +207,6 @@
     class="uk.org.ponder.rsf.components.ParameterList">
   </bean>
 
-  <!-- The default viewstatehandler uses the baseURLProvider (defaulted to 
-    autoBaseURLProvider in blank-config to infer URLs. Clients may override it 
-    by referring to another of their choosing.  -->
-  <bean id="viewStateHandler"
-    class="uk.org.ponder.rsf.viewstate.RSFServletViewStateHandler">
-    <property name="baseURLProvider">
-      <ref bean="baseURLProvider" />
-    </property>
-    <property name="consumerInfo">
-      <ref bean="consumerInfo" />
-    </property>
-    <property name="beanModelAlterer">
-      <ref bean="DARApplier" />
-    </property>
-  </bean>
 
   <bean id="URLRewriter"
     class="uk.org.ponder.rsf.viewstate.URLRewriter">
@@ -295,7 +280,7 @@
     class="uk.org.ponder.rsf.processor.RSFActionHandler"
     lazy-init="true">
     <property name="errorStateManager">
-      <ref local="errorstatemanager" />
+      <ref local="errorStateManager" />
     </property>
     <property name="ARIResolver">
       <ref bean="ARIResolver" />
@@ -304,16 +289,16 @@
       <ref local="viewParameters" />
     </property>
     <property name="requestRSVC">
-      <ref local="requestrsvc" />
+      <ref local="requestRSVC" />
     </property>
     <property name="alterationWrapper">
       <ref bean="alterationWrapper" />
     </property>
     <property name="RSVCApplier">
-      <ref bean="rsvcapplier" />
+      <ref bean="RSVCApplier" />
     </property>
     <property name="normalizedRequestMap">
-      <ref local="normalizedrequest" />
+      <ref local="normalizedRequest" />
     </property>
     <property name="statePreservationManager">
       <ref local="statePreservationManager" />
@@ -340,7 +325,7 @@
     abstract="true">
     <property name="reflectiveCache" ref="reflectiveCache" />
     <property name="beanLocator">
-      <ref bean="requestbeanlocator" />
+      <ref bean="requestBeanLocator" />
     </property>
     <property name="viewParameters">
       <ref bean="viewParameters" />
@@ -412,10 +397,10 @@
   <bean id="valueFixer"
     class="uk.org.ponder.rsf.componentprocessor.ValueFixer">
     <property name="requestRSVC">
-      <ref local="requestrsvc" />
+      <ref local="requestRSVC" />
     </property>
     <property name="beanLocator">
-      <ref local="rsacSafeBeanLocator" />
+      <ref local="RSACSafeBeanLocator" />
     </property>
     <property name="modelAlterer">
       <ref bean="DARApplier" />
@@ -454,7 +439,7 @@
     class="uk.org.ponder.rsf.processor.RenderHandlerBracketer"
     lazy-init="true">
     <property name="errorStateManager">
-      <ref local="errorstatemanager" />
+      <ref local="errorStateManager" />
     </property>
     <property name="viewExceptionStrategy">
       <ref bean="viewExceptionStrategy" />
@@ -473,7 +458,7 @@
     class="uk.org.ponder.rsf.processor.RSFRenderHandler"
     lazy-init="true">
     <property name="errorStateManager">
-      <ref local="errorstatemanager" />
+      <ref local="errorStateManager" />
     </property>
     <property name="viewParameters">
       <ref local="viewParameters" />
