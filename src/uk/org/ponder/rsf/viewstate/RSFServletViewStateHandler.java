@@ -46,16 +46,8 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
 
     String usebaseurl = urlprovider.getBaseURL();
     String extraparams = "";
-    // ConsumerRequestInfo cri = ConsumerRequestInfo.getConsumerRequestInfo();
     boolean quest = requestparams.indexOf('?') != -1;
-    // String presparams = "";
-    // if (outgoingparams != null) {
-    // RenderUtil.makeURLAttributes(outgoingparams);
-    // if (!quest && presparams.length() > 0) {
-    // presparams = "?" + presparams.substring(1);
-    // quest = true;
-    // }
-    // }
+  
     if (ci.urlbase != null) {
       usebaseurl = ci.urlbase;
     }
@@ -68,21 +60,11 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
         quest = true;
       }
     }
-
-    // We don't make any use of sessions - remove all dependence on request
-    // for URL encoding now.
-    // ExternalContext ec =
-    // FacesContext.getCurrentInstance().getExternalContext();
-
-    // QQQQQ This is totally nonportable!! What will we do about this!!
-    // Now a good deal less unportable. encodeRedirectURL seems to differ only
-    // to help session tracking:
-    // http://www.theserverside.com/discussions/thread.tss?thread_id=6039
-    // HttpServletResponse response = (HttpServletResponse) ec.getResponse();
-    String path = // response.encodeRedirectURL(
-    usebaseurl + requestparams + extraparams
-    // )
-    ;
+    String baseurl = usebaseurl + requestparams;
+    int hpos = baseurl.indexOf('#');
+    
+    String path = hpos == -1? baseurl + extraparams : baseurl.substring(0, hpos)
+         + extraparams + baseurl.substring(hpos);
     return path;
   }
 

@@ -26,7 +26,7 @@ public class FlowLiteARIResolver implements ARIResolver {
     this.flowidholder = flowidholder;
   }
   public ActionResultInterpreter getActionResultInterpreter() {
-    if (flowidholder.flowID != null) {
+    if (flowidholder.getFlowID() != null) {
       return flowari;
     }
     else {

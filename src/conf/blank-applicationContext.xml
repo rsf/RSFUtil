@@ -48,6 +48,40 @@
       value="uk.org.ponder.rsf.flow.jsfnav.NavigationMap" />
   </bean>
 
+  <!-- This standard bean name is given a default implementation to always
+    defer to the default ARI. However this will be overridden should the actual
+    action invokation ALREADY return an ARIResult, as with a FlowActionProxyBean. -->
+  <bean name="ARIResolver" class="uk.org.ponder.rsf.flow.NullARIResolver">
+    <property name="actionResultInterpreter">
+      <ref bean="defaultARI" />
+    </property>
+  </bean>
+
+  <bean id="JSFNavigationARI"
+    class="uk.org.ponder.rsf.flow.jsfnav.JSFNavActionResultInterpreter"
+    abstract="true">
+    <property name="navigationMap" ref="JSFNavigationMap" />
+    <property name="navigationCasePooler" ref="navigationCasePooler"/>
+  </bean>
+  
+  <bean id="actionErrorStrategyManager"
+    class="uk.org.ponder.rsf.flow.ActionErrorStrategyManager">
+    <property name="mergeStrategies">
+      <ref bean="XMLActionErrorStrategies" />
+    </property>
+  </bean>
+  
+  <!-- FlowLiteARI expects return codes from a FlowActionProxyBean of type
+    ViewState -->
+  <bean id="flowLiteARI" class="uk.org.ponder.rsf.flow.lite.FlowLiteARI"></bean>
+
+  <bean name="defaultARI" parent="nullActionResultInterpreter" />
+  
+  <!-- The default ActionResultInterpreter which directs to the incoming view-->
+  <bean id="nullActionResultInterpreter"
+    class="uk.org.ponder.rsf.flow.NullActionResultInterpreter">
+  </bean>
+
   <bean id="viewParamsExemplar"
     class="uk.org.ponder.rsf.viewstate.SimpleViewParameters">
   </bean>
@@ -57,7 +91,22 @@
     init-method="init">
     <property name="reflectiveCache" ref="reflectiveCache" />
     <property name="RSACBeanLocator" ref="RSACBeanLocator" />
+  </bean>
 
+  <bean id="consumerInfoProxy" parent="RSACBridgePeaProxy">
+    <property name="targetBeanName">
+      <idref bean="consumerInfo"/>
+    </property>
+  </bean>
+
+  <bean id="viewTemplateResolver" 
+    class="uk.org.ponder.rsf.templateresolver.BasicTemplateResolver">
+    <property name="baseDirectory">
+      <value>/content/templates/</value>
+    </property>
+    <property name="consumerInfo">
+      <ref bean="consumerInfoProxy" />
+    </property>
   </bean>
 
   <bean id="viewResolver" class="uk.org.ponder.rsf.view.ConcreteViewResolver"

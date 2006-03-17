@@ -3,7 +3,6 @@
  */
 package uk.org.ponder.rsf.view;
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,6 +17,7 @@ import org.springframework.core.io.ResourceLoader;
 import uk.org.ponder.rsf.expander.TemplateExpander;
 import uk.org.ponder.rsf.viewstate.ViewParamsReceiver;
 import uk.org.ponder.saxalizer.XMLProvider;
+import uk.org.ponder.springutil.CachingInputStreamSource;
 import uk.org.ponder.stringutil.FilenameUtil;
 import uk.org.ponder.stringutil.StringList;
 import uk.org.ponder.util.Logger;
@@ -46,6 +46,7 @@ public class XMLViewResolver implements ViewResolver, ApplicationContextAware {
   private XMLProvider xmlprovider;
   private int cachesecs = NO_CACHE;
   private ViewParamsReceiver vpreceiver;
+  private CachingInputStreamSource cachingiss;
 
   /**
    * Sets the default extension (including period) that will be suffixed to a
@@ -112,6 +113,7 @@ public class XMLViewResolver implements ViewResolver, ApplicationContextAware {
     if (resourceloader == null) {
       this.resourceloader = applicationContext;
     }
+    cachingiss = new CachingInputStreamSource(resourceloader, cachesecs);
     if (basepath != BASEPATH_DEFAULT) {
       // make an initial attempt to load ALL producers, both for validation and
       // also to discover viewparameter types.
@@ -141,11 +143,9 @@ public class XMLViewResolver implements ViewResolver, ApplicationContextAware {
     if (Logger.log.isInfoEnabled()) {
       Logger.log.info("Loading view template from " + fullpath);
     }
-    Resource res = resourceloader.getResource(fullpath);
-    if (res.exists()) {
+    InputStream is = cachingiss.openStream(fullpath);
+    if (is != null && is != CachingInputStreamSource.UP_TO_DATE) {
       try {
-        InputStream is = res.getInputStream();
-
         ViewRoot viewroot = (ViewRoot) xmlprovider.readXML(ViewRoot.class, is);
         vpreceiver.setViewParamsExemplar(viewId, viewroot.viewParameters);
         if (viewroot.defaultview) {
@@ -162,6 +162,9 @@ public class XMLViewResolver implements ViewResolver, ApplicationContextAware {
             "Error loading view components from view with path " + fullpath);
       }
     }
+    else {
+      return (XMLViewComponentProducer) views.get(viewId);
+    }
     return togo;
   }
 
@@ -171,9 +174,7 @@ public class XMLViewResolver implements ViewResolver, ApplicationContextAware {
     if (producer == null || cachesecs >= 0) {
       if (viewnames == null || viewnames.contains(viewId)) {
         String fullpath = basepath + viewId + extension;
-        if (isCacheStale(fullpath, producer, cachesecs)) {
-          producer = tryLoadProducer(fullpath, viewId);
-        }
+        producer = tryLoadProducer(fullpath, viewId);
       }
     }
     if (producer != null) {
@@ -187,30 +188,5 @@ public class XMLViewResolver implements ViewResolver, ApplicationContextAware {
     return null;
   }
 
-  private boolean isCacheStale(String fullpath,
-      XMLViewComponentProducer producer, int cachesecs) {
-    if (producer == null)
-      return true;
-    long now = System.currentTimeMillis();
-    boolean isstale = false;
-
-    if (now > producer.lastchecked + cachesecs * 1000) {
-      Resource res = resourceloader.getResource(fullpath);
-      try {
-        File f = res.getFile();
-        long modtime = f.lastModified();
-        if (modtime > producer.modtime) {
-          producer.modtime = modtime;
-          isstale = true;
-        }
-      }
-      catch (Exception e) {
-        // If it is not a File resource, assume that it is always stale.
-        return true;
-      }
-
-    }
-    producer.lastchecked = now;
-    return isstale;
-  }
+  
 }

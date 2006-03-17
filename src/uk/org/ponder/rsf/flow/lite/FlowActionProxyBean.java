@@ -91,28 +91,28 @@ public class FlowActionProxyBean implements MethodInvokingProxy {
         throw new IllegalStateException("Flow " + flowidholder + " already in progress, "
             + "cannot be started");
       }
-      flowidholder.flowID = flow.id;
-      flowidholder.flowtoken = idgenerator.generateID();
+      flowidholder.setFlowID(flow.id);
+      flowidholder.setFlowToken(idgenerator.generateID());
       newstate = flow.stateFor(flow.startstate);
       if (newstate instanceof ViewState) {
-        flowidholder.flowStateID = newstate.id;
-        flowidholder.requestFlowStateID = newstate.id;
+        flowidholder.setFlowStateID(newstate.id);
+        flowidholder.setRequestFlowStateID(newstate.id);
         
         togo.propagatebeans = ARIResult.FLOW_START;
         
       }
     }
     else { // any action other than FLOW_START
-      if (flowidholder.requestFlowStateID == null) {
+      if (flowidholder.getRequestFlowStateID() == null) {
         throw new IllegalStateException("Received flow action " + name + 
             " for Flow " + flow.id + " without current flow state");
       }
-      if (strict && !flowidholder.flowStateID.equals(flowidholder.requestFlowStateID)) {
+      if (strict && !flowidholder.getFlowStateID().equals(flowidholder.getRequestFlowStateID())) {
         throw new IllegalStateException("Flow " + flowidholder + " received request" +
-                " for state " + flowidholder.requestFlowStateID + " whereas current "
-                + " flow state is " + flowidholder.flowStateID);
+                " for state " + flowidholder.getRequestFlowStateID() + " whereas current "
+                + " flow state is " + flowidholder.getFlowStateID());
       }
-      ViewState viewstate = (ViewState) flow.stateFor(flowidholder.requestFlowStateID);
+      ViewState viewstate = (ViewState) flow.stateFor(flowidholder.getRequestFlowStateID());
       Transition trans = viewstate.transitions.transitionOn(name);
       if (trans == null) {
         throw new IllegalArgumentException(
@@ -139,7 +139,7 @@ public class FlowActionProxyBean implements MethodInvokingProxy {
       catch (Exception e) {
         exception = e;
       }
-      actionerrorstrategy.handleError(result, exception, flowidholder.requestFlowStateID, 
+      actionerrorstrategy.handleError(result, exception, flowidholder.getRequestFlowStateID(), 
           viewparams.viewID);
       
       Transition trans2 = actionstate.transitions.transitionOn(result);
@@ -148,10 +148,10 @@ public class FlowActionProxyBean implements MethodInvokingProxy {
           + " to state " + newstate.id + " through result of " + result);
     }
     ViewableState viewstate = (ViewableState) newstate;
-    flowidholder.requestFlowStateID = newstate.id;
-    flowidholder.flowStateID = newstate.id;
+    flowidholder.setRequestFlowStateID(newstate.id);
+    flowidholder.setFlowStateID(newstate.id);
     togo.resultingview.viewID = viewstate.viewID;
-    togo.resultingview.flowtoken = flowidholder.flowtoken;
+    togo.resultingview.flowtoken = flowidholder.getFlowToken();
   
     if (togo.propagatebeans == null) { // if not filled in as FLOW_START
     

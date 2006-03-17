@@ -8,6 +8,9 @@ import uk.org.ponder.rsf.uitype.StringUIType;
 
 public class UIBoundString extends UIBound {
   public void setValue(String value) {
+    if (value == null) {
+      throw new IllegalArgumentException("Value of UIBoundString cannot be null");
+    }
     this.value = value;
   }
 

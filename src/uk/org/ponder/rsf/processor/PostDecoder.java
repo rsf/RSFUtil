@@ -64,11 +64,14 @@ public class PostDecoder {
       String[] values = (String[]) normalizedrequest.get(key);
       Logger.log.info("PostInit: key " + key + " value " + values[0]);
       if (fossilizedconverter.isNonComponentBinding(key)) {
-        SubmittedValueEntry sve = fossilizedconverter.parseBinding(key,
-            values[0]);
-        rsvc.addEntry(sve);
-        Logger.log.info("Discovered noncomponent binding for "
-            + sve.valuebinding + " rvalue " + sve.newvalue);
+        for (int i = 0; i < values.length; ++ i) {
+          // EL binding key is fixed, there may be many values
+          SubmittedValueEntry sve = fossilizedconverter.parseBinding(key,
+            values[i]);
+          rsvc.addEntry(sve);
+          Logger.log.info("Discovered noncomponent binding for "
+              + sve.valuebinding + " rvalue " + sve.newvalue);
+        }
       }
       // Secondly assess whether this was a component fossilised binding.
       else if (fossilizedconverter.isFossilisedBinding(key)
