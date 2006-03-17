@@ -56,16 +56,12 @@
     <constructor-arg>
       <ref bean="protoSaxalizerMappingContext" />
     </constructor-arg>
-    <property name="entityResolverStash">
-      <ref bean="entityResolverStash" />
-    </property>
+    <property name="entityResolverStash" ref="entityResolverStash" />
   </bean>
 
   <bean id="RSFMappingLoader"
     class="uk.org.ponder.rsf.mappings.RSFMappingLoader">
-    <property name="viewParamsLeafParser">
-      <ref bean="viewParamsLeafParser" />
-    </property>
+    <property name="viewParamsLeafParser" ref="viewParamsLeafParser" />
   </bean>
 
   <bean id="mappingLoadManager"
@@ -223,6 +219,12 @@ http://opensource2.atlassian.com/projects/spring/browse/SPR-1116
       <ref bean="viewParametersParser" />
     </property>
   </bean>
+  
+  <bean id="viewStateHandlerProxy" parent="RSACBridgeProxy">
+    <property name="targetBeanName">
+      <idref bean="viewStateHandler"/>
+    </property>
+  </bean>
 
   <bean id="flowOnlyPreservingBeans"
     class="uk.org.ponder.springutil.StringListFactory">
@@ -245,11 +247,36 @@ http://opensource2.atlassian.com/projects/spring/browse/SPR-1116
     <property name="RSACBeanLocator" ref="RSACBeanLocator" />
   </bean>
 
+  <bean id="RSACBridgePeaProxy" class="uk.org.ponder.rsac.RSACBridgeProxy"
+    abstract="true">
+    <property name="RSACBeanLocator" ref="RSACBeanLocator" />
+    <property name="pea" value="true"/>
+  </bean>
+
+  <bean id="flowLite-flowIDHolderProxy" parent="RSACBridgeProxy">
+    <property name="targetBeanName">
+      <idref bean="flowLite-flowIDHolder"/>
+    </property>
+  </bean>
+
   <bean id="flowLite-flowDefinition" parent="XMLFactoryBean"
     class="uk.org.ponder.rsf.flow.lite.XMLFlowFactoryBean"
     abstract="true">
     <property name="objectType"
       value="uk.org.ponder.rsf.flow.lite.Flow" />
+  </bean>
+  
+  <bean id="flowLite-ARIResolver"
+    class="uk.org.ponder.rsf.flow.lite.FlowLiteARIResolver">
+    <property name="defaultARI">
+      <ref bean="defaultARI" />
+    </property>
+    <property name="flowLiteARI">
+      <ref bean="flowLiteARI" />
+    </property>
+    <property name="flowIDHolder">
+      <ref bean="flowLite-flowIDHolderProxy" />
+    </property>
   </bean>
 
   <bean id="navigationCasePooler"

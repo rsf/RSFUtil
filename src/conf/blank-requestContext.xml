@@ -9,52 +9,6 @@
   RSF configuration files. -->
 
 <beans>
- 
-  <bean id="viewTemplateResolver" 
-    class="uk.org.ponder.rsf.templateresolver.BasicTemplateResolver">
-    <property name="baseDirectory">
-      <value>/content/templates/</value>
-    </property>
-    <property name="consumerInfo">
-      <ref bean="consumerInfo" />
-    </property>
-  </bean>
-
-  <!-- This standard bean name is given a default implementation to always
-    defer to the null ARI. However this will be overridden should the actual
-    action invokation ALREADY return an ARIResult, as with a FlowActionProxyBean. -->
-  <bean name="ARIResolver" class="uk.org.ponder.rsf.flow.NullARIResolver">
-    <property name="actionResultInterpreter">
-      <ref bean="defaultARI" />
-    </property>
-  </bean>
-
-  <bean id="JSFNavigationARI"
-    class="uk.org.ponder.rsf.flow.jsfnav.JSFNavActionResultInterpreter"
-    abstract="true">
-    <property name="navigationMap" ref="JSFNavigationMap" />
-    <property name="navigationCasePooler" ref="navigationCasePooler"/>
-  </bean>
-
-  <bean id="actionErrorStrategyManager"
-    class="uk.org.ponder.rsf.flow.ActionErrorStrategyManager">
-    <property name="mergeStrategies">
-      <ref bean="XMLActionErrorStrategies" />
-    </property>
-  </bean>
-
-
-  <!-- The default ActionResultInterpreter which directs to the same view-->
-  <bean id="nullActionResultInterpreter"
-    class="uk.org.ponder.rsf.flow.NullActionResultInterpreter">
-  </bean>
-  <!-- FlowLiteARI expects return codes from a FlowActionProxyBean of type
-    ViewState -->
-  <bean id="flowLiteARI" class="uk.org.ponder.rsf.flow.lite.FlowLiteARI"></bean>
-
-
-  <bean name="defaultARI" parent="nullActionResultInterpreter" />
-
   <bean name="baseURLProvider" parent="autoBaseURLProvider" />
   
   <!-- The default viewstatehandler uses the baseURLProvider (defaulted to 
@@ -83,7 +37,7 @@
     class="uk.org.ponder.rsf.renderer.StaticRendererCollection">
   </bean>
 
-  <!-- A null "consumertype" field in this object will be  treated as an 
+  <!-- A null "consumertype" field in this object will be treated as an 
     empty object -->
   <bean name="consumerInfo" class="uk.org.ponder.webapputil.ConsumerInfo">
   </bean>

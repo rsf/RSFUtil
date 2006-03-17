@@ -36,12 +36,12 @@ public class RSFUtil {
    * Adds the supplied name/value pair to the nearest enclosing form control.
    */
   
-  public static void addBasicFormParameter(UIContainer local, String name, String value) {
+  public static void addBasicFormParameter(UIContainer local, UIParameter toadd) {
     UIForm enclosing = findBasicForm(local);
     if (enclosing == null) {
       throw new AssertionException("Component " + local.getFullID() + " has no form parent!");
     }
-    enclosing.parameters.add(new UIParameter(name, value));
+    enclosing.parameters.add(toadd);
   }
   
   /** Determines whether the supplied component has a bound value, and hence

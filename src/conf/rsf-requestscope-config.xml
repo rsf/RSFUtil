@@ -207,7 +207,6 @@
     class="uk.org.ponder.rsf.components.ParameterList">
   </bean>
 
-
   <bean id="URLRewriter"
     class="uk.org.ponder.rsf.viewstate.URLRewriter">
     <property name="viewStateHandler">
@@ -335,19 +334,6 @@
     </property>
     <property name="actionErrorStrategy">
       <ref bean="actionErrorStrategyManager" />
-    </property>
-  </bean>
-
-  <bean id="flowLite-ARIResolver"
-    class="uk.org.ponder.rsf.flow.lite.FlowLiteARIResolver">
-    <property name="defaultARI">
-      <ref bean="defaultARI" />
-    </property>
-    <property name="flowLiteARI">
-      <ref bean="flowLiteARI" />
-    </property>
-    <property name="flowIDHolder">
-      <ref bean="flowLite-flowIDHolder" />
     </property>
   </bean>
 

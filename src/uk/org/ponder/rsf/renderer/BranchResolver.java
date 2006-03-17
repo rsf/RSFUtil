@@ -51,15 +51,17 @@ public class BranchResolver {
         UIBranchContainer branch = (UIBranchContainer) flatchildren[i];
         // ups! Do not resolve here if does not actually occur in parentlump.
         XMLLump resolved = resolveCall(parentlump, branch);
-        if (Logger.log.isInfoEnabled()) {
-          Logger.log.info("Resolved call for component "
+        if (Logger.log.isDebugEnabled()) {
+          Logger.log.debug("Resolved call for component "
               + branch.getClass().getName() + " fullID " + branch.getFullID()
               + " to ");
           // Logger.log.info("for component with ID " + child.ID + " to ");
           // System.out.println(debugLump(resolved));
         }
-        branchmap.put(branch, resolved);
-        resolveRecurse(branch, resolved);
+        if (resolved != null) {
+          branchmap.put(branch, resolved);
+          resolveRecurse(branch, resolved);
+        }
       }
     }
   }
@@ -68,8 +70,8 @@ public class BranchResolver {
     SplitID split = new SplitID(child.ID);
     String defprefix = split.prefix + SplitID.SEPARATOR;
     BestMatch bestmatch = new BestMatch();
-    if (Logger.log.isInfoEnabled()) {
-      Logger.log.info("Resolving call from container " + child.debugChildren());
+    if (Logger.log.isDebugEnabled()) {
+      Logger.log.debug("Resolving call from container " + child.debugChildren());
     }
     // first get lumps in THIS SCOPE with EXACTLY MATCHING ID.
     XMLLumpList scopelumps = sourcescope.downmap.headsForID(child.ID);

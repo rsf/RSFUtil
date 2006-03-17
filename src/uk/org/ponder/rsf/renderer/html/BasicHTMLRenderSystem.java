@@ -285,8 +285,9 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         attrcopy.put(attrname, torender.target.getValue());
         XMLUtil.dumpAttributes(attrcopy, xmlw);
         pos.print(">");
-        if (torender.linktext != null) {
-          xmlw.write(torender.linktext.getValue());
+        String value = torender.linktext == null? null : torender.linktext.getValue(); 
+        if (value != null && !UITypes.isPlaceholder(value)) {
+          xmlw.write(value);
           closeTag(pos, uselump);
         }
         else {

@@ -131,9 +131,11 @@ public class ViewRender {
 //                Logger.log.info("for component with ID " + child.ID + " to ");
 //                System.out.println(debugLump(targetlump, lumps));
 //                }
-              XMLLump firstchild = lumps[targetlump.open_end.lumpindex + 1];
-              dumpContainerHead(targetlump, firstchild);
-              renderRecurse((UIBranchContainer) child, targetlump, firstchild);
+              if (targetlump != null) {
+                XMLLump firstchild = lumps[targetlump.open_end.lumpindex + 1];
+                dumpContainerHead(targetlump, firstchild);
+                renderRecurse((UIBranchContainer) child, targetlump, firstchild);
+              }
             }
             else {
               XMLLump targetlump = findChild(parentlump, child);

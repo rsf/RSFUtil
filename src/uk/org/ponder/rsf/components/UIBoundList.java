@@ -10,6 +10,9 @@ import uk.org.ponder.rsf.uitype.StringArrayUIType;
  * of extracting the value field from a bean collection retrieved via EL. **/
 public class UIBoundList extends UIBound {
   public void setValue(String[] value) {
+    if (value == null) {
+      throw new IllegalArgumentException("Value of UIBoundList cannot be null");
+    }
     this.value = value;
   }
   

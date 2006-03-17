@@ -39,7 +39,7 @@ public class BasicFlowAlterationWrapper implements RunnableWrapper {
   }
 
   public Runnable wrapRunnable(final Runnable towrap) {
-    String flowtoken = flowidholder.flowtoken;
+    String flowtoken = flowidholder.getFlowToken();
     final Object flowlock = flowtoken == null ? null
         : flowlockgetter.getFlowLock(flowtoken);
 
