@@ -165,8 +165,8 @@ public class ViewRender {
           }
         }
         else {
-          if (Logger.log.isInfoEnabled()) {
-          Logger.log.info("No component with prefix " + prefix
+          if (Logger.log.isDebugEnabled()) {
+          Logger.log.debug("No component with prefix " + prefix
               + " found for domain at template lump " + renderindex +", skipping");
           }
         }

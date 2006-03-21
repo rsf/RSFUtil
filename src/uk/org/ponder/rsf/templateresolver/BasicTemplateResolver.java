@@ -89,18 +89,25 @@ public class BasicTemplateResolver implements TemplateResolver,
       viewpath = consumerprefix + viewparams.viewID;
     }
     ViewTemplate template = null;
+    
+    // this logic to be regularised into a planned list of try/fallback.
     String fullpath = basedir + viewpath + suffix;
     InputStream is = tryLoadTemplate(fullpath, consumerprefix == null);
     if (is == null && consumerprefix != null) {
       fullpath = basedir + viewparams.viewID + suffix;
       is = tryLoadTemplate(fullpath, true);
     }
+    
+    
     if (is == CachingInputStreamSource.UP_TO_DATE) {
       template = (ViewTemplate) templates.get(viewpath);
     }
-    if (template == null) { // possibly the reason is it had a parse error last
-      // time
+    if (template == null) { 
       try {
+     // possibly the reason is it had a parse error last time, which may have been corrected
+        if (is == CachingInputStreamSource.UP_TO_DATE) {
+          is = cachingiis.getNonCachingResolver().openStream(fullpath);
+        }
         template = new XMLViewTemplate();
         template.parse(is);
         template.setRelativePath(basedir.substring(1));

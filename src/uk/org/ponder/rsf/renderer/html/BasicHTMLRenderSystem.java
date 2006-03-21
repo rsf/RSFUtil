@@ -191,9 +191,14 @@ public class BasicHTMLRenderSystem implements RenderSystem {
             else {
               attrcopy.put("name", value);
               XMLUtil.dumpAttributes(attrcopy, xmlw);
-              pos.print(">");
-              RenderUtil.dumpTillLump(lumps, endopen.lumpindex + 1,
+              if (endopen.lumpindex == close.lumpindex) {
+                pos.print("/>");
+              }
+              else {
+                pos.print(">");
+                RenderUtil.dumpTillLump(lumps, endopen.lumpindex + 1,
                   close.lumpindex + 1, pos);
+              }
             }
           }
         }
