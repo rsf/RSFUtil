@@ -29,8 +29,8 @@ public class URLRewriter {
       resourceURL = viewstatehandler.getResourceURL(
           path.substring(1));
     }
-    if (Logger.log.isInfoEnabled()) {
-      Logger.log.info("getResourceURL returning " + resourceURL + " for path "
+    if (Logger.log.isDebugEnabled()) {
+      Logger.log.debug("getResourceURL returning " + resourceURL + " for path "
         + path);
     }
     return resourceURL; 

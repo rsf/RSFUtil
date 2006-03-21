@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import uk.org.ponder.beanutil.BeanUtil;
 import uk.org.ponder.rsf.renderer.RenderSystemStatic;
 import uk.org.ponder.rsf.request.FossilizedConverter;
 import uk.org.ponder.rsf.request.RequestSubmittedValueCache;

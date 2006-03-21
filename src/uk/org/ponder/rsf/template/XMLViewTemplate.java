@@ -88,7 +88,9 @@ public class XMLViewTemplate implements ViewTemplate {
   private void setLumpChars(XMLLump lump, char[] chars, int start, int length) {
     lump.start = buffer.size;
     lump.length = length;
-    buffer.append(chars, start, length);
+    if (length > 0) {
+      buffer.append(chars, start, length);
+    }
   }
 
   private void setLumpString(XMLLump lump, String string) {
@@ -98,21 +100,34 @@ public class XMLViewTemplate implements ViewTemplate {
   }
 
   private void simpleTagText(XmlPullParser parser) {
+    justended = false;
     char[] chars = parser.getTextCharacters(limits);
-    setLumpChars(lumps[lumpindex - 1], chars, limits[0], limits[1]);
+    XMLLump newlump = newLump(parser);
+    setLumpChars(newlump, chars, limits[0], limits[1]);
     // String text = new String(chars, limits[0], limits[1]);
     // lumps[lumpindex - 1].text = text;
   }
 
   private void processDefaultTag(int token, XmlPullParser parser) {
+    justended = false;
     CharWrap w = new CharWrap();
     writeToken(token, parser, w);
-    setLumpChars(lumps[lumpindex - 1], w.storage, 0, w.size);
+    XMLLump newlump = newLump(parser);
+    setLumpChars(newlump, w.storage, 0, w.size);
     // lumps[lumpindex - 1].text = w.toString();
   }
 
   private void processTagStart(XmlPullParser parser, boolean isempty) {
-    XMLLump headlump = lumps[lumpindex - 1];
+    if (justended) {
+      // avoid the pathological case where we have for example
+      // <td class="tmiblock1" rsf:id="tmiblock:"></td><td> which makes it
+      // hard to spot run ends on the basis of recursion uncession.
+      justended = false;
+      XMLLump backlump = newLump(parser);
+      backlump.nestingdepth--;
+      setLumpChars(backlump, null, 0, 0);
+    }
+    XMLLump headlump = newLump(parser);
     String tagname = parser.getName();
     // standard text of |<tagname | to allow easy identification.
     setLumpString(headlump, XMLLump.tagToText(tagname));
@@ -201,13 +216,14 @@ public class XMLViewTemplate implements ViewTemplate {
       processTagEnd(parser);
     }
   }
-
+  boolean justended;
   private void processTagEnd(XmlPullParser parser) {
     // String tagname = parser.getName();
     XMLLump oldtop = tagstack.lumpAt(nestingdepth);
 
     oldtop.close_tag = lumps[lumpindex - 1];
     tagstack.remove(nestingdepth);
+    justended = true;
   }
 
   private XMLLump findTopContainer() {
@@ -269,6 +285,7 @@ public class XMLViewTemplate implements ViewTemplate {
     rootlump.downmap = new XMLLumpMMap();
     rootlump.nestingdepth = -1;
     globalmap = new XMLLumpMMap();
+    justended = false;
   }
 
   public void parse(InputStream xmlstream) {
@@ -286,7 +303,6 @@ public class XMLViewTemplate implements ViewTemplate {
         // provable irrelevant lumps. but watch out for end tags! Some might
         // be fused, some not.
         nestingdepth = parser.getDepth() - 1;
-        XMLLump lump = newLump(parser);
 
         switch (token) {
         case XmlPullParser.START_TAG:
