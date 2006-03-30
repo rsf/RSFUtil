@@ -60,6 +60,9 @@ public class UIBranchContainer extends UIContainer {
   // NB - the parent of an IKATContainer WILL BE an IKATContainer when it is
   // fixed up - but intermediately, it may be something like a Form...
   public static UIBranchContainer make(UIContainer parent, String ID, String localID) {
+    if (ID.indexOf(':') == -1) {
+      throw new IllegalArgumentException("Branch container ID must contain a colon character :");
+    }
     UIBranchContainer togo = new UIBranchContainer();
     togo.ID = ID;
     togo.localID = localID;
@@ -85,7 +88,14 @@ public class UIBranchContainer extends UIContainer {
    * containing colon designating a child container.
    */
   public List getComponents(String id) {
-    return (List) childmap.get(id);
+    Object togo = childmap.get(id);
+    if (togo != null && !(togo instanceof List)) {
+      throw new IllegalArgumentException( 
+          "Error in view tree: component with id " + 
+          id + " was expected to be a branch container but was a leaf."
+          + "\n (did you forget to use a colon in the component ID?)");
+    }
+    return (List)togo; 
   }
 
   public String debugChildren() {

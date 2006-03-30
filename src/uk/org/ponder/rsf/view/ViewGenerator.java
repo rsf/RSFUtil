@@ -3,11 +3,15 @@
  */
 package uk.org.ponder.rsf.view;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Priority;
+
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReceiver;
-import uk.org.ponder.rsf.util.ComponentDumper;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.saxalizer.XMLProvider;
 import uk.org.ponder.streamutil.write.StringPOS;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
@@ -25,6 +29,7 @@ public class ViewGenerator {
   private ComponentChecker checker;
   private ViewParameters viewparams;
   private NavigationCaseReceiver navreceiver;
+  private XMLProvider xmlprovider;
  // This method is called manually from GetHandler.
   public View getView() {
     if (view == null) {
@@ -32,11 +37,18 @@ public class ViewGenerator {
       if (view.viewroot.navigationCases != null) {
         navreceiver.receiveNavigationCases(viewparams.viewID, view.viewroot.navigationCases);
       }
-      if (Logger.log.isDebugEnabled()) {
+      if (Logger.log.isDebugEnabled() || view.viewroot.debug) {
         StringPOS dumppos = new StringPOS();
         dumppos.println("View component dump:");
-        ComponentDumper.dumpContainer(view.viewroot, 0, dumppos);
-        Logger.log.debug(dumppos);
+        try {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        xmlprovider.writeXML(view.viewroot, baos);
+        dumppos.println(new String(baos.toByteArray(), "UTF-8"));
+        Logger.log.log(view.viewroot.debug? Level.ERROR: Level.DEBUG, dumppos);
+        }
+        catch (Exception e) {
+          throw UniversalRuntimeException.accumulate(e, "Error dumping component tree for debug: ");
+        }
       }
     }
     return view;
@@ -58,6 +70,15 @@ public class ViewGenerator {
     this.viewparams = viewparams;
   }
   
+  
+  public void setXMLProvider(XMLProvider xmlprovider) {
+    this.xmlprovider = xmlprovider;
+  }
+
+  public XMLProvider getXMLProvider() {
+    return xmlprovider;
+  }
+
   /**
    * Returns the UIViewRoot for the view created by the View instance matching
    * the view ID. Any potentially recoverable errors are caught and a redirect

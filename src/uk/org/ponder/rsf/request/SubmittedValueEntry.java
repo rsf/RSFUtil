@@ -47,12 +47,8 @@ public class SubmittedValueEntry {
    */
   public Object oldvalue;
   /** The value received back to the system via the (current) submission.
-  * Either a String or a String[]. However, if it is a String, there are some
-  * interesting possibilities - i) String or SaxLeafType, ii) EL reference,
-  * iii) XML-encoded object tree. Type ii) is determined by setting the 
-  * <code>isEL</code> flag, the other two cases resolved once the type of 
-  * the target bean is seen (via ConvertUtil).
-  * This value is null for non-component bindings.
+  * Initially set to the raw String[] value in the request, but normalised
+  * to (at least) a UIType by FossilizedConverted.fixupNewValue. 
   */
   public Object newvalue;
   /** Holds <code>true</code> in the case the rvalue (encoded in oldvalue)

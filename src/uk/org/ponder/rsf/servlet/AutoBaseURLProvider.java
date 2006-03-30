@@ -9,6 +9,14 @@ import uk.org.ponder.rsf.viewstate.BaseURLProvider;
 import uk.org.ponder.rsf.viewstate.StaticBaseURLProvider;
 import uk.org.ponder.servletutil.ServletUtil;
 
+/** A request-scope bean which automatically infers the base URL to be
+ * used for this request from the current HttpServletRequest.
+ * <p>It is a little useful for this to be a request-scope bean so that 
+ * the computation of the URLs it not performed repeatedly on query. 
+ * @author Antranig Basman (antranig@caret.cam.ac.uk)
+ *
+ */
+
 public class AutoBaseURLProvider implements BaseURLProvider {
   private HttpServletRequest request;
 
@@ -24,9 +32,12 @@ public class AutoBaseURLProvider implements BaseURLProvider {
     String resourcebaseurl = ServletUtil.getContextBaseURL2(request);
     sbup.setBaseURL(baseurl);
     sbup.setResourceBaseURL(resourcebaseurl);
-
   }
 
+  /** A one-shot method that will create a static BaseURLProvider good for
+   * the current request.
+   */
+  
   public BaseURLProvider getBaseURLProvider() {
     return sbup;
   }

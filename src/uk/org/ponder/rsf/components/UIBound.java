@@ -4,6 +4,8 @@
 package uk.org.ponder.rsf.components;
 
 /**
+ * This is essentially the core RSF component.
+ * 
  * Represents a single (possibly vector) value as transferred between the bean
  * model and the rendererd view. Unless this is a pure output component, the
  * value will be bound to an (EL) bean reference. This reference is used both on

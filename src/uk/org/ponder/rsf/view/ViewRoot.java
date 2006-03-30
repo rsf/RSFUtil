@@ -20,4 +20,9 @@ public class ViewRoot extends UIBranchContainer {
   public ViewParameters viewParameters;
   
   public boolean defaultview;
+  
+  /** If this field is set to <code>true</code> the entire view tree will
+   * be dumped to the logger as XML just before rendering.
+   */
+  public boolean debug = false;
 }

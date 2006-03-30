@@ -9,27 +9,6 @@
   RSF configuration files. -->
 
 <beans>
-  <bean name="baseURLProvider" parent="autoBaseURLProvider" />
-  
-  <!-- The default viewstatehandler uses the baseURLProvider (defaulted to 
-    autoBaseURLProvider in blank-config to infer URLs. Clients may override it 
-    by referring to another of their choosing.  -->
-  <bean id="viewStateHandler"
-    class="uk.org.ponder.rsf.viewstate.RSFServletViewStateHandler">
-    <property name="baseURLProvider">
-      <ref bean="baseURLProvider" />
-    </property>
-    <property name="consumerInfo">
-      <ref bean="consumerInfo" />
-    </property>
-    <property name="beanModelAlterer">
-      <ref bean="DARApplier" />
-    </property>
-    <property name="ultimateRenderers">
-      <ref bean="ultimateRenderers"/>
-    </property>
-  </bean>
-
   <!-- A collection of static renderers that is expected to be dynamically
     writeable - filters and the like might populate it before request handling
     with consumer-specific rewriters. -->
@@ -38,7 +17,7 @@
   </bean>
 
   <!-- A null "consumertype" field in this object will be treated as an 
-    empty object -->
+    empty object. An "unreasonable bean". -->
   <bean name="consumerInfo" class="uk.org.ponder.webapputil.ConsumerInfo">
   </bean>
 

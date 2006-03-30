@@ -145,8 +145,6 @@ http://opensource2.atlassian.com/projects/spring/browse/SPR-1116
     <property name="mappingContext" ref="ELMappingContext" />
   </bean>
 
-  <bean id="baseURLProvider" abstract="true"></bean>
-
   <bean id="RSACResourceLocator"
     class="uk.org.ponder.rsac.servlet.ServletRSACResourceLocator">
   </bean>
@@ -196,6 +194,35 @@ http://opensource2.atlassian.com/projects/spring/browse/SPR-1116
     </property>
   </bean>
 
+  <bean id="httpServletRequestProxy" parent="RSACBridgeProxy">
+    <property name="targetBeanName">
+      <idref bean="httpServletRequest"/>
+    </property>
+  </bean>
+
+  <bean id="autoBaseURLProviderProxy" parent="RSACBridgeProxy" abstract="true">
+    <property name="targetBeanName">
+       <idref bean="autoBaseURLProvider"/>
+    </property>
+  </bean>
+
+  
+  <!-- This is now a request-scope bean defined in core RSF to use the auto-provider.
+    Override it with the following definition in your own requestScopeConfig and define
+    the two URL values above in order to use static URL determination -->
+  <bean id="staticBaseURLProvider" abstract="true" 
+      class="uk.org.ponder.rsf.viewstate.StaticBaseURLProvider">
+    <!-- CONFIG The URL under which RSF-rendered pages served directly 
+      will be made visible -->
+    <property name="baseURL">
+      <ref bean="directUIBaseURL" />
+    </property>
+    <!-- CONFIG The URL under which static resources will be made visible -->
+    <property name="resourceBaseURL">
+      <ref bean="directUIResourceBaseURL" />
+    </property>
+  </bean>
+
   <!--  Lazy loading needed to break dependence cycle - SiteMap via BasicViewParamsParser
     REQUIRES mapping to be loaded already!! -->
   <bean id="viewParamsLeafParser"
@@ -241,7 +268,8 @@ http://opensource2.atlassian.com/projects/spring/browse/SPR-1116
     <property name="XMLProvider" ref="XMLProvider" />
     <property name="reflectiveCache" ref="reflectiveCache" />
   </bean>
-
+  
+<!--  The core parent definitions for the two kinds of RSAC proxies -->
   <bean id="RSACBridgeProxy" class="uk.org.ponder.rsac.RSACBridgeProxy"
     abstract="true">
     <property name="RSACBeanLocator" ref="RSACBeanLocator" />

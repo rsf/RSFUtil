@@ -90,7 +90,9 @@ public class ViewParamUtil {
     String anchorfield = toconvert.getAnchorField();
     if (anchorfield != null) {
       String value = (String) bma.getFlattenedValue(anchorfield, toconvert, String.class, null);
-      togo.append("#").append(value);
+      if (value != null) {
+        togo.append("#").append(value);
+      }
     }
     return togo.toString();
   }

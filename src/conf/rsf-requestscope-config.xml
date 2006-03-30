@@ -195,16 +195,15 @@
     </property>
   </bean>
 
-  <bean id="autoBaseURLProvider"
-    class="uk.org.ponder.rsf.servlet.AutoBaseURLProvider"
-    init-method="init">
-    <property name="httpServletRequest">
-      <ref bean="httpServletRequest" />
-    </property>
-  </bean>
-
   <bean name="outgoingParams"
     class="uk.org.ponder.rsf.components.ParameterList">
+  </bean>
+
+  <bean id="autoBaseURLProvider"
+    class="uk.org.ponder.rsf.servlet.AutoBaseURLProvider" init-method="init">
+    <property name="httpServletRequest">
+      <ref bean="httpServletRequestProxy" />
+    </property>
   </bean>
 
   <bean id="URLRewriter"
@@ -343,18 +342,11 @@
   <bean id="viewGenerator"
     class="uk.org.ponder.rsf.view.ViewGenerator">
     <!-- EXTERNAL DEPENDENCY! The application supplies the view collection -->
-    <property name="viewResolver">
-      <ref bean="viewResolver" />
-    </property>
-    <property name="viewParameters">
-      <ref local="viewParameters" />
-    </property>
-    <property name="componentChecker">
-      <ref local="viewTemplate" />
-    </property>
-    <property name="navigationCaseReceiver">
-      <ref bean="navigationCasePooler" />
-    </property>
+    <property name="viewResolver" ref="viewResolver" />
+    <property name="viewParameters" ref="viewParameters"/>
+    <property name="componentChecker" ref="viewTemplate" />
+    <property name="navigationCaseReceiver" ref="navigationCasePooler" />
+    <property name="XMLProvider" ref="XMLProvider"/>
   </bean>
   <!--
     <bean id="view" factory-bean="viewgenerator" factory-method="getView"/>

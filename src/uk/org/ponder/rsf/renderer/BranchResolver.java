@@ -6,13 +6,17 @@ package uk.org.ponder.rsf.renderer;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Level;
+
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.template.XMLLumpList;
 import uk.org.ponder.rsf.template.XMLLumpMMap;
 import uk.org.ponder.rsf.util.SplitID;
+import uk.org.ponder.rsf.view.ViewRoot;
 import uk.org.ponder.util.Logger;
+import uk.org.ponder.util.UniversalRuntimeException;
 
 /** Performs a first "light" pass of the template and component tree to
  * resolve references by UIBranchContainer components to the correct tag targets.
@@ -37,10 +41,26 @@ public class BranchResolver {
   /** Returns a map of UIBranchContainer to XMLLump */
   public static Map resolveBranches(XMLLumpMMap globalmap,
       UIBranchContainer basecontainer, XMLLump parentlump) {
+    boolean debug = false;
+    Level oldlevel = null;
+    if (basecontainer instanceof ViewRoot) {
+      debug = ((ViewRoot)basecontainer).debug;
+    }
+    if (debug) {
+      oldlevel = Logger.log.getLevel();
+      Logger.log.setLevel(Level.DEBUG);
+    }
+    try {
     BranchResolver resolver = new BranchResolver(globalmap);
     resolver.branchmap.put(basecontainer, parentlump);
     resolver.resolveRecurse(basecontainer, parentlump);
     return resolver.branchmap;
+    }
+    finally {
+      if (debug) {
+        Logger.log.setLevel(oldlevel);
+      }
+    }
   }
   
   private void resolveRecurse(UIBranchContainer basecontainer,
@@ -52,9 +72,14 @@ public class BranchResolver {
         // ups! Do not resolve here if does not actually occur in parentlump.
         XMLLump resolved = resolveCall(parentlump, branch);
         if (Logger.log.isDebugEnabled()) {
-          Logger.log.debug("Resolved call for component "
-              + branch.getClass().getName() + " fullID " + branch.getFullID()
-              + " to ");
+          Logger.log.debug("Resolving call for component "
+              + branch.getClass().getName() + " fullID " + branch.getFullID());
+          if (resolved == null) {
+            Logger.log.debug("No target found!");
+          }
+          else {
+            Logger.log.debug(resolved.toDebugString());
+          }
           // Logger.log.info("for component with ID " + child.ID + " to ");
           // System.out.println(debugLump(resolved));
         }
@@ -123,6 +148,12 @@ public class BranchResolver {
   // match" produced by looking for a "default" member in the template with the
   // name "prefix:" for the issued component prefix.
   private int evalDeficit(UIBranchContainer container, XMLLump lump) {
+    if (lump.downmap == null) {
+      throw UniversalRuntimeException.accumulate(new IllegalArgumentException(), 
+          "Error in template file: " + lump.toDebugString() +  
+          " with id " + container.getFullID() + 
+          " is the target of branch resolution but does not have branch ID"); 
+    }
     int deficit = 0;
     UIComponent[] children = container.flatChildren();
     doneprefix.clear();
@@ -154,8 +185,7 @@ public class BranchResolver {
     // cost here (extra hashmap) and cost of searching for each template child
     // later. There may also be some layout issues.
     if (Logger.log.isDebugEnabled()) {
-      Logger.log.debug("Call to lump index " + lump.lumpindex + " line "
-          + lump.line + " column " + lump.column + " deficit " + deficit);
+      Logger.log.debug("Call to " + lump.toDebugString() + " deficit " + deficit);
     }
     return deficit;
   }
