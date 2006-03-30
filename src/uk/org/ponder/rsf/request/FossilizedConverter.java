@@ -103,10 +103,15 @@ public class FossilizedConverter {
     togo.valuebinding = value.substring(firsthash + 2, endcurly);
     String oldvaluestring = value.substring(endcurly + 1);
     
+    UIType uitype = UITypes.forName(uitypename);
     if (oldvaluestring.length() > 0) {
-      UIType uitype = UITypes.forName(uitypename);
       Class uiclass = uitype == null? null :uitype.getPlaceholder().getClass();
       togo.oldvalue = ConvertUtil.parse(oldvaluestring, xmlprovider, uiclass);
+    }
+    else {
+      // must ensure that we record the TYPE of oldvalue here for later use by 
+      // fixupNewValue, even if the oldvalue is empty.
+      togo.oldvalue = uitype.getPlaceholder();
     }
     
     togo.componentid = key.substring(0, key.length() - 
@@ -187,16 +192,22 @@ public class FossilizedConverter {
   
   /** Fixes up the supplied "new value" relative to information discovered 
    * in the fossilized binding. After this point, newvalue is authoritatively
-   * not null for every component which was marked as "expecting input", and
-   * of the same type as oldvalue.
+   * not null for every submission where a component which was marked as 
+   * "expecting input" SHOULD be receiving data, and of the same type as oldvalue.
+   * <p>In the case of an already "erroneous fossilization" where oldvalue was
+   * itself empty/null, it is possible that no submission returns, and none
+   * is actually possible (e.g. selection controls which have no parent choices).
+   * In this case newvalue will remain null (semantically null rather than 
+   * submittedly null).
+   * <p> Note that oldvalue is now always not null here.
+   * @param value The value assigned to the fossilized binding
    */
   public void fixupNewValue(SubmittedValueEntry sve, RenderSystemStatic rendersystemstatic, 
       String key, String value) {
     if (value.charAt(0) == INPUT_COMPONENT) {
       rendersystemstatic.fixupUIType(sve);
-      Class requiredclass = sve.oldvalue == null? String.class : sve.oldvalue.getClass();
-      UIType type = sve.oldvalue == null ? StringUIType.instance : UITypes.forObject(sve.oldvalue);
-      if (type != null && sve.newvalue.getClass() != requiredclass) {
+      Class requiredclass = sve.oldvalue.getClass();
+      if (sve.newvalue != null && sve.newvalue.getClass() != requiredclass) {
         // no attempt to catch the exceptions from the next two lines since they
         // all represent assertion errors. 
         String[] newvalues = (String[]) sve.newvalue;

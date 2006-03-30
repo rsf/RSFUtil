@@ -6,8 +6,7 @@ package uk.org.ponder.rsf.test.flow;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
-import uk.org.ponder.rsf.flow.lite.Flow;
-import uk.org.ponder.rsf.util.ComponentDumper;
+import uk.org.ponder.saxalizer.XMLProvider;
 import uk.org.ponder.streamutil.write.PrintStreamPOS;
 
 public class TestFlowLoader {
@@ -31,7 +30,8 @@ public class TestFlowLoader {
 //      System.out.println(flow.id);
       UIBranchContainer root = (UIBranchContainer) fsxac.getBean("viewtree");
       PrintStreamPOS pos = new PrintStreamPOS(System.out);
-      ComponentDumper.dumpContainer(root, 0, pos);
+      XMLProvider xmlp = (XMLProvider) fsxac.getBean("XMLProvider");
+      System.out.println(xmlp.toString(root));
     }
     catch (Exception e) {
       e.printStackTrace();

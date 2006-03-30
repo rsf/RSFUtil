@@ -12,12 +12,8 @@ import uk.org.ponder.rsf.componentprocessor.OrphanFinder;
 import uk.org.ponder.rsf.components.ComponentList;
 import uk.org.ponder.rsf.components.FixableComponent;
 import uk.org.ponder.rsf.components.UIBound;
-import uk.org.ponder.rsf.components.UIBoundString;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIContainer;
-import uk.org.ponder.rsf.components.UILink;
-import uk.org.ponder.rsf.components.UISelect;
-import uk.org.ponder.rsf.util.RSFUtil;
 import uk.org.ponder.saxalizer.SAXalizerMappingContext;
 import uk.org.ponder.util.Logger;
 

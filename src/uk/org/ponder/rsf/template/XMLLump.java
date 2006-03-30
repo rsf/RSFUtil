@@ -60,4 +60,8 @@ public class XMLLump {
   public static String textToTag(String text) {
     return text.substring(1, text.length() - 1);
   }
+  
+  public String toDebugString() {
+    return "lump index " + lumpindex + " line " + line + " column " + column;
+  }
 }

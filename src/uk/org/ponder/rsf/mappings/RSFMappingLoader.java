@@ -28,6 +28,7 @@ import uk.org.ponder.rsf.components.UISwitch;
 import uk.org.ponder.rsf.expander.DirectIndexStrategy;
 import uk.org.ponder.rsf.expander.IDRemapStrategy;
 import uk.org.ponder.rsf.flow.StaticActionErrorStrategy;
+import uk.org.ponder.rsf.view.ViewRoot;
 import uk.org.ponder.rsf.viewstate.EntityCentredViewParameters;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
@@ -78,6 +79,7 @@ public class RSFMappingLoader implements MappingLoader {
     context.classnamemanager.registerClass("elref", ELReference.class);
     context.classnamemanager.registerClass("dateparser", DateParser.class);
     
+    context.classnamemanager.registerClass("view", ViewRoot.class);
     
     context.saxleafparser.registerParser(ViewParameters.class, viewparamsleafparser);
     context.saxleafparser.registerParser(ELReference.class, new ELReferenceParser());

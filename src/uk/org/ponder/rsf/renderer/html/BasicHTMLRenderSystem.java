@@ -35,6 +35,7 @@ import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.stringutil.StringList;
 import uk.org.ponder.stringutil.StringSet;
 import uk.org.ponder.stringutil.URLUtil;
+import uk.org.ponder.util.Logger;
 import uk.org.ponder.xml.XMLUtil;
 import uk.org.ponder.xml.XMLWriter;
 
@@ -119,9 +120,9 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       }
 
       if (lump.textEquals("<form ")) {
-        // Logger.log.info("Warning: skipping form tag with all children at lump
-        // index "
-        // + lumpindex + " since no peer component");
+        Logger.log.warn("Warning: skipping form tag with rsf:id " + lump.rsfID 
+            + " and all children at "
+            + lump.toDebugString() + " since no peer component");
       }
     }
     else {

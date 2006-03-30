@@ -14,7 +14,7 @@ import uk.org.ponder.webapputil.ConsumerInfo;
  * A "simple" ViewStateHandler which in addition to accepting statically
  * configured Spring information, also is able to look in the
  * ConsumerRequestInfo threadlocal in order to discover relevant URL rendering
- * information. A request-scope bean.
+ * information.
  * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
@@ -22,7 +22,7 @@ import uk.org.ponder.webapputil.ConsumerInfo;
 public class RSFServletViewStateHandler implements ViewStateHandler {
 
   private BaseURLProvider urlprovider;
-  private ConsumerInfo ci;
+  private ConsumerInfo ciproxy;
   private BeanModelAlterer bma;
 
   private Map ultimaterenderers = new HashMap();
@@ -31,8 +31,8 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
     this.urlprovider = urlprovider;
   }
 
-  public void setConsumerInfo(ConsumerInfo ci) {
-    this.ci = ci;
+  public void setConsumerInfo(ConsumerInfo ciproxy) {
+    this.ciproxy = ciproxy;
   }
 
   public void setBeanModelAlterer(BeanModelAlterer bma) {
@@ -48,6 +48,7 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
     String extraparams = "";
     boolean quest = requestparams.indexOf('?') != -1;
   
+    ConsumerInfo ci = ciproxy.get();
     if (ci.urlbase != null) {
       usebaseurl = ci.urlbase;
     }
@@ -69,6 +70,7 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
   }
 
   public String getResourceURL(String resourcepath) {
+    ConsumerInfo ci = ciproxy.get();
     String useresurl = urlprovider.getResourceBaseURL();
     // ConsumerRequestInfo cri = ConsumerRequestInfo.getConsumerRequestInfo();
     if (ci.resourceurlbase != null) {
@@ -79,6 +81,7 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
 
   // in servlet context, rendered URLs agree with ultimate ones.
   public String getUltimateURL(ViewParameters viewparams) {
+    ConsumerInfo ci = ciproxy.get();
     // ConsumerRequestInfo cri = ConsumerRequestInfo.getConsumerRequestInfo();
     if (ci.externalURL != null) {
       UltimateURLRenderer uur = (UltimateURLRenderer) ultimaterenderers
