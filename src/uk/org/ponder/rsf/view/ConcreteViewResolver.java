@@ -35,7 +35,7 @@ public class ConcreteViewResolver implements ViewResolver {
   private Map views = new HashMap();
 
   private List resolvers = new ArrayList();
-  private boolean unknowniserror = false;
+  private boolean unknowniserror = true;
   private ViewParamsReceiver vpreceiver;
   private NavigationCaseReceiver ncreceiver;
   private AutoComponentProducerManager automanager;
