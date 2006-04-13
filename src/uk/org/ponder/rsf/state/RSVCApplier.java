@@ -5,11 +5,14 @@ package uk.org.ponder.rsf.state;
 
 import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.beanutil.BeanModelAlterer;
+import uk.org.ponder.conversion.LeafObjectParser;
+import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.TargettedMessageList;
 import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.mapping.DARList;
 import uk.org.ponder.mapping.DARReshaper;
 import uk.org.ponder.mapping.DataAlterationRequest;
+import uk.org.ponder.mapping.LeafObjectDARReshaper;
 import uk.org.ponder.rsf.request.RequestSubmittedValueCache;
 import uk.org.ponder.rsf.request.SubmittedValueEntry;
 import uk.org.ponder.rsf.uitype.UIType;
@@ -40,6 +43,7 @@ public class RSVCApplier {
     // Define a VersionCheckPolicy that will compare oldvalue to the model
     // value.
     DARList toapply = new DARList();
+    TargettedMessageList errors = ThreadErrorState.getErrorState().errors;
     for (int i = 0; i < rsvc.entries.size(); ++i) {
       SubmittedValueEntry sve = rsvc.entryAt(i);
       if (sve.componentid != null) { // it is a component binding.
@@ -75,12 +79,22 @@ public class RSVCApplier {
         dar = new DataAlterationRequest(sve.valuebinding, newvalue);
       }
       if (sve.reshaperbinding != null) {
-        DARReshaper reshaper = (DARReshaper) rbl.locateBean(sve.reshaperbinding);
-        dar = reshaper.reshapeDAR(dar);
+        Object reshaper = rbl.locateBean(sve.reshaperbinding);
+        if (reshaper instanceof LeafObjectParser) {
+          reshaper = new LeafObjectDARReshaper((LeafObjectParser) reshaper);
+        }
+        try {
+          dar = ((DARReshaper) reshaper).reshapeDAR(dar);
+        }
+        catch(Exception e) {
+          Logger.log.info("Error reshaping value", e);
+          // errors initially accumulated referring to paths
+          errors.addMessage(new TargettedMessage(e.getMessage(), e.getClass(), dar.path));
+        }
       }
       toapply.add(dar);
     }
-    TargettedMessageList errors = ThreadErrorState.getErrorState().errors;
+  
     darapplier.applyAlterations(rbl, toapply, errors);
   }
 

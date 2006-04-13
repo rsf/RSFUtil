@@ -94,6 +94,17 @@ http://opensource2.atlassian.com/projects/spring/browse/SPR-1116
     </property>
     <property name="reflectiveCache" ref="reflectiveCache" />
   </bean>
+  <!--  currently disused, RSAC has only simple property conversion support now -->
+  <bean id="RSACDARApplier" class="uk.org.ponder.mapping.DARApplier">
+    <property name="SAXalXMLProvider">
+      <ref local="XMLProvider" />
+    </property>
+    <property name="mappingContext">
+      <ref local="ELMappingContext" />
+    </property>
+    <property name="reflectiveCache" ref="reflectiveCache" />
+    <property name="springMode" value="true"/>
+  </bean>
 
   <bean id="deepBeanCloner"
     class="uk.org.ponder.reflect.DeepBeanCloner">

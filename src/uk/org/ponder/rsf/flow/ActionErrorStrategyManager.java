@@ -9,11 +9,13 @@ import java.util.List;
 import uk.org.ponder.errorutil.CoreMessages;
 import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.ThreadErrorState;
+import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 /** A collection point for ActionErrorStrategies. Tries each strategy in 
  * turn, and if none match the criteria for the current error, adopts 
- * a default strategy.
+ * a default strategy. This passes through any exception, and queues a
+ * general error message.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  *
  */
@@ -37,23 +39,23 @@ public class ActionErrorStrategyManager implements ActionErrorStrategy {
     return strategies;
   }
 
-  public boolean handleError(String returncode, Exception exception,
+  public Object handleError(String returncode, Exception exception,
       String flowstate, String viewID) {
-    boolean code = false;
+    Object code = null;
     for (int i = 0; i < strategies.size(); ++i) {
       code = strategyAt(i)
           .handleError(returncode, exception, flowstate, viewID);
-      if (code)
-        return true;
+      if (code != null)
+        return code;
     }
-    if (exception != null && !code) {
-//      Logger.log.error("Error invoking action", exception);
+    if (exception != null && code == null) {
+      Logger.log.warn("Error invoking action", exception);
       ThreadErrorState.addError(new TargettedMessage(
           CoreMessages.GENERAL_ACTION_ERROR));
       throw UniversalRuntimeException.accumulate(exception,
           "Error invoking action");
     }
-    return false;
+    return null;
   }
 
 }

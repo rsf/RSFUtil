@@ -113,19 +113,19 @@ public class RSFActionHandler implements ActionHandler {
             presmanager.restore(viewparams.flowtoken,
                 viewparams.endflow != null);
           }
-          rsvcapplier.applyValues(requestrsvc); // many errors possible here.
-
-          if (actionmethod != null) {
-            try {
+          try {
+            rsvcapplier.applyValues(requestrsvc); // many errors possible here.
+            if (actionmethod != null) {
               actionresult = rsvcapplier.invokeAction(actionmethod);
             }
-            catch (Exception exception) {
-              RSFActionHandler.this.exception = exception;
-            }
-            actionerrorstrategy.handleError(
-                actionresult instanceof String ? (String) actionresult
-                    : null, exception, null, viewparams.viewID);
           }
+          catch (Exception exception) {
+            RSFActionHandler.this.exception = exception;
+          }
+          Object newcode = actionerrorstrategy.handleError(
+              actionresult instanceof String ? (String) actionresult
+                  : null, exception, null, viewparams.viewID);
+          if (newcode != null) actionresult = newcode;
           // must interpret ARI INSIDE the wrapper, since it may need it
           // on closure.
           if (actionresult instanceof ARIResult) {
@@ -142,15 +142,22 @@ public class RSFActionHandler implements ActionHandler {
       if (!ariresult.propagatebeans.equals(ARIResult.FLOW_END)) {
         // TODO: consider whether we want to allow ARI to allocate a NEW TOKEN
         // for a FLOW FORK. Some call this, "continuations".
-        if (ariresult.resultingview.flowtoken == null
-            && ariresult.propagatebeans.equals(ARIResult.FLOW_START)) {
+        if (ariresult.resultingview.flowtoken == null) {
+          if (ariresult.propagatebeans.equals(ARIResult.FLOW_START)) {
           // if the ARI wanted one and hasn't allocated one, allocate flow
           // token.
-          ariresult.resultingview.flowtoken = errorstatemanager.allocateToken();
+           ariresult.resultingview.flowtoken = errorstatemanager.allocateToken();
+          }
+          else { // else assume existing flow continues.
+            if (viewparams.flowtoken == null) {
+              throw new IllegalStateException("Cannot propagate flow state without active flow");   
+            }
+            ariresult.resultingview.flowtoken = viewparams.flowtoken;
+          }
         }
         // On a FLOW_START, **ONLY** the flow state itself is to be saved,
         // since any other existing bean state will be non-flow or end-flow.
-        presmanager.preserve(ariresult.resultingview.flowtoken, 
+        presmanager.preserve(ariresult.resultingview.flowtoken,
             ariresult.propagatebeans.equals(ARIResult.FLOW_START));
       }
       else { // it is a flow end.
@@ -168,7 +175,7 @@ public class RSFActionHandler implements ActionHandler {
       // ThreadErrorState.addError(new TargettedMessage(
       // CoreMessages.GENERAL_ACTION_ERROR));
       // Detect failure to fill out arires properly.
-      if (ariresult == null || ariresult.resultingview == null) {
+      if (ariresult == null || ariresult.resultingview == null || e instanceof IllegalStateException) {
         ariresult = new ARIResult();
         ariresult.propagatebeans = ARIResult.FLOW_END;
 

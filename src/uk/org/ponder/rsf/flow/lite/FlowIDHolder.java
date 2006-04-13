@@ -3,6 +3,8 @@
  */
 package uk.org.ponder.rsf.flow.lite;
 
+import java.io.Serializable;
+
 /** Used to hold the ID of the Flow that is governing the current request 
  * cycle. We cannot use a simple String since this would break the reference
  * chain when it was assigned to.
@@ -18,7 +20,7 @@ package uk.org.ponder.rsf.flow.lite;
  *
  */
 
-public class FlowIDHolder {
+public class FlowIDHolder implements Serializable {
   // two flow-scoped members recording the flow coordinates
   private String flowID;
   private String flowStateID;
