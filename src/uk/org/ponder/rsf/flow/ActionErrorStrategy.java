@@ -7,7 +7,7 @@ package uk.org.ponder.rsf.flow;
  * strategy will be followed. The implementor may choose to swallow or propagate
  * any exception, generate a new exception, and/or add a targetted message to the
  * ThreadErrorState for the current thread. A list of these will be called in
- * sequence until one is found to return <code>true</code> 
+ * sequence until one is found to return a non-null result.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  *
  */
@@ -27,7 +27,10 @@ public interface ActionErrorStrategy {
    * @param flowstate The ID of any flow state which the action cycle is 
    * currently a part of. <code>null</code> if no flow is active.
    * @param viewID The current viewID. Never <code>null</code>
+   * @return An action return code representing the new return code for
+   * this action cycle, if the error was successfully handled. <code>null</code> 
+   * if the error was not handled by this strategy.
    */
-  public boolean handleError(String returncode, Exception exception, String flowstate,
+  public Object handleError(String returncode, Exception exception, String flowstate,
       String viewID);
 }

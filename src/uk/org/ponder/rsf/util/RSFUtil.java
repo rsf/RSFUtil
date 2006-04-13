@@ -51,13 +51,14 @@ public class RSFUtil {
   public static boolean isBound(UIComponent tocheck) {
     return tocheck instanceof UIBound? ((UIBound)tocheck).valuebinding != null : false;
   }
-  
+  // PROFILER hotspot: 1.5% of request render time.
   public static String getFullIDSegment(String ID, String localID) {
     return ID + SplitID.SEPARATOR + localID + SplitID.SEPARATOR;
   }
   
   /** @see UIComponent for the operation of this algorithm.
    */
+  // PROFILER hotspot: 2.4% render request time
   public static String computeFullID(UIComponent tocompute) {
     StringBuffer togo = new StringBuffer();
     UIComponent move = tocompute;

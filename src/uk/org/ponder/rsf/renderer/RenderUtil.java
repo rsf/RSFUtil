@@ -29,9 +29,16 @@ public class RenderUtil {
     target.write(lumps[start].buffer, lumps[start].start, lumps[limit].start - lumps[start].start);
     return limit;
   }
-  
+  /** Dump from template to output until either we reduce below <code>basedepth</code>
+   * recursion level, or we hit an rsf:id, or end of file. Return the lump index
+   * we reached. This has two uses, firstly from the base of the main scanning loop,
+   * and secondly from the "glue" scanning. The main scanning loop runs until we reduce
+   * BELOW RECURSION LEVEL OF PARENT, i.e. we output its closing tag and then return.
+   * The glue loop requires that we DO NOT OUTPUT THE CLOSING TAG OF PARENT because
+   * we may have some number of repetitive components still to render.
+   */
   public static int dumpScan(XMLLump[] lumps, int renderindex, int basedepth,  
-      PrintOutputStream target) {
+      PrintOutputStream target, boolean closeparent) {
     int start = lumps[renderindex].start;
     char[] buffer = lumps[renderindex].buffer;
     while (true) {
@@ -41,10 +48,15 @@ public class RenderUtil {
 //      target.print(lump.text);
       ++renderindex;
     }
+    // ASSUMPTIONS: close tags are ONE LUMP
+    if (!closeparent) --renderindex;
     int limit = (renderindex == lumps.length? buffer.length : lumps[renderindex].start);
+
     target.write(buffer, start, limit - start);
     return renderindex;
   }
+  
+  
 
   public static void dumpHiddenField(String name, String value, XMLWriter xmlw) {
     xmlw.writeRaw("<input type=\"hidden\" ");

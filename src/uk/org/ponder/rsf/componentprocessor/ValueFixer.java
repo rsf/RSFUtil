@@ -67,7 +67,7 @@ public class ValueFixer implements ComponentProcessor {
         // a bound component ALWAYS contains a value of the correct type.
         Object oldvalue = toprocess.acquireValue();
         String stripbinding = toprocess.valuebinding.value;
-        BeanResolver resolver = getResolver(toprocess);
+        BeanResolver resolver = computeResolver(toprocess);
         Object flatvalue = null;
         try {
           flatvalue = alterer.getFlattenedValue(stripbinding, beanlocator,
@@ -99,8 +99,13 @@ public class ValueFixer implements ComponentProcessor {
       }
     }
   }
-
-  private BeanResolver getResolver(UIBound toprocess) {
+/** As well as resolving any reference to a BeanResolver in the <code>resolver</code>
+ * field, this method will also copy it across to the <code>darreshaper</code>
+ * field if a) it refers to a LeafObjectParser, and b) the field is currently
+ * empty. This is a courtesy to allow compactly encoded things like DateParsers 
+ * to be used first class, although we REALLY expect users to make transit beans.
+ */
+  private BeanResolver computeResolver(UIBound toprocess) {
     Object renderer = toprocess.resolver;
 
     if (renderer == null) {
@@ -117,6 +122,10 @@ public class ValueFixer implements ComponentProcessor {
       return (BeanResolver) renderer;
     }
     else if (renderer instanceof LeafObjectParser) {
+      if (toprocess.darreshaper != null && toprocess.resolver instanceof
+          ELReference) {
+        toprocess.darreshaper = (ELReference) toprocess.resolver;
+      }
       return new BeanResolver() {
         public String resolveBean(Object bean) {
           return ((LeafObjectParser) finalrenderer).render(bean);

@@ -78,7 +78,7 @@ public class AutoComponentProducerManager implements ComponentProducerWrapper,
   public void setApplicationContext(ApplicationContext applicationContext)
       throws BeansException {
     String[] viewbeans = applicationContext
-        .getBeanNamesForType(ViewComponentProducer.class);
+        .getBeanNamesForType(ViewComponentProducer.class, false, false);
     for (int i = 0; i < viewbeans.length; ++i) {
       String beanname = viewbeans[i];
       ViewComponentProducer producer = (ViewComponentProducer) applicationContext

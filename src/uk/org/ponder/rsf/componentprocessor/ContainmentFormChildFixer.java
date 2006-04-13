@@ -14,8 +14,6 @@ import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.request.SubmittedValueEntry;
 import uk.org.ponder.rsf.util.RSFUtil;
-import uk.org.ponder.saxalizer.MethodAnalyser;
-import uk.org.ponder.saxalizer.SAXAccessMethod;
 import uk.org.ponder.saxalizer.SAXalizerMappingContext;
 import uk.org.ponder.stringutil.StringList;
 
@@ -27,7 +25,8 @@ import uk.org.ponder.stringutil.StringList;
  * in.
  * <p>
  * This fixer is HTML/HTTP SPECIFIC, and should not execute for other idioms.
- * 
+ * <p> Note that it also is responsible for setting the "Submitting Control"
+ * packed attribute for UICommand objects. 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */

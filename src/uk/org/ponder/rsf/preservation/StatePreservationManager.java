@@ -76,7 +76,9 @@ public class StatePreservationManager {
       endflowstrategies = new ArrayList(0);
     }
   }
-
+// TODO: We must make sure that expired flow can be reliably detected by
+// storing a special subtoken on preserve, and throwing ExpiredFlowException when
+// we fail to get it out again.
   public void preserve(String tokenid, boolean flowstart) {
     
     for (int i = 0; i < strategies.size(); ++i) {
