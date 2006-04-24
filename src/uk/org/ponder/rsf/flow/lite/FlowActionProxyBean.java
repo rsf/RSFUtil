@@ -5,36 +5,38 @@ package uk.org.ponder.rsf.flow.lite;
 
 import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.hashutil.EighteenIDGenerator;
-import uk.org.ponder.reflect.MethodInvokingProxy;
 import uk.org.ponder.reflect.ReflectiveCache;
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionErrorStrategy;
+import uk.org.ponder.rsf.processor.ActionTarget;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.Logger;
 
-/** One instance of this bean is declared per flow in the request context.
- * The "invoke action" phase of processing attempts to invoke a method on
- * this bean named for the "action" method specified in the flow configuration,
- * which is here decoded and converted into the required method call (or
- * sequence of calls) on the beans specified in the relevant action states.
+/**
+ * One instance of this bean is declared per flow in the request context. The
+ * "invoke action" phase of processing attempts to invoke a method on this bean
+ * named for the "action" method specified in the flow configuration, which is
+ * here decoded and converted into the required method call (or sequence of
+ * calls) on the beans specified in the relevant action states.
  * <p>
  * These beans are created in FlowProxyFactory, a useful convenience bean that
- * prevents the user from needing to set the other tedious dependencies of this 
+ * prevents the user from needing to set the other tedious dependencies of this
  * bean in addition to the actual target flow object.
- * <p> 
+ * <p>
  * Note that this bean causes the FlowIDHolder contents to be set with the
  * respective flowID if it receives a START transition. This is a somewhat
- * violation of BeanReasonableness, but we have not yet an architecture for
- * flow scope construct-time activities.
+ * violation of BeanReasonableness, but we have not yet an architecture for flow
+ * scope construct-time activities.
+ * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
- *
+ * 
  */
-public class FlowActionProxyBean implements MethodInvokingProxy {
+public class FlowActionProxyBean implements ActionTarget {
   // less hassle to keep this here than manage as a dependency....
   private static EighteenIDGenerator idgenerator = new EighteenIDGenerator();
   private Flow flow;
   private ActionErrorStrategy actionerrorstrategy;
-  
+
   private ReflectiveCache reflectivecache;
   private BeanLocator rbl;
   private ViewParameters viewparams;
@@ -43,15 +45,16 @@ public class FlowActionProxyBean implements MethodInvokingProxy {
 
   private boolean strict = false;
 
-// These two are user configured properties
+  // These two are user configured properties
   public void setFlow(Flow flow) {
     this.flow = flow;
   }
-  
+
   public void setStrict(boolean strict) {
-    this.strict  = strict;
+    this.strict = strict;
   }
-// The remainder are system configured properties
+
+  // The remainder are system configured properties
   public void setReflectiveCache(ReflectiveCache reflectivecache) {
     this.reflectivecache = reflectivecache;
   }
@@ -63,14 +66,15 @@ public class FlowActionProxyBean implements MethodInvokingProxy {
   public void setViewParameters(ViewParameters viewparams) {
     this.viewparams = viewparams;
   }
-  
+
   public void setFlowIDHolder(FlowIDHolder flowidholder) {
     this.flowidholder = flowidholder;
   }
-  
+
   public void setActionErrorStrategy(ActionErrorStrategy actionerrorstrategy) {
     this.actionerrorstrategy = actionerrorstrategy;
   }
+
   /**
    * Called in response to invocation of a command link. The "method" name
    * actually corresponds to the "on" text of the VIEW state. If the method name
@@ -81,15 +85,15 @@ public class FlowActionProxyBean implements MethodInvokingProxy {
    * we follow the chain, invoking actions as we go until we do hit a view
    * state. The name of the resulting view state is the return.
    */
-  public Object invokeMethod(String name, Object[] args) {
+  public Object invokeAction(String name, String knownresult) {
     State newstate;
     ARIResult togo = new ARIResult();
     togo.resultingview = viewparams.copyBase();
-    
+
     if (name.equals(ARIResult.FLOW_START)) {
       if (!flowidholder.isEmpty()) {
-        throw new IllegalStateException("Flow " + flowidholder + " already in progress, "
-            + "cannot be started");
+        throw new IllegalStateException("Flow " + flowidholder
+            + " already in progress, " + "cannot be started");
       }
       flowidholder.setFlowID(flow.id);
       flowidholder.setFlowToken(idgenerator.generateID());
@@ -97,22 +101,26 @@ public class FlowActionProxyBean implements MethodInvokingProxy {
       if (newstate instanceof ViewState) {
         flowidholder.setFlowStateID(newstate.id);
         flowidholder.setRequestFlowStateID(newstate.id);
-        
+
         togo.propagatebeans = ARIResult.FLOW_START;
-        
+
       }
     }
     else { // any action other than FLOW_START
       if (flowidholder.getRequestFlowStateID() == null) {
-        throw new IllegalStateException("Received flow action " + name + 
-            " for Flow " + flow.id + " without current flow state");
+        throw new IllegalStateException("Received flow action " + name
+            + " for Flow " + flow.id + " without current flow state");
       }
-      if (strict && !flowidholder.getFlowStateID().equals(flowidholder.getRequestFlowStateID())) {
-        throw new IllegalStateException("Flow " + flowidholder + " received request" +
-                " for state " + flowidholder.getRequestFlowStateID() + " whereas current "
-                + " flow state is " + flowidholder.getFlowStateID());
+      if (strict
+          && !flowidholder.getFlowStateID().equals(
+              flowidholder.getRequestFlowStateID())) {
+        throw new IllegalStateException("Flow " + flowidholder
+            + " received request" + " for state "
+            + flowidholder.getRequestFlowStateID() + " whereas current "
+            + " flow state is " + flowidholder.getFlowStateID());
       }
-      ViewState viewstate = (ViewState) flow.stateFor(flowidholder.getRequestFlowStateID());
+      ViewState viewstate = (ViewState) flow.stateFor(flowidholder
+          .getRequestFlowStateID());
       Transition trans = viewstate.transitions.transitionOn(name);
       if (trans == null) {
         throw new IllegalArgumentException(
@@ -121,7 +129,7 @@ public class FlowActionProxyBean implements MethodInvokingProxy {
       }
       newstate = flow.stateFor(trans.to);
     }
-  
+
     // continue while still actions - stop at either View or an EndState
     while (newstate instanceof ActionState) {
       ActionState actionstate = (ActionState) newstate;
@@ -133,15 +141,21 @@ public class FlowActionProxyBean implements MethodInvokingProxy {
       }
       String result = null;
       Exception exception = null;
-      try {
-        result = (String) reflectivecache.invokeMethod(bean, action.method);
+      if (knownresult == null) {
+        try {
+          result = (String) reflectivecache.invokeMethod(bean, action.method);
+        }
+        catch (Exception e) {
+          exception = e;
+        }
       }
-      catch (Exception e) {
-        exception = e;
+      else {
+        result = knownresult;
+        knownresult = null; // consume the known result on the first occasion.
       }
-      actionerrorstrategy.handleError(result, exception, flowidholder.getRequestFlowStateID(), 
-          viewparams.viewID);
-      
+      actionerrorstrategy.handleError(result, exception, flowidholder
+          .getRequestFlowStateID(), viewparams.viewID);
+
       Transition trans2 = actionstate.transitions.transitionOn(result);
       newstate = flow.stateFor(trans2.to);
       Logger.log.info("Transition from action state " + actionstate.id
@@ -152,11 +166,11 @@ public class FlowActionProxyBean implements MethodInvokingProxy {
     flowidholder.setFlowStateID(newstate.id);
     togo.resultingview.viewID = viewstate.viewID;
     togo.resultingview.flowtoken = flowidholder.getFlowToken();
-  
+
     if (togo.propagatebeans == null) { // if not filled in as FLOW_START
-    
-      togo.propagatebeans = newstate instanceof EndState? ARIResult.FLOW_END :
-        ARIResult.PROPAGATE;
+
+      togo.propagatebeans = newstate instanceof EndState ? ARIResult.FLOW_END
+          : ARIResult.PROPAGATE;
     }
     return togo;
   }

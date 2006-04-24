@@ -5,6 +5,7 @@ package uk.org.ponder.rsf.state;
 
 import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.beanutil.BeanModelAlterer;
+import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.conversion.LeafObjectParser;
 import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.TargettedMessageList;
@@ -13,6 +14,7 @@ import uk.org.ponder.mapping.DARList;
 import uk.org.ponder.mapping.DARReshaper;
 import uk.org.ponder.mapping.DataAlterationRequest;
 import uk.org.ponder.mapping.LeafObjectDARReshaper;
+import uk.org.ponder.rsf.processor.ActionTarget;
 import uk.org.ponder.rsf.request.RequestSubmittedValueCache;
 import uk.org.ponder.rsf.request.SubmittedValueEntry;
 import uk.org.ponder.rsf.uitype.UIType;
@@ -98,7 +100,16 @@ public class RSVCApplier {
     darapplier.applyAlterations(rbl, toapply, errors);
   }
 
-  public Object invokeAction(String actionbinding) {
-    return darapplier.invokeBeanMethod(actionbinding, rbl);
+  public Object invokeAction(String actionbinding, String knownvalue) {
+    String totail = PathUtil.getToTailPath(actionbinding);
+    String actionname = PathUtil.getTailPath(actionbinding);
+    Object penultimatebean = darapplier.getBeanValue(totail, rbl);
+    if (penultimatebean instanceof ActionTarget) {
+      Object returnvalue = ((ActionTarget)penultimatebean).invokeAction(actionname, knownvalue);
+      return returnvalue;
+    }
+    else {
+      return darapplier.invokeBeanMethod(actionbinding, rbl);
+    }
   }
 }

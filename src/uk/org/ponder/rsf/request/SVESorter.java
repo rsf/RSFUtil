@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import uk.org.ponder.beanutil.BeanUtil;
+import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.rsf.state.ELDependencyMap;
 
 /** Applies a topological sorting to a collection of SubmittedValueEntry
@@ -91,7 +91,7 @@ public class SVESorter {
     if (writingbeans == ELDependencyMap.VALID_LIST_MARKER) return;
     // If we *write* a path, all pending *writes* to higher paths must already
     // be done.
-    String parentpath = BeanUtil.getContainingPath(writepath);
+    String parentpath = PathUtil.getToTailPath(writepath);
     if (parentpath != null) {
       scheduleWrites(parentpath);
     }

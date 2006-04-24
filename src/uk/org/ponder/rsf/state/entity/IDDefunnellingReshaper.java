@@ -6,6 +6,7 @@ package uk.org.ponder.rsf.state.entity;
 import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.beanutil.BeanUtil;
+import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.mapping.DARReshaper;
 import uk.org.ponder.mapping.DataAlterationRequest;
 import uk.org.ponder.saxalizer.MethodAnalyser;
@@ -49,11 +50,11 @@ public class IDDefunnellingReshaper implements DARReshaper {
   
   public DataAlterationRequest reshapeDAR(DataAlterationRequest toshape) {
     if (toshape.type.equals(DataAlterationRequest.ADD)) {
-      String cutback = BeanUtil.getContainingPath(toshape.path);
+      String cutback = PathUtil.getToTailPath(toshape.path);
       // cutback may be null! so examine methods of cutback2. This MUST
       // be a concrete object!!
-      String cutback2 = BeanUtil.getContainingPath(cutback);
-      String membername = BeanUtil.getTail(cutback);
+      String cutback2 = PathUtil.getToTailPath(cutback);
+      String membername = PathUtil.getTailPath(cutback);
       Object lastentity = bma.getBeanValue(cutback2, rbl);
       MethodAnalyser ma = mappingcontext.getAnalyser(lastentity.getClass());
       SAXAccessMethod sam = ma.getAccessMethod(membername);

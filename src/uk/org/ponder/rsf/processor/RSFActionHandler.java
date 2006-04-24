@@ -99,7 +99,13 @@ public class RSFActionHandler implements ActionHandler {
   // letting the action result escape from the wrapper into this instance
   // variable.
   private Object actionresult = null;
-  private Exception exception;
+
+  private Object handleError(Object actionresult, Exception exception) {
+    Object newcode = actionerrorstrategy.handleError(
+        actionresult instanceof String ? (String) actionresult
+            : null, exception, null, viewparams.viewID);
+    return newcode;
+  }
 
   public ViewParameters handle() {
     ThreadErrorState.beginRequest();
@@ -113,19 +119,33 @@ public class RSFActionHandler implements ActionHandler {
             presmanager.restore(viewparams.flowtoken,
                 viewparams.endflow != null);
           }
+          Exception exception = null;
           try {
             rsvcapplier.applyValues(requestrsvc); // many errors possible here.
-            if (actionmethod != null) {
-              actionresult = rsvcapplier.invokeAction(actionmethod);
+          }
+          catch (Exception e) {
+            exception = e;
+          }
+          Object newcode = handleError(actionresult, exception);
+          exception = null;
+          if (newcode == null || newcode instanceof String) {
+            // only proceed to actually invoke action if no ARIResult already
+            // note all this odd two-step procedure is only required to be able to
+            // pass AES error returns and make them "appear" to be the returns of 
+            // the first action method in a Flow.
+            try {
+              if (actionmethod != null) {
+                actionresult = rsvcapplier.invokeAction(actionmethod,
+                    (String) newcode);
+              }
             }
+            catch (Exception e) {
+              exception = e;
+            }
+            newcode = handleError(actionresult, exception);
           }
-          catch (Exception exception) {
-            RSFActionHandler.this.exception = exception;
-          }
-          Object newcode = actionerrorstrategy.handleError(
-              actionresult instanceof String ? (String) actionresult
-                  : null, exception, null, viewparams.viewID);
-          if (newcode != null) actionresult = newcode;
+          if (newcode != null)
+            actionresult = newcode;
           // must interpret ARI INSIDE the wrapper, since it may need it
           // on closure.
           if (actionresult instanceof ARIResult) {
@@ -144,13 +164,15 @@ public class RSFActionHandler implements ActionHandler {
         // for a FLOW FORK. Some call this, "continuations".
         if (ariresult.resultingview.flowtoken == null) {
           if (ariresult.propagatebeans.equals(ARIResult.FLOW_START)) {
-          // if the ARI wanted one and hasn't allocated one, allocate flow
-          // token.
-           ariresult.resultingview.flowtoken = errorstatemanager.allocateToken();
+            // if the ARI wanted one and hasn't allocated one, allocate flow
+            // token.
+            ariresult.resultingview.flowtoken = errorstatemanager
+                .allocateToken();
           }
           else { // else assume existing flow continues.
             if (viewparams.flowtoken == null) {
-              throw new IllegalStateException("Cannot propagate flow state without active flow");   
+              throw new IllegalStateException(
+                  "Cannot propagate flow state without active flow");
             }
             ariresult.resultingview.flowtoken = viewparams.flowtoken;
           }
@@ -175,7 +197,8 @@ public class RSFActionHandler implements ActionHandler {
       // ThreadErrorState.addError(new TargettedMessage(
       // CoreMessages.GENERAL_ACTION_ERROR));
       // Detect failure to fill out arires properly.
-      if (ariresult == null || ariresult.resultingview == null || e instanceof IllegalStateException) {
+      if (ariresult == null || ariresult.resultingview == null
+          || e instanceof IllegalStateException) {
         ariresult = new ARIResult();
         ariresult.propagatebeans = ARIResult.FLOW_END;
 
