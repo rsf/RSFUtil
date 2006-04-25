@@ -49,7 +49,7 @@ public class RenderUtil {
       ++renderindex;
     }
     // ASSUMPTIONS: close tags are ONE LUMP
-    if (!closeparent) --renderindex;
+    if (!closeparent && lumps[renderindex].rsfID == null) --renderindex;
     int limit = (renderindex == lumps.length? buffer.length : lumps[renderindex].start);
 
     target.write(buffer, start, limit - start);

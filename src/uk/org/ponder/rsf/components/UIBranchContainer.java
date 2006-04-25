@@ -158,8 +158,7 @@ public class UIBranchContainer extends UIContainer {
 
     SplitID split = toadd.ID == null ? null
         : new SplitID(toadd.ID);
-    String childkey = toadd.ID == null ? NON_PEER_ID
-        : split.prefix;
+    String childkey = split.prefix;
     if (toadd.ID != null && split.suffix == null) {
       childmap.put(childkey, toadd);
     }
