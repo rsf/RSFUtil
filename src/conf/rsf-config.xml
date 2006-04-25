@@ -304,20 +304,7 @@ http://opensource2.atlassian.com/projects/spring/browse/SPR-1116
     <property name="objectType"
       value="uk.org.ponder.rsf.flow.lite.Flow" />
   </bean>
-  
-  <bean id="flowLite-ARIResolver"
-    class="uk.org.ponder.rsf.flow.lite.FlowLiteARIResolver">
-    <property name="defaultARI">
-      <ref bean="defaultARI" />
-    </property>
-    <property name="flowLiteARI">
-      <ref bean="flowLiteARI" />
-    </property>
-    <property name="flowIDHolder">
-      <ref bean="flowLite-flowIDHolderProxy" />
-    </property>
-  </bean>
-
+ 
   <bean id="navigationCasePooler"
     class="uk.org.ponder.rsf.flow.jsfnav.NavigationCasePooler">
     <property name="reflectiveCache" ref="reflectiveCache" />

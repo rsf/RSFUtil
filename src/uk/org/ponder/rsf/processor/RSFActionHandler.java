@@ -5,6 +5,8 @@ package uk.org.ponder.rsf.processor;
 
 import java.util.Map;
 
+import uk.org.ponder.errorutil.TargettedMessage;
+import uk.org.ponder.errorutil.TargettedMessageList;
 import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.rsf.flow.ARIResolver;
 import uk.org.ponder.rsf.flow.ARIResult;
@@ -100,15 +102,28 @@ public class RSFActionHandler implements ActionHandler {
   // variable.
   private Object actionresult = null;
 
-  private Object handleError(Object actionresult, Exception exception) {
-    Object newcode = actionerrorstrategy.handleError(
-        actionresult instanceof String ? (String) actionresult
-            : null, exception, null, viewparams.viewID);
+  private Object handleError(Object actionresult, Exception exception,
+      TargettedMessageList messages) {
+    // an ARIResult is at the end-of-line.
+    if (actionresult != null && !(actionresult instanceof String))
+      return actionresult;
+    Object newcode = actionerrorstrategy.handleError((String) actionresult,
+        exception, null, viewparams.viewID);
+    if (newcode != null && !(newcode instanceof String))
+      return actionresult;
+    for (int i = 0; i < messages.size(); ++i) {
+      TargettedMessage message = messages.messageAt(i);
+      if (message.exception != null) {
+        newcode = actionerrorstrategy.handleError((String) newcode,
+            message.exception, null, viewparams.viewID);
+      }
+    }
     return newcode;
   }
 
   public ViewParameters handle() {
     ThreadErrorState.beginRequest();
+    final TargettedMessageList errors = ThreadErrorState.getErrorState().errors;
     final String actionmethod = PostDecoder.decodeAction(normalizedmap);
 
     try {
@@ -126,12 +141,14 @@ public class RSFActionHandler implements ActionHandler {
           catch (Exception e) {
             exception = e;
           }
-          Object newcode = handleError(actionresult, exception);
+          Object newcode = handleError(actionresult, exception, errors);
           exception = null;
           if (newcode == null || newcode instanceof String) {
             // only proceed to actually invoke action if no ARIResult already
-            // note all this odd two-step procedure is only required to be able to
-            // pass AES error returns and make them "appear" to be the returns of 
+            // note all this odd two-step procedure is only required to be able
+            // to
+            // pass AES error returns and make them "appear" to be the returns
+            // of
             // the first action method in a Flow.
             try {
               if (actionmethod != null) {
@@ -142,7 +159,7 @@ public class RSFActionHandler implements ActionHandler {
             catch (Exception e) {
               exception = e;
             }
-            newcode = handleError(actionresult, exception);
+            newcode = handleError(actionresult, exception, errors);
           }
           if (newcode != null)
             actionresult = newcode;

@@ -91,7 +91,7 @@ public class RSVCApplier {
         catch(Exception e) {
           Logger.log.info("Error reshaping value", e);
           // errors initially accumulated referring to paths
-          errors.addMessage(new TargettedMessage(e.getMessage(), e.getClass(), dar.path));
+          errors.addMessage(new TargettedMessage(e.getMessage(), e, dar.path));
         }
       }
       toapply.add(dar);

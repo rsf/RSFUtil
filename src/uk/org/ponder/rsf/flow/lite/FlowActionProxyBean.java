@@ -111,6 +111,10 @@ public class FlowActionProxyBean implements ActionTarget {
         throw new IllegalStateException("Received flow action " + name
             + " for Flow " + flow.id + " without current flow state");
       }
+      if (viewparams.endflow != null) {
+        throw new IllegalStateException("Received flow action " + name
+        + " for ended flow " + flow.id);
+      }
       if (strict
           && !flowidholder.getFlowStateID().equals(
               flowidholder.getRequestFlowStateID())) {
