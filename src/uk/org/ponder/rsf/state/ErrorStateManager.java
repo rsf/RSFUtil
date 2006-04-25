@@ -8,14 +8,14 @@ import uk.org.ponder.errorutil.TargettedMessageList;
 import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.hashutil.EighteenIDGenerator;
 import uk.org.ponder.rsf.request.RequestSubmittedValueCache;
+import uk.org.ponder.rsf.request.SubmittedValueEntry;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.Logger;
 
 /**
- * Represents the token-related state which is stored DURING a request. After
+ * Holds the token-related state which is stored DURING a request. After
  * the request is completed, some of this information may be copied to a
  * TokenRequestState entry for the token, stored in the TokenStateHolder.
- * 
  * 
  * Keyed by a token which identifies a view that has been presented to the user.
  * The token is allocated afresh on each POST, and redirected to a GET view that
@@ -99,9 +99,17 @@ public class ErrorStateManager {
         // which follows "message-for". These IDs may actually be "synthetic",
         // at a particular level of containment, in that they refer to a specially
         // instantiated genuine component which has the same ID.
-        String id = rsvc.byPath(tm.targetid).componentid;
-        tm.targetid = id;
+        SubmittedValueEntry sve = rsvc.byPath(tm.targetid);
+        if (sve == null) {
+          Logger.log.warn("Message queued for non-component path " + tm.targetid);
+        }
+        else {
+          String id = tm.targetid = sve.componentid;
+        }
       }
+      // We desire TMs stored between cycles are "trivially" serializable, any
+      // use of the actual exception object should be finished by action end.
+      tm.exception = null;
     }
   }
 
