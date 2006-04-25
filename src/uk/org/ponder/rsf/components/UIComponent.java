@@ -15,9 +15,6 @@ import uk.org.ponder.rsf.util.RSFUtil;
  *  
  */
 public class UIComponent {
-  // used to represent the key to a peer-less component in the childmap - check
-  // that this is completely disused now with SCR architecture.
-  public static final String NON_PEER_ID = "  non-peer  ";
   /** This ID corresponds to the rsf:id in the view template, and is parsed
    * by use of the class SplitID.
    */

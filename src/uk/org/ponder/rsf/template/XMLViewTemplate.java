@@ -32,12 +32,15 @@ import uk.org.ponder.util.UniversalRuntimeException;
  */
 public class XMLViewTemplate implements ViewTemplate {
   public int INITIAL_LUMP_SIZE = 1000;
-  public XMLLump rootlump;
+  // a hypothetical "root lump" whose downmap contains root RSF components. 
+  public XMLLump rootlump; 
   public XMLLumpMMap globalmap;
 
   // private HashMap foridtocomponent = new HashMap();
 
   public XMLLump[] lumps;
+  // index of the first lump holding root document tag 
+  public int roottagindex; 
   private CharWrap buffer;
 
   public boolean hasComponent(String ID) {
@@ -128,6 +131,7 @@ public class XMLViewTemplate implements ViewTemplate {
       setLumpChars(backlump, null, 0, 0);
     }
     XMLLump headlump = newLump(parser);
+    if (roottagindex == -1) roottagindex = headlump.lumpindex;
     String tagname = parser.getName();
     // standard text of |<tagname | to allow easy identification.
     setLumpString(headlump, XMLLump.tagToText(tagname));
@@ -284,6 +288,7 @@ public class XMLViewTemplate implements ViewTemplate {
     rootlump = new XMLLump();
     rootlump.downmap = new XMLLumpMMap();
     rootlump.nestingdepth = -1;
+    roottagindex = -1;
     globalmap = new XMLLumpMMap();
     justended = false;
   }

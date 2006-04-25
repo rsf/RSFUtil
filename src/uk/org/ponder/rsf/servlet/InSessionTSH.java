@@ -38,7 +38,12 @@ public class InSessionTSH implements TokenStateHolder {
   }
 
   public void clearTokenState(String tokenID) {
+    try {
     session.removeAttribute(tokenID);
+    }
+    catch (Exception e) {
+      // We really don't care if the "session has been invalidated".
+    }
   }
 
   public void setExpirySeconds(int seconds) {

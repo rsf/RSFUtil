@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.rsf.renderer;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +20,8 @@ import uk.org.ponder.rsf.view.ViewTemplate;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.util.Logger;
+import uk.org.ponder.xml.XMLUtil;
+import uk.org.ponder.xml.XMLWriter;
 
 /**
  * Encapsulates the request-specific process of rendering a view - 
@@ -29,14 +32,15 @@ import uk.org.ponder.util.Logger;
  * 
  */
 public class ViewRender {
-
-  private XMLViewTemplate template;
+  private XMLViewTemplate template; // here only as a reminder for inversion
   private XMLLump[] lumps;
+  private int roottagindex;
   private XMLLump rootlump;
   private XMLLumpMMap globalmap;
   private View view;
   private RenderSystem renderer;
   private PrintOutputStream pos;
+  private XMLWriter xmlw;
 
   private Map branchmap;
   
@@ -57,6 +61,7 @@ public class ViewRender {
     this.lumps = template.lumps;
     this.rootlump = template.rootlump;
     this.globalmap = template.globalmap;
+    this.roottagindex = template.roottagindex;
   }
    
   public void setView(View view) {
@@ -86,10 +91,9 @@ public class ViewRender {
   
     pos.print(renderer.getDeclaration());
     this.pos = pos;
+    this.xmlw = new XMLWriter(pos);
     rendereddeadletters = false;
-    // TODO: CORRECTLY determine how much of the initial text precedes the
-    // first open tag.
-    renderRecurse(view.viewroot, rootlump, lumps[1]);
+    renderRecurse(view.viewroot, rootlump, lumps[roottagindex]);
   }
 
   private void renderRecurse(UIBranchContainer basecontainer, XMLLump parentlump,
@@ -123,21 +127,14 @@ public class ViewRender {
           for (int i = 0; i < children.size(); ++i) {
             UIComponent child = (UIComponent) children.get(i);
             if (child instanceof UIBranchContainer) {
-//            Logger.log.info("Resolved call from ");
-//            debugLump(lump);
               XMLLump targetlump = (XMLLump) branchmap.get(child);
-//              if (Logger.log.isInfoEnabled()) {
-//                System.out.println("Resolved call for component " + child.getClass().getName() + " fullID " + child.getFullID() + " to ");
-//                Logger.log.info("for component with ID " + child.ID + " to ");
-//                System.out.println(debugLump(targetlump, lumps));
-//                }
               if (targetlump != null) {
                 XMLLump firstchild = lumps[targetlump.open_end.lumpindex + 1];
-                dumpContainerHead(targetlump, firstchild);
+                dumpContainerHead((UIBranchContainer) child, targetlump);
                 renderRecurse((UIBranchContainer) child, targetlump, firstchild);
               }
             }
-            else {
+            else { // repetitive non-branch
               XMLLump targetlump = findChild(parentlump, child);
               int renderend = renderer.renderComponent(child, lumps,
                   targetlump.lumpindex, pos);
@@ -227,11 +224,16 @@ public class ViewRender {
     return headlumps.size() > 0? headlumps.lumpAt(0) : null;
   }
 
-  private void dumpContainerHead(XMLLump targetlump, XMLLump firstchild) {
-    // broken out as a method in case we want to censor rsf:id attributes one
-    // day.
-    RenderUtil.dumpTillLump(lumps, targetlump.lumpindex, firstchild.lumpindex,
-        pos);
+  private void dumpContainerHead(UIBranchContainer branch, 
+      XMLLump targetlump) {
+    HashMap attrcopy = new HashMap();
+    attrcopy.putAll(targetlump.attributemap);
+    attrcopy.put("id", branch.getFullID());
+    attrcopy.remove(XMLLump.ID_ATTRIBUTE);
+    // TODO: normalise this silly space business
+    pos.write(targetlump.buffer, targetlump.start, targetlump.length - 1);
+    XMLUtil.dumpAttributes(attrcopy, xmlw);
+    pos.print(">");
   }
 
   public static String debugLump(XMLLump debug, XMLLump[] lumps) {
