@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
+	"http://www.springframework.org/dtd/spring-beans.dtd">
+<!-- The purpose of this file is to provide reasonable "default" completion of
+  the application scope portion of 
+  RSF's Spring API, so that the project will validate self-consistently in,
+  for example, Spring IDE.  Dependencies resolved here are ones that clients
+  might well want to override, as opposed to more 
+  core dependencies in the main RSF configuration file rsf-config.xml. -->
+<beans>
+  <bean id="messageSource"
+    class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+    <property name="basename">
+      <value>WEB-INF/messages/messages</value>
+    </property>
+    <property name="cacheSeconds">
+      <value>10</value>
+    </property>
+  </bean>
+
+  <bean id="messageLocator"
+    class="uk.org.ponder.springutil.SpringMessageLocator">
+    <property name="messageSource">
+      <ref local="messageSource" />
+    </property>
+  </bean>
+
+  <bean id="viewParametersParser"
+    class="uk.org.ponder.rsf.viewstate.BasicViewParametersParser"
+    init-method="init">
+    <property name="beanModelAlterer" ref="DARApplier" />
+    <property name="reflectiveCache" ref="reflectiveCache" />
+  </bean>
+
+  <bean name="consumerInfoProxy" parent="RSACBridgeProxy">
+    <property name="targetBeanName">
+      <idref bean="consumerInfo" />
+    </property>
+  </bean>
+
+  <bean name="baseURLProvider" parent="autoBaseURLProviderProxy" />
+  
+  <!-- The two properties of sbup
+    are only relevant to users of the direct UI, where the URL that it appears
+    at is somehow "unexpected". In order to use these values, it is necessary
+    to copy these two definitions into the application's application context
+    file, together with definitions for the referenced URLs. Given these URLs
+    will generally represent configuration relevant to the end user, these should
+    be placed in yet a 3rd application context file, suggestion: a file called
+    userConfig.xml which breaks out all such configurable dependencies.
+    These will be overridden for consumers of the remote web service.  -->
+  <bean id="directUIBaseURL" class="java.lang.String">
+    <constructor-arg>
+      <value>
+        http://www.unexpected.hosting.environment/servletcontext/faces/
+      </value>
+    </constructor-arg>
+  </bean>
+  <bean id="directUIResourceBaseURL" class="java.lang.String">
+    <constructor-arg>
+      <value>http://www.unexpected.hosting.environment/servletcontext/</value>
+    </constructor-arg>
+  </bean>
+  
+  <!-- The default viewstatehandler uses the baseURLProvider (defaulted to 
+    autoBaseURLProvider in blank-config to infer URLs. Clients may override it 
+    by referring to another of their choosing.  -->
+  <bean id="viewStateHandler"
+    class="uk.org.ponder.rsf.viewstate.RSFServletViewStateHandler">
+    <property name="baseURLProvider">
+      <ref bean="baseURLProvider" />
+    </property>
+    <property name="consumerInfo">
+      <ref bean="consumerInfoProxy" />
+    </property>
+    <property name="beanModelAlterer">
+      <ref bean="DARApplier" />
+    </property>
+    <property name="ultimateRenderers">
+      <ref bean="ultimateRenderers"/>
+    </property>
+  </bean>
+
+  <bean id="siteMapDef" class="uk.org.ponder.rsf.viewstate.XMLSiteMapLoader"
+    parent="XMLFactoryBean" abstract="true">
+    <property name="location">
+      <value>/WEB-INF/sitemap.xml</value>
+    </property>
+    <property name="viewParametersReceiver" ref="viewParametersParser" />
+  </bean>
+
+  <bean id="JSFNavigationMap" parent="XMLFactoryBean" lazy-init="true">
+    <!-- 
+      <property name="location" value="/WEB-INF/navigation-map.xml"/>
+    -->
+    <property name="objectType"
+      value="uk.org.ponder.rsf.flow.jsfnav.NavigationMap" />
+  </bean>
+
+  <!-- This standard bean name is given a default implementation to always
+    defer to the default ARI. However this will be overridden should the actual
+    action invokation ALREADY return an ARIResult, as with a FlowActionProxyBean. -->
+  <bean name="ARIResolver" class="uk.org.ponder.rsf.flow.NullARIResolver">
+    <property name="actionResultInterpreter">
+      <ref bean="defaultARI" />
+    </property>
+  </bean>
+
+  <bean id="JSFNavigationARI"
+    class="uk.org.ponder.rsf.flow.jsfnav.JSFNavActionResultInterpreter"
+    abstract="true">
+    <property name="navigationMap" ref="JSFNavigationMap" />
+    <property name="navigationCasePooler" ref="navigationCasePooler"/>
+  </bean>
+  
+  <bean id="actionErrorStrategyManager"
+    class="uk.org.ponder.rsf.flow.ActionErrorStrategyManager">
+    <property name="mergeStrategies">
+      <ref bean="XMLActionErrorStrategies" />
+    </property>
+  </bean>
+
+  <bean name="defaultARI" parent="nullActionResultInterpreter" />
+  
+  <!-- The default ActionResultInterpreter which directs to the incoming view-->
+  <bean id="nullActionResultInterpreter"
+    class="uk.org.ponder.rsf.flow.NullActionResultInterpreter">
+  </bean>
+
+  <bean id="viewParamsExemplar"
+    class="uk.org.ponder.rsf.viewstate.SimpleViewParameters">
+  </bean>
+
+  <bean id="autoComponentProducerManager"
+    class="uk.org.ponder.rsf.view.AutoComponentProducerManager"
+    init-method="init">
+    <property name="reflectiveCache" ref="reflectiveCache" />
+    <property name="RSACBeanLocator" ref="RSACBeanLocator" />
+  </bean>
+
+  <bean id="consumerInfoProxy" parent="RSACBridgePeaProxy">
+    <property name="targetBeanName">
+      <idref bean="consumerInfo"/>
+    </property>
+  </bean>
+
+  <bean id="viewTemplateResolver" 
+    class="uk.org.ponder.rsf.templateresolver.BasicTemplateResolver">
+    <property name="templateExtensionInferrer" ref="templateExtensionInferrer"/>
+    <property name="templateResolverStrategy" ref="templateResolverStrategy"/>
+  </bean>
+  
+  <bean id="templateExtensionInferrer" 
+  class="uk.org.ponder.rsf.templateresolver.StaticTemplateExtensionInferrer">
+    <property name="extension" value="html"/>
+  </bean>
+  
+  <bean id="templateResolverStrategy" class="uk.org.ponder.rsf.templateresolver.CRITemplateResolverStrategy">
+    <property name="baseDirectory">
+      <value>/content/templates/</value>
+    </property>
+    <property name="consumerInfo">
+      <ref bean="consumerInfoProxy" />
+    </property>  
+  </bean>
+
+  <bean id="viewResolver" class="uk.org.ponder.rsf.view.ConcreteViewResolver"
+    init-method="init">
+    <property name="views">
+      <ref bean="staticViews" />
+    </property>
+    <property name="autoComponentProducerManager"
+      ref="autoComponentProducerManager" />
+    <property name="viewResolvers">
+      <list>
+        <ref bean="XMLViewResolver" />
+      </list>
+    </property>
+    <property name="viewParametersReceiver" ref="viewParametersParser" />
+    <property name="navigationCaseReceiver" ref="navigationCasePooler" />
+  </bean>
+
+  <!--  override this bean with a concrete bean derived from XmlViewResolverDef -->
+  <bean id="XMLViewResolver" class="uk.org.ponder.rsf.view.NullViewResolver" />
+
+  <bean id="XMLViewResolverDef" class="uk.org.ponder.rsf.view.XMLViewResolver"
+    abstract="true">
+    <property name="XMLProvider" ref="XMLProvider" />
+    <property name="templateExpander" ref="templateExpander" />
+    <property name="viewParamsReceiver" ref="viewParametersParser" />
+  </bean>
+
+  <bean id="XMLActionErrorStrategyDef" parent="XMLFactoryBean"
+    abstract="true">
+    <property name="objectType">
+      <value>uk.org.ponder.rsf.flow.ActionErrorStrategyManager</value>
+    </property>
+  </bean>
+
+  <bean id="XMLActionErrorStrategies" parent="XMLActionErrorStrategyDef" />
+
+  <bean id="viewExceptionStrategy"
+    class="uk.org.ponder.rsf.flow.SimpleViewExceptionStrategy">
+    <property name="viewParametersParser">
+      <ref bean="viewParametersParser" />
+    </property>
+    <property name="defaultView">
+      <ref bean="defaultView" />
+    </property>
+  </bean>
+
+  <bean name="requestAddressibleBeans"
+    class="uk.org.ponder.stringutil.StringList">
+    <constructor-arg>
+      <list>
+        <value>flowLite-flowIDHolder</value>
+      </list>
+    </constructor-arg>
+  </bean>
+
+  <bean id="staticViews" class="java.util.ArrayList">
+    <constructor-arg>
+      <list></list>
+    </constructor-arg>
+  </bean>
+  
+   <bean id="ultimateRenderers" class="java.util.ArrayList">
+    <constructor-arg>
+      <list></list>
+    </constructor-arg>
+  </bean>
+
+  <!-- This bean may be overriden with your default view, in reduced form
+    beginning with /  , otherwise it will be inferred from a view which reports
+    itself as a default. Do not try to get the value of this bean as an
+    application-scope dependency -->
+  <bean id="defaultView" factory-bean="viewParametersParser"
+    factory-method="getDefaultView" lazy-init="true" />
+
+  <bean id="URLPreservingBeanSpecs"
+    class="uk.org.ponder.springutil.StringListFactory">
+    <property name="strings">
+      <value>flowstateid|flowLite-flowIDHolder.requestFlowStateID</value>
+    </property>
+  </bean>
+
+  <bean id="copyPreservingBeans"
+    class="uk.org.ponder.springutil.StringListFactory">
+    <property name="strings">
+      <value>flowLite-flowIDHolder</value>
+    </property>
+  </bean>
+
+  <bean id="inMemoryFlowLockGetter"
+    class="uk.org.ponder.rsf.flow.InMemoryFlowLockGetter">
+  </bean>
+  
+  <bean id="flowTokenStateHolder" class="uk.org.ponder.rsf.servlet.InSessionTSH">
+    <property name="session" ref="httpSessionProxy"/>
+    <property name="expirySeconds">
+      <!-- deliberately short time for testing - all flows will expire after 
+        30 seconds of disuse -->
+      <value>30</value>
+    </property>
+  </bean> 
+  
+   <bean id="bandgapStateHolder" class="uk.org.ponder.rsf.servlet.InSessionTSH">
+    <property name="session" ref="httpSessionProxy"/>
+    <property name="expirySeconds">
+      <!-- deliberately short time for testing - all errors will expire after 
+        10 seconds of disuse -->
+      <value>10</value>
+    </property>
+  </bean>
+  
+  <bean id="httpSessionProxy" parent="RSACBridgeProxy">
+    <property name="targetBeanName">
+      <idref bean="httpSession"/>
+    </property> 
+  </bean>
+  
+  <bean id="flowTokenStateHolder-memory" class="uk.org.ponder.rsf.state.InMemoryTSH">
+    <property name="expirySeconds">
+      <!-- deliberately short time for testing - all flows will expire after 
+        30 seconds of disuse -->
+      <value>30</value>
+    </property>
+  </bean>
+
+  <!-- The state holder used for "ephemeral" state designed to only persist
+    through about 1 client request - error messages, end flow messages,
+    data in transit to client storage -->
+  <bean id="bandgapStateHolder-memory" class="uk.org.ponder.rsf.state.InMemoryTSH">
+    <property name="expirySeconds">
+      <!-- deliberately short time for testing - all errors will expire after 
+        10 seconds of disuse -->
+      <value>10</value>
+    </property>
+  </bean>
+
+</beans>

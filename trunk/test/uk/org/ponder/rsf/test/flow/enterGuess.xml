@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view>
+  <component type="form" id="basic-form">
+    <component type="output" id="#{numberGuess.guessesSoFar}">
+      <valuebinding>#{numberGuess.guessesSoFar}</valuebinding>
+    </component>
+     <component type="output" id="#{numberGuess.lastGuessResult}">
+      <valuebinding>#{numberGuess.lastGuessResult}</valuebinding>
+    </component>
+    <component type="input" id="#{numberGuessAction.guess}">
+      <valuebinding>#{numberGuessAction.guess}</valuebinding>
+    </component>
+    <!-- As well as component definitions for all the fields, the form
+      includes a "pure EL binding" which "assigns" the numberGuess data
+      bean into the correct field of the action bean -->
+  <parameter type="elbinding">
+    <valuebinding>#{numberGuessAction.data}</valuebinding>
+    <elrvalue>#{numberGuess}</elrvalue>
+  </parameter>
+  </component>
+</view>

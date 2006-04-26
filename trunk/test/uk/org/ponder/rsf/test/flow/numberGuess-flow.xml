@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<webflow id="numberGuess" start-state="enterGuess">
+	
+	<view-state id="enterGuess" view="enterGuess">
+		<transition on="submit" to="guess"/>
+	</view-state>
+	
+	<action-state id="guess">
+		<action bean="numberGuessAction"/>
+		<transition on="invalidInput" to="enterGuess"/>
+		<transition on="retry" to="enterGuess"/>
+		<transition on="success" to="showAnswer"/>
+	</action-state>
+	
+	<end-state id="showAnswer" view="showAnswer"/>
+
+</webflow>

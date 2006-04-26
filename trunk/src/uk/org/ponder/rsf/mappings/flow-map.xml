@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<mapperentry targetclass="uk.org.ponder.rsf.flow.lite.Flow">
+  <taghandler xmlname="start-state" xml-form="attribute">
+    <fieldname>startstate</fieldname>
+  </taghandler>
+  <taghandler xmlname="id" xml-form="attribute">
+    <fieldname>id</fieldname>
+  </taghandler>
+  <taghandler xmlname="autowire" xml-form="attribute" access-type="ignore"/>
+  <taghandler xmlname="view-state">
+    <setmethod>addState</setmethod>
+    <javaclass>uk.org.ponder.rsf.flow.lite.ViewState</javaclass>
+  </taghandler>
+  <taghandler xmlname="action-state">
+    <setmethod>addState</setmethod>
+    <javaclass>uk.org.ponder.rsf.flow.lite.ActionState</javaclass>
+  </taghandler>
+  <taghandler xmlname="end-state">
+    <setmethod>addState</setmethod>
+    <javaclass>uk.org.ponder.rsf.flow.lite.EndState</javaclass>
+  </taghandler>
+</mapperentry>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
+	"http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+  <bean id="reflectivecache" class="uk.org.ponder.reflect.JDKReflectiveCache">
+  </bean>
+  
+  <bean id="saxalizermappingcontext"
+    class="uk.org.ponder.saxalizer.SAXalizerMappingContext">
+    <property name="reflectiveCache">
+      <ref bean="reflectivecache"/>
+    </property>
+  </bean>
+  
+  <bean id="mappablexmlprovider" class="uk.org.ponder.saxalizer.SAXalXMLProvider">
+    <constructor-arg>
+      <ref bean="saxalizermappingcontext"/>
+    </constructor-arg>
+  </bean>
+  
+  <bean id="mappingloadmanager" 
+		class="uk.org.ponder.springutil.SpringXMLMappingLoader" init-method="init">
+		<property name="SAXalizerMappingContext">
+			<ref bean="saxalizermappingcontext"></ref>
+		</property>
+		<property name="mappableXMLProvider">
+			<ref bean="mappablexmlprovider"></ref>
+		</property>
+	</bean>
+  
+  <bean id="DARApplier" class="uk.org.ponder.mapping.DARApplier">
+    <property name="SAXalXMLProvider">
+      <ref local="mappablexmlprovider"/>
+    </property>
+    <property name="reflectiveCache">
+      <ref bean="reflectivecache"/>
+    </property>
+  </bean>
+  
+  <bean id="rsfmappingloader" class="uk.org.ponder.rsf.mappings.RSFMappingLoader"/>
+
+	<bean id="xmlprovider" factory-bean="mappingloadmanager" 
+    factory-method="getXMLProvider"></bean>
+  
+  <bean id="numberGuessFlowDef" class="uk.org.ponder.rsf.flow.lite.XMLFlowFactoryBean">
+		<property name="location"><value>classpath:uk/org/ponder/rsf/test/flow/numberGuess-flow.xml</value></property>
+	</bean> 
+    
+  <bean id="viewtree" class="uk.org.ponder.rsf.view.XMLComponentFactoryBean">
+		<property name="location"><value>classpath:uk/org/ponder/rsf/test/flow/enterGuess.xml</value></property>
+	</bean>
+  
+  <bean id="viewParametersParser" class="uk.org.ponder.rsf.viewstate.XMLSiteMapLoader">
+    <property name="location"><value>classpath:uk/org/ponder/rsf/test/sitemap/sitemap.xml</value></property>
+    <property name="beanModelAlterer">
+    <ref bean="DARApplier"/>
+    </property>
+  </bean>
+  
+</beans>

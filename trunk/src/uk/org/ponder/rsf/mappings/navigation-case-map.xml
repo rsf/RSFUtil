@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<mapperentry targetclass="uk.org.ponder.rsf.flow.jsfnav.NavigationCase">
+  <taghandler xmlname="from-outcome" xml-form="attribute">
+    <fieldname>fromOutcome</fieldname>
+  </taghandler>
+  <taghandler xmlname="to-view-id" xml-form="attribute">
+    <fieldname>toViewId</fieldname>
+  </taghandler>
+</mapperentry>

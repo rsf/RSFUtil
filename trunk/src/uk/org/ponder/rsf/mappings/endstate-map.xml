@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<mapperentry targetclass="uk.org.ponder.rsf.flow.lite.EndState">
+  <taghandler xmlname="id" xml-form="attribute">
+    <fieldname>id</fieldname>
+  </taghandler>
+   <taghandler xmlname="view" xml-form="attribute">
+    <fieldname>viewID</fieldname>
+  </taghandler>
+  <taghandler xmlname="autowire" xml-form="attribute" access-type="ignore"/>
+</mapperentry>

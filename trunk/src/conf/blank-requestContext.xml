@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
+	"http://www.springframework.org/dtd/spring-beans.dtd">
+<!-- The purpose of this file is to provide an "default" completion of
+  the request scope portion of 
+  RSF's Spring API, so that the project will validate self-consistently in,
+  for example, Spring IDE. Dependencies resolved here are ones that clients
+  might well want to override, as opposed to more core dependencies in the main
+  RSF configuration files. -->
+
+<beans>
+  <!-- A collection of static renderers that is expected to be dynamically
+    writeable - filters and the like might populate it before request handling
+    with consumer-specific rewriters. -->
+  <bean id="consumerStaticRenderers"
+    class="uk.org.ponder.rsf.renderer.StaticRendererCollection">
+  </bean>
+
+  <!-- A null "consumertype" field in this object will be treated as an 
+    empty object. An "unreasonable bean". -->
+  <bean name="consumerInfo" class="uk.org.ponder.webapputil.ConsumerInfo">
+  </bean>
+
+  <bean id="defaultRSVCPreserver"
+    class="uk.org.ponder.rsf.preservation.RSVCPreservationStrategy">
+    <property name="requestRSVC">
+      <ref bean="requestRSVC" />
+    </property>
+    <property name="preservingBeans">
+      <ref bean="requestAddressibleBeans" />
+    </property>
+    <property name="tokenStateHolder">
+      <ref bean="bandgapStateHolder" />
+    </property>
+    <property name="RSVCApplier">
+      <ref bean="RSVCApplier" />
+    </property>
+  </bean>
+
+  <bean id="defaultBeanCopyPreserver"
+    class="uk.org.ponder.rsf.preservation.BeanCopyPreservationStrategy">
+    <property name="preservingBeans">
+      <ref bean="copyPreservingBeans" />
+    </property>
+    <property name="tokenStateHolder">
+      <ref bean="flowTokenStateHolder" />
+    </property>
+    <property name="beanModelAlterer">
+      <ref bean="DARApplier" />
+    </property>
+  </bean>
+
+
+  <bean id="endFlowPreserver"
+    class="uk.org.ponder.rsf.preservation.BeanCopyPreservationStrategy">
+    <property name="preservingBeans">
+      <ref bean="copyPreservingBeans" />
+    </property>
+    <property name="tokenStateHolder">
+      <ref bean="bandgapStateHolder" />
+    </property>
+    <property name="beanModelAlterer">
+      <ref bean="DARApplier" />
+    </property>
+  </bean>
+
+
+  <bean id="requestFlowStatePreserver"
+    class="uk.org.ponder.rsf.preservation.InURLPreservationStrategy">
+    <property name="beanModelAlterer">
+      <ref bean="DARApplier" />
+    </property>
+    <property name="requestMap">
+      <ref bean="requestMap" />
+    </property>
+    <property name="preservingBeanSpecs">
+      <ref bean="URLPreservingBeanSpecs" />
+    </property>
+    <property name="outgoingParams">
+      <ref bean="outgoingParams" />
+    </property>
+  </bean>
+
+
+  <!-- Use this unless you are preserving the flowIDHolder by other means -->
+  <bean id="flowScopeFlowStatePreserver"
+    class="uk.org.ponder.rsf.preservation.BeanCopyPreservationStrategy">
+    <property name="tokenStateHolder">
+      <ref bean="flowTokenStateHolder" />
+    </property>
+    <property name="preservingBeans">
+      <ref bean="flowOnlyPreservingBeans" />
+    </property>
+    <property name="beanModelAlterer">
+      <ref bean="DARApplier" />
+    </property>
+  </bean>
+
+  <bean id="statePreservationStrategies"
+    class="uk.org.ponder.springutil.ListFactory">
+    <property name="list">
+      <list>
+        <ref bean="defaultBeanCopyPreserver" />
+      </list>
+    </property>
+  </bean>
+
+  <bean id="startFlowStatePreservationStrategies"
+    class="uk.org.ponder.springutil.ListFactory">
+    <property name="list">
+      <list>
+        <ref bean="flowScopeFlowStatePreserver" />
+        <ref bean="requestFlowStatePreserver" />
+      </list>
+    </property>
+  </bean>
+
+  <bean id="endFlowStatePreservationStrategies"
+    class="uk.org.ponder.springutil.ListFactory">
+    <property name="list">
+      <list>
+        <ref bean="endFlowPreserver" />
+      </list>
+    </property>
+  </bean>
+
+  <!-- The default alteration wrapper performs no ORM-specific bracketing
+    of alteration operations, unless a flow is active, in which case it will block. -->
+  <bean id="alterationWrapper"
+    class="uk.org.ponder.rsf.flow.BasicFlowAlterationWrapper">
+    <property name="flowIDHolder">
+      <ref bean="flowLite-flowIDHolder" />
+    </property>
+    <property name="flowLockGetter">
+      <ref bean="inMemoryFlowLockGetter" />
+    </property>
+  </bean>
+
+  <!-- A template for BeanExploders -->
+  <bean id="beanExploder" class="uk.org.ponder.beanutil.entity.BeanExploder"
+    abstract="true">
+    <property name="deepBeanCloner" ref="deepBeanCloner"></property>
+  </bean>
+
+</beans>

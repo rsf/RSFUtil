@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<mapperentry targetclass="uk.org.ponder.rsf.view.ViewRoot">
+  <taghandler xmlname="id" xml-form="attribute">
+    <fieldname>ID</fieldname>
+  </taghandler>
+  <taghandler xmlname="component*">
+    <setmethod>addComponent</setmethod>
+    <getmethod>flattenChildren</getmethod>
+  </taghandler>
+  <taghandler xmlname="localID">
+    <fieldname>localID</fieldname>
+  </taghandler>
+  <taghandler xmlname="navigation-case">
+    <fieldname>navigationCases</fieldname>
+    <javaclass>uk.org.ponder.rsf.flow.jsfnav.NavigationCase</javaclass>
+  </taghandler>
+  <taghandler xmlname="view-parameters*">
+    <fieldname>viewParameters</fieldname>
+  </taghandler>
+</mapperentry>

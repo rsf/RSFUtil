@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<mapperentry targetclass="uk.org.ponder.rsf.flow.lite.ActionState">
+  <taghandler xmlname="id" xml-form="attribute">
+    <fieldname>id</fieldname>
+  </taghandler>
+  <taghandler xmlname="action">
+    <fieldname>action</fieldname>
+  </taghandler>
+  <taghandler xmlname="transition">
+    <fieldname>transitions</fieldname>
+    <javaclass>uk.org.ponder.rsf.flow.lite.Transition</javaclass>
+  </taghandler>
+  <taghandler xmlname="autowire" xml-form="attribute" access-type="ignore"/>
+</mapperentry>
