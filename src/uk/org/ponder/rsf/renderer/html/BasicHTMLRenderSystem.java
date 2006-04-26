@@ -3,8 +3,12 @@
  */
 package uk.org.ponder.rsf.renderer.html;
 
+import java.io.InputStream;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.log4j.lf5.util.StreamUtils;
 
 import uk.org.ponder.rsf.components.ParameterList;
 import uk.org.ponder.rsf.components.UIAnchor;
@@ -21,6 +25,7 @@ import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UIOutputMultiline;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.components.UISelect;
+import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.renderer.ComponentRenderer;
 import uk.org.ponder.rsf.renderer.RenderSystem;
 import uk.org.ponder.rsf.renderer.RenderUtil;
@@ -31,6 +36,7 @@ import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.template.XMLLumpList;
 import uk.org.ponder.rsf.uitype.UITypes;
 import uk.org.ponder.rsf.viewstate.ViewParamUtil;
+import uk.org.ponder.streamutil.StreamCopyUtil;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.stringutil.StringList;
 import uk.org.ponder.stringutil.StringSet;
@@ -140,7 +146,6 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       }
 
       String fullID = torendero.getFullID();
-      // HashMap attrcopy = (HashMap) uselump.attributemap.clone();
       HashMap attrcopy = new HashMap();
       attrcopy.putAll(uselump.attributemap);
       attrcopy.put("id", fullID);
@@ -366,6 +371,30 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         // Assuming there are no paths *IN* through forms that do not also lead
         // *OUT* there will be no problem. Check what this *MEANS* tomorrow.
         nextpos = endopen.lumpindex + 1;
+      }
+      else if (torendero instanceof UIVerbatim) {
+        UIVerbatim torender = (UIVerbatim) torendero;
+        String rendered = null;
+        // inefficient implementation for now, upgrade when we write bulk POS utils.
+        if (torender.markup instanceof InputStream) {
+          rendered = StreamCopyUtil.streamToString((InputStream) torender.markup);
+        }
+        else if (torender.markup instanceof Reader) {
+          rendered = StreamCopyUtil.readerToString((Reader) torender.markup);
+        }
+        else if (torender.markup != null) {
+          rendered = torender.markup.toString();
+        }
+        if (rendered == null) {
+          RenderUtil.dumpTillLump(lumps, lumpindex + 1,
+            close.lumpindex + 1, pos);
+        }
+        else {
+          XMLUtil.dumpAttributes(attrcopy, xmlw);
+          pos.print(">");
+          pos.print(rendered);
+          closeTag(pos, uselump);
+        }
       }
       // if there is a payload, dump the postamble.
       if (payload != null) {
