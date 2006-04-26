@@ -15,6 +15,8 @@ import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.stringutil.StringList;
 
 /**
+ * NB - this implementation is incomplete and a sample only.
+ * 
  * Stores token state inside the navigation URL. Note that the tokenID used here
  * (as with clientFormTSH) is irrelevant since the state ID is implicitly
  * specified by the client. The state is going to come back anyway, no point
