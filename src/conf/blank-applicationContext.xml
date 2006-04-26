@@ -119,10 +119,6 @@
       <ref bean="XMLActionErrorStrategies" />
     </property>
   </bean>
-  
-  <!-- FlowLiteARI expects return codes from a FlowActionProxyBean of type
-    ViewState -->
-  <bean id="flowLiteARI" class="uk.org.ponder.rsf.flow.lite.FlowLiteARI"></bean>
 
   <bean name="defaultARI" parent="nullActionResultInterpreter" />
   
@@ -150,12 +146,22 @@
 
   <bean id="viewTemplateResolver" 
     class="uk.org.ponder.rsf.templateresolver.BasicTemplateResolver">
+    <property name="templateExtensionInferrer" ref="templateExtensionInferrer"/>
+    <property name="templateResolverStrategy" ref="templateResolverStrategy"/>
+  </bean>
+  
+  <bean id="templateExtensionInferrer" 
+  class="uk.org.ponder.rsf.templateresolver.StaticTemplateExtensionInferrer">
+    <property name="extension" value="html"/>
+  </bean>
+  
+  <bean id="templateResolverStrategy" class="uk.org.ponder.rsf.templateresolver.CRITemplateResolverStrategy">
     <property name="baseDirectory">
       <value>/content/templates/</value>
     </property>
     <property name="consumerInfo">
       <ref bean="consumerInfoProxy" />
-    </property>
+    </property>  
   </bean>
 
   <bean id="viewResolver" class="uk.org.ponder.rsf.view.ConcreteViewResolver"
