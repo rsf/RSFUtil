@@ -16,6 +16,12 @@ public interface ViewStateHandler {
    * URL is also to be used for issuing redirects.
    */
   public String getFullURL(ViewParameters viewparams);
+  /** Return a "complete" URL suitable for rendering to our upstream
+   * consumer for triggering an "action" - in HTML, as applied to 
+   * the "action" attribute of <code>form</code>. In a servlet-type 
+   * environment, produces the same URL as getFullURL.
+   */
+  public String getActionURL(ViewParameters viewparams);
   /** The equivalent of getFullURL for static resources that are not
    * necessarily under our control. These e.g. start with /content/...
    */

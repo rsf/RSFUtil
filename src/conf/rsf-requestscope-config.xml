@@ -24,7 +24,7 @@
     factory-method="getHttpServletResponse" />
 
   <bean id="earlyRequestParser"
-    class="uk.org.ponder.rsf.servlet.ServletEarlyRequestParser">
+    class="uk.org.ponder.rsf.servlet.ServletEarlyRequestParser" init-method="init">
     <property name="httpServletRequest" ref="httpServletRequest"/>
     <property name="multipartResolver" ref="multipartResolver"/>
   </bean>

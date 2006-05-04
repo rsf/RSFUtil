@@ -61,7 +61,7 @@ public class DefaultFormFixer implements ComponentProcessor, ViewReceiver {
         if (!(child instanceof UIBound) && !(child instanceof UICommand)) {
           throw UniversalRuntimeException.accumulate(new IllegalArgumentException(), 
               "Component with ID " + childid + " listed as submitting child of form " +
-              toprocess.getFullID() + " is not valid (non-Command, non-Bound or" +
+              toprocess.getFullID() + " is not valid (non-Command, non-Bound or " +
                     "non-existent)");
         }
         //formmodel.registerChild(toprocess, (UIBound) child);
