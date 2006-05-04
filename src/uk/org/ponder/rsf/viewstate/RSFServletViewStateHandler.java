@@ -69,6 +69,11 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
     return path;
   }
 
+
+  public String getActionURL(ViewParameters viewparams) {
+    return getFullURL(viewparams);
+  }
+  
   public String getResourceURL(String resourcepath) {
     ConsumerInfo ci = ciproxy.get();
     String useresurl = urlprovider.getResourceBaseURL();
@@ -98,5 +103,6 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
       ultimaterenderers.put(ultimate.getConsumerType(), ultimate);
     }
   }
+
 
 }

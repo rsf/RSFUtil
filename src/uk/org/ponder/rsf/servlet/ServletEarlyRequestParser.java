@@ -35,7 +35,9 @@ public class ServletEarlyRequestParser implements EarlyRequestParser {
 
   public void setHttpServletRequest(HttpServletRequest request) {
     this.request = request;
-
+  }
+  
+  public void init() {
     Logger.log.info("begin parseRequest");
     if (multipartresolver.isMultipart(request)) {
       try {
@@ -57,7 +59,7 @@ public class ServletEarlyRequestParser implements EarlyRequestParser {
     catch (UnsupportedEncodingException uee) {
       throw UniversalRuntimeException.accumulate(uee,
           "Fatal internal error: UTF-8 encoding not found");
-    }
+    }    
   }
 
   public Map getRequestMap() {
