@@ -277,13 +277,6 @@
      lazy-init="true">
   </bean>
   
-    <!--  DO NOT Access this bean outside a request context! -->
-  <bean name="multipartResolverBean" class="uk.org.ponder.servletutil.ServletMultipartResolverBean"
-  lazy-init="true">
-    <property name="multipartResolver" ref="multipartResolver"/>
-    <property name="httpServletRequest" ref="httpServletRequestProxy"/>
-  </bean>
-  
   <bean id="httpSessionProxy" parent="RSACBridgeProxy">
     <property name="targetBeanName">
       <idref bean="httpSession"/>

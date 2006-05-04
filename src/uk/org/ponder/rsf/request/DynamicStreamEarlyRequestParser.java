@@ -1,5 +1,6 @@
 package uk.org.ponder.rsf.request;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import uk.org.ponder.rsf.viewstate.ViewParameters;
@@ -54,6 +55,10 @@ public class DynamicStreamEarlyRequestParser implements EarlyRequestParser {
      */
     public String getRequestType() {
       return ViewParameters.RENDER_REQUEST;
+    }
+
+    public Map getMultipartMap() {
+      return new HashMap();
     }
 
   
