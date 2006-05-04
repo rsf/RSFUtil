@@ -20,7 +20,7 @@
     empty object. An "unreasonable bean". -->
   <bean name="consumerInfo" class="uk.org.ponder.webapputil.ConsumerInfo">
   </bean>
-
+  
   <bean id="defaultRSVCPreserver"
     class="uk.org.ponder.rsf.preservation.RSVCPreservationStrategy">
     <property name="requestRSVC">
