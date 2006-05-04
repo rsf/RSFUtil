@@ -21,7 +21,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * <p>
  * Nothing should touch the HttpServletRequest before this request-scope factory
  * bean, which parses primitive information such as the request type and
- * parameter map.
+ * parameter map, as well as resolving multipart uploads.
  */
 
 public class ServletEarlyRequestParser implements EarlyRequestParser {
