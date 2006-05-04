@@ -29,4 +29,8 @@ public interface EarlyRequestParser {
    */
   public String getRequestType();
 
+  /** Returns a (possibly empty) Map of parameter names to Spring MultipartFile 
+   * for the current request */
+  
+  public Map getMultipartMap();
 }

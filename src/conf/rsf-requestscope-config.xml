@@ -25,9 +25,8 @@
 
   <bean id="earlyRequestParser"
     class="uk.org.ponder.rsf.servlet.ServletEarlyRequestParser">
-    <property name="httpServletRequest">
-      <ref bean="httpServletRequest" />
-    </property>
+    <property name="httpServletRequest" ref="httpServletRequest"/>
+    <property name="multipartResolver" ref="multipartResolver"/>
   </bean>
   
   <bean id="httpSession" factory-bean="httpServletRequest" factory-method="getSession"/>
@@ -40,6 +39,9 @@
 
   <bean id="requestType" factory-bean="earlyRequestParser"
     factory-method="getRequestType" />
+    
+  <bean id="multipartMap" factory-bean="earlyRequestParser"
+    factory-method="getMultipartMap"/>
 
   <bean id="handlerResolver"
     class="uk.org.ponder.rsf.processor.DefaultHandlerResolver">
