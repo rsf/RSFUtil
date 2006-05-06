@@ -7,8 +7,12 @@ import uk.org.ponder.rsf.request.SubmittedValueEntry;
  
 import java.util.Map;
 
-/** The portion of the RenderSystem that is request-independent */
-public interface RenderSystemStatic {
+/** The portion of the "RenderSystem" interface that deals with incoming actions
+ * resulting from previously rendered submitting controls.
+ * @author Antranig Basman (antranig@caret.cam.ac.uk)
+ */
+
+public interface RenderSystemDecoder {
   /** "Normalize" the supplied (writeable) request map by scouring it for
    * System-specific key/values that secretly encode a number of others.
    * TODO: Might also normalize by making multi-valued params into single-valued,

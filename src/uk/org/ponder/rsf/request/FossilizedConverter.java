@@ -9,8 +9,7 @@ import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIDeletionBinding;
 import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIParameter;
-import uk.org.ponder.rsf.renderer.RenderSystemStatic;
-import uk.org.ponder.rsf.uitype.StringUIType;
+import uk.org.ponder.rsf.renderer.RenderSystemDecoder;
 import uk.org.ponder.rsf.uitype.UIType;
 import uk.org.ponder.rsf.uitype.UITypes;
 import uk.org.ponder.saxalizer.SAXalXMLProvider;
@@ -202,7 +201,7 @@ public class FossilizedConverter {
    * <p> Note that oldvalue is now always not null here.
    * @param value The value assigned to the fossilized binding
    */
-  public void fixupNewValue(SubmittedValueEntry sve, RenderSystemStatic rendersystemstatic, 
+  public void fixupNewValue(SubmittedValueEntry sve, RenderSystemDecoder rendersystemstatic, 
       String key, String value) {
     if (value.charAt(0) == INPUT_COMPONENT) {
       rendersystemstatic.fixupUIType(sve);

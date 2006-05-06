@@ -41,7 +41,7 @@ public class ContentTypeInfoRegistry {
   private static Map contentmap = new HashMap();
   
   public static void addContentTypeInfo(Map map, ContentTypeInfo toadd) {
-    map.put(toadd.contentType, toadd);
+    map.put(toadd.typename, toadd);
   }
   
   static {
