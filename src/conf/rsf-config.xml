@@ -73,10 +73,10 @@
     <property name="mappableXMLProvider" ref="mappableXMLProvider" />
   </bean>
 
-<!--  lazy-init is fix for Spring 1.2.2+ "behaviour" whereby ABF.getType() 
-will actually try to load the bean!!
-http://opensource2.atlassian.com/projects/spring/browse/SPR-1116
--->
+  <!--  lazy-init is fix for Spring 1.2.2+ "behaviour" whereby ABF.getType() 
+    will actually try to load the bean!!
+    http://opensource2.atlassian.com/projects/spring/browse/SPR-1116
+  -->
   <bean id="XMLProvider" factory-bean="mappingLoadManager"
     factory-method="getXMLProvider" lazy-init="true">
   </bean>
@@ -103,7 +103,7 @@ http://opensource2.atlassian.com/projects/spring/browse/SPR-1116
       <ref local="ELMappingContext" />
     </property>
     <property name="reflectiveCache" ref="reflectiveCache" />
-    <property name="springMode" value="true"/>
+    <property name="springMode" value="true" />
   </bean>
 
   <bean id="deepBeanCloner"
@@ -179,10 +179,6 @@ http://opensource2.atlassian.com/projects/spring/browse/SPR-1116
     factory-method="getFallbackBeans" lazy-init="true">
   </bean>
 
-  <bean id="renderSystemStatic"
-    class="uk.org.ponder.rsf.renderer.html.BasicHTMLRenderSystemStatic">
-  </bean>
-
   <bean id="IDGenerator"
     class="uk.org.ponder.hashutil.EighteenIDGenerator" />
 
@@ -199,6 +195,25 @@ http://opensource2.atlassian.com/projects/spring/browse/SPR-1116
     </property>
   </bean>
 
+  <bean id="staticRenderersProxy" parent="RSACBridgeProxy">
+    <property name="targetBeanName">
+      <idref bean="staticRenderers" />
+    </property>
+  </bean>
+
+  <bean id="contentTypeInfoProxy" parent="RSACBridgePeaProxy">
+    <property name="targetBeanName">
+      <idref bean="contentTypeInfo" />
+    </property>
+  </bean>
+
+  <bean id="BasicHTMLRenderSystem"
+    class="uk.org.ponder.rsf.renderer.html.BasicHTMLRenderSystem">
+    <property name="staticRenderers">
+      <ref local="staticRenderersProxy" />
+    </property>
+  </bean>
+
   <bean id="RSACSafeBeanLocatorProxy" parent="RSACBridgeProxy">
     <property name="targetBeanName">
       <idref bean="RSACSafeBeanLocator" />
@@ -207,22 +222,20 @@ http://opensource2.atlassian.com/projects/spring/browse/SPR-1116
 
   <bean id="httpServletRequestProxy" parent="RSACBridgeProxy">
     <property name="targetBeanName">
-      <idref bean="httpServletRequest"/>
+      <idref bean="httpServletRequest" />
     </property>
   </bean>
 
-  <bean id="autoBaseURLProviderProxy" parent="RSACBridgeProxy" abstract="true">
+  <bean id="autoBaseURLProviderProxy" parent="RSACBridgeProxy">
     <property name="targetBeanName">
-       <idref bean="autoBaseURLProvider"/>
+      <idref bean="autoBaseURLProvider" />
     </property>
   </bean>
-
-  
   <!-- This is now a request-scope bean defined in core RSF to use the auto-provider.
     Override it with the following definition in your own requestScopeConfig and define
     the two URL values above in order to use static URL determination -->
-  <bean id="staticBaseURLProvider" abstract="true" 
-      class="uk.org.ponder.rsf.viewstate.StaticBaseURLProvider">
+  <bean id="staticBaseURLProvider" abstract="true"
+    class="uk.org.ponder.rsf.viewstate.StaticBaseURLProvider">
     <!-- CONFIG The URL under which RSF-rendered pages served directly 
       will be made visible -->
     <property name="baseURL">
@@ -257,10 +270,10 @@ http://opensource2.atlassian.com/projects/spring/browse/SPR-1116
       <ref bean="viewParametersParser" />
     </property>
   </bean>
-  
+
   <bean id="viewStateHandlerProxy" parent="RSACBridgeProxy">
     <property name="targetBeanName">
-      <idref bean="viewStateHandler"/>
+      <idref bean="viewStateHandler" />
     </property>
   </bean>
 
@@ -279,22 +292,22 @@ http://opensource2.atlassian.com/projects/spring/browse/SPR-1116
     <property name="XMLProvider" ref="XMLProvider" />
     <property name="reflectiveCache" ref="reflectiveCache" />
   </bean>
-  
-<!--  The core parent definitions for the two kinds of RSAC proxies -->
+
+  <!--  The core parent definitions for the two kinds of RSAC proxies -->
   <bean id="RSACBridgeProxy" class="uk.org.ponder.rsac.RSACBridgeProxy"
     abstract="true">
     <property name="RSACBeanLocator" ref="RSACBeanLocator" />
   </bean>
 
-  <bean id="RSACBridgePeaProxy" class="uk.org.ponder.rsac.RSACBridgeProxy"
-    abstract="true">
+  <bean id="RSACBridgePeaProxy"
+    class="uk.org.ponder.rsac.RSACBridgeProxy" abstract="true">
     <property name="RSACBeanLocator" ref="RSACBeanLocator" />
-    <property name="pea" value="true"/>
+    <property name="pea" value="true" />
   </bean>
 
   <bean id="flowLite-flowIDHolderProxy" parent="RSACBridgeProxy">
     <property name="targetBeanName">
-      <idref bean="flowLite-flowIDHolder"/>
+      <idref bean="flowLite-flowIDHolder" />
     </property>
   </bean>
 
@@ -304,7 +317,7 @@ http://opensource2.atlassian.com/projects/spring/browse/SPR-1116
     <property name="objectType"
       value="uk.org.ponder.rsf.flow.lite.Flow" />
   </bean>
- 
+
   <bean id="navigationCasePooler"
     class="uk.org.ponder.rsf.flow.jsfnav.NavigationCasePooler">
     <property name="reflectiveCache" ref="reflectiveCache" />

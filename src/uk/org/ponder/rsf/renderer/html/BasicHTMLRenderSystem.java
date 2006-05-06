@@ -8,8 +8,6 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.lf5.util.StreamUtils;
-
 import uk.org.ponder.rsf.components.ParameterList;
 import uk.org.ponder.rsf.components.UIAnchor;
 import uk.org.ponder.rsf.components.UIBound;
@@ -32,6 +30,7 @@ import uk.org.ponder.rsf.renderer.RenderUtil;
 import uk.org.ponder.rsf.renderer.StaticComponentRenderer;
 import uk.org.ponder.rsf.renderer.StaticRendererCollection;
 import uk.org.ponder.rsf.request.FossilizedConverter;
+import uk.org.ponder.rsf.request.SubmittedValueEntry;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.template.XMLLumpList;
 import uk.org.ponder.rsf.uitype.UITypes;
@@ -56,20 +55,32 @@ import uk.org.ponder.xml.XMLWriter;
  */
 
 public class BasicHTMLRenderSystem implements RenderSystem {
-  private String declaration = "<!DOCTYPE html      "
-      + "PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\""
-      + " \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
   private StaticRendererCollection scrc;
 
-  public String getDeclaration() {
-    return declaration;
-  }
-
-  // Request-scope dependency enters here. probably should try to remove it.
   public void setStaticRenderers(StaticRendererCollection scrc) {
     this.scrc = scrc;
   }
 
+  // two methods for the RenderSystemDecoder interface
+  public void normalizeRequestMap(Map requestparams) {
+    String key = RenderUtil.findCommandParams(requestparams);
+    if (key != null) {
+      String params = key.substring(FossilizedConverter.COMMAND_LINK_PARAMETERS.length());
+      RenderUtil.unpackCommandLink(params, requestparams);
+      requestparams.remove(key);
+    }
+  }
+  
+  public void fixupUIType(SubmittedValueEntry sve) {
+    if (sve.oldvalue instanceof Boolean) {
+      if (sve.newvalue == null) sve.newvalue = Boolean.FALSE;
+    }
+    else if (sve.oldvalue instanceof String[]) {
+      if (sve.newvalue == null) sve.newvalue = new String[]{};
+    }
+  }
+  
+  
   private void closeTag(PrintOutputStream pos, XMLLump uselump) {
     pos.print("</");
     pos.write(uselump.buffer, uselump.start + 1, uselump.length - 2);

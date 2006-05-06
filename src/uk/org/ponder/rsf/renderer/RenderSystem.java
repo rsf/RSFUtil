@@ -8,12 +8,13 @@ import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 
 /**
- * The request-scope-specific portion of the RenderSystem in force.
+ * A Render System encapsulates all operations that are specific to a
+ * particular rendering technology, e.g. HTML.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
-public interface RenderSystem {
-  //public void setViewTemplate(ViewTemplate template);
+public interface RenderSystem extends RenderSystemDecoder {
+   //public void setViewTemplate(ViewTemplate template);
   /** Invoked by the IKAT renderer in order to perform a template rewrite based
    * on the System XML dialect. 
    * @param torender The UIComponent which IKAT determines is to be 
@@ -33,13 +34,5 @@ public interface RenderSystem {
 
  
   public void setStaticRenderers(StaticRendererCollection scrc);
-  /** Returns an XML/HTML declaration suitable to appear at the head of rendered
-   * (full) files. This method will be invoked should the IKAT renderer 
-   * encounter a declaration at the head of the root template file. If this
-   * method returns null, the template declaration will be retained.
-   * TODO: Fix this functionality in ViewRender by recognising template
-   * declaration.
-   */
-  public String getDeclaration();
   
 }

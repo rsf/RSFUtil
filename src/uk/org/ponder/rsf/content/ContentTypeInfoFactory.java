@@ -7,6 +7,7 @@ import java.util.Map;
 
 import uk.org.ponder.rsf.renderer.RenderSystem;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.util.UniversalRuntimeException;
 
 /** Responsible for determining the ContentTypeInfo and RenderSystem in effect
  * for the current render request.
@@ -41,7 +42,13 @@ public class ContentTypeInfoFactory {
   }
   
   public ContentTypeInfo getContentTypeInfo() {
-    return (ContentTypeInfo) typeinfomap.get(getContentType());
+    String contenttype = getContentType();
+    ContentTypeInfo togo = (ContentTypeInfo) typeinfomap.get(contenttype);
+    if (togo == null) {
+      throw UniversalRuntimeException.accumulate(new IllegalArgumentException(), 
+          "Content type name " + contenttype + " has no ContentTypeInfo registered");
+    }
+    return togo;
   }
   
   public RenderSystem getRenderSystem() {

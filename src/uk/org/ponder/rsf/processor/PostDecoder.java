@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import uk.org.ponder.rsf.renderer.RenderSystemStatic;
+import uk.org.ponder.rsf.renderer.RenderSystemDecoder;
 import uk.org.ponder.rsf.request.FossilizedConverter;
 import uk.org.ponder.rsf.request.RequestSubmittedValueCache;
 import uk.org.ponder.rsf.request.SVESorter;
@@ -26,7 +26,7 @@ import uk.org.ponder.util.Logger;
  */
 public class PostDecoder {
   private FossilizedConverter fossilizedconverter;
-  private RenderSystemStatic rendersystemstatic;
+  private RenderSystemDecoder rendersystemdecoder;
   private Map requestparams;
   private String requesttype;
   private Map normalizedrequest;
@@ -36,8 +36,8 @@ public class PostDecoder {
     this.fossilizedconverter = fossilizedconverter;
   }
 
-  public void setRenderSystemStatic(RenderSystemStatic rendersystemstatic) {
-    this.rendersystemstatic = rendersystemstatic;
+  public void setRenderSystemDecoder(RenderSystemDecoder rendersystemdecoder) {
+    this.rendersystemdecoder = rendersystemdecoder;
   }
 
   public void setRequestMap(Map requestparams) {
@@ -51,7 +51,7 @@ public class PostDecoder {
   public void init() {
     normalizedrequest = new HashMap();
     normalizedrequest.putAll(requestparams);
-    rendersystemstatic.normalizeRequestMap(normalizedrequest);
+    rendersystemdecoder.normalizeRequestMap(normalizedrequest);
   }
 
   // This method is expected to be called by accreteRSVC
@@ -81,7 +81,7 @@ public class PostDecoder {
         // Grab dependent values which we can now deduce may be in the request
         String[] newvalue = (String[]) normalizedrequest.get(sve.componentid);
         sve.newvalue = newvalue;
-        fossilizedconverter.fixupNewValue(sve, rendersystemstatic, key,
+        fossilizedconverter.fixupNewValue(sve, rendersystemdecoder, key,
             values[0]);
         
         String[] reshaper = 

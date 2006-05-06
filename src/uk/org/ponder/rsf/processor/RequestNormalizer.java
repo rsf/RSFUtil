@@ -6,13 +6,13 @@ package uk.org.ponder.rsf.processor;
 import java.util.HashMap;
 import java.util.Map;
 
-import uk.org.ponder.rsf.renderer.RenderSystemStatic;
+import uk.org.ponder.rsf.renderer.RenderSystemDecoder;
 import uk.org.ponder.rsf.request.SubmittedValueEntry;
 
 /** This class now disused in favour of PostDecoder **/
 
 public class RequestNormalizer {
-  private RenderSystemStatic rendersystemstatic;
+  private RenderSystemDecoder rendersystemstatic;
   private Map requestmap;
   private Map normalized;
   
@@ -20,7 +20,7 @@ public class RequestNormalizer {
     this.requestmap = requestmap;
   }
 
-  public void setRenderSystemStatic(RenderSystemStatic rendersystemstatic) {
+  public void setRenderSystemStatic(RenderSystemDecoder rendersystemstatic) {
     this.rendersystemstatic = rendersystemstatic;
   }
   // cheaper than an init-method!

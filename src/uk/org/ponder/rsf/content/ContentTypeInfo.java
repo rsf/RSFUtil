@@ -11,9 +11,9 @@ package uk.org.ponder.rsf.content;
 
 public class ContentTypeInfo {
   /** The name of the content/request type - e.g. HTML for html, AJAX for
-   * (XML) AJAX, XUL for XUL etc.
+   * (XML) AJAX, XUL for XUL etc - {@link ContentTypeInfoRegistry} for examples.
    */
-  public String name;
+  public String typename;
   /** The extension, omitting period "." to be used when looking for templates
    * in the filesystem.
    */
@@ -23,17 +23,17 @@ public class ContentTypeInfo {
   /** The value for the "ContentType" header served over HTTP for requests
    * of this type.
    */
-  public String contentType;
+  public String contentTypeHeader;
   
   
   public ContentTypeInfo() {}
   
 
-  public ContentTypeInfo(String name, String fileextension, String declaration, String contentType) {
-    this.name = name;
+  public ContentTypeInfo(String typename, String fileextension, String declaration, String contentTypeHeader) {
+    this.typename = typename;
     this.fileextension = fileextension;
     this.declaration = declaration;
-    this.contentType = contentType;
+    this.contentTypeHeader = contentTypeHeader;
   }
   
   /** Pea proxying method **/

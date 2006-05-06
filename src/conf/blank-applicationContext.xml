@@ -38,7 +38,7 @@
     </property>
   </bean>
 
-  <bean name="baseURLProvider" parent="autoBaseURLProviderProxy" />
+  <bean name="baseURLProvider" parent="autoBaseURLProviderProxy" /> 
   
   <!-- The two properties of sbup
     are only relevant to users of the direct UI, where the URL that it appears
@@ -150,9 +150,33 @@
     <property name="templateResolverStrategy" ref="templateResolverStrategy"/>
   </bean>
   
+  <bean id="contentTypeInfoMap" class="uk.org.ponder.rsf.content.ContentTypeInfoRegistry"
+    factory-method="getContentTypeInfoMap"/>
+  
   <bean id="templateExtensionInferrer" 
   class="uk.org.ponder.rsf.templateresolver.StaticTemplateExtensionInferrer">
     <property name="extension" value="html"/>
+  </bean>
+  
+  <!--  RSF defaults to using the BasicHTMLRenderSystem for all requests. 
+  Override this bean with your own implementation to establish correspondance 
+  of content types with ViewParameters -->
+  
+  <bean id="renderSystemMap" class="java.util.HashMap">
+    <constructor-arg>
+      <map>
+        <entry key="HTML" value-ref="BasicHTMLRenderSystem"/>
+        <entry key="DEFAULT" value-ref="BasicHTMLRenderSystem"/>
+      </map>
+    </constructor-arg>
+  </bean>
+  
+  <!--  RSF defaults to HTML content type for all requests. Override this
+  bean with your own implementation to establish correspondance of content
+  types with ViewParameters -->
+  
+  <bean id="contentTypeResolver" class="uk.org.ponder.rsf.content.StaticContentTypeResolver">
+    <property name="contentType" value="HTML"/>
   </bean>
   
   <bean id="templateResolverStrategy" class="uk.org.ponder.rsf.templateresolver.CRITemplateResolverStrategy">
@@ -273,8 +297,7 @@
     </property>
   </bean>
   
-  <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"
-     lazy-init="true">
+  <bean id="multipartResolver" class="uk.org.ponder.springutil.BlankMultipartResolver">
   </bean>
   
   <bean id="httpSessionProxy" parent="RSACBridgeProxy">

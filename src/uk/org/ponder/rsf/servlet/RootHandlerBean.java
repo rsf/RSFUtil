@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import uk.org.ponder.errorutil.ErrorUtil;
 import uk.org.ponder.rsf.components.ParameterList;
+import uk.org.ponder.rsf.content.ContentTypeInfo;
 import uk.org.ponder.rsf.processor.ActionHandler;
 import uk.org.ponder.rsf.processor.HandlerHook;
 import uk.org.ponder.rsf.processor.RenderHandlerBracketer;
@@ -42,6 +43,7 @@ public class RootHandlerBean implements HandlerHook {
   private RenderHandlerBracketer renderhandlerbracketer;
   private ActionHandler actionhandler;
   private HandlerHook handlerhook;
+  private ContentTypeInfo contenttypeinfo;
 
   public void setHttpServletRequest(HttpServletRequest request) {
     this.request = request;
@@ -149,10 +151,14 @@ public class RootHandlerBean implements HandlerHook {
     pos.close();
   }
   
-  public static PrintOutputStream setupResponseWriter(
+  public void setContentTypeInfo(ContentTypeInfo contenttypeinfo) {
+    this.contenttypeinfo = contenttypeinfo;
+  }
+  
+  public PrintOutputStream setupResponseWriter(
       HttpServletRequest request, HttpServletResponse response) {
     try {
-      response.setContentType("text/html; charset=UTF-8");
+      response.setContentType(contenttypeinfo.contentTypeHeader);
       // response.setContentType("application/xhtml+xml; charset=UTF-8");
 
       OutputStream os = response.getOutputStream();

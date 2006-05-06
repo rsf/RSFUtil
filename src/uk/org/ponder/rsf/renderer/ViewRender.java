@@ -10,6 +10,7 @@ import java.util.Map;
 import uk.org.ponder.errorutil.TargettedMessageList;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIComponent;
+import uk.org.ponder.rsf.content.ContentTypeInfo;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.template.XMLLumpList;
 import uk.org.ponder.rsf.template.XMLLumpMMap;
@@ -53,6 +54,7 @@ public class ViewRender {
   private MessageRenderer messagerenderer;
   private String globalmessagetarget;
   private boolean rendereddeadletters;
+  private ContentTypeInfo contenttypeinfo;
 
   public void setViewTemplate(ViewTemplate viewtemplateo) {
     // TODO: hack for now - will we have other kinds of template?
@@ -71,6 +73,10 @@ public class ViewRender {
   public void setRenderSystem(RenderSystem renderer) {
     this.renderer = renderer;
   }
+  
+  public void setContentTypeInfo(ContentTypeInfo contenttypeinfo) {
+    this.contenttypeinfo = contenttypeinfo;
+  }
 
   public void setMessages(TargettedMessageList messages) {
     this.messagelist = messages;
@@ -88,8 +94,8 @@ public class ViewRender {
     branchmap = BranchResolver.resolveBranches(globalmap, view.viewroot, rootlump);
     messagetargets = MessageTargetter.targetMessages(branchmap, view, 
         messagelist, globalmessagetarget);
-  
-    pos.print(renderer.getDeclaration());
+    String declaration = contenttypeinfo.get().declaration;
+    if (declaration != null) pos.print(declaration);
     this.pos = pos;
     this.xmlw = new XMLWriter(pos);
     rendereddeadletters = false;
