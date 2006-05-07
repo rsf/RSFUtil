@@ -28,6 +28,7 @@ public class UIBoundBoolean extends UIBound {
       String binding, Boolean initvalue) {
     UIBoundBoolean togo = new UIBoundBoolean();
     togo.valuebinding = ELReference.make(binding);
+    togo.fossilize = binding != null;
     if (initvalue != null) {
       togo.setValue(initvalue.booleanValue());
     }
