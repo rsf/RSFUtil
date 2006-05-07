@@ -93,7 +93,8 @@ public class RootHandlerBean implements HandlerHook {
   
   
   private void handleGet() {
-    PrintOutputStream pos = setupResponseWriter(request, response);
+    PrintOutputStream pos = setupResponseWriter(contenttypeinfo.contentTypeHeader, 
+        request, response);
     try {
       ViewParameters redirect = renderhandlerbracketer.handle(pos);
 
@@ -155,10 +156,11 @@ public class RootHandlerBean implements HandlerHook {
     this.contenttypeinfo = contenttypeinfo;
   }
   
-  public PrintOutputStream setupResponseWriter(
+  public static PrintOutputStream setupResponseWriter(
+      String contenttype,
       HttpServletRequest request, HttpServletResponse response) {
     try {
-      response.setContentType(contenttypeinfo.contentTypeHeader);
+      response.setContentType(contenttype);
       // response.setContentType("application/xhtml+xml; charset=UTF-8");
 
       OutputStream os = response.getOutputStream();
