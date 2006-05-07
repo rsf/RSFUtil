@@ -20,6 +20,8 @@ public class UIBoundBoolean extends UIBound {
   }
   public UIBoundBoolean() {
     value = BooleanUIType.instance.getPlaceholder();
+    fossilize = true;
+    willinput = true;
   }
   
   public static UIBoundBoolean make(UIContainer parent, String ID,
