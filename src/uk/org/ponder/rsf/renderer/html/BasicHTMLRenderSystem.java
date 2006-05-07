@@ -65,22 +65,24 @@ public class BasicHTMLRenderSystem implements RenderSystem {
   public void normalizeRequestMap(Map requestparams) {
     String key = RenderUtil.findCommandParams(requestparams);
     if (key != null) {
-      String params = key.substring(FossilizedConverter.COMMAND_LINK_PARAMETERS.length());
+      String params = key.substring(FossilizedConverter.COMMAND_LINK_PARAMETERS
+          .length());
       RenderUtil.unpackCommandLink(params, requestparams);
       requestparams.remove(key);
     }
   }
-  
+
   public void fixupUIType(SubmittedValueEntry sve) {
     if (sve.oldvalue instanceof Boolean) {
-      if (sve.newvalue == null) sve.newvalue = Boolean.FALSE;
+      if (sve.newvalue == null)
+        sve.newvalue = Boolean.FALSE;
     }
     else if (sve.oldvalue instanceof String[]) {
-      if (sve.newvalue == null) sve.newvalue = new String[]{};
+      if (sve.newvalue == null)
+        sve.newvalue = new String[] {};
     }
   }
-  
-  
+
   private void closeTag(PrintOutputStream pos, XMLLump uselump) {
     pos.print("</");
     pos.write(uselump.buffer, uselump.start + 1, uselump.length - 2);
@@ -137,9 +139,9 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       }
 
       if (lump.textEquals("<form ")) {
-        Logger.log.warn("Warning: skipping form tag with rsf:id " + lump.rsfID 
-            + " and all children at "
-            + lump.toDebugString() + " since no peer component");
+        Logger.log.warn("Warning: skipping form tag with rsf:id " + lump.rsfID
+            + " and all children at " + lump.toDebugString()
+            + " since no peer component");
       }
     }
     else {
@@ -214,7 +216,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
               else {
                 pos.print(">");
                 RenderUtil.dumpTillLump(lumps, endopen.lumpindex + 1,
-                  close.lumpindex + 1, pos);
+                    close.lumpindex + 1, pos);
               }
             }
           }
@@ -225,7 +227,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
           // attrcopy.put("id", fullID);
           String value = "";
           String body = null;
-          if (torender.willinput) {
+          if (torendero instanceof UIInput) {
             value = ((UIInput) torender).getValue();
             if (uselump.textEquals("<textarea ")) {
               body = value;
@@ -233,7 +235,6 @@ public class BasicHTMLRenderSystem implements RenderSystem {
             else {
               attrcopy.put("value", value);
             }
-
           }
           else if (torendero instanceof UIBoundBoolean) {
             if (((UIBoundBoolean) torender).getValue()) {
@@ -265,7 +266,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         // dump any fossilized binding for this component.
         dumpBoundFields(torender, xmlw);
       } // end if UIBound
-      
+
       else if (torendero instanceof UISelect) {
         UISelect select = (UISelect) torendero;
         // The HTML submitted value from a <select> actually corresponds
@@ -308,7 +309,8 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         }
         XMLUtil.dumpAttributes(attrcopy, xmlw);
         pos.print(">");
-        String value = torender.linktext == null? null : torender.linktext.getValue(); 
+        String value = torender.linktext == null ? null
+            : torender.linktext.getValue();
         if (value != null && !UITypes.isPlaceholder(value)) {
           xmlw.write(value);
           closeTag(pos, uselump);
@@ -386,9 +388,11 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       else if (torendero instanceof UIVerbatim) {
         UIVerbatim torender = (UIVerbatim) torendero;
         String rendered = null;
-        // inefficient implementation for now, upgrade when we write bulk POS utils.
+        // inefficient implementation for now, upgrade when we write bulk POS
+        // utils.
         if (torender.markup instanceof InputStream) {
-          rendered = StreamCopyUtil.streamToString((InputStream) torender.markup);
+          rendered = StreamCopyUtil
+              .streamToString((InputStream) torender.markup);
         }
         else if (torender.markup instanceof Reader) {
           rendered = StreamCopyUtil.readerToString((Reader) torender.markup);
@@ -397,8 +401,8 @@ public class BasicHTMLRenderSystem implements RenderSystem {
           rendered = torender.markup.toString();
         }
         if (rendered == null) {
-          RenderUtil.dumpTillLump(lumps, lumpindex + 1,
-            close.lumpindex + 1, pos);
+          RenderUtil.dumpTillLump(lumps, lumpindex + 1, close.lumpindex + 1,
+              pos);
         }
         else {
           XMLUtil.dumpAttributes(attrcopy, xmlw);
