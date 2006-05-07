@@ -50,17 +50,23 @@ public class JSFNavActionResultInterpreter implements ActionResultInterpreter {
     ARIResult togo = new ARIResult();
     togo.resultingview = incoming;
     togo.propagatebeans = ARIResult.FLOW_END;
-
+    boolean matchingrule = false;
+    
     if (map.navigationRules != null) {
       for (int i = 0; i < map.navigationRules.size(); ++i) {
         NavigationRule rule = (NavigationRule) map.navigationRules.get(i);
         if (rule.fromViewId.viewID.equals(incoming.viewID)) {
+          matchingrule = true;
           processCaseList(rule.navigationCases, togo, result);
         }
       }
     }
-    processCaseList((List) fromviews.get(incoming.viewID), togo, result);
-    return togo;
+    List rulesfromviews = (List) fromviews.get(incoming.viewID);
+    if (rulesfromviews != null && rulesfromviews.size() > 0) {
+      matchingrule = true;
+    }
+    processCaseList(rulesfromviews, togo, result);
+    return matchingrule? togo : null;
   }
 
 }
