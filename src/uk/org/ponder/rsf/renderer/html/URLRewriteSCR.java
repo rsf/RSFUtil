@@ -53,7 +53,7 @@ public class URLRewriteSCR implements StaticComponentRenderer {
       String[] tags = HTMLConstants.tagtoURL[i]; 
       String tag = tags[0];
       for (int j = 1; j < tags.length; ++ j) {
-        if (lump.textEquals(tags[j]) && lump.attributemap.containsKey(tag))
+        if (lump.textEquals(tags[j]))
           return tag;
       }
     }
