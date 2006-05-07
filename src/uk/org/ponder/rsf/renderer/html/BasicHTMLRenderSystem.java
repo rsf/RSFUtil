@@ -243,6 +243,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
               value = "true";
             }
             else {
+              attrcopy.remove("checked");
               value = "false";
             }
             // eh? What is the "value" attribute for one of these?
