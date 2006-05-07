@@ -107,10 +107,18 @@
   </bean>
 
   <bean id="JSFNavigationARI"
-    class="uk.org.ponder.rsf.flow.jsfnav.JSFNavActionResultInterpreter"
-    abstract="true">
+    class="uk.org.ponder.rsf.flow.jsfnav.JSFNavActionResultInterpreter">
     <property name="navigationMap" ref="JSFNavigationMap" />
     <property name="navigationCasePooler" ref="navigationCasePooler"/>
+  </bean>
+  
+  <bean name="defaultARI" class="uk.org.ponder.rsf.flow.DelegatingARI" >
+    <property name="ARIList">
+      <list>
+        <ref bean="JSFNavigationARI"/>
+        <ref bean="nullActionResultInterpreter"/>
+      </list>
+    </property>
   </bean>
   
   <bean id="actionErrorStrategyManager"
@@ -119,8 +127,7 @@
       <ref bean="XMLActionErrorStrategies" />
     </property>
   </bean>
-
-  <bean name="defaultARI" parent="nullActionResultInterpreter" />
+  
   
   <!-- The default ActionResultInterpreter which directs to the incoming view-->
   <bean id="nullActionResultInterpreter"

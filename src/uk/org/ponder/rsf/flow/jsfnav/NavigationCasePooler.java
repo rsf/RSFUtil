@@ -22,7 +22,7 @@ import uk.org.ponder.reflect.ReflectiveCache;
  * the ConcurrentHashMap it contains by issuing a write.
  * <p>Secondly, and as a consequence, NavigationCase lists, once supplied to,
  * or after delivered from this class, must NEVER be modified!! To change the
- * stored lists, supply a different handle.
+ * stored lists, supply a different object handle.
  * @author Antranig Basman (amb26@ponder.org.uk)
  */
 
