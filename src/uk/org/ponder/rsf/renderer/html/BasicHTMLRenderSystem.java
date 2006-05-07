@@ -303,8 +303,9 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       else if (torendero instanceof UILink) {
         UILink torender = (UILink) torendero;
         String attrname = URLRewriteSCR.getLinkAttribute(uselump);
-
-        attrcopy.put(attrname, torender.target.getValue());
+        if (attrname != null) {
+          attrcopy.put(attrname, torender.target.getValue());
+        }
         XMLUtil.dumpAttributes(attrcopy, xmlw);
         pos.print(">");
         String value = torender.linktext == null? null : torender.linktext.getValue(); 
@@ -353,7 +354,6 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       // i.e. any "submitting" controls, if indeed they ever were there.
       else if (torendero instanceof UIForm) {
         UIForm torender = (UIForm) torendero;
-        attrcopy.put("method", "post"); // yes, we MEAN this!
         int qpos = torender.postURL.indexOf('?');
         // Ensure that any attributes on this postURL
         if (qpos == -1) {
