@@ -16,9 +16,31 @@ public class UIBoundBoolean extends UIBound {
   }
 
   public void setValue(boolean value) {
-    this.value = new Boolean(value); 
+    this.value = value? Boolean.TRUE : Boolean.FALSE;
   }
   public UIBoundBoolean() {
     value = BooleanUIType.instance.getPlaceholder();
   }
+  
+  public static UIBoundBoolean make(UIContainer parent, String ID,
+      String binding, Boolean initvalue) {
+    UIBoundBoolean togo = new UIBoundBoolean();
+    togo.valuebinding = ELReference.make(binding);
+    if (initvalue != null) {
+      togo.setValue(initvalue.booleanValue());
+    }
+    togo.ID = ID;
+    parent.addComponent(togo);
+    return togo;
+  }
+  
+  public static UIBoundBoolean make(UIContainer parent, String ID,
+       Boolean initvalue) {
+    return make(parent, ID, null, initvalue);
+  }
+  
+  public static UIBoundBoolean make(UIContainer parent, String ID,
+      boolean initvalue) {
+   return make(parent, ID, null, initvalue? Boolean.TRUE : Boolean.FALSE);
+ }
 }
