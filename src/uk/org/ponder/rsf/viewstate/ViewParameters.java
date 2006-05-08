@@ -3,7 +3,7 @@
  */
 package uk.org.ponder.rsf.viewstate;
 
-import uk.org.ponder.stringutil.StringList;
+import uk.org.ponder.reflect.DeepBeanCloner;
 
 /**
  * An RSF ViewParameters is a rule for extracting the relevant fields from
@@ -26,7 +26,7 @@ import uk.org.ponder.stringutil.StringList;
 // in fact, since we only ever have ONE view id, in fact we could simply
 // omit baseurl!!
 
-public abstract class ViewParameters implements Cloneable {
+public abstract class ViewParameters {
   /** Identifies this request as part of a "render" cycle - for a simple HTTP
    * servlet, corresponds to a GET, a JSR168 "render" request or a WSRP 
    * getMarkup request.
@@ -67,11 +67,14 @@ public abstract class ViewParameters implements Cloneable {
    */
   public String endflow;
 
-  /** Return a list of relative "bean paths" which will be mapped to 
-   * attributes of a specifying URL.
-   * @return
+  /** Returns a "parse specification" suitable for mapping (currently just the
+   * attribute fields of) this ViewParameters into a URL. This is a comma-separated
+   * list of field specifications. Each field specification takes the form of
+   * the name of an attribute
+   * @return A string representing a URL parse specification
    */
-  public abstract StringList getAttributeFields();
+  
+  public abstract String getParseSpec();
   
   /** Return a field which will be used to form the "anchor" text */
   public String getAnchorField() {
@@ -91,22 +94,39 @@ public abstract class ViewParameters implements Cloneable {
   public abstract String toPathInfo();
  
   public abstract void clearParams();
+  public static final String BASE_PARSE_SPEC = "flowtoken, endflow, errortoken, errorredirect"; 
+  
+  /** "Ephemeral" fields of ViewParameters state that will not propagate by
+   * default.
+   */
+  public static final String[] cloneexceptions = new String[] {
+    "flowtoken", "errortoken", "endflow", "attributeFields", "anchorField"
+  };
 // Note that copying does not copy the error token! All command links
 // take the original request, and all non-command links should not share
 // error state.
-// This is rubbish. EVEN MORE argument that these fields should go, and this
-// operation should be replaced by a proper deepClone().
+  /** Make a "deep clone" of this ViewParameters object, representing the
+   * "same" view state but sharing no Object state with this object. To enable
+   * this to work automatically, all extra members from derived classes must
+   * be POJO beans or peas. See {@link DeepBeanCloner} for explanation of the 
+   * algorithm used. Use this method if the performance or architecture impact
+   * of the no-args method bothers you.
+   */
+  public ViewParameters copyBase(DeepBeanCloner cloner) {
+    return (ViewParameters) cloner.cloneBean(this, cloneexceptions);
+  }
+  
+  /** See <code>copyBase</code> above. Uses a ThreadLocal call to acquire
+   * the standard DeepBeanCloner bound to the current thread - necessary since
+   * ViewParameters objects are cloned in all sorts of lightweight contexts.
+   * Use the method above by preference if at all possible.
+   * **/
   public ViewParameters copyBase() {
-    try {
-      ViewParameters togo = (ViewParameters) clone(); 
-      togo.flowtoken = null;
-      togo.errortoken = null;
-      togo.endflow = null;
-      return togo;
-    }
-    catch (Throwable t) {
-      return null;
-    } // CANNOT THROW! IDIOTIC SYSTEM!!   
+    return copyBase(ViewParamUtil.getCloner());
   }
 
+  /** Pea proxying method */
+  public ViewParameters get() {
+    return this;
+  }
 }

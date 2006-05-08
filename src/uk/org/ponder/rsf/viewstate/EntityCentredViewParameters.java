@@ -18,10 +18,9 @@ import uk.org.ponder.stringutil.URLUtil;
 public class EntityCentredViewParameters extends ViewParameters {
   public static final String MODE_NEW = "new";
   public static final String MODE_EDIT = "edit";
-  private static StringList attrfields = StringList.fromString("flowtoken, " +
-        "endflow, errortoken, errorredirect, mode");
-  public StringList getAttributeFields() {
-   return attrfields;
+  
+  public String getParseSpec() {
+   return ViewParameters.BASE_PARSE_SPEC + ", mode";
   }
 
   public void clearParams() {
@@ -52,16 +51,6 @@ public class EntityCentredViewParameters extends ViewParameters {
     return "/" + viewID + "/" + entity.ID;
   }
   
-  public ViewParameters copyBase() {
-    // TODO: replace all this with deepClone from BMA
-    EntityCentredViewParameters togo = (EntityCentredViewParameters) super.copyBase();
-    EntityID neweid = new EntityID();
-    neweid.entityname = togo.entity.entityname;
-    neweid.ID = togo.entity.ID;
-    togo.entity = neweid;
-    return togo;
-  }
-
   public String getELPath() {
     return BeanUtil.composeEL(entity.entityname, entity.ID);
   }

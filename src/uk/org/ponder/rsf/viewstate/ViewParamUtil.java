@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import uk.org.ponder.beanutil.BeanModelAlterer;
+import uk.org.ponder.reflect.DeepBeanCloner;
+import uk.org.ponder.rsac.GlobalBeanAccessor;
 import uk.org.ponder.rsf.components.ParameterList;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.stringutil.CharWrap;
@@ -21,6 +23,17 @@ import uk.org.ponder.stringutil.URLUtil;
  */
 
 public class ViewParamUtil {
+  /** Returns the standard RSF "DeepBeanCloner" bound to the current thread.
+   * It is always undesirable to name beans in Java code, but this access is
+   * necessary to permit ViewParameters objects to clone themselves in contexts
+   * too small to inject this dependency.
+   * @return
+   */
+  
+  public static DeepBeanCloner getCloner() {
+    return (DeepBeanCloner) GlobalBeanAccessor.getBean("deepBeanCloner");
+  }
+  
   public static ParameterList mapToParamList(Map toconvert) {
     ParameterList togo = new ParameterList();
     for (Iterator keyit = toconvert.keySet().iterator(); keyit.hasNext();) {
@@ -56,45 +69,4 @@ public class ViewParamUtil {
     return parser.parse(pathinfo, params); 
   }
 
-  public static void parseViewParamAttributes(BeanModelAlterer bma, ViewParameters target,
-      Map params) {
-    StringList pathlist = target.getAttributeFields();
-    for (int i = 0; i < pathlist.size(); ++ i) {
-      String path = pathlist.stringAt(i);
-      Object valueo = params.get(path);
-      if (valueo != null) {
-        bma.setBeanValue(path, target, valueo, null);
-      }
-    }
-  }
-  
-  /** Returns the "mid-portion" of the URL corresponding to these parameters,
-   * i.e. /view-id/more-path-info?param1=val&param2=val 
-   */
-  public static String toHTTPRequest(BeanModelAlterer bma, ViewParameters toconvert) {
-    CharWrap togo = new CharWrap();
-    togo.append(toconvert.toPathInfo());
-    StringList attrs = toconvert.getAttributeFields();
-    boolean isfirst = true;
-    for (int i = 0; i < attrs.size(); ++i) {
-      String attrname = attrs.stringAt(i);
-      String attrval = (String) bma.getFlattenedValue(attrname, toconvert, String.class, null);
-      if (attrval != null) {
-        togo.append(isfirst? '?' : '&');
-        togo.append(attrname);
-        togo.append("=");
-        togo.append(attrval);
-        isfirst = false;
-      }
-    }
-    String anchorfield = toconvert.getAnchorField();
-    if (anchorfield != null) {
-      String value = (String) bma.getFlattenedValue(anchorfield, toconvert, String.class, null);
-      if (value != null) {
-        togo.append("#").append(value);
-      }
-    }
-    return togo.toString();
-  }
-  
 }
