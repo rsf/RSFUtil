@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.webapputil.ConsumerInfo;
 
 /**

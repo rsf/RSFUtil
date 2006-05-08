@@ -6,6 +6,7 @@ package uk.org.ponder.rsf.viewstate;
 import java.util.HashMap;
 import java.util.Map;
 
+import uk.org.ponder.reflect.DeepBeanCloner;
 import uk.org.ponder.reflect.ReflectiveCache;
 import uk.org.ponder.util.Logger;
 
@@ -21,11 +22,16 @@ public class BasicViewParametersParser implements ViewParametersParser,
     ViewParamsReceiver {
   private Map exemplarmap;
   private ViewParamsMapper vpmapper;
+  private DeepBeanCloner beancloner;
   
   public void setViewParamsMapper(ViewParamsMapper vpmapper) {
     this.vpmapper = vpmapper;
   }
 
+  public void setDeepBeanCloner(DeepBeanCloner beancloner) {
+    this.beancloner = beancloner;
+  }
+  
   // A single-threaded hashmap to be used during startup.
   private Map pendingmap = new HashMap();
 
@@ -97,7 +103,7 @@ public class BasicViewParametersParser implements ViewParametersParser,
     if (vpexemplar == null) {
       vpexemplar = defaultexemplar;
     }
-    ViewParameters origrequest = vpexemplar.copyBase();
+    ViewParameters origrequest = vpexemplar.copyBase(beancloner);
     vpmapper.parseViewParamAttributes(origrequest, requestmap);
     origrequest.parsePathInfo(pathinfo);
 
