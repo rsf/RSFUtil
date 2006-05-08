@@ -3,7 +3,6 @@
  */
 package uk.org.ponder.rsf.viewstate;
 
-import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.conversion.LeafObjectParser;
 
 /** A LeafObjectParser rendition of the ViewParametersParser bean. This parser
@@ -17,14 +16,14 @@ import uk.org.ponder.conversion.LeafObjectParser;
 public class ViewParamsLeafParser implements LeafObjectParser {
   
   private ViewParametersParser parser;
-  private BeanModelAlterer bma;
+  private ViewParamsMapper vpmapper;
 
   public void setViewParametersParser(ViewParametersParser parser) {
     this.parser = parser;
   }
-  
-  public void setBeanModelAlterer(BeanModelAlterer bma) {
-    this.bma = bma;
+
+  public void setViewParamsMapper(ViewParamsMapper vpmapper) {
+    this.vpmapper = vpmapper;
   }
   
   public Object parse(String toparse) {
@@ -32,7 +31,7 @@ public class ViewParamsLeafParser implements LeafObjectParser {
   }
 
   public String render(Object torender) {
-    return ViewParamUtil.toHTTPRequest(bma, (ViewParameters) torender);
+    return vpmapper.toHTTPRequest((ViewParameters) torender);
   }
 
   public Object copy(Object tocopy) {

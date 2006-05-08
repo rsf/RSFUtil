@@ -6,7 +6,6 @@ package uk.org.ponder.rsf.viewstate;
 import java.util.HashMap;
 import java.util.Map;
 
-import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.reflect.ReflectiveCache;
 import uk.org.ponder.util.Logger;
 
@@ -21,7 +20,11 @@ import uk.org.ponder.util.Logger;
 public class BasicViewParametersParser implements ViewParametersParser,
     ViewParamsReceiver {
   private Map exemplarmap;
-  private BeanModelAlterer bma;
+  private ViewParamsMapper vpmapper;
+  
+  public void setViewParamsMapper(ViewParamsMapper vpmapper) {
+    this.vpmapper = vpmapper;
+  }
 
   // A single-threaded hashmap to be used during startup.
   private Map pendingmap = new HashMap();
@@ -67,10 +70,6 @@ public class BasicViewParametersParser implements ViewParametersParser,
     }
   }
 
-  public void setBeanModelAlterer(BeanModelAlterer bma) {
-    this.bma = bma;
-  }
-
   public void setReflectiveCache(ReflectiveCache reflectivecache) {
     exemplarmap = reflectivecache.getConcurrentMap(1);
   }
@@ -99,7 +98,7 @@ public class BasicViewParametersParser implements ViewParametersParser,
       vpexemplar = defaultexemplar;
     }
     ViewParameters origrequest = vpexemplar.copyBase();
-    ViewParamUtil.parseViewParamAttributes(bma, origrequest, requestmap);
+    vpmapper.parseViewParamAttributes(origrequest, requestmap);
     origrequest.parsePathInfo(pathinfo);
 
     // Map requestmap = req.
@@ -107,7 +106,7 @@ public class BasicViewParametersParser implements ViewParametersParser,
     if (Logger.log.isDebugEnabled()) {
       Logger.log.debug("Parsed view " + origrequest.viewID
           + " from request parameters "
-          + ViewParamUtil.toHTTPRequest(bma, origrequest));
+          + vpmapper.toHTTPRequest(origrequest));
     }
     return origrequest;
 

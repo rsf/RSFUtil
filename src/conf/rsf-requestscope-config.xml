@@ -207,14 +207,7 @@
   <bean name="outgoingParams"
     class="uk.org.ponder.rsf.components.ParameterList">
   </bean>
-
-  <bean id="URLRewriter"
-    class="uk.org.ponder.rsf.viewstate.URLRewriter">
-    <property name="viewStateHandler">
-      <ref bean="viewStateHandler" />
-    </property>
-  </bean>
-
+ 
   <bean id="URLRewriteSCR"
     class="uk.org.ponder.rsf.renderer.html.URLRewriteSCR">
     <property name="URLRewriter">
@@ -384,16 +377,9 @@
     </property>
   </bean>
 
-  <bean id="viewParamsFixer"
-    class="uk.org.ponder.rsf.componentprocessor.ViewParamsFixer">
-    <property name="viewStateHandler">
-      <ref bean="viewStateHandler" />
-    </property>
-  </bean>
-
   <!-- End "fixer" beans" -->
 
-  <bean id="viewProcessor"
+  <bean id="viewProcessor" 
     class="uk.org.ponder.rsf.view.ViewProcessor">
     <property name="mappingContext" ref="ELMappingContext" />
     <property name="componentProcessors">
