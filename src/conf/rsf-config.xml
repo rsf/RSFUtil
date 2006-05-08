@@ -176,10 +176,8 @@
 
   <bean id="RSACBeanLocator" factory-bean="RSACBeanLocatorFactory"
     factory-method="getRSACBeanLocator" init-method="init">
-    <property name="reflectiveCache" ref="reflectiveCache" />
-    <property name="mappingContext">
-      <ref bean="ELMappingContext" />
-    </property>
+    <property name="mappingContext" ref="ELMappingContext" />
+    <property name="reflectiveCache" ref="reflectiveCache"/>
   </bean>
 
   <bean id="fallbackBeans" factory-bean="RSACBeanLocator"

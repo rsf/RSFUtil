@@ -358,6 +358,9 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       else if (torendero instanceof UIForm) {
         UIForm torender = (UIForm) torendero;
         int qpos = torender.postURL.indexOf('?');
+        if (attrcopy.get("method") == null) { // forms DEFAULT to be post
+          attrcopy.put("method", "post");
+        }
         // Ensure that any attributes on this postURL
         if (qpos == -1) {
           attrcopy.put("action", torender.postURL);

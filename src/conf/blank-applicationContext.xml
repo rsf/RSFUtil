@@ -29,6 +29,7 @@
     class="uk.org.ponder.rsf.viewstate.BasicViewParametersParser"
     init-method="init">
     <property name="viewParamsMapper" ref="viewParamsMapper" />
+    <property name="deepBeanCloner" ref="deepBeanCloner" />
     <property name="reflectiveCache" ref="reflectiveCache" />
   </bean>
 

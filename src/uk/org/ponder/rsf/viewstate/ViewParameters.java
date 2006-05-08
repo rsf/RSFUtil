@@ -100,7 +100,7 @@ public abstract class ViewParameters {
    * default.
    */
   public static final String[] cloneexceptions = new String[] {
-    "flowtoken", "errortoken", "endflow", "attributeFields", "anchorField"
+    "flowtoken", "errortoken", "endflow", "parseSpec", "anchorField"
   };
 // Note that copying does not copy the error token! All command links
 // take the original request, and all non-command links should not share

@@ -7,7 +7,6 @@ import java.util.Map;
 
 import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.stringutil.CharWrap;
-import uk.org.ponder.stringutil.StringList;
 
 public class ViewParamsMapper {
 
@@ -31,6 +30,10 @@ public class ViewParamsMapper {
     return bma;
   }
 
+  public ViewParamsMapInfo getMappingInfo(ViewParameters target) {
+    return vpmim.getMappingInfo(target);
+  }
+  
   public void parseViewParamAttributes(ViewParameters target, Map params) {
     ViewParamsMapInfo mapinfo = vpmim.getMappingInfo(target);
     for (int i = 0; i < mapinfo.attrnames.length; ++ i) {
