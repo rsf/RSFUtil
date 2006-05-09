@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.rsf.servlet;
 
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -18,6 +19,7 @@ import uk.org.ponder.rsf.processor.RenderHandlerBracketer;
 import uk.org.ponder.rsf.renderer.RenderUtil;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewStateHandler;
+import uk.org.ponder.servletutil.ServletResponseWriter;
 import uk.org.ponder.streamutil.write.OutputStreamPOS;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.util.Logger;
@@ -83,6 +85,7 @@ public class RootHandlerBean implements HandlerHook {
         handlePost();
       }
     }
+    Logger.log.info("Request handled");
     return true;
   }
 
@@ -163,7 +166,8 @@ public class RootHandlerBean implements HandlerHook {
       response.setContentType(contenttype);
       // response.setContentType("application/xhtml+xml; charset=UTF-8");
 
-      OutputStream os = response.getOutputStream();
+      ServletResponseWriter srw = new ServletResponseWriter(response);
+      OutputStream os = srw.getOutputStream();
       PrintOutputStream pos = new OutputStreamPOS(os, "UTF-8");
 
       String acceptHeader = request.getHeader("Accept");
@@ -180,7 +184,7 @@ public class RootHandlerBean implements HandlerHook {
       response.setHeader("Accept", acceptHeader);
       return pos;
     }
-    catch (IOException ioe) {
+    catch (Exception ioe) {
       throw UniversalRuntimeException.accumulate(ioe,
           "Error setting up response writer");
     }
