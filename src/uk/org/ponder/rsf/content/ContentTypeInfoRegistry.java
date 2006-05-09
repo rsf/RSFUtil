@@ -34,7 +34,7 @@ public class ContentTypeInfoRegistry {
         );
 
   public static final ContentTypeInfo XUL_CONTENTINFO = 
-    new ContentTypeInfo(AJAX, "xul",  "",
+    new ContentTypeInfo(XUL, "xul",  "",
         "application/vnd.mozilla.xul+xml; charset=UTF-8"
         );
   
