@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.rsf.viewstate;
 
+import uk.org.ponder.stringutil.URLUtil;
 import uk.org.ponder.util.Logger;
 
 /**
@@ -19,12 +20,10 @@ public class URLRewriter {
    */
   public String rewriteResourceURL(String path, String relpath) {
     String resourceURL = null;
-    // erm?? Was this always broken? Looks like all relative URLs mapped onto
-    // the default base URL???
-    if (path.charAt(0) != '/') {
+    if (path.charAt(0) != '/') { 
       resourceURL = viewstatehandler.getResourceURL(relpath + path);
     }
-    else {
+    else if (!URLUtil.isAbsolute(path)){
       //String resourceURL = origViewHandler.getResourceURL(context, path);
       resourceURL = viewstatehandler.getResourceURL(
           path.substring(1));

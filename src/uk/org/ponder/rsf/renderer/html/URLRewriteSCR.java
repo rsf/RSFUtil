@@ -17,11 +17,12 @@ import uk.org.ponder.xml.XMLUtil;
 import uk.org.ponder.xml.XMLWriter;
 
 public class URLRewriteSCR implements StaticComponentRenderer {
+  public static final String NAME = "rewrite-url"; 
   private URLRewriter rewriter;
   private String relpath;
 
   public String getName() {
-    return "rewrite-url";
+    return NAME;
   }
 
   public void setURLRewriter(URLRewriter resolver) {
@@ -32,12 +33,16 @@ public class URLRewriteSCR implements StaticComponentRenderer {
     this.relpath = template.getRelativePath();
   }
   
+  public String resolveURL(String toresolve) {
+    return rewriter.rewriteResourceURL(toresolve, relpath);
+  }
+  
   // returns null if no change required.
   public HashMap getResolvedURLMap(HashMap attrs, String name) {
     if (rewriter == null)
       return null;
     String toresolve = (String) attrs.get(name);
-    String resolved = rewriter.rewriteResourceURL(toresolve, relpath);
+    String resolved = resolveURL(toresolve);
     if (resolved == null) {
       return null;
     }
