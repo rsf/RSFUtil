@@ -11,13 +11,6 @@ import uk.org.ponder.rsf.uitype.BooleanUIType;
  * 
  */
 public class UIBoundBoolean extends UIBound {
-  /** An identifier for a "group" for this control, in the case it is one of a 
-   * set of mutually exclusive choices, e.g. radio buttons. If this is 
-   * <code>null</code>, this value is assumed to be independent.
-   */
-  // NB, this will be used to replace "ID" for fullID computation for
-  // BINDINGS, but not for "ID".
-  public String group;
   
   public boolean getValue() {
     return ((Boolean)value).booleanValue();
