@@ -62,7 +62,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
   public void setStaticRenderers(StaticRendererCollection scrc) {
     this.scrc = scrc;
   }
-
+  
   // two methods for the RenderSystemDecoder interface
   public void normalizeRequestMap(Map requestparams) {
     String key = RenderUtil.findCommandParams(requestparams);
@@ -298,7 +298,13 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         UILink torender = (UILink) torendero;
         String attrname = URLRewriteSCR.getLinkAttribute(uselump);
         if (attrname != null) {
-          attrcopy.put(attrname, torender.target.getValue());
+          String target = torender.target.getValue();
+          URLRewriteSCR urlrewriter = (URLRewriteSCR) scrc.getSCR(URLRewriteSCR.NAME);
+          if (!URLUtil.isAbsolute(target)) {
+            String rewritten = urlrewriter.resolveURL(target);
+            if (rewritten != null) target = rewritten;
+          }
+          attrcopy.put(attrname, target);
         }
         String value = torender.linktext == null ? null
             : torender.linktext.getValue();
