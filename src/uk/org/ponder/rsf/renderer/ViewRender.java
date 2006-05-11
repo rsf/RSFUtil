@@ -142,7 +142,7 @@ public class ViewRender {
             }
             else { // repetitive non-branch
               XMLLump targetlump = findChild(parentlump, child);
-              int renderend = renderer.renderComponent(child, lumps,
+              int renderend = renderer.renderComponent(child, view, lumps,
                   targetlump.lumpindex, pos);
               if (i != children.size() - 1) {
                 // at this point, magically locate any "glue" that matches the
@@ -206,7 +206,7 @@ public class ViewRender {
           }
         }
         // if we find a leaf component, render it.
-        renderindex = renderer.renderComponent(component, lumps, renderindex,
+        renderindex = renderer.renderComponent(component, view, lumps, renderindex,
             pos);
       } // end if unrepeatable component.
     }

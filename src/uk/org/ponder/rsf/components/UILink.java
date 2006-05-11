@@ -27,7 +27,9 @@ public class UILink extends UISimpleContainer {
     togo.target = new UIOutput();
     togo.target.setValue(target);
     togo.linktext = new UIOutput();
-    togo.linktext.setValue(text);
+    if (text != null) {
+      togo.linktext.setValue(text);
+    }
     parent.addComponent(togo);    
     return togo;
   }

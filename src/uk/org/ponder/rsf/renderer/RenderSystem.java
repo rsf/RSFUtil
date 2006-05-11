@@ -5,6 +5,7 @@ package uk.org.ponder.rsf.renderer;
 
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.template.XMLLump;
+import uk.org.ponder.rsf.view.View;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 
 /**
@@ -22,6 +23,8 @@ public interface RenderSystem extends RenderSystemDecoder {
    * (at least in prefix) the rsf:id of tag specified in lumpindex. The 
    * component may be <code>null</code> where the tag is to be target of a 
    * static rewrite rule, in which case the System will invoke the relevant SCR.
+   * @param view The view currently being rendered - necessary to resolve
+   * any inter-component references.
    * @param lumps The full array of XMLLump object specifing the condensed
    * representation of the template set.
    * @param lumpindex The index of the lump (head lump holding open tag) where
@@ -29,7 +32,7 @@ public interface RenderSystem extends RenderSystemDecoder {
    * @param pos The output stream where the transformed template data is to be
    * written.
    */
-  public int renderComponent(UIComponent torender, XMLLump[] lumps, 
+  public int renderComponent(UIComponent torender, View view, XMLLump[] lumps, 
       int lumpindex, PrintOutputStream pos);
 
  

@@ -17,6 +17,7 @@ package uk.org.ponder.rsf.components;
  */
 public class UICommand extends UISimpleContainer {
   public ELReference methodbinding;
+  // TODO: This should really be a UIOutput
   public String commandtext;
   /**
    * Creates a command link initiating the specified method binding on trigger,

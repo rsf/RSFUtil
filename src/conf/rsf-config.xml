@@ -6,7 +6,7 @@
 <beans>
   <bean id="reflectiveCache"
     class="uk.org.ponder.reflect.JDKReflectiveCache" />
-
+    
   <bean id="staticLeafParser"
     class="uk.org.ponder.conversion.StaticLeafParser" />
 
