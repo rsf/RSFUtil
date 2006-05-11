@@ -282,7 +282,7 @@
 
   <bean id="flowTokenStateHolder"
     class="uk.org.ponder.rsf.servlet.InSessionTSH">
-    <property name="session" ref="httpSessionProxy" />
+    <property name="httpRequest" ref="httpServletRequestProxy" />
     <property name="expirySeconds">
       <!-- deliberately short time for testing - all flows will expire after 
         30 seconds of disuse -->
@@ -292,7 +292,7 @@
 
   <bean id="bandgapStateHolder"
     class="uk.org.ponder.rsf.servlet.InSessionTSH">
-    <property name="session" ref="httpSessionProxy" />
+    <property name="httpRequest" ref="httpServletRequestProxy" />
     <property name="expirySeconds">
       <!-- deliberately short time for testing - all errors will expire after 
         10 seconds of disuse -->
@@ -302,12 +302,6 @@
 
   <bean id="multipartResolver"
     class="uk.org.ponder.springutil.BlankMultipartResolver">
-  </bean>
-
-  <bean id="httpSessionProxy" parent="RSACBridgeProxy">
-    <property name="targetBeanName">
-      <idref bean="httpSession" />
-    </property>
   </bean>
 
   <bean id="flowTokenStateHolder-memory"

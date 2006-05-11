@@ -3,6 +3,8 @@
  */
 package uk.org.ponder.rsf.components;
 
+import uk.org.ponder.stringutil.StringSet;
+
 /**
  * Backs a selection control of some kind, where named values are presented in a
  * list to the user. The returned value which is submitted may be a single
@@ -29,6 +31,11 @@ public class UISelect extends UIComponent implements FixableComponent {
    */
   public UIBound selection;
 
+  /** This field is set during fixup for reference of the renderer. Do not
+   * set this manually.
+   */
+  public StringSet selected;
+  
   /** Creates a non-submitting (output-only) selection control */
   public static UISelect make(UIContainer tofill, String ID, String[] values,
       String[] labels, String value) {
@@ -48,8 +55,8 @@ public class UISelect extends UIComponent implements FixableComponent {
   /** A "skeleton" make method to prepare for more complex constructions */
   public static UISelect make(UIContainer tofill, String ID) {
     UISelect togo = new UISelect();
-    tofill.addComponent(togo);
     togo.ID = ID;
+    tofill.addComponent(togo);
     return togo;
   }
   
@@ -58,6 +65,14 @@ public class UISelect extends UIComponent implements FixableComponent {
       if (optionnames.valuebinding == null) {
         optionnames.valuebinding = optionlist.valuebinding;
       }
+    }
+    
+    selected = new StringSet();
+    if (selection instanceof UIBoundList) {
+      selected.addAll(((UIBoundList) selection).getValue());
+    }
+    else if (selection instanceof UIBoundString) {
+      selected.add(((UIBoundString) selection).getValue());
     }
   }
   /** Constructs a simple selection control, where the submitted values are 

@@ -28,8 +28,6 @@
     <property name="httpServletRequest" ref="httpServletRequest"/>
     <property name="multipartResolver" ref="multipartResolver"/>
   </bean>
-  
-  <bean id="httpSession" factory-bean="httpServletRequest" factory-method="getSession"/>
 
   <bean id="requestMap" factory-bean="earlyRequestParser"
     factory-method="getRequestMap" />

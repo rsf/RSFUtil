@@ -13,7 +13,6 @@ import uk.org.ponder.rsf.components.UIAnchor;
 import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBoundList;
-import uk.org.ponder.rsf.components.UIBoundString;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIForm;
@@ -23,22 +22,25 @@ import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UIOutputMultiline;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.components.UISelect;
+import uk.org.ponder.rsf.components.UISelectChoice;
+import uk.org.ponder.rsf.components.UISelectLabel;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.renderer.ComponentRenderer;
 import uk.org.ponder.rsf.renderer.RenderSystem;
 import uk.org.ponder.rsf.renderer.RenderUtil;
 import uk.org.ponder.rsf.renderer.StaticComponentRenderer;
 import uk.org.ponder.rsf.renderer.StaticRendererCollection;
+import uk.org.ponder.rsf.renderer.TagRenderContext;
 import uk.org.ponder.rsf.request.FossilizedConverter;
 import uk.org.ponder.rsf.request.SubmittedValueEntry;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.template.XMLLumpList;
 import uk.org.ponder.rsf.uitype.UITypes;
+import uk.org.ponder.rsf.view.View;
 import uk.org.ponder.rsf.viewstate.ViewParamUtil;
 import uk.org.ponder.streamutil.StreamCopyUtil;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.stringutil.StringList;
-import uk.org.ponder.stringutil.StringSet;
 import uk.org.ponder.stringutil.URLUtil;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.xml.XMLUtil;
@@ -106,7 +108,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
   // with renderer-per-component "class" as before, plus interceptors.
   // Although a lot of the parameterisation now lies in the allowable tag
   // set at target.
-  public int renderComponent(UIComponent torendero, XMLLump[] lumps,
+  public int renderComponent(UIComponent torendero, View view, XMLLump[] lumps,
       int lumpindex, PrintOutputStream pos) {
     XMLWriter xmlw = new XMLWriter(pos);
     XMLLump lump = lumps[lumpindex];
@@ -163,6 +165,8 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       attrcopy.putAll(uselump.attributemap);
       attrcopy.put("id", fullID);
       attrcopy.remove(XMLLump.ID_ATTRIBUTE);
+      TagRenderContext rendercontext = new TagRenderContext(attrcopy, lumps,
+          uselump, endopen, close, pos, xmlw);
       // ALWAYS dump the tag name, this can never be rewritten. (probably?!)
       pos.write(uselump.buffer, uselump.start, uselump.length);
       // TODO: Note that these are actually BOUND now. Create some kind of
@@ -172,16 +176,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         if (!torender.willinput) {
           if (torendero.getClass() == UIOutput.class) {
             String value = ((UIOutput) torendero).getValue();
-            if (UITypes.isPlaceholder(value)) {
-              RenderUtil.dumpTillLump(lumps, lumpindex + 1,
-                  close.lumpindex + 1, pos);
-            }
-            else {
-              XMLUtil.dumpAttributes(attrcopy, xmlw);
-              pos.print(">");
-              xmlw.write(value);
-              closeTag(pos, uselump);
-            }
+            rewriteLeaf(value, rendercontext);
           }
           else if (torendero.getClass() == UIOutputMultiline.class) {
             StringList value = ((UIOutputMultiline) torendero).getValue();
@@ -204,20 +199,11 @@ public class BasicHTMLRenderSystem implements RenderSystem {
           else if (torender.getClass() == UIAnchor.class) {
             String value = ((UIAnchor) torendero).getValue();
             if (UITypes.isPlaceholder(value)) {
-              RenderUtil.dumpTillLump(lumps, lumpindex + 1,
-                  close.lumpindex + 1, pos);
+              renderUnchanged(rendercontext);
             }
             else {
               attrcopy.put("name", value);
-              XMLUtil.dumpAttributes(attrcopy, xmlw);
-              if (endopen.lumpindex == close.lumpindex) {
-                pos.print("/>");
-              }
-              else {
-                pos.print(">");
-                RenderUtil.dumpTillLump(lumps, endopen.lumpindex + 1,
-                    close.lumpindex + 1, pos);
-              }
+              replaceAttributes(rendercontext);
             }
           }
         }
@@ -239,28 +225,13 @@ public class BasicHTMLRenderSystem implements RenderSystem {
           else if (torendero instanceof UIBoundBoolean) {
             if (((UIBoundBoolean) torender).getValue()) {
               attrcopy.put("checked", "yes");
-              // this "value" is thrown away for checkboxes.
-              value = "true";
             }
             else {
               attrcopy.remove("checked");
-              value = "false";
             }
-            // eh? What is the "value" attribute for one of these?
             attrcopy.put("value", "true");
           }
-
-          XMLUtil.dumpAttributes(attrcopy, xmlw);
-          pos.print(">");
-          if (body != null) {
-            xmlw.write(body);
-            pos.write(close.buffer, close.start, close.length);
-          }
-          else {
-            RenderUtil.dumpTillLump(lumps, endopen.lumpindex + 1,
-                close.lumpindex + 1, pos);
-          }
-
+          rewriteLeaf(body, rendercontext);
           // unify hidden field processing? ANY parameter children found must
           // be dumped as hidden fields.
         }
@@ -274,33 +245,54 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         // with the selection member, not the top-level component.
         attrcopy.put("name", select.selection.getFullID());
         attrcopy.put("id", select.selection.getFullID());
-        StringSet selected = new StringSet();
-        if (select.selection instanceof UIBoundList) {
-          selected.addAll(((UIBoundList) select.selection).getValue());
+        boolean ishtmlselect = uselump.textEquals("<select ");
+        if (select.selection instanceof UIBoundList && ishtmlselect) {
           attrcopy.put("multiple", "true");
         }
-        else if (select.selection instanceof UIBoundString) {
-          selected.add(((UIBoundString) select.selection).getValue());
-        }
         XMLUtil.dumpAttributes(attrcopy, xmlw);
-        pos.print(">");
-        String[] values = select.optionlist.getValue();
-        String[] names = select.optionnames == null ? values
-            : select.optionnames.getValue();
-        for (int i = 0; i < names.length; ++i) {
-          pos.print("<option value=\"");
-          xmlw.write(values[i]);
-          if (selected.contains(values[i])) {
-            pos.print("\" selected=\"true");
+        if (ishtmlselect) {
+          pos.print(">");
+          String[] values = select.optionlist.getValue();
+          String[] names = select.optionnames == null ? values
+              : select.optionnames.getValue();
+          for (int i = 0; i < names.length; ++i) {
+            pos.print("<option value=\"");
+            xmlw.write(values[i]);
+            if (select.selected.contains(values[i])) {
+              pos.print("\" selected=\"true");
+            }
+            pos.print("\">");
+            xmlw.write(names[i]);
+            pos.print("</option>\n");
           }
-          pos.print("\">");
-          xmlw.write(names[i]);
-          pos.print("</option>\n");
+          closeTag(pos, uselump);
         }
-        closeTag(pos, uselump);
+        else {
+          dumpTemplateBody(rendercontext);
+        }
+
         dumpBoundFields(select.selection, xmlw);
         dumpBoundFields(select.optionlist, xmlw);
         dumpBoundFields(select.optionnames, xmlw);
+      }
+      else if (torendero instanceof UISelectChoice) {
+        UISelectChoice torender = (UISelectChoice) torendero;
+        UISelect parent = (UISelect) view.getComponent(torender.parentFullID);
+        String value = parent.optionlist.getValue()[torender.choiceindex];
+        // currently only peers with "input type="radio"".
+        attrcopy.put("name", torender.parentFullID +"-selection");
+        attrcopy.put("value", value);
+        attrcopy.remove("checked");
+        if (parent.selected.contains(value)) {
+          attrcopy.put("checked", "true");
+        }
+        replaceAttributes(rendercontext);
+      }
+      else if (torendero instanceof UISelectLabel) {
+        UISelectLabel torender = (UISelectLabel) torendero;
+        UISelect parent = (UISelect) view.getComponent(torender.parentFullID);
+        String value = parent.optionnames.getValue()[torender.choiceindex];
+        replaceBody(value, rendercontext);
       }
       else if (torendero instanceof UILink) {
         UILink torender = (UILink) torendero;
@@ -308,18 +300,9 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         if (attrname != null) {
           attrcopy.put(attrname, torender.target.getValue());
         }
-        XMLUtil.dumpAttributes(attrcopy, xmlw);
-        pos.print(">");
         String value = torender.linktext == null ? null
             : torender.linktext.getValue();
-        if (value != null && !UITypes.isPlaceholder(value)) {
-          xmlw.write(value);
-          closeTag(pos, uselump);
-        }
-        else {
-          RenderUtil.dumpTillLump(lumps, endopen.lumpindex + 1,
-              close.lumpindex + 1, pos);
-        }
+        rewriteLeaf(value, rendercontext);
       }
 
       else if (torendero instanceof UICommand) {
@@ -330,25 +313,13 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         // bundled as this special attribute.
         attrcopy.put("name", FossilizedConverter.COMMAND_LINK_PARAMETERS
             + value);
-        if (lump.textEquals("<input ") && torender.commandtext != null) {
+        String text = torender.commandtext;
+        boolean isbutton = lump.textEquals("<button ");
+        if (text != null && !isbutton) {
           attrcopy.put("value", torender.commandtext);
+          text = null;
         }
-
-        XMLUtil.dumpAttributes(attrcopy, xmlw);
-        if (endopen.lumpindex == close.lumpindex) {
-          pos.print("/>");
-        }
-        else {
-          pos.print(">");
-          if (torender.commandtext != null && lump.textEquals("<button ")) {
-            xmlw.write(torender.commandtext);
-            closeTag(pos, uselump);
-          }
-          else {
-            RenderUtil.dumpTillLump(lumps, endopen.lumpindex + 1,
-                close.lumpindex + 1, pos);
-          }
-        }
+        rewriteLeaf(text, rendercontext);
         // RenderUtil.dumpHiddenField(SubmittedValueEntry.ACTION_METHOD,
         // torender.actionhandler, pos);
       }
@@ -405,14 +376,10 @@ public class BasicHTMLRenderSystem implements RenderSystem {
           rendered = torender.markup.toString();
         }
         if (rendered == null) {
-          RenderUtil.dumpTillLump(lumps, lumpindex + 1, close.lumpindex + 1,
-              pos);
+          renderUnchanged(rendercontext);
         }
         else {
-          XMLUtil.dumpAttributes(attrcopy, xmlw);
-          pos.print(">");
-          pos.print(rendered);
-          closeTag(pos, uselump);
+          replaceBody(rendered, rendercontext);
         }
       }
       // if there is a payload, dump the postamble.
@@ -424,6 +391,40 @@ public class BasicHTMLRenderSystem implements RenderSystem {
     }
 
     return nextpos;
+  }
+
+  private void renderUnchanged(TagRenderContext c) {
+    RenderUtil.dumpTillLump(c.lumps, c.uselump.lumpindex + 1,
+        c.close.lumpindex + 1, c.pos);
+  }
+
+  private void rewriteLeaf(String value, TagRenderContext c) {
+    if (value != null && !UITypes.isPlaceholder(value)) replaceBody(value, c);
+    else replaceAttributes(c); 
+  }
+  
+  private void replaceBody(String value, TagRenderContext c) {
+    XMLUtil.dumpAttributes(c.attrcopy, c.xmlw);
+    c.pos.print(">");
+    c.xmlw.write(value);
+    closeTag(c.pos, c.uselump);
+  }
+
+  private void replaceAttributes(TagRenderContext c) {
+    XMLUtil.dumpAttributes(c.attrcopy, c.xmlw);
+
+    dumpTemplateBody(c);
+  }
+
+  private void dumpTemplateBody(TagRenderContext c) {
+    if (c.endopen.lumpindex == c.close.lumpindex) {
+      c.pos.print("/>");
+    }
+    else {
+      c.pos.print(">");
+      RenderUtil.dumpTillLump(c.lumps, c.endopen.lumpindex + 1,
+          c.close.lumpindex + 1, c.pos);
+    }
   }
 
 }

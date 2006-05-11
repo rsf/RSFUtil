@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.rsf.servlet;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import uk.org.ponder.rsf.state.TokenStateHolder;
@@ -21,25 +22,28 @@ import uk.org.ponder.rsf.state.TokenStateHolder;
  *
  */
 public class InSessionTSH implements TokenStateHolder {
- // NB - this is a proxy of the request-scope session!!!
-  private HttpSession session;
+ // NB - this is a proxy of the request
+  private HttpServletRequest request;
   private int expiryseconds;
 
-  public void setSession(HttpSession session) {
-    this.session = session;
+  public void setHttpRequest(HttpServletRequest request) {
+    this.request = request;
   }
   
   public Object getTokenState(String tokenID) {
-    return session.getAttribute(tokenID);
+    HttpSession session = request.getSession(false);
+    return session == null? null : session.getAttribute(tokenID);
   }
 
   public void putTokenState(String tokenID, Object trs) {
+    HttpSession session = request.getSession(true);
     session.setAttribute(tokenID, trs);
   }
 
   public void clearTokenState(String tokenID) {
     try {
-    session.removeAttribute(tokenID);
+      HttpSession session = request.getSession(false);
+      session.removeAttribute(tokenID);
     }
     catch (Exception e) {
       // We really don't care if the "session has been invalidated".
