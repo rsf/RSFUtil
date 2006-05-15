@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartResolver;
 
 import uk.org.ponder.rsf.request.EarlyRequestParser;
-import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
 
@@ -86,8 +85,8 @@ public class ServletEarlyRequestParser implements EarlyRequestParser {
    * ViewParameters.ACTION_REQUEST.
    */
   public String getRequestType() {
-    String requesttype = request.getMethod().equals("GET") ? ViewParameters.RENDER_REQUEST
-        : ViewParameters.ACTION_REQUEST;
+    String requesttype = request.getMethod().equals("GET") ? EarlyRequestParser.RENDER_REQUEST
+        : EarlyRequestParser.ACTION_REQUEST;
     return requesttype;
   }
 

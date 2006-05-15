@@ -17,6 +17,7 @@ import uk.org.ponder.rsf.processor.ActionHandler;
 import uk.org.ponder.rsf.processor.HandlerHook;
 import uk.org.ponder.rsf.processor.RenderHandlerBracketer;
 import uk.org.ponder.rsf.renderer.RenderUtil;
+import uk.org.ponder.rsf.request.EarlyRequestParser;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewStateHandler;
 import uk.org.ponder.servletutil.ServletResponseWriter;
@@ -78,7 +79,7 @@ public class RootHandlerBean implements HandlerHook {
 
   public boolean handle() {
     if (handlerhook == null || !handlerhook.handle()) {
-      if (requesttype.equals(ViewParameters.RENDER_REQUEST)) {
+      if (requesttype.equals(EarlyRequestParser.RENDER_REQUEST)) {
         handleGet();
       }
       else {

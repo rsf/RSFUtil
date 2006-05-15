@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 import uk.org.ponder.rsf.renderer.RenderSystemDecoder;
+import uk.org.ponder.rsf.request.EarlyRequestParser;
 import uk.org.ponder.rsf.request.FossilizedConverter;
 import uk.org.ponder.rsf.request.RequestSubmittedValueCache;
 import uk.org.ponder.rsf.request.SVESorter;
 import uk.org.ponder.rsf.request.SubmittedValueEntry;
-import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.Logger;
 
 /**
@@ -101,7 +101,7 @@ public class PostDecoder {
   public RequestSubmittedValueCache getRequestRSVC() {
     if (requestrsvc == null) {
       requestrsvc = new RequestSubmittedValueCache();
-      if (requesttype.equals(ViewParameters.ACTION_REQUEST)) {
+      if (requesttype.equals(EarlyRequestParser.ACTION_REQUEST)) {
         RequestSubmittedValueCache newvalues = new RequestSubmittedValueCache();
         parseRequest(newvalues);
         // Topologically sort the fresh values (which may be arbitrarily

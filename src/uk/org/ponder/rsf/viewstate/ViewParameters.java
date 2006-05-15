@@ -27,17 +27,6 @@ import uk.org.ponder.reflect.DeepBeanCloner;
 // omit baseurl!!
 
 public abstract class ViewParameters {
-  /** Identifies this request as part of a "render" cycle - for a simple HTTP
-   * servlet, corresponds to a GET, a JSR168 "render" request or a WSRP 
-   * getMarkup request.
-   */ 
-  public static final String RENDER_REQUEST = "render";
-  
-  /** Identifies this request as part of an "action" cycle - for a simple
-   * HTTP servlet, corresponds to a POST, a JSR168 "processAction" request 
-   * or a WRSP performBlockingInteration request.
-   */
-  public static final String ACTION_REQUEST = "action";
   /** A globally unique key identifying view-specific state that is held on the
    * server, restorable in the form of a request-scope bean container. Need not
    * be set. 

@@ -10,10 +10,20 @@ import java.util.Map;
  * comes though BaseURLProvider, and if in use, a session dependence through
  * InSessionTokenRequestState.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
- *
  */
 
 public interface EarlyRequestParser {
+  /** Identifies this request as part of a "render" cycle - for a simple HTTP
+   * servlet, corresponds to a GET, a JSR168 "render" request or a WSRP 
+   * getMarkup request.
+   */ 
+  public static final String RENDER_REQUEST = "render";
+  /** Identifies this request as part of an "action" cycle - for a simple
+   * HTTP servlet, corresponds to a POST, a JSR168 "processAction" request 
+   * or a WRSP performBlockingInteration request.
+   */
+  public static final String ACTION_REQUEST = "action";
+
   /** The parameter map from the request */
   public Map getRequestMap();
 
@@ -24,8 +34,7 @@ public interface EarlyRequestParser {
 
   /**
    * A factory method for a String encoding the nature of the current request
-   * cycle, either ViewParameters.RENDER_REQUEST or
-   * ViewParameters.ACTION_REQUEST.
+   * cycle, either RENDER_REQUEST or ACTION_REQUEST.
    */
   public String getRequestType();
 

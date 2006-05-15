@@ -154,7 +154,7 @@ public class FossilizedConverter {
           togenerate.getFullID());
     }
     UIParameter togo = new UIParameter();
-    togo.name = togenerate.getFullID() + FOSSIL_SUFFIX;
+    togo.name = togenerate.submittingname + FOSSIL_SUFFIX;
     String oldvaluestring = null;
     Object oldvalue = togenerate.acquireValue();
     UIType type = UITypes.forObject(oldvalue);

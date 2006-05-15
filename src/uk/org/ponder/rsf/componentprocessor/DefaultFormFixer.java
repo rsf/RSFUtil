@@ -9,7 +9,6 @@ import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.view.View;
-import uk.org.ponder.rsf.view.ViewGenerator;
 import uk.org.ponder.rsf.view.ViewReceiver;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewStateHandler;
@@ -23,7 +22,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * field of UIForm filled in (possibly by ContainmentFormChildFixer)
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
-// WHY do we treat forms in this strange way? We WOULD like IKAT to be
+// WHY do we treat forms in this strange way? Because we WOULD like IKAT to be
 // form-agnostic, and also form nesting is not a "given" for WAP &c.
 public class DefaultFormFixer implements ComponentProcessor, ViewReceiver {
   private ViewParameters viewparams;
@@ -51,7 +50,10 @@ public class DefaultFormFixer implements ComponentProcessor, ViewReceiver {
     if (toprocesso instanceof UIForm) {
       UIForm toprocess = (UIForm) toprocesso;
       toprocess.fold();
-      toprocess.postURL = viewstatehandler.getFullURL(viewparams);
+      if (toprocess.viewparams == null) {
+        toprocess.viewparams = viewparams;
+      }
+      toprocess.targetURL = viewstatehandler.getFullURL(viewparams);
       toprocess.parameters.addAll(outgoingparams);
       
       // Check that anything registered so far as submitting exists and is valid.
