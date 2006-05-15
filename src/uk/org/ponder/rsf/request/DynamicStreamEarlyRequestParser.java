@@ -3,7 +3,6 @@ package uk.org.ponder.rsf.request;
 import java.util.HashMap;
 import java.util.Map;
 
-import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /** A default concrete implementation of EarlyRequestParser that is a simple
  * repository for set values.
@@ -54,7 +53,7 @@ public class DynamicStreamEarlyRequestParser implements EarlyRequestParser {
      * should be a GET request, NOT a POST.
      */
     public String getRequestType() {
-      return ViewParameters.RENDER_REQUEST;
+      return EarlyRequestParser.RENDER_REQUEST;
     }
 
     public Map getMultipartMap() {

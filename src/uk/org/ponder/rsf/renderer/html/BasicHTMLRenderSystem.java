@@ -334,17 +334,17 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       // i.e. any "submitting" controls, if indeed they ever were there.
       else if (torendero instanceof UIForm) {
         UIForm torender = (UIForm) torendero;
-        int qpos = torender.postURL.indexOf('?');
+        int qpos = torender.targetURL.indexOf('?');
         if (attrcopy.get("method") == null) { // forms DEFAULT to be post
           attrcopy.put("method", "post");
         }
         // Ensure that any attributes on this postURL
         if (qpos == -1) {
-          attrcopy.put("action", torender.postURL);
+          attrcopy.put("action", torender.targetURL);
         }
         else {
-          attrcopy.put("action", torender.postURL.substring(0, qpos));
-          String attrs = torender.postURL.substring(qpos + 1);
+          attrcopy.put("action", torender.targetURL.substring(0, qpos));
+          String attrs = torender.targetURL.substring(qpos + 1);
           Map attrmap = URLUtil.paramsToMap(attrs, new HashMap());
           ParameterList urlparams = ViewParamUtil.mapToParamList(attrmap);
           torender.parameters.addAll(urlparams);

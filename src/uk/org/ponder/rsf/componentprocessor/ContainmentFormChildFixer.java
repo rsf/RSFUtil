@@ -7,6 +7,7 @@ import java.util.Iterator;
 
 import uk.org.ponder.beanutil.IterableBeanLocator;
 import uk.org.ponder.rsf.components.ComponentList;
+import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIContainer;
@@ -16,6 +17,7 @@ import uk.org.ponder.rsf.request.SubmittedValueEntry;
 import uk.org.ponder.rsf.util.RSFUtil;
 import uk.org.ponder.saxalizer.SAXalizerMappingContext;
 import uk.org.ponder.stringutil.StringList;
+import uk.org.ponder.stringutil.StringUtil;
 
 /**
  * A fixer to be run BEFORE the main form fixer, which implements the HTML/HTTP
@@ -49,8 +51,14 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
   }
 
   private void registerComponent(UIForm toprocess, UIComponent child) {
-    if (RSFUtil.isBound(child)) {
-      toprocess.submittingcontrols.add(child.getFullID());
+    if (child instanceof UIBound) {
+      String fullID = child.getFullID();
+      String formID = toprocess.getFullID();
+      UIBound bound = (UIBound) child;
+      bound.submittingname = fullID.substring(StringUtil.commonPrefix(fullID, formID));
+      if (RSFUtil.isBound(child)) {
+        toprocess.submittingcontrols.add(fullID);
+       }
     }
     // TODO: clarify UIForm/UICommand relationship for WAP-style forms.
     // Who is to be master!

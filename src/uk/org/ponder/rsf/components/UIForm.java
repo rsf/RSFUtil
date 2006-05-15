@@ -3,6 +3,8 @@
  */
 package uk.org.ponder.rsf.components;
 
+import uk.org.ponder.rsf.request.EarlyRequestParser;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.stringutil.StringList;
 import uk.org.ponder.util.UniversalRuntimeException;
 
@@ -18,11 +20,22 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * 
  */
 public class UIForm extends UISimpleContainer {
-  /** The URL to which this form will be submitted. This SHOULD be the same
-   * as the URL of the page containing the form, minus query parameters. This
-   * field need not be filled in by the user.
+
+  /** Which type of submission will this form trigger? For ACTION_REQUEST,
+   * this will behave like a UICommand (e.g. HTTP POST) - for RENDER_REQUEST
+   * like UILink (e.g. HTTP GET).
    */
-  public String postURL;
+  public String type = EarlyRequestParser.ACTION_REQUEST;
+  
+  /** The target view state of this form. For a managed form, this will be
+   * filled in by the fixup phrase to be the current view state.
+   */
+  public ViewParameters viewparams;
+  
+  /** The URL to which this form will be submitted. This field will be computed
+   * by a fixup and need not be filled in by the user.
+   */
+  public String targetURL;
   
   /** A list of the FullIDs of the all controls to be submitted by this form.
    * If this is left blank(empty), it will be filled in by a FormFixer 
@@ -35,6 +48,7 @@ public class UIForm extends UISimpleContainer {
    */ 
   public StringList submittingcontrols;
   
+  /** Creates an "action" form that will receive an RSF submission */
   public static UIForm make(UIContainer parent, String ID) {
     if (!(parent instanceof UIBranchContainer)) {
       throw UniversalRuntimeException.accumulate(new 
@@ -43,6 +57,15 @@ public class UIForm extends UISimpleContainer {
     UIForm togo = new UIForm();
     togo.ID = ID;
     parent.addComponent(togo);
+    return togo;
+  }
+  
+  /** Creates an "unmanaged" GET form, targetted at the supplied ViewParameters */
+  
+  public static UIForm make(UIContainer parent, String ID, ViewParameters viewparams) {
+    UIForm togo = make(parent, ID);
+    togo.viewparams = viewparams;
+    togo.type = EarlyRequestParser.RENDER_REQUEST;
     return togo;
   }
   

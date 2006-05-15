@@ -7,12 +7,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.reflect.DeepBeanCloner;
 import uk.org.ponder.rsac.GlobalBeanAccessor;
 import uk.org.ponder.rsf.components.ParameterList;
+import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIParameter;
-import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.stringutil.StringList;
 import uk.org.ponder.stringutil.URLUtil;
 
@@ -33,6 +32,51 @@ public class ViewParamUtil {
   public static DeepBeanCloner getCloner() {
     return (DeepBeanCloner) GlobalBeanAccessor.getBean("deepBeanCloner");
   }
+  
+  /** Converts the portion of ViewParameters that will be rendered into URL
+   * attributes into name/value pairs as a Map.
+   * @param vsh
+   * @param viewparams
+   * @return
+   */
+  
+  public static Map viewParamsToMap(ViewStateHandler vsh, ViewParameters viewparams) {
+    String fullURL = vsh.getFullURL(viewparams);
+    int qpos = fullURL.indexOf('?');
+    HashMap togo = new HashMap();
+    return URLUtil.paramsToMap(fullURL.substring(qpos + 1), togo);
+  }
+  
+  /** Embody "most" of the state from a ViewParameters object into a GET
+   * form. I.e create a set of "forced" submitted values that will construct
+   * navigation state that agrees with the parameters, ignoring i) state that does
+   * not enter attributes, ii) any named attributes (which presumably correspond to
+   * values that will be altered by "real" form components that are being 
+   * rendered manually). Unclear that this will in general have a meaning 
+   * outside HTTP but there is a fighting chance - RSF is not really portable
+   * to architectures that don't communicate via name/value pairs anyway.
+   * @param vsh A ViewStateHandler that can render the ViewParameters into 
+   * a URL for the current request.
+   * @param orig The ViewParameters whose state is to be imbued into the form.
+   * @param target The Form to receive the state.
+   * @param exceptions A list of "exceptions" from the state copying procedure.
+   * Note that these are expressed in the <b>attribute</b> name space, and <b>
+   * not</b> in terms of the parent EL paths through ViewParameters, since the 
+   * former are generally more compact. However, this strictly is a violation of
+   * view/model separation, so you may want to use the ViewParamsMapper to
+   * compute this list for full isolation.
+   */
+  
+  public static void addAroundGETForm(ViewStateHandler vsh, ViewParameters orig, 
+      UIForm target, StringList exceptions) {
+    Map parammap = viewParamsToMap(vsh, orig);
+    for (int i = 0; i < exceptions.size(); ++ i) {
+      parammap.remove(exceptions.get(i));
+    }
+    ParameterList params = mapToParamList(parammap);
+    target.parameters.add(params);
+  }
+  
   
   public static ParameterList mapToParamList(Map toconvert) {
     ParameterList togo = new ParameterList();

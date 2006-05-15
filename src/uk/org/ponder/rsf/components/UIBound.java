@@ -39,7 +39,7 @@ public abstract class UIBound extends UIComponent {
   /**
    * An EL reference to a "DAR reshaper" that should be used to adjust the value
    * of any attempt to write a value based on the valuebinding. The reference
-   * should be to a bean of type {@see uk.org.ponder.mapping.DARReshaper}.
+   * should be to a bean of type {@link uk.org.ponder.mapping.DARReshaper}.
    * <p>
    * This is principally (currently) useful for selection controls, where a
    * write of the value (typically an Object ID) that was read via the
@@ -120,4 +120,10 @@ public abstract class UIBound extends UIComponent {
    * computed during fixup stage if the darshaper is set.
    */
   public UIParameter fossilizedshaper;
+  
+  /** The key that this bound control will submit under. May be set during 
+   * early fixup - if not, will default to the fullID of the component, unless
+   * the renderer has special requirements (e.g. radio button group).
+   */
+  public String submittingname;
 }

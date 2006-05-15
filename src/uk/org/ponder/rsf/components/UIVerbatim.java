@@ -16,4 +16,13 @@ public class UIVerbatim extends UIComponent {
    * to get character data.
    */
   public Object markup;
+  
+  public static UIVerbatim make(UIContainer parent, String ID, Object markup) {
+    UIVerbatim togo = new UIVerbatim();
+    togo.ID = ID;
+    togo.markup = markup;
+    
+    parent.addComponent(togo);
+    return togo;
+  }
 }

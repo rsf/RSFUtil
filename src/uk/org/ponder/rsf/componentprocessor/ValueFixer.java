@@ -82,7 +82,9 @@ public class ValueFixer implements ComponentProcessor {
           toprocess.updateValue(flatvalue);
         }
       }
-
+      if (toprocess.submittingname == null) {
+        toprocess.submittingname = toprocess.getFullID();
+      }
       // TODO: Think carefully whether we want these "encoded" bindings to
       // EVER appear in the component tree. Tradeoffs - we would need to create
       // more classes that renderer could recognise to compute bindings, and 
