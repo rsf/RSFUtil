@@ -3,13 +3,17 @@
  */
 package uk.org.ponder.rsf.componentprocessor;
 
+import java.util.Map;
+
 import uk.org.ponder.rsf.components.ParameterList;
 import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIForm;
+import uk.org.ponder.rsf.request.EarlyRequestParser;
 import uk.org.ponder.rsf.view.View;
 import uk.org.ponder.rsf.view.ViewReceiver;
+import uk.org.ponder.rsf.viewstate.ViewParamUtil;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewStateHandler;
 import uk.org.ponder.util.UniversalRuntimeException;
@@ -53,8 +57,16 @@ public class DefaultFormFixer implements ComponentProcessor, ViewReceiver {
       if (toprocess.viewparams == null) {
         toprocess.viewparams = viewparams;
       }
-      toprocess.targetURL = viewstatehandler.getFullURL(viewparams);
+      if (toprocess.type.equals(EarlyRequestParser.RENDER_REQUEST)) {
+        toprocess.targetURL =  viewstatehandler.getFullURL(viewparams);
+      }
+      else {
+        toprocess.targetURL = viewstatehandler.getActionURL(viewparams);
+        Map actionmap = viewstatehandler.getActionMap(viewparams);
+        toprocess.parameters.addAll(ViewParamUtil.mapToParamList(actionmap));
+      }
       toprocess.parameters.addAll(outgoingparams);
+      
       
       // Check that anything registered so far as submitting exists and is valid.
       for (int i = 0; i < toprocess.submittingcontrols.size(); ++ i) {

@@ -11,5 +11,5 @@ package uk.org.ponder.rsf.request;
  *
  */
 public interface RedirectHandler {
-  public void handleRedirect(EarlyRequestParser replacement);
+  public void handleRedirect(InternalRedirectState restate);
 }

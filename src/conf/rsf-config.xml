@@ -280,6 +280,7 @@
         </property>
       </bean>
     </property>
+    <property name="proxyTargetClass" value="true"/>
   </bean>
 
   <bean id="viewParamsLeafParserTarget"
