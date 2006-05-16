@@ -3,6 +3,8 @@
  */
 package uk.org.ponder.rsf.viewstate;
 
+import java.util.Map;
+
 /**
  * Provides primitive functionality for mapping view states to URLs, and
  * issuing redirects.
@@ -18,10 +20,14 @@ public interface ViewStateHandler {
   public String getFullURL(ViewParameters viewparams);
   /** Return a "complete" URL suitable for rendering to our upstream
    * consumer for triggering an "action" - in HTML, as applied to 
-   * the "action" attribute of <code>form</code>. In a servlet-type 
-   * environment, produces the same URL as getFullURL.
+   * the "action" attribute of <code>form</code>. This omits all state
+   * that might enter attributes, which is supplied by getActionMap().
    */
   public String getActionURL(ViewParameters viewparams);
+  /** Return a map of all state from these ViewParameters that will be
+   * mapped into attribute state.
+   */
+  public Map getActionMap(ViewParameters viewparams);
   /** The equivalent of getFullURL for static resources that are not
    * necessarily under our control. These e.g. start with /content/...
    */

@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import uk.org.ponder.stringutil.URLUtil;
 import uk.org.ponder.webapputil.ConsumerInfo;
 
 /**
@@ -70,7 +71,19 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
 
 
   public String getActionURL(ViewParameters viewparams) {
-    return getFullURL(viewparams);
+    String fullURL = getFullURL(viewparams);
+    int qpos = fullURL.indexOf('?');
+    return qpos == -1? fullURL : fullURL.substring(0, qpos);
+  }
+  
+  public Map getActionMap(ViewParameters viewparams) {
+    Map togo = new HashMap();
+    String fullURL = getFullURL(viewparams);
+    int qpos = fullURL.indexOf('?');
+    if (qpos != -1) {
+      return URLUtil.paramsToMap(fullURL.substring(qpos + 1), togo);
+    }
+    return togo;
   }
   
   public String getResourceURL(String resourcepath) {
