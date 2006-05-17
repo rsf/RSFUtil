@@ -76,7 +76,7 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
     return qpos == -1? fullURL : fullURL.substring(0, qpos);
   }
   
-  public Map getActionMap(ViewParameters viewparams) {
+  public Map getAttrMap(ViewParameters viewparams) {
     Map togo = new HashMap();
     String fullURL = getFullURL(viewparams);
     int qpos = fullURL.indexOf('?');

@@ -27,7 +27,7 @@ public interface ViewStateHandler {
   /** Return a map of all state from these ViewParameters that will be
    * mapped into attribute state.
    */
-  public Map getActionMap(ViewParameters viewparams);
+  public Map getAttrMap(ViewParameters viewparams);
   /** The equivalent of getFullURL for static resources that are not
    * necessarily under our control. These e.g. start with /content/...
    */
