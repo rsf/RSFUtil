@@ -55,6 +55,7 @@ public class ViewRender {
   private String globalmessagetarget;
   private boolean rendereddeadletters;
   private ContentTypeInfo contenttypeinfo;
+  private DecoratorManager decoratormanager;
 
   public void setViewTemplate(ViewTemplate viewtemplateo) {
     // TODO: hack for now - will we have other kinds of template?
@@ -88,6 +89,10 @@ public class ViewRender {
   
   public void setMessageRenderer(MessageRenderer messagerenderer) {
     this.messagerenderer = messagerenderer;
+  }
+  
+  public void setDecoratorManager(DecoratorManager decoratormanager) {
+    this.decoratormanager = decoratormanager;
   }
   
   public void render(PrintOutputStream pos) {
@@ -236,6 +241,7 @@ public class ViewRender {
     attrcopy.putAll(targetlump.attributemap);
     attrcopy.put("id", branch.getFullID());
     attrcopy.remove(XMLLump.ID_ATTRIBUTE);
+    decoratormanager.decorate(branch.decorators, targetlump.getTag(), attrcopy);
     // TODO: normalise this silly space business
     pos.write(targetlump.buffer, targetlump.start, targetlump.length - 1);
     XMLUtil.dumpAttributes(attrcopy, xmlw);

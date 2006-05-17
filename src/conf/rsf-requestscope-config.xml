@@ -41,6 +41,13 @@
   <bean id="multipartMap" factory-bean="earlyRequestParser"
     factory-method="getMultipartMap"/>
 
+  <!-- This bean may be overriden with your default view, in reduced form
+    beginning with /  , otherwise it will be inferred from a view which reports
+    itself as a default. Do not try to get the value of this bean as an
+    application-scope dependency -->
+  <bean id="defaultView" factory-bean="viewParametersParser"
+    factory-method="getDefaultView" />
+
   <bean id="handlerResolver"
     class="uk.org.ponder.rsf.processor.DefaultHandlerResolver">
     <property name="renderHandler">
@@ -253,12 +260,9 @@
       <property name="view">
       <ref local="view"/>
       </property>-->
-    <property name="renderSystem">
-      <ref local="renderSystem" />
-    </property>
-    <property name="messageRenderer">
-      <ref bean="messageRenderer" />
-    </property>
+    <property name="renderSystem" ref="renderSystem" />
+    <property name="messageRenderer" ref="messageRenderer"/>
+    <property name="decoratorManager" ref="decoratorManager"/>
   </bean>
 
   <bean id="RSFActionHandler"

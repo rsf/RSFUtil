@@ -25,18 +25,37 @@
     </property>
   </bean>
 
+
+  <bean id="multipartResolver"
+    class="uk.org.ponder.springutil.BlankMultipartResolver">
+  </bean>
+
+  <bean id="autoComponentProducerManager"
+    class="uk.org.ponder.rsf.view.AutoComponentProducerManager"
+    init-method="init">
+    <property name="reflectiveCache" ref="reflectiveCache" />
+    <property name="RSACBeanLocator" ref="RSACBeanLocator" />
+  </bean>
+  
+  
+  <bean id="consumerInfoProxy" parent="RSACBridgePeaProxy">
+    <property name="targetBeanName">
+      <idref bean="consumerInfo" />
+    </property>
+  </bean>
+  
+  <!-- **** VIEWPARAMETERS and URL HANDLING **** -->
+
+  <bean id="viewParamsExemplar"
+    class="uk.org.ponder.rsf.viewstate.SimpleViewParameters">
+  </bean>
+
   <bean id="viewParametersParser"
     class="uk.org.ponder.rsf.viewstate.BasicViewParametersParser"
     init-method="init">
     <property name="viewParamsMapper" ref="viewParamsMapper" />
     <property name="deepBeanCloner" ref="deepBeanCloner" />
     <property name="reflectiveCache" ref="reflectiveCache" />
-  </bean>
-
-  <bean name="consumerInfoProxy" parent="RSACBridgeProxy">
-    <property name="targetBeanName">
-      <idref bean="consumerInfo" />
-    </property>
   </bean>
 
   <bean name="baseURLProvider" parent="autoBaseURLProviderProxy" />
@@ -73,6 +92,9 @@
     <property name="viewParamsMapper" ref="viewParamsMapper" />
     <property name="ultimateRenderers" ref="ultimateRenderers" />
   </bean>
+  
+
+  <!-- ***** NAVIGATION and ACTION RESULTS ***** -->
 
   <bean id="siteMapDef" class="uk.org.ponder.rsf.viewstate.XMLSiteMapLoader"
     parent="XMLFactoryBean" abstract="true">
@@ -103,6 +125,11 @@
     <property name="navigationCasePooler" ref="navigationCasePooler" />
   </bean>
 
+  <!-- The default ActionResultInterpreter which directs to the incoming view-->
+  <bean id="nullActionResultInterpreter"
+    class="uk.org.ponder.rsf.flow.NullActionResultInterpreter">
+  </bean>
+
   <bean name="defaultARI" class="uk.org.ponder.rsf.flow.DelegatingARI">
     <property name="ARIList">
       <list>
@@ -118,29 +145,34 @@
       <ref bean="XMLActionErrorStrategies" />
     </property>
   </bean>
-
-
-  <!-- The default ActionResultInterpreter which directs to the incoming view-->
-  <bean id="nullActionResultInterpreter"
-    class="uk.org.ponder.rsf.flow.NullActionResultInterpreter">
-  </bean>
-
-  <bean id="viewParamsExemplar"
-    class="uk.org.ponder.rsf.viewstate.SimpleViewParameters">
-  </bean>
-
-  <bean id="autoComponentProducerManager"
-    class="uk.org.ponder.rsf.view.AutoComponentProducerManager"
-    init-method="init">
-    <property name="reflectiveCache" ref="reflectiveCache" />
-    <property name="RSACBeanLocator" ref="RSACBeanLocator" />
-  </bean>
-
-  <bean id="consumerInfoProxy" parent="RSACBridgePeaProxy">
-    <property name="targetBeanName">
-      <idref bean="consumerInfo" />
+  
+  <bean id="XMLActionErrorStrategyDef" parent="XMLFactoryBean"
+    abstract="true">
+    <property name="objectType">
+      <value>uk.org.ponder.rsf.flow.ActionErrorStrategyManager</value>
     </property>
   </bean>
+
+  <bean id="XMLActionErrorStrategies" parent="XMLActionErrorStrategyDef" />
+
+  <bean id="defaultViewProxy" parent="RSACStringBridge">
+    <property name="targetBeanName">
+      <idref bean="defaultView"/>
+    </property>
+  </bean>
+
+  <bean id="viewExceptionStrategy"
+    class="uk.org.ponder.rsf.flow.SimpleViewExceptionStrategy">
+    <property name="viewParametersParser">
+      <ref bean="viewParametersParser" />
+    </property>  
+    <property name="defaultView"> 
+      <ref bean="defaultViewProxy" />
+    </property>
+  </bean>
+
+
+<!-- ***** CONTENT TYPES and RENDERING ***** -->
 
   <bean id="viewTemplateResolver"
     class="uk.org.ponder.rsf.templateresolver.BasicTemplateResolver">
@@ -215,25 +247,6 @@
     <property name="viewParamsReceiver" ref="viewParametersParser" />
   </bean>
 
-  <bean id="XMLActionErrorStrategyDef" parent="XMLFactoryBean"
-    abstract="true">
-    <property name="objectType">
-      <value>uk.org.ponder.rsf.flow.ActionErrorStrategyManager</value>
-    </property>
-  </bean>
-
-  <bean id="XMLActionErrorStrategies" parent="XMLActionErrorStrategyDef" />
-
-  <bean id="viewExceptionStrategy"
-    class="uk.org.ponder.rsf.flow.SimpleViewExceptionStrategy">
-    <property name="viewParametersParser">
-      <ref bean="viewParametersParser" />
-    </property>
-    <property name="defaultView">
-      <ref bean="defaultView" />
-    </property>
-  </bean>
-
   <bean name="requestAddressibleBeans"
     class="uk.org.ponder.stringutil.StringList">
     <constructor-arg>
@@ -255,12 +268,19 @@
     </constructor-arg>
   </bean>
 
-  <!-- This bean may be overriden with your default view, in reduced form
-    beginning with /  , otherwise it will be inferred from a view which reports
-    itself as a default. Do not try to get the value of this bean as an
-    application-scope dependency -->
-  <bean id="defaultView" factory-bean="viewParametersParser"
-    factory-method="getDefaultView" lazy-init="true" />
+
+  <!--  ***** DECORATORS **** -->
+
+  <bean id="HTMLColourDecoratorRenderer" 
+    class="uk.org.ponder.rsf.renderer.html.decorators.HTMLColourDecoratorRenderer"/>
+    
+  <bean id="HTMLStyleDecoratorRenderer"
+    class="uk.org.ponder.rsf.renderer.html.decorators.HTMLStyleDecoratorRenderer"/>
+    
+  <bean id="FreeAttributeDecoratorRenderer"
+    class="uk.org.ponder.rsf.renderer.FreeAttributeDecoratorRenderer"/>
+
+  <!--  ***** STATE MANAGEMENT and TOKENS ***** -->
 
   <bean id="URLPreservingBeanSpecs"
     class="uk.org.ponder.springutil.StringListFactory">
@@ -298,10 +318,6 @@
         10 seconds of disuse -->
       <value>10</value>
     </property>
-  </bean>
-
-  <bean id="multipartResolver"
-    class="uk.org.ponder.springutil.BlankMultipartResolver">
   </bean>
 
   <bean id="flowTokenStateHolder-memory"
