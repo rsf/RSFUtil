@@ -243,7 +243,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         UISelect select = (UISelect) torendero;
         // The HTML submitted value from a <select> actually corresponds
         // with the selection member, not the top-level component.
-        attrcopy.put("name", select.selection.getFullID());
+        attrcopy.put("name", select.selection.submittingname);
         attrcopy.put("id", select.selection.getFullID());
         boolean ishtmlselect = uselump.textEquals("<select ");
         if (select.selection instanceof UIBoundList && ishtmlselect) {
@@ -376,7 +376,10 @@ public class BasicHTMLRenderSystem implements RenderSystem {
           renderUnchanged(rendercontext);
         }
         else {
-          replaceBody(rendered, rendercontext);
+          XMLUtil.dumpAttributes(attrcopy, xmlw);
+          pos.print(">");
+          pos.print(rendered);
+          closeTag(pos, uselump);
         }
       }
       // if there is a payload, dump the postamble.

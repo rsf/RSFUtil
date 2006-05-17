@@ -57,14 +57,17 @@ public class DefaultFormFixer implements ComponentProcessor, ViewReceiver {
       if (toprocess.viewparams == null) {
         toprocess.viewparams = viewparams;
       }
+      Map attrmap = viewstatehandler.getAttrMap(toprocess.viewparams);
       if (toprocess.type.equals(EarlyRequestParser.RENDER_REQUEST)) {
-        toprocess.targetURL =  viewstatehandler.getFullURL(viewparams);
+        String fullURL = viewstatehandler.getFullURL(toprocess.viewparams);
+        int qpos = fullURL.indexOf('?');
+        if (qpos != -1) fullURL = fullURL.substring(0, qpos);
+        toprocess.targetURL = fullURL;
       }
       else {
-        toprocess.targetURL = viewstatehandler.getActionURL(viewparams);
-        Map actionmap = viewstatehandler.getActionMap(viewparams);
-        toprocess.parameters.addAll(ViewParamUtil.mapToParamList(actionmap));
+        toprocess.targetURL = viewstatehandler.getActionURL(toprocess.viewparams);
       }
+      toprocess.parameters.addAll(ViewParamUtil.mapToParamList(attrmap));
       toprocess.parameters.addAll(outgoingparams);
       
       

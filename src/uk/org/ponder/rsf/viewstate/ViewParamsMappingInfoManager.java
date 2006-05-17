@@ -65,7 +65,7 @@ public class ViewParamsMappingInfoManager {
         String path = field.substring(0, colpos);
         String attrname = field.substring(colpos + 1);
         if (path.endsWith(".*")) {
-          appendLeaves(viewparams.getClass(), path.substring(0, path.length()-1), 
+          appendLeaves(viewparams.getClass(), path.substring(0, path.length()-2), 
               attrname, attnames, paths);
         }
         else {
@@ -76,7 +76,7 @@ public class ViewParamsMappingInfoManager {
     }
     ViewParamsMapInfo togo = new ViewParamsMapInfo();
     togo.attrnames = attnames.toStringArray();
-    togo.paths = attnames.toStringArray();
+    togo.paths = paths.toStringArray();
     return togo;
   }
 
