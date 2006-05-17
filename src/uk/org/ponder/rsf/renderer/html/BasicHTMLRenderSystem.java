@@ -8,7 +8,6 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
-import uk.org.ponder.rsf.components.ParameterList;
 import uk.org.ponder.rsf.components.UIAnchor;
 import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
@@ -26,6 +25,7 @@ import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UISelectLabel;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.renderer.ComponentRenderer;
+import uk.org.ponder.rsf.renderer.DecoratorManager;
 import uk.org.ponder.rsf.renderer.RenderSystem;
 import uk.org.ponder.rsf.renderer.RenderUtil;
 import uk.org.ponder.rsf.renderer.StaticComponentRenderer;
@@ -37,7 +37,6 @@ import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.template.XMLLumpList;
 import uk.org.ponder.rsf.uitype.UITypes;
 import uk.org.ponder.rsf.view.View;
-import uk.org.ponder.rsf.viewstate.ViewParamUtil;
 import uk.org.ponder.streamutil.StreamCopyUtil;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.stringutil.StringList;
@@ -58,9 +57,14 @@ import uk.org.ponder.xml.XMLWriter;
 
 public class BasicHTMLRenderSystem implements RenderSystem {
   private StaticRendererCollection scrc;
+  private DecoratorManager decoratormanager;
 
   public void setStaticRenderers(StaticRendererCollection scrc) {
     this.scrc = scrc;
+  }
+  
+  public void setDecoratorManager(DecoratorManager decoratormanager) {
+    this.decoratormanager = decoratormanager;
   }
   
   // two methods for the RenderSystemDecoder interface
@@ -165,6 +169,8 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       attrcopy.putAll(uselump.attributemap);
       attrcopy.put("id", fullID);
       attrcopy.remove(XMLLump.ID_ATTRIBUTE);
+      decoratormanager.decorate(torendero.decorators, uselump.getTag(), attrcopy);
+      
       TagRenderContext rendercontext = new TagRenderContext(attrcopy, lumps,
           uselump, endopen, close, pos, xmlw);
       // ALWAYS dump the tag name, this can never be rewritten. (probably?!)

@@ -6,7 +6,7 @@
 <beans>
   <bean id="reflectiveCache"
     class="uk.org.ponder.reflect.JDKReflectiveCache" />
-    
+
   <bean id="staticLeafParser"
     class="uk.org.ponder.conversion.StaticLeafParser" />
 
@@ -148,7 +148,7 @@
       <ref bean="messageLocator" />
     </property>
   </bean>
-  
+
   <bean id="viewParamsFixer"
     class="uk.org.ponder.rsf.componentprocessor.ViewParamsFixer">
     <property name="viewStateHandler">
@@ -177,7 +177,7 @@
   <bean id="RSACBeanLocator" factory-bean="RSACBeanLocatorFactory"
     factory-method="getRSACBeanLocator" init-method="init">
     <property name="mappingContext" ref="ELMappingContext" />
-    <property name="reflectiveCache" ref="reflectiveCache"/>
+    <property name="reflectiveCache" ref="reflectiveCache" />
   </bean>
 
   <bean id="fallbackBeans" factory-bean="RSACBeanLocator"
@@ -214,9 +214,12 @@
 
   <bean id="BasicHTMLRenderSystem"
     class="uk.org.ponder.rsf.renderer.html.BasicHTMLRenderSystem">
-    <property name="staticRenderers">
-      <ref local="staticRenderersProxy" />
-    </property>
+    <property name="staticRenderers" ref="staticRenderersProxy" />
+    <property name="decoratorManager" ref="decoratorManager"/>
+  </bean>
+  
+  <bean id="decoratorManager" class="uk.org.ponder.rsf.renderer.DecoratorManager">
+    <property name="contentTypeInfo" ref="contentTypeInfoProxy"/>
   </bean>
 
   <bean id="RSACSafeBeanLocatorProxy" parent="RSACBridgeProxy">
@@ -251,21 +254,24 @@
       <ref bean="directUIResourceBaseURL" />
     </property>
   </bean>
-  
+
   <bean id="viewParametersProxy" parent="RSACBridgePeaProxy">
     <property name="targetBeanName">
-      <idref bean="viewParameters"/>
+      <idref bean="viewParameters" />
     </property>
   </bean>
-  
-  <bean id="viewParamsMappingInfoManager" class="uk.org.ponder.rsf.viewstate.ViewParamsMappingInfoManager">
-    <property name="reflectiveCache" ref="reflectiveCache"/>
-    <property name="SAXalizerMappingContext" ref="ELMappingContext"/>
+
+  <bean id="viewParamsMappingInfoManager"
+    class="uk.org.ponder.rsf.viewstate.ViewParamsMappingInfoManager">
+    <property name="reflectiveCache" ref="reflectiveCache" />
+    <property name="SAXalizerMappingContext" ref="ELMappingContext" />
   </bean>
-  
-  <bean id="viewParamsMapper" class="uk.org.ponder.rsf.viewstate.ViewParamsMapper">
-    <property name="beanModelAlterer" ref="DARApplier"/>
-    <property name="VPMappingInfoManager" ref="viewParamsMappingInfoManager"/>
+
+  <bean id="viewParamsMapper"
+    class="uk.org.ponder.rsf.viewstate.ViewParamsMapper">
+    <property name="beanModelAlterer" ref="DARApplier" />
+    <property name="VPMappingInfoManager"
+      ref="viewParamsMappingInfoManager" />
   </bean>
 
   <!--  Lazy loading needed to break dependence cycle - SiteMap via BasicViewParamsParser
@@ -280,12 +286,12 @@
         </property>
       </bean>
     </property>
-    <property name="proxyTargetClass" value="true"/>
+    <property name="proxyTargetClass" value="true" />
   </bean>
 
   <bean id="viewParamsLeafParserTarget"
     class="uk.org.ponder.rsf.viewstate.ViewParamsLeafParser">
-    <property name="viewParamsMapper" ref="viewParamsMapper"/>
+    <property name="viewParamsMapper" ref="viewParamsMapper" />
     <property name="viewParametersParser" ref="viewParametersParser" />
   </bean>
 
@@ -328,6 +334,11 @@
     class="uk.org.ponder.rsac.RSACBridgeProxy" abstract="true">
     <property name="RSACBeanLocator" ref="RSACBeanLocator" />
     <property name="pea" value="true" />
+  </bean>
+
+  <bean id="RSACStringBridge"
+    class="uk.org.ponder.rsac.RSACStringBridge" abstract="true">
+    <property name="RSACBeanLocator" ref="RSACBeanLocator" />
   </bean>
 
   <bean id="flowLite-flowIDHolderProxy" parent="RSACBridgeProxy">

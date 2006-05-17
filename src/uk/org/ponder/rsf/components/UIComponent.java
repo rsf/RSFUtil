@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.rsf.components;
 
+import uk.org.ponder.rsf.components.decorators.DecoratorList;
 import uk.org.ponder.rsf.util.RSFUtil;
 
 /**
@@ -48,7 +49,6 @@ public class UIComponent {
    * of "composite" parents can have their IDs set correctly before value
    * fixup.
    */
-  
   public void updateFullID(String fullID) {
     this.fullID = fullID;
   }
@@ -57,5 +57,10 @@ public class UIComponent {
    * UIContainer representing the view root.
    */
   public UIContainer parent;
+  
+  /** A list of "decorators" which alter the rendering behaviour of this 
+   * component, orthogonal to its binding behaviour. Usually <code>null</code>
+   */
+  public DecoratorList decorators;
   
 }
