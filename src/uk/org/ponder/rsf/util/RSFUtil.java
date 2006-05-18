@@ -80,6 +80,19 @@ public class RSFUtil {
     return togo.toString();
   }
   
+  /** Returns the common ancestor path of s1 and s2 **/
+  public static int commonPath(String s1, String s2) {
+    int s1c = s1.lastIndexOf(':');
+    int s2c = s2.lastIndexOf(':');
+    int i = 0;
+    while (true) {
+      if (i >= s1c || i >= s2c) break;
+      if (s1.charAt(i) != s2.charAt(i)) break;
+      ++i;
+    }
+    return i;
+  }
+  
   public static ComponentList getRootPath(UIComponent leaf) {
     ComponentList togo = new ComponentList();
     while (leaf != null) {
