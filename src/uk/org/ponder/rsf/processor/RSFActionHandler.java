@@ -175,32 +175,43 @@ public class RSFActionHandler implements ActionHandler {
           }
         }
       }).run();
+      String prop = ariresult.propagatebeans; // propagation code for this cycle
+      ViewParameters newview = ariresult.resultingview;
 
-      if (!ariresult.propagatebeans.equals(ARIResult.FLOW_END)) {
+      if (!prop.equals(ARIResult.FLOW_END)
+          && !prop.equals(ARIResult.FLOW_ONESTEP)) {
         // TODO: consider whether we want to allow ARI to allocate a NEW TOKEN
         // for a FLOW FORK. Some call this, "continuations".
-        if (ariresult.resultingview.flowtoken == null) {
-          if (ariresult.propagatebeans.equals(ARIResult.FLOW_START)) {
+        if (newview.flowtoken == null) {
+          if (prop.equals(ARIResult.FLOW_START) || prop.equals(ARIResult.FLOW_FASTSTART)) {
             // if the ARI wanted one and hasn't allocated one, allocate flow
             // token.
-            ariresult.resultingview.flowtoken = errorstatemanager
-                .allocateToken();
+            newview.flowtoken = errorstatemanager.allocateToken();
           }
           else { // else assume existing flow continues.
             if (viewparams.flowtoken == null) {
               throw new IllegalStateException(
                   "Cannot propagate flow state without active flow");
             }
-            ariresult.resultingview.flowtoken = viewparams.flowtoken;
+            newview.flowtoken = viewparams.flowtoken;
           }
         }
         // On a FLOW_START, **ONLY** the flow state itself is to be saved,
         // since any other existing bean state will be non-flow or end-flow.
-        presmanager.preserve(ariresult.resultingview.flowtoken,
-            ariresult.propagatebeans.equals(ARIResult.FLOW_START));
+        presmanager.preserve(newview.flowtoken, prop
+            .equals(ARIResult.FLOW_START));
+      }
+      else if (prop.equals(ARIResult.FLOW_ONESTEP)) {
+        if (viewparams.endflow != null || viewparams.flowtoken != null) {
+          throw new IllegalStateException(
+              "Cannot use one-step flow from previous flow state");
+        }
+        newview.flowtoken = errorstatemanager.allocateToken();
+        newview.endflow = "1";
+        presmanager.flowEnd(newview.flowtoken);
       }
       else { // it is a flow end.
-        ariresult.resultingview.endflow = "1";
+        newview.endflow = "1";
         if (viewparams.flowtoken != null) {
           presmanager.flowEnd(viewparams.flowtoken);
         }
