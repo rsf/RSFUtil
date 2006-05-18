@@ -41,6 +41,7 @@ public class JSFNavActionResultInterpreter implements ActionResultInterpreter {
         // more with JSF semantics
         if (navcase.fromOutcome == null || navcase.fromOutcome.equals(result)) {
           togo.resultingview = navcase.toViewId;
+          togo.propagatebeans = navcase.flowCondition;
         }
       }
     }

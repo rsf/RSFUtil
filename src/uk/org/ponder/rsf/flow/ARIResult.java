@@ -28,9 +28,25 @@ public class ARIResult {
   * of all of its flow state. Will anyone really want this?
   */
   public static final String FLOW_FORK = "flow-fork";
+  
+  /** A flow that will begin and end in a single cycle - i.e. will 
+   * immediately enter the "end-flow" condition. The current view must be
+   * free of any flow state, end-flow or otherwise. In effect, perform 
+   * FLOW_FASTSTART and FLOW_END simultaneously.
+   */
+  public static final String FLOW_ONESTEP = "flow-onestep";
 
-  /** An action name representing the start of a flow **/
+  /** An action name representing the start of a flow. This kind of flow is
+   * safe to launch from the end-state of an existing flow. Although not
+   * from an internal state of an existing flow. **/
   public static final String FLOW_START = "flow-start";
+  
+  /** Launches a new flow, in "fast" mode, i.e. performing the same 
+   * preservation that is performed in interior states. This may not
+   * be used in either internal or end states of another flow.
+   */
+  public static final String FLOW_FASTSTART = "flow-faststart";
+  
     /** Propagate the request scope state only as an "error" state - i.e. this
      * represents an erroneous submission from a single-request submission.
      * The default implementation will expire the storage of this state on
@@ -52,7 +68,7 @@ public class ARIResult {
   }
   /** A result code indicating the propagation status of any multi-request state
    * required by the next view to be rendered. This code is chosen from one of the
-   * three String values above (interned, so you may compare with ==).
+   * FLOW_ String values above.
    */
   public String propagatebeans;
   /** An access method, for those who like that sort of thing. Certainly people
