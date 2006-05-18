@@ -18,7 +18,6 @@ import uk.org.ponder.rsf.request.SubmittedValueEntry;
 import uk.org.ponder.rsf.util.RSFUtil;
 import uk.org.ponder.saxalizer.SAXalizerMappingContext;
 import uk.org.ponder.stringutil.StringList;
-import uk.org.ponder.stringutil.StringUtil;
 
 /**
  * A fixer to be run BEFORE the main form fixer, which implements the HTML/HTTP
@@ -56,7 +55,7 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
       String fullID = child.getFullID();
       String formID = toprocess.getFullID();
       UIBound bound = (UIBound) child;
-      bound.submittingname = fullID.substring(StringUtil.commonPrefix(fullID, formID));
+      bound.submittingname = fullID.substring(RSFUtil.commonPath(fullID, formID));
       if (toprocess.type.equals(EarlyRequestParser.RENDER_REQUEST)) {
         // slight "hack" to make cluster components in GET forms work
         // correctly - presumably there is only ONE of them that will actually
