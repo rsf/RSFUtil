@@ -305,6 +305,9 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         String attrname = URLRewriteSCR.getLinkAttribute(uselump);
         if (attrname != null) {
           String target = torender.target.getValue();
+          if (target == null || target.length() == 0) {
+            throw new IllegalArgumentException("Empty URL in UILink at " + uselump.toDebugString());
+          }
           URLRewriteSCR urlrewriter = (URLRewriteSCR) scrc.getSCR(URLRewriteSCR.NAME);
           if (!URLUtil.isAbsolute(target)) {
             String rewritten = urlrewriter.resolveURL(target);
