@@ -85,33 +85,40 @@ public class ValueFixer implements ComponentProcessor {
       if (toprocess.submittingname == null) {
         toprocess.submittingname = toprocess.getFullID();
       }
-      // TODO: Think carefully whether we want these "encoded" bindings to
-      // EVER appear in the component tree. Tradeoffs - we would need to create
-      // more classes that renderer could recognise to compute bindings, and 
-      // increase its knowledge about the rest of RSF.
-      if (toprocess.fossilize && toprocess.fossilizedbinding == null) {
-        UIParameter fossilized = fossilizedconverter
-            .computeFossilizedBinding(toprocess);
-        toprocess.fossilizedbinding = fossilized;
-      }
-      if (toprocess.darreshaper != null) {
-        toprocess.fossilizedshaper = fossilizedconverter.computeReshaperBinding(toprocess);
+      if (toprocess.valuebinding != null) {
+        // TODO: Think carefully whether we want these "encoded" bindings to
+        // EVER appear in the component tree. Tradeoffs - we would need to
+        // create
+        // more classes that renderer could recognise to compute bindings, and
+        // increase its knowledge about the rest of RSF.
+        if (toprocess.fossilize && toprocess.fossilizedbinding == null) {
+          UIParameter fossilized = fossilizedconverter
+              .computeFossilizedBinding(toprocess);
+          toprocess.fossilizedbinding = fossilized;
+        }
+        if (toprocess.darreshaper != null) {
+          toprocess.fossilizedshaper = fossilizedconverter
+              .computeReshaperBinding(toprocess);
+        }
       }
     }
   }
-/** As well as resolving any reference to a BeanResolver in the <code>resolver</code>
- * field, this method will also copy it across to the <code>darreshaper</code>
- * field if a) it refers to a LeafObjectParser, and b) the field is currently
- * empty. This is a courtesy to allow compactly encoded things like DateParsers 
- * to be used first class, although we REALLY expect users to make transit beans.
- */
+
+  /**
+   * As well as resolving any reference to a BeanResolver in the
+   * <code>resolver</code> field, this method will also copy it across to the
+   * <code>darreshaper</code> field if a) it refers to a LeafObjectParser, and
+   * b) the field is currently empty. This is a courtesy to allow compactly
+   * encoded things like DateParsers to be used first class, although we REALLY
+   * expect users to make transit beans.
+   */
   private BeanResolver computeResolver(UIBound toprocess) {
     Object renderer = toprocess.resolver;
 
     if (renderer == null) {
       return null;
     }
-    
+
     if (renderer instanceof ELReference) {
       renderer = alterer.getBeanValue(((ELReference) renderer).value,
           beanlocator);
@@ -122,8 +129,8 @@ public class ValueFixer implements ComponentProcessor {
       return (BeanResolver) renderer;
     }
     else if (renderer instanceof LeafObjectParser) {
-      if (toprocess.darreshaper != null && toprocess.resolver instanceof
-          ELReference) {
+      if (toprocess.darreshaper != null
+          && toprocess.resolver instanceof ELReference) {
         toprocess.darreshaper = (ELReference) toprocess.resolver;
       }
       return new BeanResolver() {

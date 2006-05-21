@@ -68,6 +68,15 @@ public class UIForm extends UISimpleContainer {
     togo.type = EarlyRequestParser.RENDER_REQUEST;
     return togo;
   }
+
+  /** Creates a form of the specified submission type, either 
+   * EarlyRequestParser.ACTION_REQUEST or EarlyRequestParser.RENDER_REQUEST.
+   */
+  public static UIForm make(UIContainer parent, String ID, String type) {
+    UIForm togo = make(parent, ID);
+    togo.type = type;
+    return togo;
+  }
   
   public static UIForm make(UIContainer parent) {
     return make(parent, BasicComponentIDs.BASIC_FORM);
