@@ -56,7 +56,8 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
       String formID = toprocess.getFullID();
       UIBound bound = (UIBound) child;
       bound.submittingname = fullID.substring(RSFUtil.commonPath(fullID, formID));
-      if (toprocess.type.equals(EarlyRequestParser.RENDER_REQUEST)) {
+      boolean getform = toprocess.type.equals(EarlyRequestParser.RENDER_REQUEST); 
+      if (getform) {
         // slight "hack" to make cluster components in GET forms work
         // correctly - presumably there is only ONE of them that will actually
         // try to submit an HTML value.
@@ -65,7 +66,7 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
           bound.submittingname = bound.submittingname.substring(0, hypos);
         }
       }
-      if (RSFUtil.isBound(child)) {
+      if (RSFUtil.isBound(child) || getform) {
         toprocess.submittingcontrols.add(fullID);
        }
     }

@@ -38,7 +38,7 @@ public class BasicViewParametersParser implements ViewParametersParser,
   private ViewParameters defaultexemplar = new SimpleViewParameters();
 
   private String defaultview;
-
+  // Called from ConcreteViewResolver.init(), i.e. "somewhat late"
   public void setDefaultView(String viewid) {
     defaultview = viewid;
   }
