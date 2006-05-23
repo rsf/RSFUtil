@@ -14,7 +14,11 @@ package uk.org.ponder.rsf.components;
  */
 public class UILink extends UISimpleContainer {
   /** A string representing the target of this link - e.g. in an HTML system,
-   * a URL. For an InternalLink this will be filled in by a fixup from the
+   * a URL. In HTML in particular, the special prefix $context/ will be 
+   * resolved onto the context for the current webapp - that is, the directory
+   * immediately above WEB-INF.
+   * 
+   * <p>For an InternalLink this will be filled in by a fixup from the
    * ViewParameters member.
    */
   public UIOutput target;
