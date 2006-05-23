@@ -137,7 +137,7 @@ public class PostDecoder {
     // This MUST be set or the post is erroneous.
     String[] array = (String[]) normalized
         .get(SubmittedValueEntry.SUBMITTING_CONTROL);
-    return array[0];
+    return array == null? null : array[0];
   }
 
 }
