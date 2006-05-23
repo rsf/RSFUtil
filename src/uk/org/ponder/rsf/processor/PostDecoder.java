@@ -134,7 +134,7 @@ public class PostDecoder {
   }
 
   public static String decodeSubmittingControl(Map normalized) {
-    // This MUST be set or the post is erroneous.
+    // This SHOULD be set if an RSF submitting response is required
     String[] array = (String[]) normalized
         .get(SubmittedValueEntry.SUBMITTING_CONTROL);
     return array == null? null : array[0];
