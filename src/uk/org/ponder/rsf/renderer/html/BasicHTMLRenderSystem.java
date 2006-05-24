@@ -62,11 +62,11 @@ public class BasicHTMLRenderSystem implements RenderSystem {
   public void setStaticRenderers(StaticRendererCollection scrc) {
     this.scrc = scrc;
   }
-  
+
   public void setDecoratorManager(DecoratorManager decoratormanager) {
     this.decoratormanager = decoratormanager;
   }
-  
+
   // two methods for the RenderSystemDecoder interface
   public void normalizeRequestMap(Map requestparams) {
     String key = RenderUtil.findCommandParams(requestparams);
@@ -137,11 +137,15 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       if (lump.rsfID.startsWith(XMLLump.SCR_PREFIX)) {
         String scrname = lump.rsfID.substring(XMLLump.SCR_PREFIX.length());
         StaticComponentRenderer scr = scrc.getSCR(scrname);
-        if (scr != null) {
-          int tagtype = scr.render(lumps, lumpindex, xmlw);
-          nextpos = tagtype == ComponentRenderer.LEAF_TAG ? outerclose.lumpindex + 1
-              : outerendopen.lumpindex + 1;
+        if (scr == null) {
+          Logger.log
+              .info("Warning: unrecognised static component renderer reference with key "
+                  + scrname + " at lump " + lump.toDebugString());
+          scr = NullRewriteSCR.instance;
         }
+        int tagtype = scr.render(lumps, lumpindex, xmlw);
+        nextpos = tagtype == ComponentRenderer.LEAF_TAG ? outerclose.lumpindex + 1
+            : outerendopen.lumpindex + 1;
       }
 
       if (lump.textEquals("<form ")) {
@@ -169,8 +173,9 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       attrcopy.putAll(uselump.attributemap);
       attrcopy.put("id", fullID);
       attrcopy.remove(XMLLump.ID_ATTRIBUTE);
-      decoratormanager.decorate(torendero.decorators, uselump.getTag(), attrcopy);
-      
+      decoratormanager.decorate(torendero.decorators, uselump.getTag(),
+          attrcopy);
+
       TagRenderContext rendercontext = new TagRenderContext(attrcopy, lumps,
           uselump, endopen, close, pos, xmlw);
       // ALWAYS dump the tag name, this can never be rewritten. (probably?!)
@@ -286,7 +291,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         UISelect parent = (UISelect) view.getComponent(torender.parentFullID);
         String value = parent.optionlist.getValue()[torender.choiceindex];
         // currently only peers with "input type="radio"".
-        attrcopy.put("name", torender.parentFullID +"-selection");
+        attrcopy.put("name", torender.parentFullID + "-selection");
         attrcopy.put("value", value);
         attrcopy.remove("checked");
         if (parent.selected.contains(value)) {
@@ -311,7 +316,8 @@ public class BasicHTMLRenderSystem implements RenderSystem {
           URLRewriteSCR urlrewriter = (URLRewriteSCR) scrc.getSCR(URLRewriteSCR.NAME);
           if (!URLUtil.isAbsolute(target)) {
             String rewritten = urlrewriter.resolveURL(target);
-            if (rewritten != null) target = rewritten;
+            if (rewritten != null)
+              target = rewritten;
           }
           attrcopy.put(attrname, target);
         }
@@ -346,9 +352,9 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         if (attrcopy.get("method") == null) { // forms DEFAULT to be post
           attrcopy.put("method", "post");
         }
-      // form fixer guarantees that this URL is attribute free. 
-        attrcopy.put("action", torender.targetURL); 
-     
+        // form fixer guarantees that this URL is attribute free.
+        attrcopy.put("action", torender.targetURL);
+
         XMLUtil.dumpAttributes(attrcopy, xmlw);
         pos.println(">");
         for (int i = 0; i < torender.parameters.size(); ++i) {
@@ -408,10 +414,12 @@ public class BasicHTMLRenderSystem implements RenderSystem {
   }
 
   private void rewriteLeaf(String value, TagRenderContext c) {
-    if (value != null && !UITypes.isPlaceholder(value)) replaceBody(value, c);
-    else replaceAttributes(c); 
+    if (value != null && !UITypes.isPlaceholder(value))
+      replaceBody(value, c);
+    else
+      replaceAttributes(c);
   }
-  
+
   private void replaceBody(String value, TagRenderContext c) {
     XMLUtil.dumpAttributes(c.attrcopy, c.xmlw);
     c.pos.print(">");

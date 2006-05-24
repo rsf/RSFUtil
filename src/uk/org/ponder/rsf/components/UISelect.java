@@ -75,19 +75,42 @@ public class UISelect extends UIComponent implements FixableComponent {
       selected.add(((UIBoundString) selection).getValue());
     }
   }
+  protected static UISelect make(UIContainer tofill, String ID, String[] options, 
+      String valuebinding) {
+    UISelect togo = new UISelect();
+    togo.ID = ID;
+    togo.optionlist = togo.optionnames = UIOutputMany.make(options);
+    tofill.addComponent(togo);
+    return togo;
+  }
+  
   /** Constructs a simple selection control, where the submitted values are 
    * identical with the rendered labels
    */
   public static UISelect make(UIContainer tofill, String ID, String[] options, 
       String valuebinding, String initvalue) {
-    UISelect togo = new UISelect();
-    togo.ID = ID;
-    togo.optionlist = togo.optionnames = UIOutputMany.make(options);
-    UIInput selection = UIInput.make(valuebinding);
-    selection.setValue(initvalue);
+    UISelect togo = make(tofill, ID, options, valuebinding);
+    UIInput selection = UIInput.make(valuebinding); 
+    if (initvalue != null) {
+      selection.setValue(initvalue);
+    }
     togo.selection = selection;
-    tofill.addComponent(togo);
     return togo;
-    
   }
+  
+  /** Constructs a multiple selection control, where the submitted values are 
+   * identical with the rendered labels. Named differently to allow overload
+   * where the final parameter is null.
+   */
+  public static UISelect makeMultiple(UIContainer tofill, String ID, String[] options, 
+      String valuebinding, String[] initvalue) {
+    UISelect togo = make(tofill, ID, options, valuebinding);
+    UIInputMany selection = UIInputMany.make(valuebinding); 
+    if (initvalue != null) {
+      selection.setValue(initvalue);
+    }
+    togo.selection = selection;
+    return togo;
+  }
+  
 }
