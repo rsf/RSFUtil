@@ -12,15 +12,24 @@ import uk.org.ponder.rsf.renderer.DecoratorRenderer;
 
 public class HTMLColourDecoratorRenderer implements DecoratorRenderer {
 
-  public void modifyAttributes(UIDecorator decoratoro, String tagname, Map tomodify) {
+  public static final String zeros = "000000";
+
+  public String padLeft(String topad) {
+    return zeros.substring(6 - topad.length()) + topad;
+  }
+
+  public void modifyAttributes(UIDecorator decoratoro, String tagname,
+      Map tomodify) {
     UIColourDecorator decorator = (UIColourDecorator) decoratoro;
     if (decorator.foreground != null) {
-      String fgstring = Integer.toHexString(decorator.foreground.getRGB() & 0xffffff);
-      HTMLUtil.appendStyle("color", "#"+fgstring, tomodify);
+      String fgstring = padLeft(Integer.toHexString(decorator.foreground
+          .getRGB() & 0xffffff));
+      HTMLUtil.appendStyle("color", "#" + fgstring, tomodify);
     }
     if (decorator.background != null) {
-      String bgstring = Integer.toHexString(decorator.background.getRGB() & 0xffffff);
-      HTMLUtil.appendStyle("background-color", "#"+bgstring, tomodify);
+      String bgstring = padLeft(Integer.toHexString(decorator.background
+          .getRGB() & 0xffffff));
+      HTMLUtil.appendStyle("background-color", "#" + bgstring, tomodify);
     }
   }
 
@@ -32,5 +41,4 @@ public class HTMLColourDecoratorRenderer implements DecoratorRenderer {
     return "HTML, HTML-FRAGMENT";
   }
 
-  
 }
