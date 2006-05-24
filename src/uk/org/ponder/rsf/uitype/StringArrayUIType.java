@@ -20,7 +20,7 @@ public class StringArrayUIType implements UIType {
   public boolean valueUnchanged(Object oldvalue, Object newvalue) {
     String[] olds = (String[]) oldvalue;
     String[] news = (String[]) newvalue;
-    return ArrayUtil.lexicalCompare(olds, olds.length, news, news.length) != 0;
+    return ArrayUtil.lexicalCompare(olds, olds.length, news, news.length) == 0;
   }
 
 }

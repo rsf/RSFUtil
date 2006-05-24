@@ -8,4 +8,14 @@ public class UIInputMany extends UIBoundList {
     fossilize = true;
     willinput = true;
   }
+  
+  /**
+   * A "bare" constructor suitable for the selection member of a multiple
+   * selection control (UIInput);
+   */
+  public static UIInputMany make(String valuebinding) {
+    UIInputMany togo = new UIInputMany();
+    togo.valuebinding = new ELReference(valuebinding);
+    return togo;
+  }
 }
