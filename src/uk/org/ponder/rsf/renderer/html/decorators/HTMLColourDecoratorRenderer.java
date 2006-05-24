@@ -15,7 +15,7 @@ public class HTMLColourDecoratorRenderer implements DecoratorRenderer {
   public static final String zeros = "000000";
 
   public String padLeft(String topad) {
-    return zeros.substring(6 - topad.length()) + topad;
+    return zeros.substring(topad.length()) + topad;
   }
 
   public void modifyAttributes(UIDecorator decoratoro, String tagname,
