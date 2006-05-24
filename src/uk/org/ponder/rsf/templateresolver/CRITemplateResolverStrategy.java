@@ -47,8 +47,4 @@ public class CRITemplateResolverStrategy implements
     return togo;
   }
 
-  public String getBaseDirectory() {
-    return basedir;
-  }
-
 }

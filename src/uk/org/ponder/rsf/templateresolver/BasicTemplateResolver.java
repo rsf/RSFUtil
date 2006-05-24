@@ -67,8 +67,6 @@ public class BasicTemplateResolver implements TemplateResolver,
           "Cannot load template file from path " + fullpath);
     }
     
-    String basedir = strs.getBaseDirectory(); 
-    
     ViewTemplate template = null;
     if (is == CachingInputStreamSource.UP_TO_DATE) {
       template = (ViewTemplate) templates.get(fullpath);
@@ -81,7 +79,9 @@ public class BasicTemplateResolver implements TemplateResolver,
         }
         template = new XMLViewTemplate();
         template.parse(is);
-        template.setRelativePath(basedir.substring(1));
+        // there WILL be one slash in the path.
+        int lastslashpos = fullpath.lastIndexOf('/');
+        template.setRelativePath(fullpath.substring(1, lastslashpos + 1));
         templates.put(fullpath, template);
       }
       catch (Exception e) {
