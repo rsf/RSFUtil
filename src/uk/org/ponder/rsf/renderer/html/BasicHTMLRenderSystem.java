@@ -220,7 +220,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         }
         // factor out component-invariant processing of UIBound.
         else { // Bound with willinput = true
-          attrcopy.put("name", fullID);
+          attrcopy.put("name", torender.submittingname);
           // attrcopy.put("id", fullID);
           String value = "";
           String body = null;

@@ -15,7 +15,6 @@ import uk.org.ponder.streamutil.write.PrintOutputStream;
  * 
  */
 public interface RenderSystem extends RenderSystemDecoder {
-   //public void setViewTemplate(ViewTemplate template);
   /** Invoked by the IKAT renderer in order to perform a template rewrite based
    * on the System XML dialect. 
    * @param torender The UIComponent which IKAT determines is to be 

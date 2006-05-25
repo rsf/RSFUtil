@@ -86,7 +86,7 @@ public class RSFUtil {
     int s2c = s2.lastIndexOf(':');
     int i = 0;
     while (true) {
-      if (i >= s1c || i >= s2c) break;
+      if (i > s1c || i > s2c) break;
       if (s1.charAt(i) != s2.charAt(i)) break;
       ++i;
     }

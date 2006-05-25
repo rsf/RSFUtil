@@ -15,7 +15,7 @@ import uk.org.ponder.stringutil.StringList;
 
 public interface SimpleTemplateResolverStrategy {
   /** @param viewparams The view parameters for the view being rendered.
-   * @return A list of resource names (as supplied to some kind of 
+   * @return A (modifiable) list of resource names (as supplied to some kind of 
    * InputStreamSource) MINUS extension, that will be searched, IN ORDER,
    * for a view template to be used for the current view. These are full
    * paths relative to the current context root, beginning with a leading slash.

@@ -22,7 +22,7 @@ import uk.org.ponder.stringutil.StringSet;
 
 public class UISelect extends UIComponent implements FixableComponent {
   public UIBoundList optionlist;
-  
+
   /** A component representing the rendered labels for the list control */
   public UIBoundList optionnames;
   /**
@@ -31,11 +31,12 @@ public class UISelect extends UIComponent implements FixableComponent {
    */
   public UIBound selection;
 
-  /** This field is set during fixup for reference of the renderer. Do not
-   * set this manually.
+  /**
+   * This field is set during fixup for reference of the renderer. Do not set
+   * this manually.
    */
   public StringSet selected;
-  
+
   /** Creates a non-submitting (output-only) selection control */
   public static UISelect make(UIContainer tofill, String ID, String[] values,
       String[] labels, String value) {
@@ -52,6 +53,7 @@ public class UISelect extends UIComponent implements FixableComponent {
     tofill.addComponent(togo);
     return togo;
   }
+
   /** A "skeleton" make method to prepare for more complex constructions */
   public static UISelect make(UIContainer tofill, String ID) {
     UISelect togo = new UISelect();
@@ -59,14 +61,14 @@ public class UISelect extends UIComponent implements FixableComponent {
     tofill.addComponent(togo);
     return togo;
   }
-  
+
   public void fixupComponent() {
     if (optionnames != null) {
       if (optionnames.valuebinding == null) {
         optionnames.valuebinding = optionlist.valuebinding;
       }
     }
-    
+
     selected = new StringSet();
     if (selection instanceof UIBoundList) {
       selected.addAll(((UIBoundList) selection).getValue());
@@ -75,42 +77,59 @@ public class UISelect extends UIComponent implements FixableComponent {
       selected.add(((UIBoundString) selection).getValue());
     }
   }
-  protected static UISelect make(UIContainer tofill, String ID, String[] options, 
-      String valuebinding) {
+
+  protected static UISelect make(UIContainer tofill, String ID,
+      String[] options, String valuebinding) {
     UISelect togo = new UISelect();
     togo.ID = ID;
     togo.optionlist = togo.optionnames = UIOutputMany.make(options);
     tofill.addComponent(togo);
     return togo;
   }
-  
-  /** Constructs a simple selection control, where the submitted values are 
+
+  /**
+   * Constructs a single selection control, where the submitted values are
    * identical with the rendered labels
    */
-  public static UISelect make(UIContainer tofill, String ID, String[] options, 
+  public static UISelect make(UIContainer tofill, String ID, String[] options,
       String valuebinding, String initvalue) {
     UISelect togo = make(tofill, ID, options, valuebinding);
-    UIInput selection = UIInput.make(valuebinding); 
+    UIInput selection = UIInput.make(valuebinding);
     if (initvalue != null) {
       selection.setValue(initvalue);
     }
     togo.selection = selection;
     return togo;
   }
+
+  /**
+   * Constructs a single selection control, with labels distinct from the 
+   * submitting values.
+   */
   
-  /** Constructs a multiple selection control, where the submitted values are 
+  public static UISelect make(UIContainer tofill, String ID, String[] options,
+      String[] labels, String valuebinding, String initvalue) {
+    UISelect togo = make(tofill, ID, options, valuebinding, initvalue);
+    if (labels != null) {
+      togo.optionnames = UIOutputMany.make(labels);
+    }
+    return togo;
+  }
+
+  /**
+   * Constructs a multiple selection control, where the submitted values are
    * identical with the rendered labels. Named differently to allow overload
    * where the final parameter is null.
    */
-  public static UISelect makeMultiple(UIContainer tofill, String ID, String[] options, 
-      String valuebinding, String[] initvalue) {
+  public static UISelect makeMultiple(UIContainer tofill, String ID,
+      String[] options, String valuebinding, String[] initvalue) {
     UISelect togo = make(tofill, ID, options, valuebinding);
-    UIInputMany selection = UIInputMany.make(valuebinding); 
+    UIInputMany selection = UIInputMany.make(valuebinding);
     if (initvalue != null) {
       selection.setValue(initvalue);
     }
     togo.selection = selection;
     return togo;
   }
-  
+
 }

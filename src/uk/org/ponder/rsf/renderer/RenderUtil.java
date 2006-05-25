@@ -6,6 +6,7 @@ package uk.org.ponder.rsf.renderer;
 import java.util.Iterator;
 import java.util.Map;
 
+import uk.org.ponder.arrayutil.ArrayUtil;
 import uk.org.ponder.rsf.components.ParameterList;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.request.FossilizedConverter;
@@ -94,7 +95,14 @@ public class RenderUtil {
     // start at 1 since string will begin with &
     for (int i = 1; i < split.length; i += 2) {
       Logger.log.info("Unpacked command link key " + split[i] + " value " + split[i + 1]);
-      requestparams.put(split[i], new String[] {split[i + 1]});
+      String[] existing = (String[]) requestparams.get(split[i]);
+      if (existing == null) {
+        requestparams.put(split[i], new String[] {split[i + 1]});
+      }
+      else {
+        String[] fused = (String[]) ArrayUtil.append(existing, split[i + 1]);
+        requestparams.put(split[i], fused);
+      }
     }
     
   }
