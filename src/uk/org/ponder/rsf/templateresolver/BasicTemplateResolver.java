@@ -71,7 +71,7 @@ public class BasicTemplateResolver implements TemplateResolver,
     if (is == CachingInputStreamSource.UP_TO_DATE) {
       template = (ViewTemplate) templates.get(fullpath);
     }
-    if (template == null) { 
+    if (template == null) {
       try {
      // possibly the reason is it had a parse error last time, which may have been corrected
         if (is == CachingInputStreamSource.UP_TO_DATE) {

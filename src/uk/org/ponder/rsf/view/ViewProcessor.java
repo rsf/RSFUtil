@@ -26,8 +26,6 @@ import uk.org.ponder.util.Logger;
  * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
-// TODO: This class is aware of the existence of UISelect! We might well
-// upgrade to a generic reflective architecture at some point.
 public class ViewProcessor {
   private List processors;
 
@@ -105,6 +103,12 @@ public class ViewProcessor {
 
   private void appendContainer(UIContainer toappend) {
     ComponentList thischildren = toappend.flattenChildren();
+    // add the actual children later, to ensure dependent components resolved
+    // first
+    // BUT we require at the very least that Forms are processed before their
+    // children, otherwise any work done by ContainmentFCF will NOT BE SEEN
+    // in time!
+    worklist.addAll(thischildren);
 
     for (int i = 0; i < thischildren.size(); ++i) {
       UIComponent thischild = thischildren.componentAt(i);
@@ -120,8 +124,6 @@ public class ViewProcessor {
         appendComponent((UIBound) children.locateBean(childname), thischild.getFullID() + "-" + childname);
       }
     }
-    // add the actual children later, to ensure dependent components resolved
-    // first
-    worklist.addAll(thischildren);
+ 
   }
 }

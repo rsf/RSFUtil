@@ -211,8 +211,11 @@
     <property name="contentType" value="HTML" />
   </bean>
 
-  <bean id="templateResolverStrategy"
-    class="uk.org.ponder.rsf.templateresolver.CRITemplateResolverStrategy">
+  <bean id="templateResolverStrategy" parent="CRITemplateResolverStrategy"/>
+  
+  <bean id="CRITemplateResolverStrategy"
+    class="uk.org.ponder.rsf.templateresolver.CRITemplateResolverStrategy"
+    lazy-init="true">
     <property name="baseDirectory">
       <value>/content/templates/</value>
     </property>

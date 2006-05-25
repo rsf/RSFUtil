@@ -27,8 +27,10 @@ import uk.org.ponder.stringutil.StringList;
  * in.
  * <p>
  * This fixer is HTML/HTTP SPECIFIC, and should not execute for other idioms.
- * <p> Note that it also is responsible for setting the "Submitting Control"
- * packed attribute for UICommand objects. 
+ * <p>
+ * Note that it also is responsible for setting the "Submitting Control" packed
+ * attribute for UICommand objects.
+ * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
@@ -39,10 +41,11 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
   public void setMappingContext(SAXalizerMappingContext mappingcontext) {
     this.mappingcontext = mappingcontext;
   }
-  
+
   public void processComponent(UIComponent toprocesso) {
     if (toprocesso instanceof UIForm) {
       UIForm toprocess = (UIForm) toprocesso;
+      System.out.println("Top level form: " + toprocess);
       if (toprocess.submittingcontrols == null) {
         toprocess.submittingcontrols = new StringList();
         registerContainer(toprocess, toprocess);
@@ -51,24 +54,34 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
   }
 
   private void registerComponent(UIForm toprocess, UIComponent child) {
+    // TODO: produce some useful diagnostic on an attempt to create a nested
+    // form. This is "presumably" forbidden in every dialect but HTML, and
+    // "certainly" forbidden in HTML, even though it actually seems to work
+    // in practice (apart from double-registration of SUBMITTING_CONTROL &c).
+    // The problem is there is currently no (portable) place for this
+    // housekeeping information since we abolished FormModel.
     if (child instanceof UIBound) {
-      String fullID = child.getFullID();
-      String formID = toprocess.getFullID();
-      UIBound bound = (UIBound) child;
-      bound.submittingname = fullID.substring(RSFUtil.commonPath(fullID, formID));
-      boolean getform = toprocess.type.equals(EarlyRequestParser.RENDER_REQUEST); 
-      if (getform) {
-        // slight "hack" to make cluster components in GET forms work
-        // correctly - presumably there is only ONE of them that will actually
-        // try to submit an HTML value.
-        int hypos = bound.submittingname.indexOf('-');
-        if (hypos != -1) {
-          bound.submittingname = bound.submittingname.substring(0, hypos);
-        }
-      }
+      boolean getform = toprocess.type
+          .equals(EarlyRequestParser.RENDER_REQUEST);
       if (RSFUtil.isBound(child) || getform) {
+        String fullID = child.getFullID();
+        String formID = toprocess.getFullID();
+        UIBound bound = (UIBound) child;
+        bound.submittingname = fullID.substring(RSFUtil.commonPath(fullID,
+            formID));
+
+        if (getform) {
+          // slight "hack" to make cluster components in GET forms work
+          // correctly - presumably there is only ONE of them that will actually
+          // try to submit an HTML value.
+          int hypos = bound.submittingname.indexOf('-');
+          if (hypos != -1) {
+            bound.submittingname = bound.submittingname.substring(0, hypos);
+          }
+        }
+
         toprocess.submittingcontrols.add(fullID);
-       }
+      }
     }
     // TODO: clarify UIForm/UICommand relationship for WAP-style forms.
     // Who is to be master!
@@ -81,21 +94,25 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
       command.parameters.add(new UIParameter(
           SubmittedValueEntry.SUBMITTING_CONTROL, child.getFullID()));
       if (command.methodbinding != null) {
-        command.parameters.add(new UIParameter(
-            SubmittedValueEntry.FAST_TRACK_ACTION,
-            command.methodbinding.value));
+        System.out.println("Registering " + child + " with "
+            + toprocess.getFullID());
+        command.parameters
+            .add(new UIParameter(SubmittedValueEntry.FAST_TRACK_ACTION,
+                command.methodbinding.value));
       }
     }
     if (child instanceof UIContainer) {
       registerContainer(toprocess, (UIContainer) child);
     }
-    IterableBeanLocator children = new ComponentChildIterator(child, mappingcontext);
+    IterableBeanLocator children = new ComponentChildIterator(child,
+        mappingcontext);
     for (Iterator childit = children.iterator(); childit.hasNext();) {
-      UIComponent nested = (UIComponent) children.locateBean((String) childit.next());
+      UIComponent nested = (UIComponent) children.locateBean((String) childit
+          .next());
       registerComponent(toprocess, nested);
     }
   }
-  
+
   private void registerContainer(UIForm toprocess, UIContainer toregister) {
     ComponentList children = toregister.flattenChildren();
     for (int i = 0; i < children.size(); ++i) {

@@ -56,20 +56,26 @@ public class PostDecoder {
 
   // This method is expected to be called by accreteRSVC
   public void parseRequest(RequestSubmittedValueCache rsvc) {
-   // Firstly acquire all non-component ("pure") bindings
+    // Firstly acquire all non-component ("pure") bindings
     for (Iterator keyit = normalizedrequest.keySet().iterator(); keyit
         .hasNext();) {
       String key = (String) keyit.next();
       String[] values = (String[]) normalizedrequest.get(key);
       Logger.log.info("PostInit: key " + key + " value " + values[0]);
       if (fossilizedconverter.isNonComponentBinding(key)) {
-        for (int i = 0; i < values.length; ++ i) {
+        for (int i = 0; i < values.length; ++i) {
           // EL binding key is fixed, there may be many values
-          SubmittedValueEntry sve = fossilizedconverter.parseBinding(key,
-            values[i]);
-          rsvc.addEntry(sve);
-          Logger.log.info("Discovered noncomponent binding for "
-              + sve.valuebinding + " rvalue " + sve.newvalue);
+          try {
+            SubmittedValueEntry sve = fossilizedconverter.parseBinding(key,
+                values[i]);
+            rsvc.addEntry(sve);
+            Logger.log.info("Discovered noncomponent binding for "
+                + sve.valuebinding + " rvalue " + sve.newvalue);
+          }
+          catch (Exception e) {
+            Logger.log.warn("Error parsing binding key " + key + " value "
+                + values[i], e);
+          }
         }
       }
       // Secondly assess whether this was a component fossilised binding.
@@ -83,13 +89,13 @@ public class PostDecoder {
         sve.newvalue = newvalue;
         fossilizedconverter.fixupNewValue(sve, rendersystemdecoder, key,
             values[0]);
-        
-        String[] reshaper = 
-          (String[]) normalizedrequest.get(fossilizedconverter.getReshaperKey(sve.componentid));
+
+        String[] reshaper = (String[]) normalizedrequest
+            .get(fossilizedconverter.getReshaperKey(sve.componentid));
         if (reshaper != null) {
           sve.reshaperbinding = reshaper[0];
         }
-        
+
         Logger.log.info("Discovered fossilised binding for " + sve.valuebinding
             + " for component " + sve.componentid + " with old value "
             + sve.oldvalue);
@@ -109,7 +115,7 @@ public class PostDecoder {
         // dependency.
         SVESorter sorter = new SVESorter(newvalues);
         List sorted = sorter.getSortedRSVC();
-     
+
         for (int i = 0; i < sorted.size(); ++i) {
           requestrsvc.addEntry((SubmittedValueEntry) sorted.get(i));
         }
@@ -127,7 +133,7 @@ public class PostDecoder {
         .get(SubmittedValueEntry.FAST_TRACK_ACTION);
     if (actionmethods != null) {
       String actionmethod = actionmethods[0];
-      //actionmethod = BeanUtil.stripEL(actionmethod);
+      // actionmethod = BeanUtil.stripEL(actionmethod);
       return actionmethod;
     }
     return null;
@@ -137,7 +143,8 @@ public class PostDecoder {
     // This SHOULD be set if an RSF submitting response is required
     String[] array = (String[]) normalized
         .get(SubmittedValueEntry.SUBMITTING_CONTROL);
-    return array == null? null : array[0];
+    return array == null ? null
+        : array[0];
   }
 
 }
