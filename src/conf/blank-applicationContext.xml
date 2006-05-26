@@ -280,6 +280,9 @@
   <bean id="HTMLStyleDecoratorRenderer"
     class="uk.org.ponder.rsf.renderer.html.decorators.HTMLStyleDecoratorRenderer"/>
     
+  <bean id="HTMLTooltipDecoratorRenderer"
+    class="uk.org.ponder.rsf.renderer.html.decorators.HTMLTooltipDecoratorRenderer"/>
+    
   <bean id="FreeAttributeDecoratorRenderer"
     class="uk.org.ponder.rsf.renderer.FreeAttributeDecoratorRenderer"/>
 
