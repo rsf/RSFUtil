@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<mapperentry targetclass="uk.org.ponder.rsf.components.UISimpleContainer">
+<mapperentry targetclass="uk.org.ponder.rsf.components.UIForm">
   <taghandler xmlname="id" xml-form="attribute">
     <fieldname>ID</fieldname>
   </taghandler>
@@ -7,4 +7,5 @@
     <setmethod>addComponent</setmethod>
     <getmethod>flattenChildren</getmethod>
   </taghandler>
+  <defaultible>true</defaultible>
 </mapperentry>
