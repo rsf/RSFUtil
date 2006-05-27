@@ -45,7 +45,6 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
   public void processComponent(UIComponent toprocesso) {
     if (toprocesso instanceof UIForm) {
       UIForm toprocess = (UIForm) toprocesso;
-      System.out.println("Top level form: " + toprocess);
       if (toprocess.submittingcontrols == null) {
         toprocess.submittingcontrols = new StringList();
         registerContainer(toprocess, toprocess);
@@ -94,8 +93,6 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
       command.parameters.add(new UIParameter(
           SubmittedValueEntry.SUBMITTING_CONTROL, child.getFullID()));
       if (command.methodbinding != null) {
-        System.out.println("Registering " + child + " with "
-            + toprocess.getFullID());
         command.parameters
             .add(new UIParameter(SubmittedValueEntry.FAST_TRACK_ACTION,
                 command.methodbinding.value));
