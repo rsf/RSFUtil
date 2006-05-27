@@ -119,6 +119,8 @@ public class RSFMappingLoader implements MappingLoader {
     MappingLoadManager.loadClasspathMapping(xmlprovider, 
     "uk/org/ponder/rsf/mappings/simplecontainer-map.xml");
     MappingLoadManager.loadClasspathMapping(xmlprovider, 
+    "uk/org/ponder/rsf/mappings/form-map.xml");
+    MappingLoadManager.loadClasspathMapping(xmlprovider, 
     "uk/org/ponder/rsf/mappings/parameter-map.xml");
     MappingLoadManager.loadClasspathMapping(xmlprovider, 
     "uk/org/ponder/rsf/mappings/idremapstrategy-map.xml");

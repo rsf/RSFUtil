@@ -25,8 +25,7 @@ public class URLRewriter {
   }
 
   /**
-   * Returns null for URLs which do not need rewriting. relpath has leading
-   * slash removed.
+   * relpath has leading slash removed.
    */
   public String rewriteResourceURL(String path, String relpath) {
     String resourceURL = null;

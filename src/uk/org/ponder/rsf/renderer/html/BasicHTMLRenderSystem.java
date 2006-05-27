@@ -307,6 +307,9 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       }
       else if (torendero instanceof UILink) {
         UILink torender = (UILink) torendero;
+        // TODO - imagine that an image link has been provided. this
+        // both needs URL rewritten inside, and also NOT BEING REPLACED with
+        // the supplied body text.
         String attrname = URLRewriteSCR.getLinkAttribute(uselump);
         if (attrname != null) {
           String target = torender.target.getValue();

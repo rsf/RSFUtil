@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.rsf.renderer;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import uk.org.ponder.rsf.view.ViewTemplate;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.util.Logger;
+import uk.org.ponder.util.UniversalRuntimeException;
 import uk.org.ponder.xml.XMLUtil;
 import uk.org.ponder.xml.XMLWriter;
 
@@ -147,6 +149,9 @@ public class ViewRender {
             }
             else { // repetitive non-branch
               XMLLump targetlump = findChild(parentlump, child);
+              // this case may trigger if there are suffix-specific renderers
+              // but no fallback.
+              if (targetlump == null) continue;
               int renderend = renderer.renderComponent(child, view, lumps,
                   targetlump.lumpindex, pos);
               if (i != children.size() - 1) {
@@ -228,8 +233,8 @@ public class ViewRender {
           + SplitID.SEPARATOR);
 //      if (headlumps.size() == 0) {
 //        throw UniversalRuntimeException.accumulate(new IOException(),
-//            "Error in template file: component with ID " + child.ID
-//                + " not found");
+//            "Error in template file: peer for component with ID " + child.ID
+//                + " not found in scope " + sourcescope.toDebugString());
 //      }
     }
     return headlumps.size() > 0? headlumps.lumpAt(0) : null;

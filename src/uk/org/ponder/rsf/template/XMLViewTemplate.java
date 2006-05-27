@@ -299,7 +299,7 @@ public class XMLViewTemplate implements ViewTemplate {
     XmlPullParser parser = new MXParser();
     try {
       // parser.setFeature(FEATURE_XML_ROUNDTRIP, true);
-      parser.setInput(xmlstream, null);
+      parser.setInput(xmlstream, "UTF-8");
       while (true) {
         int token = parser.nextToken();
         if (token == XmlPullParser.END_DOCUMENT)

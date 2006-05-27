@@ -7,7 +7,6 @@ import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import org.apache.log4j.Level;
-import org.apache.log4j.Priority;
 
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReceiver;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
