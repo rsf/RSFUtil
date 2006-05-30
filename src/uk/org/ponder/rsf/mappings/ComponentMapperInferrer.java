@@ -48,15 +48,6 @@ public class ComponentMapperInferrer implements SAXalizerMapperInferrer {
   public void setDefaultInferrible(Class clazz) {
     upchain.setDefaultInferrible(clazz);
   }
-  
-  public void addCollectionType(Class collectiontype, Class containeetype) {
-    upchain.addCollectionType(collectiontype, containeetype);
-    
-  }
-
-  public Class getContaineeType(Class collectiontype) {
-    return upchain.getContaineeType(collectiontype);
-  }
 
 
 }

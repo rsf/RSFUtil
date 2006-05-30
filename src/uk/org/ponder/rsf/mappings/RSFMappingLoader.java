@@ -36,6 +36,7 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsLeafParser;
 import uk.org.ponder.saxalizer.SAXalizerMappingContext;
+import uk.org.ponder.saxalizer.mapping.ContainerTypeRegistry;
 import uk.org.ponder.saxalizer.mapping.MappableXMLProvider;
 import uk.org.ponder.saxalizer.mapping.MappingLoadManager;
 import uk.org.ponder.saxalizer.mapping.MappingLoader;
@@ -61,6 +62,10 @@ public class RSFMappingLoader implements MappingLoader {
   // advertise their parsed types.
   public void setViewParamsLeafParser(ViewParamsLeafParser viewparamsleafparser) {
     this.viewparamsleafparser = viewparamsleafparser;
+  }
+  
+
+  public void registerContainerTypes(ContainerTypeRegistry ctr) {
   }
   
   public void loadExtendedMappings(SAXalizerMappingContext context) {

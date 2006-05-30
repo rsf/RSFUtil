@@ -16,7 +16,9 @@ public class UIOutputMany extends UIBoundList {
   /** Another constructor for selection lists, where these have been precomputed **/
   public static UIOutputMany make(String[] values) {
     UIOutputMany togo = new UIOutputMany();
-    togo.setValue(values);
+    if (values != null) {
+      togo.setValue(values);
+    }
     return togo;
   }
 }
