@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.rsf.renderer;
 
+import java.net.URLDecoder;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -13,6 +14,8 @@ import uk.org.ponder.rsf.request.FossilizedConverter;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.stringutil.CharWrap;
+import uk.org.ponder.stringutil.URLEncoder;
+import uk.org.ponder.stringutil.URLUtil;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.xml.XMLUtil;
 import uk.org.ponder.xml.XMLWriter;
@@ -80,7 +83,8 @@ public class RenderUtil {
     CharWrap togo = new CharWrap();
     for (int i = 0; i < params.size(); ++ i) {
       UIParameter param = params.parameterAt(i);
-      togo.append("&").append(param.name).append("=").append(param.value);
+      togo.append("&").append(URLEncoder.encode(param.name)).append("=").
+        append(URLEncoder.encode(param.value));
     }
     return togo.toString();
   }
@@ -90,18 +94,24 @@ public class RenderUtil {
    * of URL attribute stanzas. The key/value pairs encoded in it will be
    * added to the supplied (modifiable) map.
    */ 
-  public static void unpackCommandLink(String value, Map requestparams) {
-    String[] split = value.split("[&=]");
+  public static void unpackCommandLink(String longvalue, Map requestparams) {
+    String[] split = longvalue.split("[&=]");
     // start at 1 since string will begin with &
+    if ((split.length %2) == 0) {
+      Logger.log.warn("Erroneous submission - odd number of parameters/values in " + longvalue);
+      return;
+    }
     for (int i = 1; i < split.length; i += 2) {
-      Logger.log.info("Unpacked command link key " + split[i] + " value " + split[i + 1]);
-      String[] existing = (String[]) requestparams.get(split[i]);
+      String key = URLUtil.decodeURL(split[i]);
+      String value = URLUtil.decodeURL(split[i + 1]);
+      Logger.log.info("Unpacked command link key " + key + " value " + value);
+      String[] existing = (String[]) requestparams.get(key);
       if (existing == null) {
-        requestparams.put(split[i], new String[] {split[i + 1]});
+        requestparams.put(key, new String[] {value});
       }
       else {
-        String[] fused = (String[]) ArrayUtil.append(existing, split[i + 1]);
-        requestparams.put(split[i], fused);
+        String[] fused = (String[]) ArrayUtil.append(existing, value);
+        requestparams.put(key, fused);
       }
     }
     

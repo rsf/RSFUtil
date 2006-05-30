@@ -36,5 +36,6 @@ public interface RenderSystem extends RenderSystemDecoder {
 
  
   public void setStaticRenderers(StaticRendererCollection scrc);
-  
+
+  public void setDecoratorManager(DecoratorManager decoratormanager);
 }

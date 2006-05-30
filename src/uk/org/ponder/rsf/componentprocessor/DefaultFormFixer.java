@@ -18,6 +18,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamUtil;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewStateHandler;
 import uk.org.ponder.stringutil.StringSet;
+import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 /**
@@ -76,6 +77,11 @@ public class DefaultFormFixer implements ComponentProcessor, ViewReceiver {
         }
         if (child instanceof UIBound) {
           UIBound boundchild = (UIBound) child;
+          if (boundchild.submittingname == null) {
+            Logger.log.warn("Submitting name for " + boundchild.getFullID()
+                + " not set by previos fixup");
+            boundchild.submittingname = boundchild.getFullID();
+          }
           submittingnames.add(boundchild.submittingname);
         }
         // formmodel.registerChild(toprocess, (UIBound) child);
