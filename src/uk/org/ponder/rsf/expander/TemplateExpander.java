@@ -22,6 +22,7 @@ import uk.org.ponder.rsf.components.UIReplicator;
 import uk.org.ponder.rsf.components.UISwitch;
 import uk.org.ponder.rsf.uitype.UITypes;
 import uk.org.ponder.rsf.viewstate.EntityCentredViewParameters;
+import uk.org.ponder.saxalizer.AccessMethod;
 import uk.org.ponder.saxalizer.MethodAnalyser;
 import uk.org.ponder.saxalizer.SAXAccessMethod;
 import uk.org.ponder.util.EnumerationConverter;
@@ -64,7 +65,7 @@ public class TemplateExpander {
       IDRemapStrategy remapstrategy = (IDRemapStrategy) idstrategy;
       MethodAnalyser ma = darapplier.getMappingContext().getAnalyser(
           bean.getClass());
-      SAXAccessMethod sam = ma.getAccessMethod(remapstrategy.idfield);
+      AccessMethod sam = ma.getAccessMethod(remapstrategy.idfield);
       localid = sam.getChildObject(bean).toString();
     }
     return localid;
