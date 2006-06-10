@@ -7,6 +7,7 @@ import java.util.Map;
 
 import uk.org.ponder.beanutil.BeanUtil;
 import uk.org.ponder.reflect.ReflectiveCache;
+import uk.org.ponder.saxalizer.AccessMethod;
 import uk.org.ponder.saxalizer.MethodAnalyser;
 import uk.org.ponder.saxalizer.SAXAccessMethod;
 import uk.org.ponder.saxalizer.SAXalizerMappingContext;
@@ -88,7 +89,7 @@ public class ViewParamsMappingInfoManager {
     for (int i = 0; i < components.length; ++ i) {
       MethodAnalyser ma = mappingcontext.getAnalyser(moveclass);
       String component = components[i];
-      SAXAccessMethod method = ma.getAccessMethod(component);
+      AccessMethod method = ma.getAccessMethod(component);
       if (method == null || !(method.canGet() && method.canSet())) {
         throw new IllegalArgumentException("Unable to find writeable property for path component " + 
             component + " at " + moveclass);

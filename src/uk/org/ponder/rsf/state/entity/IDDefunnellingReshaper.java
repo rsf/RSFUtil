@@ -9,8 +9,8 @@ import uk.org.ponder.beanutil.BeanUtil;
 import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.mapping.DARReshaper;
 import uk.org.ponder.mapping.DataAlterationRequest;
+import uk.org.ponder.saxalizer.AccessMethod;
 import uk.org.ponder.saxalizer.MethodAnalyser;
-import uk.org.ponder.saxalizer.SAXAccessMethod;
 import uk.org.ponder.saxalizer.SAXalizerMappingContext;
 
 /** A "DataAlterationRequest" reshaper that does the work of reprocessing
@@ -57,7 +57,7 @@ public class IDDefunnellingReshaper implements DARReshaper {
       String membername = PathUtil.getTailPath(cutback);
       Object lastentity = bma.getBeanValue(cutback2, rbl);
       MethodAnalyser ma = mappingcontext.getAnalyser(lastentity.getClass());
-      SAXAccessMethod sam = ma.getAccessMethod(membername);
+      AccessMethod sam = ma.getAccessMethod(membername);
       String entityname = eni.getEntityName(sam.getDeclaredType());
       Object newentity = null;
       if (toshape.data != null) {
