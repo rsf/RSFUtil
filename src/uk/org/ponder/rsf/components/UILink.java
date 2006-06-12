@@ -40,7 +40,7 @@ public class UILink extends UISimpleContainer {
     return togo;
   }
   
-   public static UILink make(UIBranchContainer parent, String ID, String target) {
+   public static UILink make(UIContainer parent, String ID, String target) {
     return make(parent, ID, null, target);
   }
 
