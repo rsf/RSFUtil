@@ -113,7 +113,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
   // Although a lot of the parameterisation now lies in the allowable tag
   // set at target.
   public int renderComponent(UIComponent torendero, View view, XMLLump[] lumps,
-      int lumpindex, PrintOutputStream pos) {
+      int lumpindex, PrintOutputStream pos, String IDStrategy) {
     XMLWriter xmlw = new XMLWriter(pos);
     XMLLump lump = lumps[lumpindex];
     int nextpos = -1;
@@ -171,8 +171,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       String fullID = torendero.getFullID();
       HashMap attrcopy = new HashMap();
       attrcopy.putAll(uselump.attributemap);
-      attrcopy.put("id", fullID);
-      attrcopy.remove(XMLLump.ID_ATTRIBUTE);
+      RenderUtil.adjustForID(attrcopy, IDStrategy, fullID);
       decoratormanager.decorate(torendero.decorators, uselump.getTag(),
           attrcopy);
 

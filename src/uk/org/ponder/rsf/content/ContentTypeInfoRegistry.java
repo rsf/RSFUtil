@@ -27,12 +27,14 @@ public class ContentTypeInfoRegistry {
     new ContentTypeInfo(HTML, "html",  "<!DOCTYPE html      "
         + "PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\""
         + " \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">",
-        "text/html; charset=UTF-8"
+        "text/html; charset=UTF-8",
+        ContentTypeInfo.ID_FULL
         );
   
   public static final ContentTypeInfo HTML_FRAGMENT_CONTENTINFO = 
     new ContentTypeInfo(HTML_FRAGMENT, "html",  "",
-        "text/html; charset=UTF-8"
+        "text/html; charset=UTF-8",
+        ContentTypeInfo.ID_FULL
         );
   
   public static final ContentTypeInfo AJAX_CONTENTINFO = 
@@ -59,7 +61,9 @@ public class ContentTypeInfoRegistry {
   
   public static final ContentTypeInfo SVG_CONTENTINFO = 
     new ContentTypeInfo(SVG, "svg", "",
-        "image/svg+xml; charset=UTF-8"
+        "image/svg+xml; charset=UTF-8",
+        ContentTypeInfo.ID_FULL
+        
         );
   
   private static Map contentmap = new HashMap();

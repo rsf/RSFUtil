@@ -30,9 +30,12 @@ public interface RenderSystem extends RenderSystemDecoder {
    * the tag appears within the template requiring rewrite.
    * @param pos The output stream where the transformed template data is to be
    * written.
+   * @param IDstrategy One of the String constants from
+   *  {@link uk.org.ponder.rsf.content.ContentTypeInfo} determining the strategy
+   *  to be used for assigning ID attributes.
    */
   public int renderComponent(UIComponent torender, View view, XMLLump[] lumps, 
-      int lumpindex, PrintOutputStream pos);
+      int lumpindex, PrintOutputStream pos, String IDstrategy);
 
  
   public void setStaticRenderers(StaticRendererCollection scrc);

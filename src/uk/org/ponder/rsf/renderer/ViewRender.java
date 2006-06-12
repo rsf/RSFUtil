@@ -3,7 +3,6 @@
  */
 package uk.org.ponder.rsf.renderer;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +21,6 @@ import uk.org.ponder.rsf.view.ViewTemplate;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.util.Logger;
-import uk.org.ponder.util.UniversalRuntimeException;
 import uk.org.ponder.xml.XMLUtil;
 import uk.org.ponder.xml.XMLWriter;
 
@@ -153,7 +151,7 @@ public class ViewRender {
               // but no fallback.
               if (targetlump == null) continue;
               int renderend = renderer.renderComponent(child, view, lumps,
-                  targetlump.lumpindex, pos);
+                  targetlump.lumpindex, pos, contenttypeinfo.IDStrategy);
               if (i != children.size() - 1) {
                 // at this point, magically locate any "glue" that matches the
                 // transition
@@ -217,7 +215,7 @@ public class ViewRender {
         }
         // if we find a leaf component, render it.
         renderindex = renderer.renderComponent(component, view, lumps, renderindex,
-            pos);
+            pos, contenttypeinfo.IDStrategy);
       } // end if unrepeatable component.
     }
   }
@@ -244,8 +242,7 @@ public class ViewRender {
       XMLLump targetlump) {
     HashMap attrcopy = new HashMap();
     attrcopy.putAll(targetlump.attributemap);
-    attrcopy.put("id", branch.getFullID());
-    attrcopy.remove(XMLLump.ID_ATTRIBUTE);
+    RenderUtil.adjustForID(attrcopy, contenttypeinfo.IDStrategy, branch.getFullID());
     decoratormanager.decorate(branch.decorators, targetlump.getTag(), attrcopy);
     // TODO: normalise this silly space business
     pos.write(targetlump.buffer, targetlump.start, targetlump.length - 1);
