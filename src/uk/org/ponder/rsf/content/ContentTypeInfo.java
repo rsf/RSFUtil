@@ -10,6 +10,10 @@ package uk.org.ponder.rsf.content;
  */
 
 public class ContentTypeInfo {
+  public static final String ID_FULL = "full";
+  public static final String ID_NONE = "none";
+  public static final String ID_RSF = "RSF";
+  
   /** The name of the content/request type - e.g. HTML for html, AJAX for
    * (XML) AJAX, XUL for XUL etc - {@link ContentTypeInfoRegistry} for examples.
    */
@@ -25,15 +29,28 @@ public class ContentTypeInfo {
    */
   public String contentTypeHeader;
   
+  /** The strategy to be used for generating the values of "ID" elements - either
+   * ID_FULL, ID_NONE, or ID_RSF
+   */
+  public String IDStrategy;
   
   public ContentTypeInfo() {}
-  
 
   public ContentTypeInfo(String typename, String fileextension, String declaration, String contentTypeHeader) {
     this.typename = typename;
     this.fileextension = fileextension;
     this.declaration = declaration;
     this.contentTypeHeader = contentTypeHeader;
+    this.IDStrategy = ID_NONE;
+  }
+  
+  public ContentTypeInfo(String typename, String fileextension, String declaration, String contentTypeHeader, 
+      String IDStrategy) {
+    this.typename = typename;
+    this.fileextension = fileextension;
+    this.declaration = declaration;
+    this.contentTypeHeader = contentTypeHeader;
+    this.IDStrategy = IDStrategy;
   }
   
   /** Pea proxying method **/

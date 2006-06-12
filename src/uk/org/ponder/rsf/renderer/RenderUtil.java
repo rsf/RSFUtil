@@ -3,13 +3,13 @@
  */
 package uk.org.ponder.rsf.renderer;
 
-import java.net.URLDecoder;
 import java.util.Iterator;
 import java.util.Map;
 
 import uk.org.ponder.arrayutil.ArrayUtil;
 import uk.org.ponder.rsf.components.ParameterList;
 import uk.org.ponder.rsf.components.UIParameter;
+import uk.org.ponder.rsf.content.ContentTypeInfo;
 import uk.org.ponder.rsf.request.FossilizedConverter;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
@@ -60,7 +60,14 @@ public class RenderUtil {
     return renderindex;
   }
   
-  
+  public static void adjustForID(Map attrcopy, String IDStrategy, String fullID) {
+    if (IDStrategy.equals(ContentTypeInfo.ID_FULL)) {
+      attrcopy.put("id", fullID);
+    }
+    if (!IDStrategy.equals(ContentTypeInfo.ID_RSF)) {
+      attrcopy.remove(XMLLump.ID_ATTRIBUTE);
+    }
+  }
 
   public static void dumpHiddenField(String name, String value, XMLWriter xmlw) {
     xmlw.writeRaw("<input type=\"hidden\" ");
