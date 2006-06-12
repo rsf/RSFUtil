@@ -79,6 +79,10 @@ public class DecoratorManager implements ApplicationContextAware {
           typemap.put(content, renderer);
         }
       }
+      
+      if (contents.size() == 0) {
+        typemap.put("", renderer);
+      }
     
     }
     
