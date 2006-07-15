@@ -42,7 +42,6 @@ public class RSFActionHandler implements ActionHandler {
   private StatePreservationManager presmanager; // no, not that of OS/2
   private ViewExceptionStrategy ves;
   private ActionErrorStrategy actionerrorstrategy;
-  private InformalFlowManager informalflowmanager;
 
   public void setErrorStateManager(ErrorStateManager errorstatemanager) {
     this.errorstatemanager = errorstatemanager;
@@ -82,11 +81,7 @@ public class RSFActionHandler implements ActionHandler {
 
   public void setActionErrorStrategy(ActionErrorStrategy actionerrorstrategy) {
     this.actionerrorstrategy = actionerrorstrategy;
-  }
-  
-  public void setInformalFlowFanager(InformalFlowManager informalflowmanager) {
-    this.informalflowmanager = informalflowmanager;
-  }
+  }  
 
   private ARIResult ariresult = null;
 
