@@ -10,7 +10,7 @@ import uk.org.ponder.errorutil.CoreMessages;
 import uk.org.ponder.errorutil.PermissionException;
 import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.ThreadErrorState;
-import uk.org.ponder.rsf.flow.ViewExceptionStrategy;
+import uk.org.ponder.rsf.flow.errors.ViewExceptionStrategy;
 import uk.org.ponder.rsf.state.ErrorStateManager;
 import uk.org.ponder.rsf.viewstate.ErrorViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;

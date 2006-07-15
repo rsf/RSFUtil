@@ -10,9 +10,9 @@ import uk.org.ponder.errorutil.TargettedMessageList;
 import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.rsf.flow.ARIResolver;
 import uk.org.ponder.rsf.flow.ARIResult;
-import uk.org.ponder.rsf.flow.ActionErrorStrategy;
 import uk.org.ponder.rsf.flow.ActionResultInterpreter;
-import uk.org.ponder.rsf.flow.ViewExceptionStrategy;
+import uk.org.ponder.rsf.flow.errors.ActionErrorStrategy;
+import uk.org.ponder.rsf.flow.errors.ViewExceptionStrategy;
 import uk.org.ponder.rsf.preservation.StatePreservationManager;
 import uk.org.ponder.rsf.request.RequestSubmittedValueCache;
 import uk.org.ponder.rsf.state.ErrorStateManager;
@@ -42,6 +42,7 @@ public class RSFActionHandler implements ActionHandler {
   private StatePreservationManager presmanager; // no, not that of OS/2
   private ViewExceptionStrategy ves;
   private ActionErrorStrategy actionerrorstrategy;
+  private InformalFlowManager informalflowmanager;
 
   public void setErrorStateManager(ErrorStateManager errorstatemanager) {
     this.errorstatemanager = errorstatemanager;
@@ -81,6 +82,10 @@ public class RSFActionHandler implements ActionHandler {
 
   public void setActionErrorStrategy(ActionErrorStrategy actionerrorstrategy) {
     this.actionerrorstrategy = actionerrorstrategy;
+  }
+  
+  public void setInformalFlowFanager(InformalFlowManager informalflowmanager) {
+    this.informalflowmanager = informalflowmanager;
   }
 
   private ARIResult ariresult = null;
@@ -187,6 +192,7 @@ public class RSFActionHandler implements ActionHandler {
             // if the ARI wanted one and hasn't allocated one, allocate flow
             // token.
             newview.flowtoken = errorstatemanager.allocateToken();
+//            informalflowmanager.startFlow(newview.flowtoken);
           }
           else { // else assume existing flow continues.
             if (viewparams.flowtoken == null) {

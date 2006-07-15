@@ -4,9 +4,12 @@
 package uk.org.ponder.rsf.util;
 
 import uk.org.ponder.rsf.components.ComponentList;
+import uk.org.ponder.rsf.components.ELReference;
+import uk.org.ponder.rsf.components.ParameterList;
 import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIParameter;
@@ -42,6 +45,17 @@ public class RSFUtil {
       throw new AssertionException("Component " + local.getFullID() + " has no form parent!");
     }
     enclosing.parameters.add(toadd);
+  }
+  
+  /** Adds a binding to the supplied parameter list that will assign the 
+   * EL expression <code>source</code> to <code>transit</code> and then
+   * <code>transit</code> to <code>dest</code>, a classic usage of 
+   * "whole-object validation through transit".
+   */
+  public static void addTransitBinding(ParameterList paramlist, 
+      String source, String transit, String dest) {
+    paramlist.add(new UIELBinding(transit, new ELReference(source)));
+    paramlist.add(new UIELBinding(dest, new ELReference(transit)));
   }
   
   /** Determines whether the supplied component has a bound value, and hence

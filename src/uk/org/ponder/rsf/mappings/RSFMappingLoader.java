@@ -29,7 +29,7 @@ import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.expander.DirectIndexStrategy;
 import uk.org.ponder.rsf.expander.IDRemapStrategy;
 import uk.org.ponder.rsf.flow.ARIResult;
-import uk.org.ponder.rsf.flow.StaticActionErrorStrategy;
+import uk.org.ponder.rsf.flow.errors.StaticActionErrorStrategy;
 import uk.org.ponder.rsf.view.ViewRoot;
 import uk.org.ponder.rsf.viewstate.EntityCentredViewParameters;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;

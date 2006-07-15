@@ -41,6 +41,7 @@ import uk.org.ponder.streamutil.StreamCopyUtil;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.stringutil.StringList;
 import uk.org.ponder.stringutil.URLUtil;
+import uk.org.ponder.util.Constants;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.xml.XMLUtil;
 import uk.org.ponder.xml.XMLWriter;
@@ -86,6 +87,11 @@ public class BasicHTMLRenderSystem implements RenderSystem {
     else if (sve.oldvalue instanceof String[]) {
       if (sve.newvalue == null)
         sve.newvalue = new String[] {};
+    }
+    else if (sve.oldvalue instanceof String) {
+      if (sve.newvalue.equals(Constants.NULL_STRING)) {
+        sve.newvalue = null;
+      }
     }
   }
 
@@ -267,7 +273,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
               : select.optionnames.getValue();
           for (int i = 0; i < names.length; ++i) {
             pos.print("<option value=\"");
-            xmlw.write(values[i]);
+            xmlw.write(values[i] == null? Constants.NULL_STRING: values[i]);
             if (select.selected.contains(values[i])) {
               pos.print("\" selected=\"true");
             }
@@ -290,7 +296,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         UISelect parent = (UISelect) view.getComponent(torender.parentFullID);
         String value = parent.optionlist.getValue()[torender.choiceindex];
         // currently only peers with "input type="radio"".
-        attrcopy.put("name", torender.parentFullID + "-selection");
+        attrcopy.put("name", parent.selection.submittingname);
         attrcopy.put("value", value);
         attrcopy.remove("checked");
         if (parent.selected.contains(value)) {

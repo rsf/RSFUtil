@@ -3,10 +3,12 @@
  */
 package uk.org.ponder.rsf.state;
 
+import java.io.Serializable;
+
 import uk.org.ponder.errorutil.TargettedMessageList;
 import uk.org.ponder.rsf.request.RequestSubmittedValueCache;
 
-public class ErrorTokenState extends TokenState{
+public class ErrorTokenState extends TokenState implements Serializable {
   int redirectcount = 0;
   // We are HERE: If this is a Multi-Request GET, in order to locate the
   // submitting control for errors correctly, we MUST have stored here

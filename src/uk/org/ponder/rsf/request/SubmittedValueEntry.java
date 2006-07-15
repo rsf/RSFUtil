@@ -3,6 +3,8 @@
  */
 package uk.org.ponder.rsf.request;
 
+import java.io.Serializable;
+
 /**
  * Represents a submitted value as received from a user submission. For 
  * full coverage, we must know 
@@ -15,7 +17,7 @@ package uk.org.ponder.rsf.request;
  * represent a deletion binding or a pure EL binding.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
-public class SubmittedValueEntry {
+public class SubmittedValueEntry implements Serializable {
  
   /** The key used in the parameters of a command link (and hence in the 
    * servlet request) whose value is the method binding EL to be invoked on
@@ -55,8 +57,9 @@ public class SubmittedValueEntry {
    * of this non-component binding represents an EL binding, rather
    * than a serialised object */
   public boolean isEL;
-  /** Holds <code>true</code> if this submitted value is a deletion binding,
-   * in which case newvalue will be <code>null</code>
+  /** Holds <code>true</code> if this submitted value is a deletion binding.
+   * <code>isEL</code> may also be <code>true</code>, and may have been the
+   * cause of filling in <code>newvalue</code>
    */
   public boolean isdeletion = false;
  

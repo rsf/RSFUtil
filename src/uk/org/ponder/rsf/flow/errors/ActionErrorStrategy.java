@@ -1,7 +1,7 @@
 /*
  * Created on Dec 3, 2005
  */
-package uk.org.ponder.rsf.flow;
+package uk.org.ponder.rsf.flow.errors;
 
 /** Called after each application invocation to determine whether any error
  * strategy will be followed. The implementor may choose to swallow or propagate

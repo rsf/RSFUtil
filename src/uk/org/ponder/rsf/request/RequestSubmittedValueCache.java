@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.rsf.request;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
-public class RequestSubmittedValueCache {
+public class RequestSubmittedValueCache implements Serializable {
   public void addEntry(SubmittedValueEntry sve) {
     idmap.put(sve.componentid, sve);
     pathmap.put(sve.valuebinding, sve);

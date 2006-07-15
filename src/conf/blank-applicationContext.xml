@@ -25,6 +25,8 @@
     </property>
   </bean>
 
+  <bean id="fatalErrorHandler"
+    class="uk.org.ponder.rsf.processor.DefaultFatalErrorHandler" />
 
   <bean id="multipartResolver"
     class="uk.org.ponder.springutil.BlankMultipartResolver">
@@ -36,19 +38,22 @@
     <property name="reflectiveCache" ref="reflectiveCache" />
     <property name="RSACBeanLocator" ref="RSACBeanLocator" />
   </bean>
-  
-  
+
+
   <bean id="consumerInfoProxy" parent="RSACBridgePeaProxy">
     <property name="targetBeanName">
       <idref bean="consumerInfo" />
     </property>
   </bean>
-  
+
   <!-- **** VIEWPARAMETERS and URL HANDLING **** -->
 
   <bean id="viewParamsExemplar"
     class="uk.org.ponder.rsf.viewstate.SimpleViewParameters">
   </bean>
+
+  <bean id="viewIDInferrer"
+    class="uk.org.ponder.rsf.viewstate.DefaultViewIDInferrer" />
 
   <bean id="viewParametersParser"
     class="uk.org.ponder.rsf.viewstate.BasicViewParametersParser"
@@ -56,6 +61,7 @@
     <property name="viewParamsMapper" ref="viewParamsMapper" />
     <property name="deepBeanCloner" ref="deepBeanCloner" />
     <property name="reflectiveCache" ref="reflectiveCache" />
+    <property name="viewIDInferrer" ref="viewIDInferrer"/>
   </bean>
 
   <bean name="baseURLProvider" parent="autoBaseURLProviderProxy" />
@@ -78,7 +84,9 @@
   </bean>
   <bean id="directUIResourceBaseURL" class="java.lang.String">
     <constructor-arg>
-      <value>http://www.unexpected.hosting.environment/servletcontext/</value>
+      <value>
+        http://www.unexpected.hosting.environment/servletcontext/
+      </value>
     </constructor-arg>
   </bean>
 
@@ -92,17 +100,19 @@
     <property name="viewParamsMapper" ref="viewParamsMapper" />
     <property name="ultimateRenderers" ref="ultimateRenderers" />
   </bean>
-  
+
 
   <!-- ***** NAVIGATION and ACTION RESULTS ***** -->
 
-  <bean id="siteMapDef" class="uk.org.ponder.rsf.viewstate.XMLSiteMapLoader"
+  <bean id="siteMapDef"
+    class="uk.org.ponder.rsf.viewstate.XMLSiteMapLoader"
     parent="XMLFactoryBean" abstract="true">
-    <property name="location" value="/WEB-INF/sitemap.xml"/>
+    <property name="location" value="/WEB-INF/sitemap.xml" />
     <property name="viewParametersReceiver" ref="viewParametersParser" />
   </bean>
 
-  <bean id="JSFNavigationMap" parent="XMLFactoryBean" lazy-init="true">
+  <bean id="JSFNavigationMap" parent="XMLFactoryBean"
+    lazy-init="true">
     <!-- 
       <property name="location" value="/WEB-INF/navigation-map.xml"/>
     -->
@@ -113,7 +123,8 @@
   <!-- This standard bean name is given a default implementation to always
     defer to the default ARI. However this will be overridden should the actual
     action invokation ALREADY return an ARIResult, as with a FlowActionProxyBean. -->
-  <bean name="ARIResolver" class="uk.org.ponder.rsf.flow.NullARIResolver">
+  <bean name="ARIResolver"
+    class="uk.org.ponder.rsf.flow.NullARIResolver">
     <property name="actionResultInterpreter">
       <ref bean="defaultARI" />
     </property>
@@ -130,7 +141,8 @@
     class="uk.org.ponder.rsf.flow.NullActionResultInterpreter">
   </bean>
 
-  <bean name="defaultARI" class="uk.org.ponder.rsf.flow.DelegatingARI">
+  <bean name="defaultARI"
+    class="uk.org.ponder.rsf.flow.DelegatingARI">
     <property name="ARIList">
       <list>
         <ref bean="JSFNavigationARI" />
@@ -140,44 +152,49 @@
   </bean>
 
   <bean id="actionErrorStrategyManager"
-    class="uk.org.ponder.rsf.flow.ActionErrorStrategyManager">
+    class="uk.org.ponder.rsf.flow.errors.ActionErrorStrategyManager">
     <property name="mergeStrategies">
       <ref bean="XMLActionErrorStrategies" />
     </property>
   </bean>
-  
+
   <bean id="XMLActionErrorStrategyDef" parent="XMLFactoryBean"
     abstract="true">
     <property name="objectType">
-      <value>uk.org.ponder.rsf.flow.ActionErrorStrategyManager</value>
+      <value>
+        uk.org.ponder.rsf.flow.errors.ActionErrorStrategyManager
+      </value>
     </property>
   </bean>
 
-  <bean id="XMLActionErrorStrategies" parent="XMLActionErrorStrategyDef" />
+  <bean id="XMLActionErrorStrategies"
+    parent="XMLActionErrorStrategyDef" />
 
   <bean id="defaultViewProxy" parent="RSACStringBridge">
     <property name="targetBeanName">
-      <idref bean="defaultView"/>
+      <idref bean="defaultView" />
     </property>
   </bean>
 
   <bean id="viewExceptionStrategy"
-    class="uk.org.ponder.rsf.flow.SimpleViewExceptionStrategy">
+    class="uk.org.ponder.rsf.flow.errors.SimpleViewExceptionStrategy">
     <property name="viewParametersParser">
       <ref bean="viewParametersParser" />
-    </property>  
-    <property name="defaultView"> 
+    </property>
+    <property name="defaultView">
       <ref bean="defaultViewProxy" />
     </property>
   </bean>
 
 
-<!-- ***** CONTENT TYPES and RENDERING ***** -->
+  <!-- ***** CONTENT TYPES and RENDERING ***** -->
 
   <bean id="viewTemplateResolver"
     class="uk.org.ponder.rsf.templateresolver.BasicTemplateResolver">
-    <property name="templateExtensionInferrer" ref="templateExtensionInferrer" />
-    <property name="templateResolverStrategy" ref="templateResolverStrategy" />
+    <property name="templateExtensionInferrer"
+      ref="templateExtensionInferrer" />
+    <property name="templateResolverStrategy"
+      ref="templateResolverStrategy" />
   </bean>
 
   <bean id="contentTypeInfoMap"
@@ -211,8 +228,9 @@
     <property name="contentType" value="HTML" />
   </bean>
 
-  <bean id="templateResolverStrategy" parent="CRITemplateResolverStrategy"/>
-  
+  <bean id="templateResolverStrategy"
+    parent="CRITemplateResolverStrategy" />
+
   <bean id="CRITemplateResolverStrategy"
     class="uk.org.ponder.rsf.templateresolver.CRITemplateResolverStrategy"
     lazy-init="true">
@@ -224,7 +242,8 @@
     </property>
   </bean>
 
-  <bean id="viewResolver" class="uk.org.ponder.rsf.view.ConcreteViewResolver"
+  <bean id="viewResolver"
+    class="uk.org.ponder.rsf.view.ConcreteViewResolver"
     init-method="init">
     <property name="views">
       <ref bean="staticViews" />
@@ -241,10 +260,11 @@
   </bean>
 
   <!--  override this bean with a concrete bean derived from XmlViewResolverDef -->
-  <bean id="XMLViewResolver" class="uk.org.ponder.rsf.view.NullViewResolver" />
+  <bean id="XMLViewResolver"
+    class="uk.org.ponder.rsf.view.NullViewResolver" />
 
-  <bean id="XMLViewResolverDef" class="uk.org.ponder.rsf.view.XMLViewResolver"
-    abstract="true">
+  <bean id="XMLViewResolverDef"
+    class="uk.org.ponder.rsf.view.XMLViewResolver" abstract="true">
     <property name="XMLProvider" ref="XMLProvider" />
     <property name="templateExpander" ref="templateExpander" />
     <property name="viewParamsReceiver" ref="viewParametersParser" />
@@ -274,24 +294,27 @@
 
   <!--  ***** DECORATORS **** -->
 
-  <bean id="HTMLColourDecoratorRenderer" 
-    class="uk.org.ponder.rsf.renderer.html.decorators.HTMLColourDecoratorRenderer"/>
-    
+  <bean id="HTMLColourDecoratorRenderer"
+    class="uk.org.ponder.rsf.renderer.html.decorators.HTMLColourDecoratorRenderer" />
+
   <bean id="HTMLStyleDecoratorRenderer"
-    class="uk.org.ponder.rsf.renderer.html.decorators.HTMLStyleDecoratorRenderer"/>
-    
+    class="uk.org.ponder.rsf.renderer.html.decorators.HTMLStyleDecoratorRenderer" />
+
   <bean id="HTMLTooltipDecoratorRenderer"
-    class="uk.org.ponder.rsf.renderer.html.decorators.HTMLTooltipDecoratorRenderer"/>
-    
+    class="uk.org.ponder.rsf.renderer.html.decorators.HTMLTooltipDecoratorRenderer" />
+
   <bean id="FreeAttributeDecoratorRenderer"
-    class="uk.org.ponder.rsf.renderer.FreeAttributeDecoratorRenderer"/>
+    class="uk.org.ponder.rsf.renderer.FreeAttributeDecoratorRenderer" />
+
 
   <!--  ***** STATE MANAGEMENT and TOKENS ***** -->
 
   <bean id="URLPreservingBeanSpecs"
     class="uk.org.ponder.springutil.StringListFactory">
     <property name="strings">
-      <value>flowstateid|flowLite-flowIDHolder.requestFlowStateID</value>
+      <value>
+        flowstateid|flowLite-flowIDHolder.requestFlowStateID
+      </value>
     </property>
   </bean>
 

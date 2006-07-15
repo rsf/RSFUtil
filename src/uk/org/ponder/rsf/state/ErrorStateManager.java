@@ -13,8 +13,8 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.Logger;
 
 /**
- * Holds the token-related state which is stored DURING a request. After
- * the request is completed, some of this information may be copied to a
+ * Holds the token-related state which is stored DURING a request. After the
+ * request is completed, some of this information may be copied to a
  * TokenRequestState entry for the token, stored in the TokenStateHolder.
  * 
  * Keyed by a token which identifies a view that has been presented to the user.
@@ -38,9 +38,11 @@ import uk.org.ponder.util.Logger;
  * 
  */
 public class ErrorStateManager {
-  /** The id of the submitting control responsible for this POST cycle, if there
-  * is one. This will be used to target the error messages delivered to the
-  * following RENDER cycle. */
+  /**
+   * The id of the submitting control responsible for this POST cycle, if there
+   * is one. This will be used to target the error messages delivered to the
+   * following RENDER cycle.
+   */
   public String globaltargetid = null;
   // this field will be set if there is an incoming error state.
   public ErrorTokenState errorstate;
@@ -55,19 +57,20 @@ public class ErrorStateManager {
   }
 
   public void setViewParameters(ViewParameters viewparams) {
-   this.viewparams = viewparams;
+    this.viewparams = viewparams;
   }
-  
+
   public void init() {
     if (viewparams.errortoken != null) {
-      errorstate = (ErrorTokenState) errortsholder.getTokenState(viewparams.errortoken);
+      errorstate = (ErrorTokenState) errortsholder
+          .getTokenState(viewparams.errortoken);
       if (errorstate == null) {
         Logger.log.warn("Client requested error state " + viewparams.errortoken
             + " which has expired from the cache");
       }
-    } 
+    }
   }
-  
+
   public void setRequestRSVC(RequestSubmittedValueCache requestrsvc) {
     this.requestrsvc = requestrsvc;
   }
@@ -77,12 +80,12 @@ public class ErrorStateManager {
   public String allocateToken() {
     return idgenerator.generateID();
   }
-  
 
   public String allocateOutgoingToken() {
     if (errorstate == null) {
       errorstate = new ErrorTokenState();
-      errorstate.tokenID = viewparams.errortoken == null? allocateToken() : viewparams.errortoken;
+      errorstate.tokenID = viewparams.errortoken == null ? allocateToken()
+          : viewparams.errortoken;
     }
     return errorstate.tokenID;
   }
@@ -97,15 +100,23 @@ public class ErrorStateManager {
         // Target ID refers to bean path. We need somewhat more flexible
         // rules for locating a component ID, which is defined as something
         // which follows "message-for". These IDs may actually be "synthetic",
-        // at a particular level of containment, in that they refer to a specially
+        // at a particular level of containment, in that they refer to a
+        // specially
         // instantiated genuine component which has the same ID.
         SubmittedValueEntry sve = rsvc.byPath(tm.targetid);
-        if (sve == null) {
-          Logger.log.warn("Message queued for non-component path " + tm.targetid);
+        String rewritten = TargettedMessage.TARGET_NONE;
+        if (sve == null || sve.componentid == null) {
+          // TODO: We want to trace EL reference chains BACKWARDS to figure
+          // "ultimate source" of erroneous data. For now we will default to
+          // TARGET_NONE
+          Logger.log.warn("Message queued for non-component path "
+              + tm.targetid);
         }
         else {
-          String id = tm.targetid = sve.componentid;
+          rewritten = sve.componentid;
+
         }
+        tm.targetid = rewritten;
       }
       // We desire TMs stored between cycles are "trivially" serializable, any
       // use of the actual exception object should be finished by action end.
@@ -119,8 +130,10 @@ public class ErrorStateManager {
    * reference by further requests, under the OUTGOING token ID, and cleared
    * from the current thread.
    * 
-   * @return The error token ID to be used for the outgoing request, or null
-   * if there is no error.
+   * This is called at the end of both render and action cycles.
+   * 
+   * @return The error token ID to be used for the outgoing request, or null if
+   *         there is no error.
    */
   public String requestComplete() {
     try {
@@ -135,6 +148,8 @@ public class ErrorStateManager {
         errorstate.globaltargetid = globaltargetid;
         errorstate.rsvc = requestrsvc;
         errorstate.errors = errors;
+        Logger.log.info(errorstate.rsvc.entries.size()
+            + " RSVC values stored under error token " + errorstate.tokenID);
         errortsholder.putTokenState(errorstate.tokenID, errorstate);
         return errorstate.tokenID;
       }

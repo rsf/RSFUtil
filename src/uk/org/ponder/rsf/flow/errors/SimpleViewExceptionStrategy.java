@@ -1,7 +1,7 @@
 /*
  * Created on Nov 17, 2005
  */
-package uk.org.ponder.rsf.flow;
+package uk.org.ponder.rsf.flow.errors;
 
 import uk.org.ponder.rsf.viewstate.ViewParamUtil;
 import uk.org.ponder.rsf.viewstate.ViewParameters;

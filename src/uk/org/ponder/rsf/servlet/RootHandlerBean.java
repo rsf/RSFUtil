@@ -3,17 +3,17 @@
  */
 package uk.org.ponder.rsf.servlet;
 
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import uk.org.ponder.errorutil.ErrorUtil;
 import uk.org.ponder.rsf.components.ParameterList;
 import uk.org.ponder.rsf.content.ContentTypeInfo;
 import uk.org.ponder.rsf.processor.ActionHandler;
+import uk.org.ponder.rsf.processor.DefaultFatalErrorHandler;
+import uk.org.ponder.rsf.processor.FatalErrorHandler;
 import uk.org.ponder.rsf.processor.HandlerHook;
 import uk.org.ponder.rsf.processor.RenderHandlerBracketer;
 import uk.org.ponder.rsf.renderer.RenderUtil;
@@ -47,6 +47,7 @@ public class RootHandlerBean implements HandlerHook {
   private ActionHandler actionhandler;
   private HandlerHook handlerhook;
   private ContentTypeInfo contenttypeinfo;
+  private FatalErrorHandler fatalErrorHandler;
 
   public void setHttpServletRequest(HttpServletRequest request) {
     this.request = request;
@@ -77,6 +78,10 @@ public class RootHandlerBean implements HandlerHook {
     this.actionhandler = actionhandler;
   }
 
+  public void setFatalErrorHandler(FatalErrorHandler fatalErrorHandler) {
+    this.fatalErrorHandler = fatalErrorHandler;
+  }
+
   public boolean handle() {
     if (handlerhook == null || !handlerhook.handle()) {
       if (requesttype.equals(EarlyRequestParser.RENDER_REQUEST)) {
@@ -94,11 +99,9 @@ public class RootHandlerBean implements HandlerHook {
     this.handlerhook = handlerhook;
   }
 
-  
-  
   private void handleGet() {
-    PrintOutputStream pos = setupResponseWriter(contenttypeinfo.contentTypeHeader, 
-        request, response);
+    PrintOutputStream pos = setupResponseWriter(
+        contenttypeinfo.contentTypeHeader, request, response);
     try {
       ViewParameters redirect = renderhandlerbracketer.handle(pos);
 
@@ -107,8 +110,8 @@ public class RootHandlerBean implements HandlerHook {
       }
     }
     catch (Throwable t) {
-      // moved here to avoid triggering bean creation error.
-      renderFatalError(t, pos);
+      DefaultFatalErrorHandler.handleFatalErrorStrategy(fatalErrorHandler, t,
+          pos);
     }
     finally {
       pos.close();
@@ -116,7 +119,7 @@ public class RootHandlerBean implements HandlerHook {
   }
 
   private void handlePost() {
-    
+
     ViewParameters redirect = actionhandler.handle();
 
     issueRedirect(redirect, response);
@@ -143,25 +146,11 @@ public class RootHandlerBean implements HandlerHook {
     }
   }
 
-
-  public void renderFatalError(Throwable t, PrintOutputStream pos) {
-    // We may have such a fatal misconfiguration that we can't even rely on
-    // IKAT to format this error message
-    Logger.log.fatal("Completely fatal error populating view root", t);
-
-    pos.println("<html><head><title>Internal Error</title></head></body><pre>");
-    pos.println("Fatal internal error handling request: " + t);
-    ErrorUtil.dumpStackTrace(t, pos);
-    pos.println("</pre></body></html>");
-    pos.close();
-  }
-  
   public void setContentTypeInfo(ContentTypeInfo contenttypeinfo) {
     this.contenttypeinfo = contenttypeinfo;
   }
-  
-  public static PrintOutputStream setupResponseWriter(
-      String contenttype,
+
+  public static PrintOutputStream setupResponseWriter(String contenttype,
       HttpServletRequest request, HttpServletResponse response) {
     try {
       response.setContentType(contenttype);
