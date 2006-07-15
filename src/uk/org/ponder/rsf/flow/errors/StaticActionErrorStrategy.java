@@ -1,7 +1,7 @@
 /*
  * Created on Dec 3, 2005
  */
-package uk.org.ponder.rsf.flow;
+package uk.org.ponder.rsf.flow.errors;
 
 import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.ThreadErrorState;

@@ -23,6 +23,7 @@ public class BasicViewParametersParser implements ViewParametersParser,
   private Map exemplarmap;
   private ViewParamsMapper vpmapper;
   private DeepBeanCloner beancloner;
+  private ViewIDInferrer viewIDInferrer;
   
   public void setViewParamsMapper(ViewParamsMapper vpmapper) {
     this.vpmapper = vpmapper;
@@ -30,6 +31,10 @@ public class BasicViewParametersParser implements ViewParametersParser,
 
   public void setDeepBeanCloner(DeepBeanCloner beancloner) {
     this.beancloner = beancloner;
+  }
+
+  public void setViewIDInferrer(ViewIDInferrer viewIDInferrer) {
+    this.viewIDInferrer = viewIDInferrer;
   }
   
   // A single-threaded hashmap to be used during startup.
@@ -76,6 +81,8 @@ public class BasicViewParametersParser implements ViewParametersParser,
     }
   }
 
+  
+  
   public void setReflectiveCache(ReflectiveCache reflectivecache) {
     exemplarmap = reflectivecache.getConcurrentMap(1);
   }
@@ -95,10 +102,7 @@ public class BasicViewParametersParser implements ViewParametersParser,
     // each request, and it is guaranteed to be called. We take this opportunity
     // to stash away a parsed parameter object corresponding to our original
     // request.
-    int firstslashpos = pathinfo.indexOf('/', 1);
-    String viewID = firstslashpos == -1 ? pathinfo.substring(1)
-        : pathinfo.substring(1, firstslashpos);
-
+    String viewID = viewIDInferrer.inferViewID(pathinfo, requestmap);
     ViewParameters vpexemplar = (ViewParameters) exemplarmap.get(viewID);
     if (vpexemplar == null) {
       vpexemplar = defaultexemplar;

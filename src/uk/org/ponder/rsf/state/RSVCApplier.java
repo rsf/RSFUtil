@@ -69,15 +69,15 @@ public class RSVCApplier {
         }
       }
       DataAlterationRequest dar = null;
+      Object newvalue = sve.newvalue;
+      if (sve.isEL) {
+        newvalue = darapplier.getBeanValue((String) sve.newvalue, rbl);
+      }
       if (sve.isdeletion) {
-        dar = new DataAlterationRequest(sve.valuebinding, sve.newvalue,
+        dar = new DataAlterationRequest(sve.valuebinding, newvalue,
             DataAlterationRequest.DELETE);
       }
       else {
-        Object newvalue = sve.newvalue;
-        if (sve.isEL) {
-          newvalue = darapplier.getBeanValue((String) sve.newvalue, rbl);
-        }
         dar = new DataAlterationRequest(sve.valuebinding, newvalue);
       }
       if (sve.reshaperbinding != null) {
@@ -88,16 +88,18 @@ public class RSVCApplier {
         try {
           dar = ((DARReshaper) reshaper).reshapeDAR(dar);
         }
-        catch(Exception e) {
+        catch (Exception e) {
           Logger.log.info("Error reshaping value", e);
           // errors initially accumulated referring to paths
           errors.addMessage(new TargettedMessage(e.getMessage(), e, dar.path));
         }
       }
       toapply.add(dar);
+      // Do this INSIDE the loop since fetched values may change
+      darapplier.applyAlteration(rbl, dar, errors);
     }
-  
-    darapplier.applyAlterations(rbl, toapply, errors);
+
+   
   }
 
   public Object invokeAction(String actionbinding, String knownvalue) {
@@ -105,7 +107,8 @@ public class RSVCApplier {
     String actionname = PathUtil.getTailPath(actionbinding);
     Object penultimatebean = darapplier.getBeanValue(totail, rbl);
     if (penultimatebean instanceof ActionTarget) {
-      Object returnvalue = ((ActionTarget)penultimatebean).invokeAction(actionname, knownvalue);
+      Object returnvalue = ((ActionTarget) penultimatebean).invokeAction(
+          actionname, knownvalue);
       return returnvalue;
     }
     else {

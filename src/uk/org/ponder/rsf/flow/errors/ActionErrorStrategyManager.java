@@ -1,7 +1,7 @@
 /*
  * Created on Dec 3, 2005
  */
-package uk.org.ponder.rsf.flow;
+package uk.org.ponder.rsf.flow.errors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,6 @@ import java.util.List;
 import uk.org.ponder.errorutil.CoreMessages;
 import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.ThreadErrorState;
-import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 /** A collection point for ActionErrorStrategies. Tries each strategy in 

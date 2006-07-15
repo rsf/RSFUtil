@@ -19,7 +19,8 @@ import uk.org.ponder.util.Logger;
 /**
  * A request-scope bean whose job is to determine the (topologically sorted) set
  * of submitted request submitted values for this POST request. If this is a
- * RENDER request, returns an empty list.
+ * RENDER request, returns an empty list, or any RSVC queued as a result of
+ * error state for this view.
  * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 

@@ -97,6 +97,7 @@
     <property name="actionHandler" ref="actionHandler" />
     <property name="handlerHook" ref="handlerHook" />
     <property name="contentTypeInfo" ref="contentTypeInfo"/>
+    <property name="fatalErrorHandler" ref="fatalErrorHandler"/>
   </bean>
 
   <bean id="rootHandlerBean" parent="rootHandlerBeanBase">
@@ -139,18 +140,14 @@
 
   <bean id="postDecoder" class="uk.org.ponder.rsf.processor.PostDecoder"
     init-method="init">
-    <property name="renderSystemDecoder">
-      <ref bean="renderSystem" />
-    </property>
-    <property name="requestMap">
-      <ref bean="requestMap" />
-    </property>
-    <property name="requestType">
-      <ref bean="requestType" />
-    </property>
-    <property name="fossilizedConverter">
-      <ref bean="fossilizedConverter" />
-    </property>
+    <property name="renderSystemDecoder" ref="renderSystem" />
+    <property name="requestMap" ref="requestMap" />
+    <property name="requestType" ref="requestType"/>
+    <property name="fossilizedConverter" ref="fossilizedConverter"/>
+    <!-- WE CAN'T DELIVER THIS DEPENDENCY RIGHT NOW - circularity with
+    PostDecoder. Crikey ESM is a heap of rubbish.
+    <property name="errorStateManager" ref="errorStateManager"/>
+    -->
   </bean>
 
   <bean id="normalizedRequest" factory-bean="postDecoder"
@@ -158,8 +155,9 @@
 
   <bean id="outgoingMap" class="java.util.HashMap"></bean>
 
+<!-- Marked as lazy-init because of late use from errorStateManager -->
   <bean id="requestRSVC" factory-bean="postDecoder"
-    factory-method="getRequestRSVC" />
+    factory-method="getRequestRSVC"/>
 
   <bean id="versionCheckPolicy"
     class="uk.org.ponder.rsf.state.NullVersionCheckPolicy" />
@@ -175,7 +173,9 @@
       <ref bean="DARApplier" />
     </property>
   </bean>
-
+  
+<!--  requires input of requestRSVC in order to fix up errors at the
+end of a cycle -->
   <bean id="errorStateManager"
     class="uk.org.ponder.rsf.state.ErrorStateManager"
     init-method="init">
@@ -365,18 +365,10 @@
 
   <bean id="valueFixer"
     class="uk.org.ponder.rsf.componentprocessor.ValueFixer">
-    <property name="requestRSVC">
-      <ref local="requestRSVC" />
-    </property>
-    <property name="beanLocator">
-      <ref local="RSACSafeBeanLocator" />
-    </property>
-    <property name="modelAlterer">
-      <ref bean="DARApplier" />
-    </property>
-    <property name="fossilizedConverter">
-      <ref bean="fossilizedConverter" />
-    </property>
+    <property name="beanLocator" ref="RSACSafeBeanLocator" />
+    <property name="modelAlterer" ref="DARApplier" />
+    <property name="fossilizedConverter" ref="fossilizedConverter" />
+    <property name="errorStateManager" ref="errorStateManager"/>
   </bean>
 
   <!-- End "fixer" beans" -->

@@ -14,6 +14,7 @@ import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.request.FossilizedConverter;
 import uk.org.ponder.rsf.request.RequestSubmittedValueCache;
 import uk.org.ponder.rsf.request.SubmittedValueEntry;
+import uk.org.ponder.rsf.state.ErrorStateManager;
 import uk.org.ponder.rsf.uitype.UITypes;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
@@ -31,6 +32,7 @@ public class ValueFixer implements ComponentProcessor {
   private BeanLocator beanlocator;
   private BeanModelAlterer alterer;
   private RequestSubmittedValueCache rsvc;
+  //private ErrorStateManager errorStateManager;
 
   public void setBeanLocator(BeanLocator beanlocator) {
     this.beanlocator = beanlocator;
@@ -40,9 +42,14 @@ public class ValueFixer implements ComponentProcessor {
     this.alterer = alterer;
   }
 
-  public void setRequestRSVC(RequestSubmittedValueCache rsvc) {
-    this.rsvc = rsvc;
+  public void setErrorStateManager(ErrorStateManager errorStateManager) {
+    //this.errorStateManager = errorStateManager;
+    if (errorStateManager.errorstate != null) {
+      rsvc = errorStateManager.errorstate.rsvc;
+    }
+    else rsvc = new RequestSubmittedValueCache();
   }
+  
 
   // This dependency is here so we can free FC from instance wiring cycle on
   // RenderSystem. A slight loss of efficiency since this component may never

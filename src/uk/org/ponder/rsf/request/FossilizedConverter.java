@@ -125,28 +125,32 @@ public class FossilizedConverter {
     return togo;
   }
 
+  public String computeBindingValue(String lvalue, Object rvalue) {
+    if (rvalue instanceof ELReference) {
+      ELReference elref = (ELReference) rvalue;
+      return EL_BINDING + "#{" + lvalue + "}" + elref.value;
+    }
+    else {
+      // The value type will be inferred on delivery, for Object bindings.
+      return OBJECT_BINDING + "#{" + lvalue + "}" + 
+        (rvalue == null? "" : ConvertUtil.render(rvalue, xmlprovider));
+    }
+  }
+  
   public void computeDeletionBinding(UIDeletionBinding binding) {
-    String converted = binding.deletetarget == null ? ""
-        : ConvertUtil.render(binding.deletetarget, xmlprovider);
-    binding.name = binding.deletetarget == null ? DELETION_KEY
-        : VALUE_DELETION_KEY;
-    binding.value = OBJECT_BINDING + "#{" + binding.deletebinding.value + "}"
-        + converted;
+    if (binding.deletetarget == null) {
+      binding.name = DELETION_KEY;
+      binding.value = OBJECT_BINDING + "#{" + binding.deletebinding.value + "}";
+    }
+    else {
+      binding.name = VALUE_DELETION_KEY;
+      binding.value = computeBindingValue(binding.deletebinding.value, binding.deletetarget);
+    }
   }
 
   public void computeELBinding(UIELBinding binding) {
     binding.name = ELBINDING_KEY;
-    if (binding.rvalue instanceof ELReference) {
-      ELReference elref = (ELReference) binding.rvalue;
-      binding.value = EL_BINDING + "#{" + binding.valuebinding.value + "}"
-          + elref.value;
-    }
-    else {
-      // The value type will be inferred on delivery, for Object bindings.
-      binding.value = OBJECT_BINDING + "#{" + binding.valuebinding.value + "}"
-          + (binding.rvalue == null ? ""
-              : ConvertUtil.render(binding.rvalue, xmlprovider));
-    }
+    binding.value = computeBindingValue(binding.valuebinding.value, binding.rvalue);
   }
 
   /**
