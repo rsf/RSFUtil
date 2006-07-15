@@ -89,7 +89,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         sve.newvalue = new String[] {};
     }
     else if (sve.oldvalue instanceof String) {
-      if (sve.newvalue.equals(Constants.NULL_STRING)) {
+      if (Constants.NULL_STRING.equals(sve.newvalue)) {
         sve.newvalue = null;
       }
     }
