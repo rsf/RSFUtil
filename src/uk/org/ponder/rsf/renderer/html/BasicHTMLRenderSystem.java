@@ -89,7 +89,10 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         sve.newvalue = new String[] {};
     }
     else if (sve.oldvalue instanceof String) {
-      if (Constants.NULL_STRING.equals(sve.newvalue)) {
+      if (sve.newvalue instanceof String
+          && Constants.NULL_STRING.equals(sve.newvalue)
+          || sve.newvalue instanceof String[]
+          && Constants.NULL_STRING.equals(((String[]) sve.newvalue)[0])) {
         sve.newvalue = null;
       }
     }
@@ -273,8 +276,10 @@ public class BasicHTMLRenderSystem implements RenderSystem {
               : select.optionnames.getValue();
           for (int i = 0; i < names.length; ++i) {
             pos.print("<option value=\"");
-            xmlw.write(values[i] == null? Constants.NULL_STRING: values[i]);
-            if (select.selected.contains(values[i])) {
+            String value = values[i];
+            if (value == null) value = Constants.NULL_STRING;
+            xmlw.write(value);
+            if (select.selected.contains(value)) {
               pos.print("\" selected=\"true");
             }
             pos.print("\">");
@@ -319,9 +324,11 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         if (attrname != null) {
           String target = torender.target.getValue();
           if (target == null || target.length() == 0) {
-            throw new IllegalArgumentException("Empty URL in UILink at " + torender.getFullID());
+            throw new IllegalArgumentException("Empty URL in UILink at "
+                + torender.getFullID());
           }
-          URLRewriteSCR urlrewriter = (URLRewriteSCR) scrc.getSCR(URLRewriteSCR.NAME);
+          URLRewriteSCR urlrewriter = (URLRewriteSCR) scrc
+              .getSCR(URLRewriteSCR.NAME);
           if (!URLUtil.isAbsolute(target)) {
             String rewritten = urlrewriter.resolveURL(target);
             if (rewritten != null)
