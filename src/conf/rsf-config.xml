@@ -94,7 +94,7 @@
   <bean id="XMLProvider" factory-bean="mappingLoadManager"
     factory-method="getXMLProvider" lazy-init="true">
   </bean>
- 
+
   <bean id="XMLMappingContext" factory-bean="mappingLoadManager"
     factory-method="getSAXalizerMappingContext">
   </bean>
@@ -230,6 +230,12 @@
     </property>
   </bean>
 
+  <bean id="renderSystemResolver"
+    class="uk.org.ponder.rsf.renderer.RenderSystemResolver">
+    <property name="contentTypeInfo" ref="contentTypeInfoProxy" />
+    <property name="renderSystemMap" ref="renderSystemMap" />
+  </bean>
+
   <bean id="BasicHTMLRenderSystem"
     class="uk.org.ponder.rsf.renderer.html.BasicHTMLRenderSystem">
     <property name="staticRenderers" ref="staticRenderersProxy" />
@@ -327,13 +333,6 @@
     </property>
   </bean>
 
-  <bean id="flowOnlyPreservingBeans"
-    class="uk.org.ponder.springutil.StringListFactory">
-    <property name="strings">
-      <value>flowLite-flowIDHolder</value>
-    </property>
-  </bean>
-
   <bean id="listenerConnector"
     class="uk.org.ponder.iocevent.BeetleConnector" />
 
@@ -343,7 +342,7 @@
     <property name="reflectiveCache" ref="reflectiveCache" />
   </bean>
 
-  <!--  The core parent definitions for the two kinds of RSAC proxies -->
+  <!--  The core parent definitions for the different kinds of RSAC proxies -->
   <bean id="RSACBridgeProxy" class="uk.org.ponder.rsac.RSACBridgeProxy"
     abstract="true">
     <property name="RSACBeanLocator" ref="RSACBeanLocator" />
@@ -363,6 +362,29 @@
   <bean id="RSACLocaleBridge"
     class="uk.org.ponder.rsac.RSACLocaleBridge" abstract="true">
     <property name="RSACBeanLocator" ref="RSACBeanLocator" />
+  </bean>
+
+
+  <!-- Core flow definitions -->
+
+  <bean id="beanScopeParent"
+    class="uk.org.ponder.rsf.state.scope.ScopedBeanManager"
+    abstract="true">
+    <property name="tokenStateHolder" ref="flowTokenStateHolder" />
+    <property name="destroyedScopeMap" ref="destroyedScopeMapProxy"/>
+  </bean>
+  
+  <bean id="destroyedScopeMapProxy" parent="RSACBridgeProxy">
+    <property name="targetBeanName">
+      <idref bean="destroyedScopeMap"/>
+    </property>
+  </bean>
+
+  <bean id="flowOnlyPreservingBeans"
+    class="uk.org.ponder.springutil.StringListFactory">
+    <property name="strings">
+      <value>flowLite-flowIDHolder</value>
+    </property>
   </bean>
 
   <bean id="flowLite-flowIDHolderProxy" parent="RSACBridgeProxy">

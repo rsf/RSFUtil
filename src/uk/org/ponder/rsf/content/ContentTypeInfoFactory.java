@@ -5,7 +5,6 @@ package uk.org.ponder.rsf.content;
 
 import java.util.Map;
 
-import uk.org.ponder.rsf.renderer.RenderSystem;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.UniversalRuntimeException;
 
@@ -17,16 +16,11 @@ import uk.org.ponder.util.UniversalRuntimeException;
 
 public class ContentTypeInfoFactory {
   private ContentTypeResolver resolver;
-  private Map systemmap;
   private ViewParameters viewparams;
   private Map typeinfomap;
 
   public void setContentTypeResolver(ContentTypeResolver resolver) {
     this.resolver = resolver;
-  }
-  
-  public void setRenderSystemMap(Map systemmap) {
-    this.systemmap = systemmap;
   }
   
   public void setContentTypeInfoMap(Map typeinfomap) {
@@ -49,10 +43,5 @@ public class ContentTypeInfoFactory {
           "Content type name " + contenttype + " has no ContentTypeInfo registered");
     }
     return togo;
-  }
-  
-  public RenderSystem getRenderSystem() {
-    RenderSystem togo = (RenderSystem) systemmap.get(getContentType());
-    return (togo == null?  (RenderSystem) systemmap.get(ContentTypeInfoRegistry.DEFAULT) : togo);
   }
 }

@@ -242,7 +242,8 @@ public class ViewRender {
       XMLLump targetlump) {
     HashMap attrcopy = new HashMap();
     attrcopy.putAll(targetlump.attributemap);
-    RenderUtil.adjustForID(attrcopy, contenttypeinfo.IDStrategy, branch.getFullID());
+    String IDStrategy = RenderUtil.determineIDStrategy(branch, contenttypeinfo.IDStrategy);
+    RenderUtil.adjustForID(attrcopy, IDStrategy, branch.getFullID());
     decoratormanager.decorate(branch.decorators, targetlump.getTag(), attrcopy);
     // TODO: normalise this silly space business
     pos.write(targetlump.buffer, targetlump.start, targetlump.length - 1);

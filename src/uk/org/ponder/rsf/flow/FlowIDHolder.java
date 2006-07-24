@@ -1,7 +1,7 @@
 /*
  * Created on Nov 25, 2005
  */
-package uk.org.ponder.rsf.flow.lite;
+package uk.org.ponder.rsf.flow;
 
 import java.io.Serializable;
 

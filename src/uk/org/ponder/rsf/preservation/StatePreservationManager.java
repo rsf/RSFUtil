@@ -32,6 +32,7 @@ public class StatePreservationManager {
   private List strategies;
   private List startflowstrategies;
   private List endflowstrategies;
+  private List scopestrategies;
 
   public void setStrategies(List strategies) {
     this.strategies = strategies;
@@ -45,6 +46,10 @@ public class StatePreservationManager {
     this.endflowstrategies = endflowstrategies;
   }
 
+  public void setScopeStrategies(List scopestrategies) {
+    this.scopestrategies = scopestrategies;
+  }
+  
   private WriteableBeanLocator wbl;
   private BeanLocator deadbl;
  
@@ -68,6 +73,10 @@ public class StatePreservationManager {
     return (StatePreservationStrategy) endflowstrategies.get(i);
   }
 
+  private AutonomousStatePreservationStrategy scopeStrategyAt(int i) {
+    return (AutonomousStatePreservationStrategy) scopestrategies.get(i);
+  }
+  
   public void init() {
     if (strategies == null) {
       strategies = new ArrayList(0);
@@ -76,6 +85,13 @@ public class StatePreservationManager {
       endflowstrategies = new ArrayList(0);
     }
   }
+  
+  public void scopePreserve() {
+    for (int i = 0; i < scopestrategies.size(); ++i) {
+      scopeStrategyAt(i).preserve(deadbl);
+    }
+  }
+  
 // TODO: We must make sure that expired flow can be reliably detected by
 // storing a special subtoken on preserve, and throwing ExpiredFlowException when
 // we fail to get it out again.
@@ -89,6 +105,12 @@ public class StatePreservationManager {
     }
   }
 
+  public void scopeRestore() {
+    for (int i = 0; i < scopestrategies.size(); ++i) {
+      scopeStrategyAt(i).restore(wbl);
+    }
+  }
+  
   /** Request all registered strategies to restore state into the current
    * request-scope container.
    * @param The flow token keying the state to be restored.

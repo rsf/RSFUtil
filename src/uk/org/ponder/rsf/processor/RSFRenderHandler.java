@@ -3,12 +3,12 @@
  */
 package uk.org.ponder.rsf.processor;
 
+import uk.org.ponder.rsf.componentprocessor.ViewProcessor;
 import uk.org.ponder.rsf.preservation.StatePreservationManager;
 import uk.org.ponder.rsf.renderer.ViewRender;
 import uk.org.ponder.rsf.state.ErrorStateManager;
 import uk.org.ponder.rsf.view.View;
 import uk.org.ponder.rsf.view.ViewGenerator;
-import uk.org.ponder.rsf.view.ViewProcessor;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.util.RunnableWrapper;
@@ -71,6 +71,7 @@ public class RSFRenderHandler implements RenderHandler {
   public void handle(PrintOutputStream pos) {
     getwrapper.wrapRunnable(new Runnable() {
       public void run() {
+        presmanager.scopeRestore();
         if (viewparams.flowtoken != null) {
           presmanager.restore(viewparams.flowtoken, viewparams.endflow != null);
         }

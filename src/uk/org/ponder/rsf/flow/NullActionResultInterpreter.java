@@ -14,7 +14,7 @@ public class NullActionResultInterpreter implements ActionResultInterpreter {
 
   public ARIResult interpretActionResult(ViewParameters incoming, Object result) {
     ARIResult togo = new ARIResult();
-    togo.resultingview = incoming; 
+    togo.resultingview = incoming.copyBase();
     togo.propagatebeans = ARIResult.FLOW_END;
     return togo;
   }

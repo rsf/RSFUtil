@@ -4,6 +4,7 @@
 package uk.org.ponder.rsf.renderer;
 
 import uk.org.ponder.rsf.components.UIComponent;
+import uk.org.ponder.rsf.request.RenderSystemDecoder;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.view.View;
 import uk.org.ponder.streamutil.write.PrintOutputStream;

@@ -8,9 +8,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import uk.org.ponder.rsf.renderer.RenderSystemDecoder;
 import uk.org.ponder.rsf.request.EarlyRequestParser;
 import uk.org.ponder.rsf.request.FossilizedConverter;
+import uk.org.ponder.rsf.request.RenderSystemDecoder;
 import uk.org.ponder.rsf.request.RequestSubmittedValueCache;
 import uk.org.ponder.rsf.request.SVESorter;
 import uk.org.ponder.rsf.request.SubmittedValueEntry;

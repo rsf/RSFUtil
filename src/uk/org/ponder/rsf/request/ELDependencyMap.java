@@ -1,7 +1,7 @@
 /*
  * Created on Nov 8, 2005
  */
-package uk.org.ponder.rsf.state;
+package uk.org.ponder.rsf.request;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,9 +9,16 @@ import java.util.List;
 import java.util.Map;
 
 import uk.org.ponder.beanutil.BeanUtil;
-import uk.org.ponder.rsf.request.SubmittedValueEntry;
 import uk.org.ponder.stringutil.StringList;
 
+
+/** 
+ * Takes responsibility for topological sorting of incoming EL in the request 
+ * map (which may be arbitrarily disordered)
+ * @author Andrew Thornton (andrew@caret.cam.ac.uk)
+ * @author Antranig Basman (antranig@caret.cam.ac.uk)
+ *
+ */
 public class ELDependencyMap {
   public static final List VALID_LIST_MARKER = new ArrayList();
   

@@ -81,7 +81,7 @@ public class RSFActionHandler implements ActionHandler {
 
   public void setActionErrorStrategy(ActionErrorStrategy actionerrorstrategy) {
     this.actionerrorstrategy = actionerrorstrategy;
-  }  
+  }
 
   private ARIResult ariresult = null;
 
@@ -130,6 +130,7 @@ public class RSFActionHandler implements ActionHandler {
       // invoke all state-altering operations within the runnable wrapper.
       postwrapper.wrapRunnable(new Runnable() {
         public void run() {
+          presmanager.scopeRestore();
           if (viewparams.flowtoken != null) {
             presmanager.restore(viewparams.flowtoken,
                 viewparams.endflow != null);
@@ -146,10 +147,8 @@ public class RSFActionHandler implements ActionHandler {
           if (newcode == null || newcode instanceof String) {
             // only proceed to actually invoke action if no ARIResult already
             // note all this odd two-step procedure is only required to be able
-            // to
-            // pass AES error returns and make them "appear" to be the returns
-            // of
-            // the first action method in a Flow.
+            // to pass AES error returns and make them "appear" to be the
+            // returns of the first action method in a Flow.
             try {
               if (actionmethod != null) {
                 actionresult = rsvcapplier.invokeAction(actionmethod,
@@ -175,6 +174,8 @@ public class RSFActionHandler implements ActionHandler {
           }
         }
       }).run();
+      presmanager.scopePreserve();
+
       String prop = ariresult.propagatebeans; // propagation code for this cycle
       ViewParameters newview = ariresult.resultingview;
 
@@ -183,11 +184,12 @@ public class RSFActionHandler implements ActionHandler {
         // TODO: consider whether we want to allow ARI to allocate a NEW TOKEN
         // for a FLOW FORK. Some call this, "continuations".
         if (newview.flowtoken == null) {
-          if (prop.equals(ARIResult.FLOW_START) || prop.equals(ARIResult.FLOW_FASTSTART)) {
+          if (prop.equals(ARIResult.FLOW_START)
+              || prop.equals(ARIResult.FLOW_FASTSTART)) {
             // if the ARI wanted one and hasn't allocated one, allocate flow
             // token.
             newview.flowtoken = errorstatemanager.allocateToken();
-//            informalflowmanager.startFlow(newview.flowtoken);
+            // informalflowmanager.startFlow(newview.flowtoken);
           }
           else { // else assume existing flow continues.
             if (viewparams.flowtoken == null) {
@@ -212,8 +214,8 @@ public class RSFActionHandler implements ActionHandler {
         presmanager.flowEnd(newview.flowtoken);
       }
       else { // it is a flow end.
-        newview.endflow = "1";
         if (viewparams.flowtoken != null) {
+          newview.endflow = "1";
           presmanager.flowEnd(viewparams.flowtoken);
         }
       }

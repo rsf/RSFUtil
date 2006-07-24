@@ -62,10 +62,9 @@
     <property name="contentTypeInfoMap" ref="contentTypeInfoMap"/>
     <property name="contentTypeResolver" ref="contentTypeResolver"/>
     <property name="viewParameters" ref="viewParameters"/>
-    <property name="renderSystemMap" ref="renderSystemMap"/>
   </bean>
   
-  <bean id="renderSystem" factory-bean="contentTypeInfoFactory"
+  <bean id="renderSystem" factory-bean="renderSystemResolver"
     factory-method="getRenderSystem"/>
     
   <bean id="contentTypeInfo" factory-bean="contentTypeInfoFactory"
@@ -192,21 +191,14 @@ end of a cycle -->
 
   <bean id="statePreservationManager"
     class="uk.org.ponder.rsf.preservation.StatePreservationManager">
-    <property name="strategies">
-      <ref bean="statePreservationStrategies" />
-    </property>
-    <property name="startFlowStrategies">
-      <ref bean="startFlowStatePreservationStrategies" />
-    </property>
-    <property name="endFlowStrategies">
-      <ref bean="endFlowStatePreservationStrategies" />
-    </property>
-    <property name="writeableBeanLocator">
-      <ref local="RSACSafeBeanLocator" />
-    </property>
-    <property name="deadBeanLocator">
-      <ref local="deadRequestBeanLocator" />
-    </property>
+    <property name="strategies" ref="statePreservationStrategies" />
+    <property name="startFlowStrategies"
+      ref="startFlowStatePreservationStrategies"/>
+    <property name="endFlowStrategies"
+      ref="endFlowStatePreservationStrategies"/>
+    <property name="writeableBeanLocator" ref="RSACSafeBeanLocator"/>
+    <property name="deadBeanLocator" ref="deadRequestBeanLocator"/>
+    <property name="scopeStrategies" ref="scopePreservationStrategies"/>
   </bean>
 
   <bean name="outgoingParams"
@@ -302,11 +294,16 @@ end of a cycle -->
 
   <bean id="ARIResult" factory-bean="actionHandler"
     factory-method="getARIResult" lazy-init="true" />
-
+  <!-- A useful "EL-target" bean to allow scopes to be destroyed via EL -->
+  <bean id="destroyScope" 
+     class="uk.org.ponder.rsf.state.scope.ScopedBeanDestroyer"/>
+     
+  <bean id="destroyedScopeMap" class="java.util.HashMap"/>
+     
   <!-- Begin beans for FlowLite -->
 
   <bean id="flowLite-flowIDHolder"
-    class="uk.org.ponder.rsf.flow.lite.FlowIDHolder">
+    class="uk.org.ponder.rsf.flow.FlowIDHolder">
   </bean>
 
   <bean id="flowLite-flowProxyBean"
@@ -374,7 +371,7 @@ end of a cycle -->
   <!-- End "fixer" beans" -->
 
   <bean id="viewProcessor" 
-    class="uk.org.ponder.rsf.view.ViewProcessor">
+    class="uk.org.ponder.rsf.componentprocessor.ViewProcessor">
     <property name="mappingContext" ref="ELMappingContext" />
     <property name="componentProcessors">
       <list>

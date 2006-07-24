@@ -6,7 +6,7 @@ package uk.org.ponder.rsf.processor;
 import java.util.HashMap;
 import java.util.Map;
 
-import uk.org.ponder.rsf.renderer.RenderSystemDecoder;
+import uk.org.ponder.rsf.request.RenderSystemDecoder;
 import uk.org.ponder.rsf.request.SubmittedValueEntry;
 
 /** This class now disused in favour of PostDecoder **/

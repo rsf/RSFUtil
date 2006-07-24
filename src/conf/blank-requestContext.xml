@@ -20,7 +20,8 @@
     empty object. An "unreasonable bean". -->
   <bean name="consumerInfo" class="uk.org.ponder.webapputil.ConsumerInfo">
   </bean>
-  
+
+<!-- TODO: Move all preservers and lists of them into application scope. -->
   <bean id="defaultRSVCPreserver"
     class="uk.org.ponder.rsf.preservation.RSVCPreservationStrategy">
     <property name="requestRSVC">
@@ -36,6 +37,24 @@
       <ref bean="RSVCApplier" />
     </property>
   </bean>
+
+  <bean id="requestFlowStatePreserver"
+    class="uk.org.ponder.rsf.preservation.InURLPreservationStrategy">
+    <property name="beanModelAlterer">
+      <ref bean="DARApplier" />
+    </property>
+    <property name="requestMap">
+      <ref bean="requestMap" />
+    </property>
+    <property name="preservingBeanSpecs">
+      <ref bean="URLPreservingBeanSpecs" />
+    </property>
+    <property name="outgoingParams">
+      <ref bean="outgoingParams" />
+    </property>
+  </bean>
+
+
 
   <bean id="defaultBeanCopyPreserver"
     class="uk.org.ponder.rsf.preservation.BeanCopyPreservationStrategy">
@@ -63,24 +82,6 @@
       <ref bean="DARApplier" />
     </property>
   </bean>
-
-
-  <bean id="requestFlowStatePreserver"
-    class="uk.org.ponder.rsf.preservation.InURLPreservationStrategy">
-    <property name="beanModelAlterer">
-      <ref bean="DARApplier" />
-    </property>
-    <property name="requestMap">
-      <ref bean="requestMap" />
-    </property>
-    <property name="preservingBeanSpecs">
-      <ref bean="URLPreservingBeanSpecs" />
-    </property>
-    <property name="outgoingParams">
-      <ref bean="outgoingParams" />
-    </property>
-  </bean>
-
 
   <!-- Use this unless you are preserving the flowIDHolder by other means -->
   <bean id="flowScopeFlowStatePreserver"
