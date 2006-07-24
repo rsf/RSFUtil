@@ -14,7 +14,7 @@ import uk.org.ponder.mapping.DARList;
 import uk.org.ponder.mapping.DARReshaper;
 import uk.org.ponder.mapping.DataAlterationRequest;
 import uk.org.ponder.mapping.LeafObjectDARReshaper;
-import uk.org.ponder.rsf.processor.ActionTarget;
+import uk.org.ponder.rsf.request.ActionTarget;
 import uk.org.ponder.rsf.request.RequestSubmittedValueCache;
 import uk.org.ponder.rsf.request.SubmittedValueEntry;
 import uk.org.ponder.rsf.uitype.UIType;

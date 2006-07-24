@@ -3,7 +3,6 @@
  */
 package uk.org.ponder.rsf.flow;
 
-import uk.org.ponder.rsf.flow.lite.FlowIDHolder;
 import uk.org.ponder.rsf.state.FlowLockGetter;
 import uk.org.ponder.util.RunnableWrapper;
 

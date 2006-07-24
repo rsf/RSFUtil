@@ -19,8 +19,6 @@ public class ContentTypeInfoRegistry {
   public static final String SVG = "SVG";
   public static final String RSS_0_91 = "RSS-0.91";
   public static final String RSS_2 = "RSS-2.0";
-  
-  public static final String DEFAULT = "DEFAULT";
   /** A default ContentTypeInfo entry for HTML content */
   
   public static final ContentTypeInfo HTML_CONTENTINFO = 

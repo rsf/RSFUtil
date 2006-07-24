@@ -37,8 +37,9 @@ public class BeanCopyPreservationStrategy implements StatePreservationStrategy,
     BeanNameAware {
   private StringList beannames;
   private TokenStateHolder holder;
-  private String ourbeanname;
+  private String basekey = "";
   private BeanModelAlterer alterer;
+  private boolean expected = true;
 
   public void setPreservingBeans(StringList beannames) {
     this.beannames = beannames;
@@ -50,6 +51,14 @@ public class BeanCopyPreservationStrategy implements StatePreservationStrategy,
 
   public void setBeanModelAlterer(BeanModelAlterer alterer) {
     this.alterer = alterer;
+  }
+  
+  public void setStorageExpected(boolean expected) {
+    this.expected = expected;
+  }
+  
+  public void setBaseKey(String basekey) {
+    this.basekey = basekey;
   }
   
   public void preserve(BeanLocator source, String tokenid) {
@@ -72,19 +81,21 @@ public class BeanCopyPreservationStrategy implements StatePreservationStrategy,
         Logger.log.info("BeanCopy preserved to path " + beanname + ": " + bean);   
       }
     }
-    String token = ourbeanname + tokenid;
+    String token = basekey + tokenid;
     holder.putTokenState(token, beans);
     Logger.log.info("BeanCopy saved " + beans.size() + " beans to token " + token);
   }
 
   public void restore(WriteableBeanLocator target, String tokenid) {
-    String token = ourbeanname + tokenid;
+    String token = basekey + tokenid;
     Logger.log.info("BeanCopy looking for state token " + token);
     Map beans = (Map) holder.getTokenState(token);
     if (beans == null) {
+      if (expected) {
       throw UniversalRuntimeException.accumulate(new ExpiredFlowException(),
           "Client requested restoration of expired flow state with ID "
               + tokenid);
+      }
     }
     else {
       for (Iterator keyit = beans.keySet().iterator(); keyit.hasNext();) {
@@ -97,11 +108,11 @@ public class BeanCopyPreservationStrategy implements StatePreservationStrategy,
   }
 
   public void clear(String tokenid) {
-    holder.clearTokenState(ourbeanname + tokenid);
+    holder.clearTokenState(basekey + tokenid);
   }
 
   public void setBeanName(String name) {
-    this.ourbeanname = name;
+    this.basekey = name;
   }
 
 }

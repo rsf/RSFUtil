@@ -1,19 +1,18 @@
 /*
  * Created on Nov 2, 2005
  */
-package uk.org.ponder.rsf.view;
+package uk.org.ponder.rsf.componentprocessor;
 
 import java.util.Iterator;
 import java.util.List;
 
-import uk.org.ponder.rsf.componentprocessor.ComponentChildIterator;
-import uk.org.ponder.rsf.componentprocessor.ComponentProcessor;
-import uk.org.ponder.rsf.componentprocessor.OrphanFinder;
 import uk.org.ponder.rsf.components.ComponentList;
 import uk.org.ponder.rsf.components.FixableComponent;
 import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.view.View;
+import uk.org.ponder.rsf.view.ViewReceiver;
 import uk.org.ponder.saxalizer.SAXalizerMappingContext;
 import uk.org.ponder.util.Logger;
 

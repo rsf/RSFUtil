@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import uk.org.ponder.beanutil.PathUtil;
-import uk.org.ponder.rsf.state.ELDependencyMap;
 
 /** Applies a topological sorting to a collection of SubmittedValueEntry
  * objects, such that any read or write of an entry of the bean model is 

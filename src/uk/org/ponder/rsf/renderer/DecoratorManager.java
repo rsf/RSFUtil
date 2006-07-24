@@ -34,8 +34,10 @@ public class DecoratorManager implements ApplicationContextAware {
       UIDecorator dec = decorators.decoratorAt(i);
       DecoratorRenderer renderer = lookupRenderer(dec, requestcontent);
       if (renderer == null) {
-        Logger.log.warn("Unable to find renderer for decorator " + dec.getClass() 
+        if (Logger.log.isDebugEnabled()) {
+        Logger.log.debug("Unable to find renderer for decorator " + dec.getClass() 
             + " and content type " + requestcontent);
+        }
       }
       else {
         renderer.modifyAttributes(dec, tagname, attrmap);

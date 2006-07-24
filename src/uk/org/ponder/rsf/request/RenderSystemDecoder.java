@@ -1,9 +1,8 @@
 /*
  * Created on Nov 14, 2005
  */
-package uk.org.ponder.rsf.renderer;
+package uk.org.ponder.rsf.request;
 
-import uk.org.ponder.rsf.request.SubmittedValueEntry;
  
 import java.util.Map;
 

@@ -1,7 +1,7 @@
 /*
  * Created on Apr 15, 2006
  */
-package uk.org.ponder.rsf.processor;
+package uk.org.ponder.rsf.request;
 
 /**
  * On discovering a bean implementing this interface in the model as the
