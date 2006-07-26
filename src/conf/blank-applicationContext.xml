@@ -62,6 +62,7 @@
     <property name="deepBeanCloner" ref="deepBeanCloner" />
     <property name="reflectiveCache" ref="reflectiveCache" />
     <property name="viewIDInferrer" ref="viewIDInferrer" />
+    <property name="defaultExemplar" ref="viewParamsExemplar"/>
   </bean>
 
   <bean name="baseURLProvider" parent="autoBaseURLProviderProxy" />
