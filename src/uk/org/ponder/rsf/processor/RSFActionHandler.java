@@ -127,10 +127,12 @@ public class RSFActionHandler implements ActionHandler {
     final String actionmethod = PostDecoder.decodeAction(normalizedmap);
 
     try {
+      // Do this FIRST in case it discovers any scopelocks required
+      presmanager.scopeRestore();
       // invoke all state-altering operations within the runnable wrapper.
       postwrapper.wrapRunnable(new Runnable() {
         public void run() {
-          presmanager.scopeRestore();
+       
           if (viewparams.flowtoken != null) {
             presmanager.restore(viewparams.flowtoken,
                 viewparams.endflow != null);

@@ -24,9 +24,10 @@
     factory-method="getHttpServletResponse" />
 
   <bean id="earlyRequestParser"
-    class="uk.org.ponder.rsf.servlet.ServletEarlyRequestParser" init-method="init">
-    <property name="httpServletRequest" ref="httpServletRequest"/>
-    <property name="multipartResolver" ref="multipartResolver"/>
+    class="uk.org.ponder.rsf.servlet.ServletEarlyRequestParser"
+    init-method="init">
+    <property name="httpServletRequest" ref="httpServletRequest" />
+    <property name="multipartResolver" ref="multipartResolver" />
   </bean>
 
   <bean id="requestMap" factory-bean="earlyRequestParser"
@@ -37,9 +38,9 @@
 
   <bean id="requestType" factory-bean="earlyRequestParser"
     factory-method="getRequestType" />
-    
+
   <bean id="multipartMap" factory-bean="earlyRequestParser"
-    factory-method="getMultipartMap"/>
+    factory-method="getMultipartMap" />
 
   <!-- This bean may be overriden with your default view, in reduced form
     beginning with /  , otherwise it will be inferred from a view which reports
@@ -57,18 +58,19 @@
       <ref bean="RSFActionHandler" />
     </property>
   </bean>
-  
-  <bean id="contentTypeInfoFactory" class="uk.org.ponder.rsf.content.ContentTypeInfoFactory">
-    <property name="contentTypeInfoMap" ref="contentTypeInfoMap"/>
-    <property name="contentTypeResolver" ref="contentTypeResolver"/>
-    <property name="viewParameters" ref="viewParameters"/>
+
+  <bean id="contentTypeInfoFactory"
+    class="uk.org.ponder.rsf.content.ContentTypeInfoFactory">
+    <property name="contentTypeInfoMap" ref="contentTypeInfoMap" />
+    <property name="contentTypeResolver" ref="contentTypeResolver" />
+    <property name="viewParameters" ref="viewParameters" />
   </bean>
-  
+
   <bean id="renderSystem" factory-bean="renderSystemResolver"
-    factory-method="getRenderSystem"/>
-    
+    factory-method="getRenderSystem" />
+
   <bean id="contentTypeInfo" factory-bean="contentTypeInfoFactory"
-    factory-method="getContentTypeInfo"/>
+    factory-method="getContentTypeInfo" />
 
   <bean id="renderHandler" factory-bean="handlerResolver"
     factory-method="getRenderHandler" />
@@ -76,7 +78,8 @@
     factory-method="getActionHandler" />
 
   <bean id="autoBaseURLProvider"
-    class="uk.org.ponder.rsf.servlet.AutoBaseURLProvider" init-method="init">
+    class="uk.org.ponder.rsf.servlet.AutoBaseURLProvider"
+    init-method="init">
     <property name="httpServletRequest">
       <ref bean="httpServletRequestProxy" />
     </property>
@@ -87,16 +90,18 @@
     class="uk.org.ponder.rsf.processor.NullHandlerHook">
   </bean>
 
-  <bean id="rootHandlerBeanBase" abstract="true" class="uk.org.ponder.rsf.servlet.RootHandlerBean"
-   init-method="handle">
+  <bean id="rootHandlerBeanBase" abstract="true"
+    class="uk.org.ponder.rsf.servlet.RootHandlerBean"
+    init-method="handle">
     <property name="requestType" ref="requestType" />
     <property name="viewStateHandler" ref="viewStateHandler" />
     <property name="outgoingParams" ref="outgoingParams" />
-    <property name="renderHandlerBracketer" ref="renderHandlerBracketer" />
+    <property name="renderHandlerBracketer"
+      ref="renderHandlerBracketer" />
     <property name="actionHandler" ref="actionHandler" />
     <property name="handlerHook" ref="handlerHook" />
-    <property name="contentTypeInfo" ref="contentTypeInfo"/>
-    <property name="fatalErrorHandler" ref="fatalErrorHandler"/>
+    <property name="contentTypeInfo" ref="contentTypeInfo" />
+    <property name="fatalErrorHandler" ref="fatalErrorHandler" />
   </bean>
 
   <bean id="rootHandlerBean" parent="rootHandlerBeanBase">
@@ -141,11 +146,11 @@
     init-method="init">
     <property name="renderSystemDecoder" ref="renderSystem" />
     <property name="requestMap" ref="requestMap" />
-    <property name="requestType" ref="requestType"/>
-    <property name="fossilizedConverter" ref="fossilizedConverter"/>
+    <property name="requestType" ref="requestType" />
+    <property name="fossilizedConverter" ref="fossilizedConverter" />
     <!-- WE CAN'T DELIVER THIS DEPENDENCY RIGHT NOW - circularity with
-    PostDecoder. Crikey ESM is a heap of rubbish.
-    <property name="errorStateManager" ref="errorStateManager"/>
+      PostDecoder. Crikey ESM is a heap of rubbish.
+      <property name="errorStateManager" ref="errorStateManager"/>
     -->
   </bean>
 
@@ -154,27 +159,27 @@
 
   <bean id="outgoingMap" class="java.util.HashMap"></bean>
 
-<!-- Marked as lazy-init because of late use from errorStateManager -->
+  <!-- Marked as lazy-init because of late use from errorStateManager -->
   <bean id="requestRSVC" factory-bean="postDecoder"
-    factory-method="getRequestRSVC"/>
+    factory-method="getRequestRSVC" />
 
   <bean id="versionCheckPolicy"
     class="uk.org.ponder.rsf.state.NullVersionCheckPolicy" />
 
+
+  <bean id="beanInvalidationModel"
+    class="uk.org.ponder.mapping.ListBeanInvalidationModel" />
+
   <bean id="RSVCApplier" class="uk.org.ponder.rsf.state.RSVCApplier">
-    <property name="versionCheckPolicy">
-      <ref bean="versionCheckPolicy" />
-    </property>
-    <property name="rootBeanLocator">
-      <ref bean="RSACSafeBeanLocator" />
-    </property>
-    <property name="beanModelAlterer">
-      <ref bean="DARApplier" />
-    </property>
+    <property name="versionCheckPolicy" ref="versionCheckPolicy" />
+    <property name="rootBeanLocator" ref="RSACSafeBeanLocator" />
+    <property name="beanModelAlterer" ref="DARApplier" />
+    <property name="beanInvalidationModel" ref="beanInvalidationModel" />
+    <property name="beanGuardProcessor" ref="beanGuardProcessor" />
   </bean>
-  
-<!--  requires input of requestRSVC in order to fix up errors at the
-end of a cycle -->
+
+  <!--  requires input of requestRSVC in order to fix up errors at the
+    end of a cycle -->
   <bean id="errorStateManager"
     class="uk.org.ponder.rsf.state.ErrorStateManager"
     init-method="init">
@@ -193,26 +198,25 @@ end of a cycle -->
     class="uk.org.ponder.rsf.preservation.StatePreservationManager">
     <property name="strategies" ref="statePreservationStrategies" />
     <property name="startFlowStrategies"
-      ref="startFlowStatePreservationStrategies"/>
+      ref="startFlowStatePreservationStrategies" />
     <property name="endFlowStrategies"
-      ref="endFlowStatePreservationStrategies"/>
-    <property name="writeableBeanLocator" ref="RSACSafeBeanLocator"/>
-    <property name="deadBeanLocator" ref="deadRequestBeanLocator"/>
-    <property name="scopeStrategies" ref="scopePreservationStrategies"/>
+      ref="endFlowStatePreservationStrategies" />
+    <property name="writeableBeanLocator" ref="RSACSafeBeanLocator" />
+    <property name="deadBeanLocator" ref="deadRequestBeanLocator" />
+    <property name="scopeStrategies" ref="scopePreservationStrategies" />
   </bean>
+
+  <bean id="scopeLocks" factory-bean="statePreservationManager"
+    factory-method="getScopeLocks" lazy-init="true" />
 
   <bean name="outgoingParams"
     class="uk.org.ponder.rsf.components.ParameterList">
   </bean>
- 
+
   <bean id="URLRewriteSCR"
     class="uk.org.ponder.rsf.renderer.html.URLRewriteSCR">
-    <property name="URLRewriter">
-      <ref bean="URLRewriter" />
-    </property>
-    <property name="viewTemplate">
-      <ref bean="viewTemplate" />
-    </property>
+    <property name="URLRewriter" ref="URLRewriter" />
+    <property name="viewTemplate" ref="viewTemplate" />
   </bean>
 
   <!-- A set of static renderers to be used for this request -->
@@ -233,19 +237,13 @@ end of a cycle -->
   <bean id="viewTemplate"
     class="uk.org.ponder.rsf.templateresolver.TemplateLoaderBean">
     <!-- EXTERNAL DEPENDENCY! The application supplies the template resolver -->
-    <property name="templateResolver">
-      <ref bean="viewTemplateResolver" />
-    </property>
-    <property name="viewParameters">
-      <ref local="viewParameters" />
-    </property>
+    <property name="templateResolver" ref="viewTemplateResolver" />
+    <property name="viewParameters" ref="viewParameters" />
   </bean>
 
   <bean id="viewRender" class="uk.org.ponder.rsf.renderer.ViewRender">
-    <property name="viewTemplate">
-      <ref local="viewTemplate" />
-    </property>
-    <property name="contentTypeInfo" ref="contentTypeInfo"/>
+    <property name="viewTemplate" ref="viewTemplate" />
+    <property name="contentTypeInfo" ref="contentTypeInfo" />
     <!-- This dependence is injected manually, since the alterationwrapper must
       bracket restoration, and access to the model by fixup -->
     <!--
@@ -253,53 +251,35 @@ end of a cycle -->
       <ref local="view"/>
       </property>-->
     <property name="renderSystem" ref="renderSystem" />
-    <property name="messageRenderer" ref="messageRenderer"/>
-    <property name="decoratorManager" ref="decoratorManager"/>
+    <property name="messageRenderer" ref="messageRenderer" />
+    <property name="decoratorManager" ref="decoratorManager" />
   </bean>
 
   <bean id="RSFActionHandler"
     class="uk.org.ponder.rsf.processor.RSFActionHandler"
     lazy-init="true">
-    <property name="errorStateManager">
-      <ref local="errorStateManager" />
-    </property>
-    <property name="ARIResolver">
-      <ref bean="ARIResolver" />
-    </property>
-    <property name="viewParameters">
-      <ref local="viewParameters" />
-    </property>
-    <property name="requestRSVC">
-      <ref local="requestRSVC" />
-    </property>
-    <property name="alterationWrapper">
-      <ref bean="alterationWrapper" />
-    </property>
-    <property name="RSVCApplier">
-      <ref bean="RSVCApplier" />
-    </property>
-    <property name="normalizedRequestMap">
-      <ref local="normalizedRequest" />
-    </property>
-    <property name="statePreservationManager">
-      <ref local="statePreservationManager" />
-    </property>
-    <property name="viewExceptionStrategy">
-      <ref bean="viewExceptionStrategy" />
-    </property>
-    <property name="actionErrorStrategy">
-      <ref bean="actionErrorStrategyManager" />
-    </property>
+    <property name="errorStateManager" ref="errorStateManager" />
+    <property name="ARIResolver" ref="ARIResolver" />
+    <property name="viewParameters" ref="viewParameters" />
+    <property name="requestRSVC" ref="requestRSVC" />
+    <property name="alterationWrapper" ref="alterationWrapper" />
+    <property name="RSVCApplier" ref="RSVCApplier" />
+    <property name="normalizedRequestMap" ref="normalizedRequest" />
+    <property name="statePreservationManager"
+      ref="statePreservationManager" />
+    <property name="viewExceptionStrategy" ref="viewExceptionStrategy" />
+    <property name="actionErrorStrategy"
+      ref="actionErrorStrategyManager" />
   </bean>
 
   <bean id="ARIResult" factory-bean="actionHandler"
     factory-method="getARIResult" lazy-init="true" />
   <!-- A useful "EL-target" bean to allow scopes to be destroyed via EL -->
-  <bean id="destroyScope" 
-     class="uk.org.ponder.rsf.state.scope.ScopedBeanDestroyer"/>
-     
-  <bean id="destroyedScopeMap" class="java.util.HashMap"/>
-     
+  <bean id="destroyScope"
+    class="uk.org.ponder.rsf.state.scope.ScopedBeanDestroyer" />
+
+  <bean id="destroyedScopeMap" class="java.util.HashMap" />
+
   <!-- Begin beans for FlowLite -->
 
   <bean id="flowLite-flowIDHolder"
@@ -331,10 +311,10 @@ end of a cycle -->
     class="uk.org.ponder.rsf.view.ViewGenerator">
     <!-- EXTERNAL DEPENDENCY! The application supplies the view collection -->
     <property name="viewResolver" ref="viewResolver" />
-    <property name="viewParameters" ref="viewParameters"/>
+    <property name="viewParameters" ref="viewParameters" />
     <property name="componentChecker" ref="viewTemplate" />
     <property name="navigationCaseReceiver" ref="navigationCasePooler" />
-    <property name="XMLProvider" ref="XMLProvider"/>
+    <property name="XMLProvider" ref="XMLProvider" />
   </bean>
   <!--
     <bean id="view" factory-bean="viewgenerator" factory-method="getView"/>
@@ -365,12 +345,12 @@ end of a cycle -->
     <property name="beanLocator" ref="RSACSafeBeanLocator" />
     <property name="modelAlterer" ref="DARApplier" />
     <property name="fossilizedConverter" ref="fossilizedConverter" />
-    <property name="errorStateManager" ref="errorStateManager"/>
+    <property name="errorStateManager" ref="errorStateManager" />
   </bean>
 
   <!-- End "fixer" beans" -->
 
-  <bean id="viewProcessor" 
+  <bean id="viewProcessor"
     class="uk.org.ponder.rsf.componentprocessor.ViewProcessor">
     <property name="mappingContext" ref="ELMappingContext" />
     <property name="componentProcessors">

@@ -16,7 +16,7 @@ import uk.org.ponder.beanutil.WriteableBeanLocator;
  */
 
 public interface StatePreservationStrategy {
-  public void preserve(BeanLocator source, String tokenid);
-  public void restore(WriteableBeanLocator target, String tokenid);
+  public int preserve(BeanLocator source, String tokenid);
+  public int restore(WriteableBeanLocator target, String tokenid);
   public void clear(String tokenid);
 }

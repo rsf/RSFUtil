@@ -333,6 +333,7 @@ in any case? -->
     class="uk.org.ponder.rsf.state.scope.ScopedBeanCoordinator">
     <property name="beanModelAlterer" ref="DARApplier" />
     <property name="destroyedScopeMap" ref="destroyedScopeMapProxy"/>
+    <property name="requestTypeProxy" ref="requestTypeProxy"/>
   </bean>
 
   <bean id="scopePreservationStrategies"
@@ -344,8 +345,8 @@ in any case? -->
     </property>
   </bean>
 
-  <bean id="inMemoryFlowLockGetter"
-    class="uk.org.ponder.rsf.flow.InMemoryFlowLockGetter">
+  <bean id="inMemoryLockGetter"
+    class="uk.org.ponder.rsf.state.InMemoryLockGetter">
   </bean>
 
   <bean id="flowTokenStateHolder"

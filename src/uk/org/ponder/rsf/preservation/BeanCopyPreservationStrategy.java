@@ -23,17 +23,19 @@ import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 /**
- * If the target beans are serializable, then so will be the entry sent to the
- * tokenstateholder. If so this state may be passed to a
- * ClientFormTokenStateHolder or other similar - for Hibernate-style
- * non-serializable beans, they must be sent to an InMemoryTSH. But on the other
- * hand, these beans will need a Session.lock() called on them in any case, so
- * need to derive from the BCPS for a HibernateBCPS.
- * 
+ * A preservation strategy that works by simple copying of bean object 
+ * references. These should probably be "Serializable" if their destination is
+ * a Session.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
-public class BeanCopyPreservationStrategy implements StatePreservationStrategy,
+// * If the target beans are serializable, then so will be the entry sent to the
+// * tokenstateholder. If so this state may be passed to a
+// * ClientFormTokenStateHolder or other similar - for Hibernate-style
+// * non-serializable beans, they must be sent to an InMemoryTSH. But on the other
+// * hand, these beans will need a Session.lock() called on them in any case, so
+// * need to derive from the BCPS for a HibernateBCPS.
+public class BeanCopyPreservationStrategy implements TSHPreservationStrategy,
     BeanNameAware {
   private StringList beannames;
   private TokenStateHolder holder;
@@ -49,6 +51,10 @@ public class BeanCopyPreservationStrategy implements StatePreservationStrategy,
     this.holder = holder;
   }
 
+  public TokenStateHolder getTokenStateHolder() {
+    return holder;
+  }
+  
   public void setBeanModelAlterer(BeanModelAlterer alterer) {
     this.alterer = alterer;
   }
@@ -61,7 +67,7 @@ public class BeanCopyPreservationStrategy implements StatePreservationStrategy,
     this.basekey = basekey;
   }
   
-  public void preserve(BeanLocator source, String tokenid) {
+  public int preserve(BeanLocator source, String tokenid) {
     HashMap beans = new HashMap();
     for (int i = 0; i < beannames.size(); ++i) {
       String beanname = beannames.stringAt(i);
@@ -84,18 +90,20 @@ public class BeanCopyPreservationStrategy implements StatePreservationStrategy,
     String token = basekey + tokenid;
     holder.putTokenState(token, beans);
     Logger.log.info("BeanCopy saved " + beans.size() + " beans to token " + token);
+    return beans.size();
   }
 
-  public void restore(WriteableBeanLocator target, String tokenid) {
+  public int restore(WriteableBeanLocator target, String tokenid) {
     String token = basekey + tokenid;
     Logger.log.info("BeanCopy looking for state token " + token);
     Map beans = (Map) holder.getTokenState(token);
     if (beans == null) {
       if (expected) {
-      throw UniversalRuntimeException.accumulate(new ExpiredFlowException(),
+        throw UniversalRuntimeException.accumulate(new ExpiredFlowException(),
           "Client requested restoration of expired flow state with ID "
               + tokenid);
       }
+      return 0;
     }
     else {
       for (Iterator keyit = beans.keySet().iterator(); keyit.hasNext();) {
@@ -104,6 +112,7 @@ public class BeanCopyPreservationStrategy implements StatePreservationStrategy,
         TargettedMessageList messages = ThreadErrorState.getErrorState().errors;
         alterer.setBeanValue(beanname, target, bean, messages);
       }
+      return beans.size();
     }
   }
 
@@ -114,5 +123,6 @@ public class BeanCopyPreservationStrategy implements StatePreservationStrategy,
   public void setBeanName(String name) {
     this.basekey = name;
   }
+
 
 }

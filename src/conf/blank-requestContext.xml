@@ -126,15 +126,13 @@
   </bean>
 
   <!-- The default alteration wrapper performs no ORM-specific bracketing
-    of alteration operations, unless a flow is active, in which case it will block. -->
+    of alteration operations, unless a flow or scope is active, in which case 
+    it will block. -->
   <bean id="alterationWrapper"
-    class="uk.org.ponder.rsf.flow.BasicFlowAlterationWrapper">
-    <property name="flowIDHolder">
-      <ref bean="flowLite-flowIDHolder" />
-    </property>
-    <property name="flowLockGetter">
-      <ref bean="inMemoryFlowLockGetter" />
-    </property>
+    class="uk.org.ponder.rsf.flow.BasicScopedAlterationWrapper">
+    <property name="flowIDHolder" ref="flowLite-flowIDHolder"/>
+    <property name="lockGetter" ref="inMemoryLockGetter"/>
+    <property name="scopeLocks" ref="scopeLocks"/>
   </bean>
 
   <!-- A template for BeanExploders -->

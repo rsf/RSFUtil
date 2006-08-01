@@ -76,4 +76,8 @@ public class InMemoryTSH implements TokenStateHolder {
     this.expiryseconds = seconds;
   }
 
+  public String getId() {
+    return null;
+  }
+
 }

@@ -112,6 +112,10 @@
     <property name="vectorCapableParser" ref="vectorCapableParser" />
   </bean>
 
+  <bean id="beanGuardProcessor" class="uk.org.ponder.rsf.state.guards.BeanGuardProcessor">
+    <property name="beanModelAlterer" ref="DARApplier"/>
+  </bean>
+
   <!--  currently disused, RSAC has only simple property conversion support now -->
   <bean id="RSACDARApplier" class="uk.org.ponder.mapping.DARApplier">
     <property name="SAXalXMLProvider">
@@ -228,6 +232,10 @@
     <property name="targetBeanName">
       <idref bean="contentTypeInfo" />
     </property>
+  </bean>
+
+  <bean id="requestTypeProxy" parent="RSACStringBridge">
+    <property name="targetBeanName" value="requestType"/>
   </bean>
 
   <bean id="renderSystemResolver"
@@ -364,6 +372,10 @@
     <property name="RSACBeanLocator" ref="RSACBeanLocator" />
   </bean>
 
+  <bean id="writeGuardParent" class="uk.org.ponder.rsf.state.guards.BeanGuard" 
+    abstract="true">
+    <property name="guardMode" value="WRITE"/>
+  </bean>
 
   <!-- Core flow definitions -->
 
@@ -371,12 +383,12 @@
     class="uk.org.ponder.rsf.state.scope.ScopedBeanManager"
     abstract="true">
     <property name="tokenStateHolder" ref="flowTokenStateHolder" />
-    <property name="destroyedScopeMap" ref="destroyedScopeMapProxy"/>
+    <property name="destroyedScopeMap" ref="destroyedScopeMapProxy" />
   </bean>
-  
+
   <bean id="destroyedScopeMapProxy" parent="RSACBridgeProxy">
     <property name="targetBeanName">
-      <idref bean="destroyedScopeMap"/>
+      <idref bean="destroyedScopeMap" />
     </property>
   </bean>
 

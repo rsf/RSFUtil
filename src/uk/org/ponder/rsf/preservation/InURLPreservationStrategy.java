@@ -39,6 +39,8 @@ import uk.org.ponder.stringutil.StringList;
  * 
  */
 // TODO: split this into request-scope and app-scope portions.
+// TODO: This is actually an AutonomousStatePreservationStrategy!
+// TODO: Can we abolish this completely?
 public class InURLPreservationStrategy implements StatePreservationStrategy {
   private String prefix = "";
   private Map requestmap;
@@ -91,7 +93,8 @@ public class InURLPreservationStrategy implements StatePreservationStrategy {
     this.outgoingparams = outgoingparams;
   }
 
-  public void preserve(BeanLocator source, String tokenid) {
+  public int preserve(BeanLocator source, String tokenid) {
+    int preserved = 0;
     outgoingparams.clear();
     for (Iterator specit = iupsspecs.values().iterator(); specit.hasNext();) {
       IUPSMapping spec = (IUPSMapping) specit.next();
@@ -99,10 +102,13 @@ public class InURLPreservationStrategy implements StatePreservationStrategy {
           String.class, null);
       if (converted == null) continue;
       outgoingparams.add(new UIParameter(spec.urlkey, converted));
+      ++ preserved;
     }
+    return preserved;
   }
 
-  public void restore(WriteableBeanLocator target, String tokenid) {
+  public int restore(WriteableBeanLocator target, String tokenid) {
+    int restored = 0;
     for (Iterator keyit = requestmap.keySet().iterator(); keyit.hasNext();) {
       String key = (String) keyit.next();      
       IUPSMapping spec = (IUPSMapping) iupsspecs.get(key);
@@ -111,9 +117,11 @@ public class InURLPreservationStrategy implements StatePreservationStrategy {
         bma.setBeanValue(spec.beanpath, target, value, null);
         if (value != null) {
           outgoingparams.add(new UIParameter(key, value[0]));
+          ++ restored;
         }
       }
     }
+    return restored;
   }
 
   public void clear(String tokenid) {
