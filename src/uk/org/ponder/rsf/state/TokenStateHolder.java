@@ -17,4 +17,8 @@ public interface TokenStateHolder {
   /** Stores the supplied TokenRequestState object in the repository */
   public void putTokenState(String tokenID, Object trs);
   public void clearTokenState(String tokenID);
+  /** Returns a (probably request-variable) key by which the specific
+   * storage for this TSH may be indexed.
+   */
+  public String getId();
 }

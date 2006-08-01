@@ -86,6 +86,7 @@ public class BasicSCR implements StaticComponentRenderer {
     HashMap newattrs = new HashMap();
     newattrs.putAll(lump.attributemap);
     newattrs.putAll(attributemap);
+    newattrs.remove(XMLLump.ID_ATTRIBUTE);
     XMLUtil.dumpAttributes(newattrs, xmlw);
     if (endopen == close && body == null) {
       pos.print("/>");

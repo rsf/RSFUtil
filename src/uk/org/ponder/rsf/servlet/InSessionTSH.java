@@ -53,5 +53,10 @@ public class InSessionTSH implements TokenStateHolder {
   public void setExpirySeconds(int seconds) {
     this.expiryseconds = seconds;
   }
+
+  public String getId() {
+    HttpSession session = request.getSession(false);
+    return session == null? null : session.getId();
+  }
   
 }

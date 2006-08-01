@@ -16,6 +16,11 @@ import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.xml.XMLUtil;
 import uk.org.ponder.xml.XMLWriter;
 
+/** Performs a URL-rewrite for a template-relative
+ * "resource" URL (e.g. image or CSS) as found in a template.
+ * @author Antranig Basman (antranig@caret.cam.ac.uk)
+ */
+
 public class URLRewriteSCR implements StaticComponentRenderer {
   public static final String NAME = "rewrite-url";
   private URLRewriter rewriter;
@@ -100,6 +105,7 @@ public class URLRewriteSCR implements StaticComponentRenderer {
       RenderUtil.dumpTillLump(lumps, lumpindex + 1, close.lumpindex + 1, pos);
     }
     else {
+      newattrs.remove(XMLLump.ID_ATTRIBUTE);
       XMLUtil.dumpAttributes(newattrs, xmlw);
       if (endopen == close) {
         pos.print("/>");

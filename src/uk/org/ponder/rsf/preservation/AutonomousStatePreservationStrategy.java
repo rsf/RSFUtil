@@ -5,6 +5,7 @@ package uk.org.ponder.rsf.preservation;
 
 import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.beanutil.WriteableBeanLocator;
+import uk.org.ponder.stringutil.StringList;
 
 /** A state preservation strategy that requires no token to be specified.
  * It automatically locates its own storage, for example either because it is 
@@ -15,8 +16,13 @@ import uk.org.ponder.beanutil.WriteableBeanLocator;
  */
 
 public interface AutonomousStatePreservationStrategy {
-  
-  public void restore(WriteableBeanLocator target);
+  /** Restores any beans preserved by this strategy into the target 
+   * container.
+   * @return A list of lock names that will need to be acquired by any
+   * request proceeding to access the model, resulting from possible sharing
+   * of the target of the storage. <code>null</code> where no locks are required. 
+   */
+  public StringList restore(WriteableBeanLocator target);
   
   public void preserve(BeanLocator source);
 }

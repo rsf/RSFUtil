@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beansProjectDescription>
+	<configExtensions>
+		<configExtension>xml</configExtension>
+	</configExtensions>
 	<configs>
 		<config>src/conf/blank-applicationContext.xml</config>
 		<config>src/conf/rsf-requestscope-config.xml</config>

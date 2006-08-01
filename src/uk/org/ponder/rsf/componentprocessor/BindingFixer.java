@@ -4,7 +4,6 @@
 package uk.org.ponder.rsf.componentprocessor;
 
 import uk.org.ponder.rsf.components.ParameterList;
-import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIDeletionBinding;

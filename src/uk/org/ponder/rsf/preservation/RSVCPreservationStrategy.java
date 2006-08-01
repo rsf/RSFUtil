@@ -44,7 +44,7 @@ public class RSVCPreservationStrategy implements StatePreservationStrategy,
   }
   // This is called at the END of the request cycle, assuming there is an
   // ongoing request.
-  public void preserve(BeanLocator source, String tokenid) {
+  public int preserve(BeanLocator source, String tokenid) {
     String token = ourbeanname + tokenid;
     // OK. assume anything ALREADY there for this token needs continued 
     //preserving, with accretion.
@@ -79,9 +79,10 @@ public class RSVCPreservationStrategy implements StatePreservationStrategy,
     }
     holder.putTokenState(token, tokenstate);
     Logger.log.info("RSVCPres saved " + tokenstate.entries.size() + " entries to token " + token);
+    return entries;
   }
 
-  public void restore(WriteableBeanLocator target, String tokenid) {
+  public int restore(WriteableBeanLocator target, String tokenid) {
     String token = ourbeanname + tokenid;
     RequestSubmittedValueCache tokenstate = 
       (RequestSubmittedValueCache) holder.getTokenState(token);
@@ -93,6 +94,7 @@ public class RSVCPreservationStrategy implements StatePreservationStrategy,
     else {
       Logger.log.info("RSVCPres recovered " + tokenstate.entries.size() + " entries from token " + token);
       rsvcapplier.applyValues(tokenstate);
+      return tokenstate.entries.size(); 
     }
   }
 

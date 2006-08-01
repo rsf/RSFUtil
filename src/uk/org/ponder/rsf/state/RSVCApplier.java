@@ -3,13 +3,14 @@
  */
 package uk.org.ponder.rsf.state;
 
-import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.beanutil.PathUtil;
+import uk.org.ponder.beanutil.WriteableBeanLocator;
 import uk.org.ponder.conversion.LeafObjectParser;
 import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.TargettedMessageList;
 import uk.org.ponder.errorutil.ThreadErrorState;
+import uk.org.ponder.mapping.BeanInvalidationModel;
 import uk.org.ponder.mapping.DARList;
 import uk.org.ponder.mapping.DARReshaper;
 import uk.org.ponder.mapping.DataAlterationRequest;
@@ -17,6 +18,7 @@ import uk.org.ponder.mapping.LeafObjectDARReshaper;
 import uk.org.ponder.rsf.request.ActionTarget;
 import uk.org.ponder.rsf.request.RequestSubmittedValueCache;
 import uk.org.ponder.rsf.request.SubmittedValueEntry;
+import uk.org.ponder.rsf.state.guards.BeanGuardProcessor;
 import uk.org.ponder.rsf.uitype.UIType;
 import uk.org.ponder.rsf.uitype.UITypes;
 import uk.org.ponder.util.Logger;
@@ -24,7 +26,9 @@ import uk.org.ponder.util.Logger;
 public class RSVCApplier {
   private VersionCheckPolicy versioncheckpolicy;
   private BeanModelAlterer darapplier;
-  private BeanLocator rbl;
+  private WriteableBeanLocator rbl;
+  private BeanInvalidationModel bim;
+  private BeanGuardProcessor beanGuardProcessor;
 
   public void setBeanModelAlterer(BeanModelAlterer darapplier) {
     this.darapplier = darapplier;
@@ -34,18 +38,31 @@ public class RSVCApplier {
     this.versioncheckpolicy = versioncheckpolicy;
   }
 
+  public void setBeanInvalidationModel(BeanInvalidationModel bim) {
+    this.bim = bim;
+  }
+  
+  public void setBeanGuardProcessor(BeanGuardProcessor beanGuardProcessor) {
+    this.beanGuardProcessor = beanGuardProcessor;
+  }
+  
   // this will be used to locate request-scope beans.
 
-  public void setRootBeanLocator(BeanLocator rbl) {
+  public void setRootBeanLocator(WriteableBeanLocator rbl) {
     this.rbl = rbl;
   }
 
+  /** Apply values from this RSVC to the model, and in addition process
+   * any validations specified by BeanGuards.
+   */
   public void applyValues(RequestSubmittedValueCache rsvc) {
     // TODO: There is scope for a lot of policy here - mainly version checking.
     // Define a VersionCheckPolicy that will compare oldvalue to the model
     // value.
-    DARList toapply = new DARList();
     TargettedMessageList errors = ThreadErrorState.getErrorState().errors;
+    try {
+    DARList toapply = new DARList();
+  
     for (int i = 0; i < rsvc.entries.size(); ++i) {
       SubmittedValueEntry sve = rsvc.entryAt(i);
       if (sve.componentid != null) { // it is a component binding.
@@ -96,9 +113,12 @@ public class RSVCApplier {
       }
       toapply.add(dar);
       // Do this INSIDE the loop since fetched values may change
-      darapplier.applyAlteration(rbl, dar, errors);
+      darapplier.applyAlteration(rbl, dar, errors, bim.iterator());
     }
-
+    }
+    finally {
+      beanGuardProcessor.processPostGuards(bim, errors, rbl);
+    }
    
   }
 

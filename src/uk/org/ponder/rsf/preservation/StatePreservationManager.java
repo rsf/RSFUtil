@@ -9,6 +9,7 @@ import java.util.List;
 import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.beanutil.NullBeanLocator;
 import uk.org.ponder.beanutil.WriteableBeanLocator;
+import uk.org.ponder.stringutil.StringList;
 
 /** The central manager of all PreservationStrategies. This is a request-scope
  * bean which is called directly by the ActionHandler in order to be notified
@@ -52,6 +53,7 @@ public class StatePreservationManager {
   
   private WriteableBeanLocator wbl;
   private BeanLocator deadbl;
+  private StringList scopelocks = new StringList();
  
   public void setWriteableBeanLocator(WriteableBeanLocator wbl) {
     this.wbl = wbl;
@@ -75,6 +77,10 @@ public class StatePreservationManager {
 
   private AutonomousStatePreservationStrategy scopeStrategyAt(int i) {
     return (AutonomousStatePreservationStrategy) scopestrategies.get(i);
+  }
+  
+  public StringList getScopeLocks() {
+    return scopelocks;
   }
   
   public void init() {
@@ -107,7 +113,10 @@ public class StatePreservationManager {
 
   public void scopeRestore() {
     for (int i = 0; i < scopestrategies.size(); ++i) {
-      scopeStrategyAt(i).restore(wbl);
+      StringList returned = scopeStrategyAt(i).restore(wbl);
+      if (returned != null) {
+        scopelocks.addAll(returned);
+      }
     }
   }
   

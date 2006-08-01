@@ -23,7 +23,7 @@ import uk.org.ponder.stringutil.StringList;
  * A fixer to be run BEFORE the main form fixer, which implements the HTML/HTTP
  * form model whereby ALL nested child controls of the form are submitted. This
  * fixer will perform no action if it discovers that the "submittingcontrols"
- * fields of {@see uk.org.ponder.rsf.components.UIForm} has already been filled
+ * fields of {@link uk.org.ponder.rsf.components.UIForm} has already been filled
  * in.
  * <p>
  * This fixer is HTML/HTTP SPECIFIC, and should not execute for other idioms.

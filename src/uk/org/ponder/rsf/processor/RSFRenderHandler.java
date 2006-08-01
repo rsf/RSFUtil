@@ -78,6 +78,9 @@ public class RSFRenderHandler implements RenderHandler {
         // this must now be AFTER restoration since the templateexpander may
         // access the model. Shucks!!
         view = viewgenerator.getView();
+        // even a "read" from the model may want to cause a scope to be allocated.
+        // it will have to be the user's responsibility not to violate idempotency.
+        presmanager.scopePreserve();
         viewprocessor.setView(view);
         view = viewprocessor.getProcessedView();
       }

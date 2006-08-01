@@ -27,6 +27,8 @@ public class ScopedBeanManager implements BeanDestroyer, BeanNameAware {
 
   private TokenStateHolder tokenStateHolder;
   private Map destroyed;
+  private boolean exclusive;
+  private boolean alwaysPreserve;
 
   public void setDestroyedScopeMap(Map destroyed) {
     this.destroyed = destroyed;
@@ -40,7 +42,34 @@ public class ScopedBeanManager implements BeanDestroyer, BeanNameAware {
   public void setScopeName(String scopeName) {
     this.scopeName = scopeName;
   }
+  public String getScopeName() {
+    return scopeName;
+  }
 
+  /** Set to <code>true</code> if multiple requests are to be prevented
+   * from accessing this scope simultaneously. A second request trying to
+   * access the same scope will block in its alterationWrapper until 
+   * the first has concluded. 
+   */
+  public void setExclusive(boolean exclusive) {
+    this.exclusive = exclusive;
+  }
+  
+  public boolean getExclusive() {
+    return exclusive;
+  }
+  /** Set to <code>true</code> if this is a "bad" kind of scope (with the
+   * potential to violate HTTP semanatics) that requires to be preserved
+   * on <code>RENDER</code> cycles as well as <code>ACTION</code> cycles.
+   */
+  public void setAlwaysPreserve(boolean alwaysPreserve) {
+    this.alwaysPreserve = alwaysPreserve;
+  }
+  
+  public boolean getAlwaysPreserve() {
+    return alwaysPreserve;
+  }
+  
   public void setCopyPreservingBeans(String copyPreservingBeans) {
     this.copyPreservingBeans = copyPreservingBeans;
   }

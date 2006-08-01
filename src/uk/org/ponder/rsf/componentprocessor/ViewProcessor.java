@@ -83,6 +83,12 @@ public class ViewProcessor {
       }
       finder.processComponent(child);
     }
+    for (int compind = 0; compind < worklist.size(); ++compind) {
+      UIComponent thischild = worklist.componentAt(compind);
+      if (thischild instanceof FixableComponent) {
+        ((FixableComponent)thischild).fixupComponent();
+      }
+    }
     finder.report();
   }
 
@@ -113,9 +119,6 @@ public class ViewProcessor {
       UIComponent thischild = thischildren.componentAt(i);
       if (thischild instanceof UIContainer) {
         appendContainer((UIContainer) thischild);
-      }
-      if (thischild instanceof FixableComponent) {
-        ((FixableComponent)thischild).fixupComponent();
       }
       ComponentChildIterator children = new ComponentChildIterator(thischild, mappingcontext);
       for (Iterator childit = children.iterator(); childit.hasNext(); ) {
