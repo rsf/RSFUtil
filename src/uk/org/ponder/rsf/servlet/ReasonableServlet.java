@@ -25,7 +25,8 @@ public class ReasonableServlet extends HttpServlet {
   public void init(ServletConfig config) {
     ServletContext sc = config.getServletContext();
     WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(sc);
-    rsacbeanlocator = (RSACBeanLocator) wac.getBean("RSACBeanLocator");
+    rsacbeanlocator = (RSACBeanLocator) 
+      wac.getBean(RSACBeanLocator.RSAC_BEAN_LOCATOR_NAME);
   }
   
   protected void service(HttpServletRequest requst, HttpServletResponse response) {
