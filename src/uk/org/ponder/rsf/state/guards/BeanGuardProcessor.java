@@ -43,6 +43,7 @@ public class BeanGuardProcessor implements ApplicationContextAware {
       String guardedpath = guarddef.getGuardedPath();
       String guardmethod = guarddef.getGuardMethod();
       String guardEL = guarddef.getGuardEL();
+      String guardproperty = guarddef.getGuardProperty();
       if (guardEL != null && guardmethod != null) {
         guardmethod = PathUtil.composePath(guardEL, guardmethod);
       }

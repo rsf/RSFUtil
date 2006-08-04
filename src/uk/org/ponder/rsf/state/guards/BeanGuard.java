@@ -29,6 +29,7 @@ public class BeanGuard {
   private String timing;
   private String guardEL;
   private String guardMethod;
+  private String guardProperty;
   
   /** Sets the guard mode - either READ or WRITE **/
   public void setGuardMode(String mode) {
@@ -89,4 +90,11 @@ public class BeanGuard {
     return guardMethod;
   }
   
+  public void setGuardProperty(String guardProperty) {
+    this.guardProperty = guardProperty;
+  }
+  
+  public String getGuardProperty() {
+    return guardProperty;
+  }
 }

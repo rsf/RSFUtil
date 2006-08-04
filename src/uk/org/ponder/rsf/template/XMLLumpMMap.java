@@ -39,6 +39,12 @@ public class XMLLumpMMap {
     return idtolumps.get(ID) != null;
   }
   
+  /** Returns an iterator of the String values of the IDs represented here.
+   */
+  public Iterator iterator() {
+    return idtolumps.keySet().iterator();
+  }
+  
   private int concretes = 0;
 
   public int numConcretes() {

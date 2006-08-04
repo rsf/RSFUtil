@@ -41,7 +41,8 @@ public class ReasonableSpringServlet extends HttpServlet {
         + sc.getRealPath(""));
     contextLoader = new ContextLoader();
     WebApplicationContext wac = contextLoader.initWebApplicationContext(sc);
-    rsacbeanlocator = (RSACBeanLocator) wac.getBean("RSACBeanLocator");
+    rsacbeanlocator = (RSACBeanLocator) wac
+        .getBean(RSACBeanLocator.RSAC_BEAN_LOCATOR_NAME);
   }
 
   public void destroy() {
@@ -60,7 +61,7 @@ public class ReasonableSpringServlet extends HttpServlet {
       // non-standard and crummy.
       Logger.log.error("Error servicing RSAC request: ", t);
       if (t instanceof Error) {
-        throw ((Error)t);
+        throw ((Error) t);
       }
     }
     finally {
