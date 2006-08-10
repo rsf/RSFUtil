@@ -75,9 +75,10 @@ public class RSFRenderHandler implements RenderHandler {
    * bean which needs to occur in a controlled exception context.
    */
   public void handle(PrintOutputStream pos) {
+    // *outside* alteration wrapper so that AW may be BeanFetchBracketed.
+    presmanager.scopeRestore();
     getwrapper.wrapRunnable(new Runnable() {
       public void run() {
-        presmanager.scopeRestore();
         if (viewparams.flowtoken != null) {
           presmanager.restore(viewparams.flowtoken, viewparams.endflow != null);
         }
