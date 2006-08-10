@@ -14,6 +14,7 @@ import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.request.EarlyRequestParser;
 import uk.org.ponder.rsf.view.View;
 import uk.org.ponder.rsf.view.ViewReceiver;
+import uk.org.ponder.rsf.viewstate.URLRewriter;
 import uk.org.ponder.rsf.viewstate.ViewParamUtil;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewStateHandler;
@@ -38,6 +39,7 @@ public class DefaultFormFixer implements ComponentProcessor, ViewReceiver {
   private ViewStateHandler viewstatehandler;
   private View view;
   private ParameterList outgoingparams;
+  private URLRewriter urlrewriter;
 
   public void setViewParameters(ViewParameters viewparams) {
     this.viewparams = viewparams;
@@ -55,40 +57,50 @@ public class DefaultFormFixer implements ComponentProcessor, ViewReceiver {
     this.outgoingparams = outgoingparams;
   }
 
+  public void setURLRewriter(URLRewriter urlrewriter) {
+    this.urlrewriter = urlrewriter;
+  }
+
   public void processComponent(UIComponent toprocesso) {
-    if (toprocesso instanceof UIForm) {
-      UIForm toprocess = (UIForm) toprocesso;
-      toprocess.fold();
+    if (!(toprocesso instanceof UIForm))
+      return;
+    UIForm toprocess = (UIForm) toprocesso;
+    toprocess.fold();
 
-      StringSet submittingnames = new StringSet();
+    StringSet submittingnames = new StringSet();
 
-      // Check that anything registered so far as submitting exists and is
-      // valid.
-      for (int i = 0; i < toprocess.submittingcontrols.size(); ++i) {
-        String childid = toprocess.submittingcontrols.stringAt(i);
-        UIComponent child = view.getComponent(childid);
-        if (!(child instanceof UIBound) && !(child instanceof UICommand)) {
-          throw UniversalRuntimeException.accumulate(
-              new IllegalArgumentException(), "Component with ID " + childid
-                  + " listed as submitting child of form "
-                  + toprocess.getFullID()
-                  + " is not valid (non-Command, non-Bound or "
-                  + "non-existent)");
-        }
-        if (child instanceof UIBound) {
-          UIBound boundchild = (UIBound) child;
-          if (boundchild.submittingname == null) {
-            Logger.log.warn("Submitting name for " + boundchild.getFullID()
-                + " not set by previos fixup");
-            boundchild.submittingname = boundchild.getFullID();
-          }
-          submittingnames.add(boundchild.submittingname);
-        }
-        // formmodel.registerChild(toprocess, (UIBound) child);
+    // Check that anything registered so far as submitting exists and is
+    // valid.
+    for (int i = 0; i < toprocess.submittingcontrols.size(); ++i) {
+      String childid = toprocess.submittingcontrols.stringAt(i);
+      UIComponent child = view.getComponent(childid);
+      if (!(child instanceof UIBound) && !(child instanceof UICommand)) {
+        throw UniversalRuntimeException
+            .accumulate(new IllegalArgumentException(), "Component with ID "
+                + childid + " listed as submitting child of form "
+                + toprocess.getFullID()
+                + " is not valid (non-Command, non-Bound or " + "non-existent)");
       }
+      if (child instanceof UIBound) {
+        UIBound boundchild = (UIBound) child;
+        if (boundchild.submittingname == null) {
+          Logger.log.warn("Submitting name for " + boundchild.getFullID()
+              + " not set by previos fixup");
+          boundchild.submittingname = boundchild.getFullID();
+        }
+        submittingnames.add(boundchild.submittingname);
+      }
+      // formmodel.registerChild(toprocess, (UIBound) child);
+    }
+    // if the user has filled in targetURL, simply let it stand.
+    if (toprocess.targetURL == null) {
       // form will submit to current URL if none other specified
       if (toprocess.viewparams == null) {
-        toprocess.viewparams = viewparams;
+        toprocess.viewparams = viewparams.copyBase();
+        if (viewparams.endflow == null) {
+          toprocess.viewparams.flowtoken = viewparams.flowtoken;
+        }
+        toprocess.viewparams.errortoken = null;
       }
       Map attrmap = viewstatehandler.getAttrMap(toprocess.viewparams);
       // remove any URL keys for which there exist controls for a GET form
@@ -111,8 +123,13 @@ public class DefaultFormFixer implements ComponentProcessor, ViewReceiver {
       }
       toprocess.parameters.addAll(ViewParamUtil.mapToParamList(attrmap));
       toprocess.parameters.addAll(outgoingparams);
-
+    }
+    else {
+      if (URLRewriter.isContextURL(toprocess.targetURL)) {
+        toprocess.targetURL = urlrewriter
+            .rewriteContextURL(toprocess.targetURL);
+      }
     }
   }
-
+  
 }

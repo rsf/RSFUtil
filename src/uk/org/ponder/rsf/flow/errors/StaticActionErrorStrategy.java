@@ -50,7 +50,6 @@ public class StaticActionErrorStrategy implements ActionErrorStrategy {
       if (messagekey != null) {
         TargettedMessage tmessage = new TargettedMessage(messagekey,
             messagetarget);
-        ThreadErrorState.addError(tmessage);
         if (exception != null) {
           if (propagateexception) {
             throw UniversalRuntimeException.accumulate(exception);
@@ -58,6 +57,7 @@ public class StaticActionErrorStrategy implements ActionErrorStrategy {
           else {
             Logger.log.warn("Error invoking action", exception);
           }
+          return tmessage;
         }
       }
       return newreturncode == null? returncode : newreturncode;

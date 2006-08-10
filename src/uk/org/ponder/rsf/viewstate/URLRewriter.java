@@ -24,15 +24,23 @@ public class URLRewriter {
     this.viewstatehandler = viewstatehandler;
   }
 
+  public static boolean isContextURL(String path) {
+    return path.startsWith(CONTEXT_PREFIX);
+  }
+  
+  public String rewriteContextURL(String path) {
+    return viewstatehandler.getResourceURL(path
+          .substring(CONTEXT_PREFIX.length()));
+  }
+  
   /**
    * relpath has leading slash removed.
    */
   public String rewriteResourceURL(String path, String relpath) {
     String resourceURL = null;
     if (!URLUtil.isAbsolute(path) && path.charAt(0) != '/') {
-      if (path.startsWith(CONTEXT_PREFIX)) {
-        resourceURL = viewstatehandler.getResourceURL(path
-            .substring(CONTEXT_PREFIX.length()));
+      if (isContextURL(path)) {
+        resourceURL = rewriteContextURL(path);
       }
       else {
         resourceURL = viewstatehandler.getResourceURL(relpath + path);

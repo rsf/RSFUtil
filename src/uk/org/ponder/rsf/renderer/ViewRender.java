@@ -199,6 +199,7 @@ public class ViewRender {
         if (id != null) {
           if (ismessage) {
             TargettedMessageList messages = messagetargets.getMessages(lump);
+            if (messages == null) messages = new TargettedMessageList();
             if (!rendereddeadletters) {
               rendereddeadletters = true;
               TargettedMessageList deadmessages = 

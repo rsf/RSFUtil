@@ -72,11 +72,6 @@
     <property name="entityResolverStash" ref="entityResolverStash" />
   </bean>
 
-  <bean id="RSFMappingLoader"
-    class="uk.org.ponder.rsf.mappings.RSFMappingLoader">
-    <property name="viewParamsLeafParser" ref="viewParamsLeafParser" />
-  </bean>
-
   <bean id="mappingLoadManager"
     class="uk.org.ponder.springutil.SpringXMLMappingLoader"
     init-method="init">
@@ -112,8 +107,9 @@
     <property name="vectorCapableParser" ref="vectorCapableParser" />
   </bean>
 
-  <bean id="beanGuardProcessor" class="uk.org.ponder.rsf.state.guards.BeanGuardProcessor">
-    <property name="beanModelAlterer" ref="DARApplier"/>
+  <bean id="beanGuardProcessor"
+    class="uk.org.ponder.rsf.state.guards.BeanGuardProcessor">
+    <property name="beanModelAlterer" ref="DARApplier" />
   </bean>
 
   <!--  currently disused, RSAC has only simple property conversion support now -->
@@ -141,6 +137,26 @@
     <property name="mappingContext">
       <ref bean="ELMappingContext" />
     </property>
+  </bean>
+
+  <!-- Broken out as a separate bean to avoid cycle with RBL -->
+  <bean id="ErrorBBTarget" class="uk.org.ponder.rsac.RSACErrorBridge"
+    lazy-init="true">
+    <property name="RSACBeanLocator" ref="RSACBeanLocator" />
+    <property name="TMLBeanName" value="targettedMessageList" />
+  </bean>
+
+  <bean id="RSACErrorBridgeBracketer"
+    class="uk.org.ponder.rsac.BeanFetchBracketer">
+    <property name="targetBeanName" value="rootHandlerBean" />
+    <property name="wrappingBean" value="ErrorBBTarget" />
+  </bean>
+
+  <!-- ******    RSF-SPECIFIC DEFINITIONS BELOW HERE    *******    -->
+
+  <bean id="RSFMappingLoader"
+    class="uk.org.ponder.rsf.mappings.RSFMappingLoader">
+    <property name="viewParamsLeafParser" ref="viewParamsLeafParser" />
   </bean>
 
   <bean id="fossilizedConverter"
@@ -209,6 +225,20 @@
   <bean id="IDGenerator"
     class="uk.org.ponder.hashutil.EighteenIDGenerator" />
 
+  <bean id="requestAddressibleParent"
+    class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
+    <property name="targetPath"
+      value="totalRequestAddressibleBeans.collect" />
+  </bean>
+  
+  <bean id="TLABPostProcessor" class="uk.org.ponder.springutil.TLABPostProcessor">
+    <property name="mappingContext" ref="ELMappingContext"/>
+  </bean>
+
+  <bean id="totalRequestAddressibleBeans"
+    class="uk.org.ponder.springutil.StringListAggregatingFactory">
+  </bean>
+
   <bean id="templateExpander"
     class="uk.org.ponder.rsf.expander.TemplateExpander">
     <property name="DARApplier">
@@ -218,7 +248,7 @@
       <ref bean="deepBeanCloner" />
     </property>
     <property name="safeBeanLocator">
-      <ref bean="RSACSafeBeanLocatorProxy" />
+      <ref bean="ELTargetBeanLocatorProxy" />
     </property>
   </bean>
 
@@ -235,7 +265,7 @@
   </bean>
 
   <bean id="requestTypeProxy" parent="RSACStringBridge">
-    <property name="targetBeanName" value="requestType"/>
+    <property name="targetBeanName" value="requestType" />
   </bean>
 
   <bean id="renderSystemResolver"
@@ -255,9 +285,9 @@
     <property name="contentTypeInfo" ref="contentTypeInfoProxy" />
   </bean>
 
-  <bean id="RSACSafeBeanLocatorProxy" parent="RSACBridgeProxy">
+  <bean id="ELTargetBeanLocatorProxy" parent="RSACBridgeProxy">
     <property name="targetBeanName">
-      <idref bean="RSACSafeBeanLocator" />
+      <idref bean="ELTargetBeanLocator" />
     </property>
   </bean>
 
@@ -372,9 +402,9 @@
     <property name="RSACBeanLocator" ref="RSACBeanLocator" />
   </bean>
 
-  <bean id="writeGuardParent" class="uk.org.ponder.rsf.state.guards.BeanGuard" 
-    abstract="true">
-    <property name="guardMode" value="WRITE"/>
+  <bean id="writeGuardParent"
+    class="uk.org.ponder.rsf.state.guards.BeanGuard" abstract="true">
+    <property name="guardMode" value="WRITE" />
   </bean>
 
   <!-- Core flow definitions -->

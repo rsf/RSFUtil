@@ -11,6 +11,7 @@ import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.rsf.flow.ARIResolver;
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterpreter;
+import uk.org.ponder.rsf.flow.FlowStateManager;
 import uk.org.ponder.rsf.flow.errors.ActionErrorStrategy;
 import uk.org.ponder.rsf.flow.errors.ViewExceptionStrategy;
 import uk.org.ponder.rsf.preservation.StatePreservationManager;
@@ -20,6 +21,7 @@ import uk.org.ponder.rsf.state.RSVCApplier;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.RunnableWrapper;
+import uk.org.ponder.util.UniversalRuntimeException;
 
 /**
  * ActionHandler is a request scope bean responsible for handling an HTTP POST
@@ -42,7 +44,12 @@ public class RSFActionHandler implements ActionHandler {
   private StatePreservationManager presmanager; // no, not that of OS/2
   private ViewExceptionStrategy ves;
   private ActionErrorStrategy actionerrorstrategy;
+  private FlowStateManager flowstatemanager;
 
+  public void setFlowStateManager(FlowStateManager flowstatemanager) {
+    this.flowstatemanager = flowstatemanager;
+  }
+  
   public void setErrorStateManager(ErrorStateManager errorstatemanager) {
     this.errorstatemanager = errorstatemanager;
   }
@@ -78,13 +85,15 @@ public class RSFActionHandler implements ActionHandler {
   public void setViewExceptionStrategy(ViewExceptionStrategy ves) {
     this.ves = ves;
   }
-
+// actually the ActionErrorStrategyManager
   public void setActionErrorStrategy(ActionErrorStrategy actionerrorstrategy) {
     this.actionerrorstrategy = actionerrorstrategy;
   }
-
+  
+// The public ARIResult after all inference is concluded. 
   private ARIResult ariresult = null;
-
+// The original raw action result - cannot make this final for wrapper access
+  private Object actionresult = null;
   /**
    * The result of this post cycle will be of interest to some other request
    * beans, in particular the alteration wrapper. This bean must however be
@@ -96,11 +105,6 @@ public class RSFActionHandler implements ActionHandler {
   public ARIResult getARIResult() {
     return ariresult;
   }
-
-  // Since this entire bean is request scope, there is no difficulty with
-  // letting the action result escape from the wrapper into this instance
-  // variable.
-  private Object actionresult = null;
 
   private Object handleError(Object actionresult, Exception exception,
       TargettedMessageList messages) {
@@ -114,15 +118,23 @@ public class RSFActionHandler implements ActionHandler {
     for (int i = 0; i < messages.size(); ++i) {
       TargettedMessage message = messages.messageAt(i);
       if (message.exception != null) {
+        Throwable target = message.exception instanceof UniversalRuntimeException?
+            ((UniversalRuntimeException)message.exception).getTargetException() 
+            : message.exception;
         newcode = actionerrorstrategy.handleError((String) newcode,
-            message.exception, null, viewparams.viewID);
+            (Exception) target, null, viewparams.viewID);
+        if (newcode instanceof TargettedMessage) {
+          TargettedMessage retarget = (TargettedMessage) newcode;
+          retarget.targetid = message.targetid;
+          messages.setMessageAt(i, (TargettedMessage) newcode);
+        }
+        newcode = null;
       }
     }
     return newcode;
   }
 
   public ViewParameters handle() {
-    ThreadErrorState.beginRequest();
     final TargettedMessageList errors = ThreadErrorState.getErrorState().errors;
     final String actionmethod = PostDecoder.decodeAction(normalizedmap);
 
@@ -146,7 +158,7 @@ public class RSFActionHandler implements ActionHandler {
           }
           Object newcode = handleError(actionresult, exception, errors);
           exception = null;
-          if (newcode == null || newcode instanceof String) {
+          if ((newcode == null && !errors.isError()) || newcode instanceof String) {
             // only proceed to actually invoke action if no ARIResult already
             // note all this odd two-step procedure is only required to be able
             // to pass AES error returns and make them "appear" to be the
@@ -177,50 +189,9 @@ public class RSFActionHandler implements ActionHandler {
         }
       }).run();
       presmanager.scopePreserve();
+      
+      flowstatemanager.inferFlowState(viewparams, ariresult);
 
-      String prop = ariresult.propagatebeans; // propagation code for this cycle
-      ViewParameters newview = ariresult.resultingview;
-
-      if (!prop.equals(ARIResult.FLOW_END)
-          && !prop.equals(ARIResult.FLOW_ONESTEP)) {
-        // TODO: consider whether we want to allow ARI to allocate a NEW TOKEN
-        // for a FLOW FORK. Some call this, "continuations".
-        if (newview.flowtoken == null) {
-          if (prop.equals(ARIResult.FLOW_START)
-              || prop.equals(ARIResult.FLOW_FASTSTART)) {
-            // if the ARI wanted one and hasn't allocated one, allocate flow
-            // token.
-            newview.flowtoken = errorstatemanager.allocateToken();
-            // informalflowmanager.startFlow(newview.flowtoken);
-          }
-          else { // else assume existing flow continues.
-            if (viewparams.flowtoken == null) {
-              throw new IllegalStateException(
-                  "Cannot propagate flow state without active flow");
-            }
-            newview.flowtoken = viewparams.flowtoken;
-          }
-        }
-        // On a FLOW_START, **ONLY** the flow state itself is to be saved,
-        // since any other existing bean state will be non-flow or end-flow.
-        presmanager.preserve(newview.flowtoken, prop
-            .equals(ARIResult.FLOW_START));
-      }
-      else if (prop.equals(ARIResult.FLOW_ONESTEP)) {
-        if (viewparams.endflow != null || viewparams.flowtoken != null) {
-          throw new IllegalStateException(
-              "Cannot use one-step flow from previous flow state");
-        }
-        newview.flowtoken = errorstatemanager.allocateToken();
-        newview.endflow = "1";
-        presmanager.flowEnd(newview.flowtoken);
-      }
-      else { // it is a flow end.
-        if (viewparams.flowtoken != null) {
-          newview.endflow = "1";
-          presmanager.flowEnd(viewparams.flowtoken);
-        }
-      }
       // moved inside since this may itself cause an error!
       String submitting = PostDecoder.decodeSubmittingControl(normalizedmap);
       errorstatemanager.globaltargetid = submitting;
@@ -235,14 +206,15 @@ public class RSFActionHandler implements ActionHandler {
         ariresult = new ARIResult();
         ariresult.propagatebeans = ARIResult.FLOW_END;
 
-        ViewParameters defaultparameters = ves.handleException(e, viewparams);
+        ViewParameters defaultparameters = viewparams.copyBase();
         ariresult.resultingview = defaultparameters;
       }
     }
+    finally {
+      String errortoken = errorstatemanager.requestComplete();
 
-    String errortoken = errorstatemanager.requestComplete();
-
-    ariresult.resultingview.errortoken = errortoken;
+      ariresult.resultingview.errortoken = errortoken;
+    }
     return ariresult.resultingview;
   }
 

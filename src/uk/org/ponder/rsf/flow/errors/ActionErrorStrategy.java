@@ -28,8 +28,9 @@ public interface ActionErrorStrategy {
    * currently a part of. <code>null</code> if no flow is active.
    * @param viewID The current viewID. Never <code>null</code>
    * @return An action return code representing the new return code for
-   * this action cycle, if the error was successfully handled. <code>null</code> 
-   * if the error was not handled by this strategy.
+   * this action cycle, if the error was successfully handled, OR a 
+   * TargettedMessage if the error was converted into another error.
+   * Else <code>null</code> if the error was not handled by this strategy.
    */
   public Object handleError(String returncode, Exception exception, String flowstate,
       String viewID);

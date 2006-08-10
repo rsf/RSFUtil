@@ -3,9 +3,13 @@
  */
 package uk.org.ponder.rsf.processor;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import uk.org.ponder.errorutil.ErrorUtil;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.util.Logger;
+import uk.org.ponder.xml.XMLWriter;
 
 /**
  * The default FatalErrorHandler for RSF. In addition to logic to print a hardwired
@@ -23,8 +27,11 @@ public class DefaultFatalErrorHandler implements FatalErrorHandler {
     Logger.log.fatal("Completely fatal error populating view root", t);
 
     pos.println("<html><head><title>Internal Error</title></head></body><pre>");
-    pos.println("Fatal internal error handling request: " + t);
-    ErrorUtil.dumpStackTrace(t, pos);
+    pos.println("Fatal internal error handling request: ");
+    StringWriter todump = new StringWriter();
+    t.printStackTrace(new PrintWriter(todump));
+    XMLWriter xml = new XMLWriter(pos);
+    xml.write(todump.toString());
     pos.println("</pre></body></html>");
     pos.close();
     return true;

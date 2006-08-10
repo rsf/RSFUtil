@@ -29,6 +29,11 @@ public class RSVCApplier {
   private WriteableBeanLocator rbl;
   private BeanInvalidationModel bim;
   private BeanGuardProcessor beanGuardProcessor;
+  private boolean ignoreFossilizedValues = true;
+
+  public void setIgnoreFossilizedValues(boolean ignoreFossilizedValues) {
+    this.ignoreFossilizedValues = ignoreFossilizedValues;
+  }
 
   public void setBeanModelAlterer(BeanModelAlterer darapplier) {
     this.darapplier = darapplier;
@@ -65,7 +70,8 @@ public class RSVCApplier {
   
     for (int i = 0; i < rsvc.entries.size(); ++i) {
       SubmittedValueEntry sve = rsvc.entryAt(i);
-      if (sve.componentid != null) { // it is a component binding.
+      // check against "old" values
+      if (sve.componentid != null && !ignoreFossilizedValues) { 
         if (sve.oldvalue != null && sve.valuebinding != null) {
           versioncheckpolicy.checkOldVersion(sve); // will blow on error
 
