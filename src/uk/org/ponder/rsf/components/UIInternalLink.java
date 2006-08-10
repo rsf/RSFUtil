@@ -44,5 +44,22 @@ public class UIInternalLink extends UILink {
     return togo;
   }
 
+  /** Create a link which, while internal, does not participate in the
+   * ViewParameters system. This is largely useful for unmanaged environments
+   * such as SpringMVC/Cocoon. Cannot be named "make" to avoid clashing with
+   * UILink through ridiculous Java semantics on static methods.
+   */
+  public static UIInternalLink makeURL(UIContainer parent, String ID,
+      String target) {
+    UIInternalLink togo = new UIInternalLink();
+    togo.ID = ID;
+    togo.target = new UIOutput();
+    if (target != null) {
+      togo.target.setValue(target);
+    }
+    parent.addComponent(togo);
+    return togo;
+  }
+  
   public ViewParameters viewparams;
 }

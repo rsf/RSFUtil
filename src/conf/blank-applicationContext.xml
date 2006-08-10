@@ -70,6 +70,9 @@
 
   <bean name="baseURLProvider" parent="autoBaseURLProviderProxy" />
 
+  <bean name="internalBaseURLProvider" 
+    class="uk.org.ponder.rsf.viewstate.StaticInternalBaseURLProvider"/>
+    
   <!-- The two properties of sbup
     are only relevant to users of the direct UI, where the URL that it appears
     at is somehow "unexpected". In order to use these values, it is necessary

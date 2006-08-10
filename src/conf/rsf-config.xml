@@ -182,16 +182,13 @@
 
   <bean id="messageFixer"
     class="uk.org.ponder.rsf.componentprocessor.MessageFixer">
-    <property name="messageLocator">
-      <ref bean="messageLocator" />
-    </property>
+    <property name="messageLocator" ref="messageLocator"/>
   </bean>
 
   <bean id="viewParamsFixer"
     class="uk.org.ponder.rsf.componentprocessor.ViewParamsFixer">
-    <property name="viewStateHandler">
-      <ref bean="viewStateHandlerProxy" />
-    </property>
+    <property name="viewStateHandler" ref="viewStateHandlerProxy"/>
+    <property name="internalBaseURLProvider" ref="internalBaseURLProvider"/>
   </bean>
 
   <!-- Used when operating an HTML-like form system whereby submitting controls
