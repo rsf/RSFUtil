@@ -61,7 +61,8 @@ public class UISelect extends UIComponent implements FixableComponent {
     tofill.addComponent(togo);
     return togo;
   }
-
+// TODO: perhaps split this as a "postConstruct()" and "postFixup()" 
+// method. Will we actually ever have complex components?
   public void fixupComponent() {
     if (optionnames != null) {
       if (optionnames.valuebinding == null) {
