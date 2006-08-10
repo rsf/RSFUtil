@@ -37,6 +37,7 @@ import uk.org.ponder.stringutil.StringList;
 public class ContainmentFormChildFixer implements ComponentProcessor {
 
   private SAXalizerMappingContext mappingcontext;
+  private boolean renderfossilized;
 
   public void setMappingContext(SAXalizerMappingContext mappingcontext) {
     this.mappingcontext = mappingcontext;
@@ -52,6 +53,10 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
     }
   }
 
+  public void setRenderFossilizedForms(boolean renderfossilized) {
+    this.renderfossilized = renderfossilized;
+  }
+  
   private void registerComponent(UIForm toprocess, UIComponent child) {
     // TODO: produce some useful diagnostic on an attempt to create a nested
     // form. This is "presumably" forbidden in every dialect but HTML, and
@@ -62,6 +67,8 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
     if (child instanceof UIBound) {
       boolean getform = toprocess.type
           .equals(EarlyRequestParser.RENDER_REQUEST);
+      // in the case of an "unmanaged" form, this will generate submitting names
+      // that the processor is "not expecting" in repetitious cases. 
       if (RSFUtil.isBound(child) || getform) {
         String fullID = child.getFullID();
         String formID = toprocess.getFullID();

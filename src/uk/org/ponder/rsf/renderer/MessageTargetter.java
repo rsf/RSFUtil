@@ -80,7 +80,7 @@ public class MessageTargetter {
       // TODO: what if action has, despite errors, insisted on redirecting to
       // a DIFFERENT view?
       if (target == null) {
-        Logger.log.warn("Warning: Message " + message.messagecode
+        Logger.log.warn("Warning: Message " + message.acquireMessageCode()
             + " queued for nonexistent component ID " + message.targetid);
       }
       else {
@@ -124,7 +124,8 @@ public class MessageTargetter {
       }
       else {
         // well noone can say we didn't try our darndest to deliver this message.
-        Logger.log.error("Unable to deliver message " + message.messagecode +
+        Logger.log.error("Unable to deliver message " + 
+            message.acquireMessageCode() +
             " targetted at " + message.targetid);
       }
     }

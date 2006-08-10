@@ -51,12 +51,8 @@
 
   <bean id="handlerResolver"
     class="uk.org.ponder.rsf.processor.DefaultHandlerResolver">
-    <property name="renderHandler">
-      <ref bean="RSFRenderHandler" />
-    </property>
-    <property name="actionHandler">
-      <ref bean="RSFActionHandler" />
-    </property>
+    <property name="renderHandler" ref="RSFRenderHandler"/>
+    <property name="actionHandler" ref="RSFActionHandler"/>
   </bean>
 
   <bean id="contentTypeInfoFactory"
@@ -109,13 +105,19 @@
     <property name="httpServletResponse" ref="httpServletResponse" />
   </bean>
 
+  <!-- An uncensored BeanLocator suitable to be the target of internal EL
+  expressions, filled out with any fallback beans -->
+  <bean id="ELTargetBeanLocator" class="uk.org.ponder.beanutil.FallbackCapableBeanLocator">
+    <property name="beanLocator" ref="requestBeanLocator" />
+    <property name="fallbackBeans" ref="fallbackBeans" />
+  </bean>
+  
   <!-- The "censored" bean locator into which it is safe to resolve EL
     expressions coming in over the request -->
   <bean id="RSACSafeBeanLocator"
-    class="uk.org.ponder.beanutil.BeanContainerWrapper">
-    <property name="beanLocator" ref="requestBeanLocator" />
-    <property name="permittedBeanRoots" ref="requestAddressibleBeans" />
-    <property name="fallbackBeans" ref="fallbackBeans" />
+    class="uk.org.ponder.beanutil.SecuredBeanLocator">
+    <property name="beanLocator" ref="ELTargetBeanLocator" />
+    <property name="permittedBeanRoots" ref="totalRequestAddressibleBeans" />
   </bean>
 
   <bean id="ELEvaluator" class="uk.org.ponder.beanutil.ELEvaluator">
@@ -125,15 +127,9 @@
 
   <bean id="viewParameters"
     class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-    <property name="singleton">
-      <value>true</value>
-    </property>
-    <property name="targetObject">
-      <ref bean="viewParametersParser" />
-    </property>
-    <property name="targetMethod">
-      <value>parse</value>
-    </property>
+    <property name="singleton" value="true"/>
+    <property name="targetObject" ref="viewParametersParser"/>
+    <property name="targetMethod" value="parse"/>
     <property name="arguments">
       <list>
         <ref local="requestPathInfo" />
@@ -176,6 +172,7 @@
     <property name="beanModelAlterer" ref="DARApplier" />
     <property name="beanInvalidationModel" ref="beanInvalidationModel" />
     <property name="beanGuardProcessor" ref="beanGuardProcessor" />
+    <property name="ignoreFossilizedValues" ref="ignoreFossilizedValues"/>
   </bean>
 
   <!--  requires input of requestRSVC in order to fix up errors at the
@@ -183,15 +180,9 @@
   <bean id="errorStateManager"
     class="uk.org.ponder.rsf.state.ErrorStateManager"
     init-method="init">
-    <property name="TSHolder">
-      <ref bean="bandgapStateHolder" />
-    </property>
-    <property name="viewParameters">
-      <ref local="viewParameters" />
-    </property>
-    <property name="requestRSVC">
-      <ref local="requestRSVC" />
-    </property>
+    <property name="TSHolder" ref="bandgapStateHolder"/>
+    <property name="viewParameters" ref="viewParameters"/>
+    <property name="requestRSVC" ref="requestRSVC"/>
   </bean>
 
   <bean id="statePreservationManager"
@@ -255,6 +246,13 @@
     <property name="decoratorManager" ref="decoratorManager" />
   </bean>
 
+  <bean id="flowStateManager"
+    class="uk.org.ponder.rsf.flow.FlowStateManager">
+    <property name="errorStateManager" ref="errorStateManager" />
+    <property name="statePreservationManager"
+      ref="statePreservationManager" />
+  </bean>
+
   <bean id="RSFActionHandler"
     class="uk.org.ponder.rsf.processor.RSFActionHandler"
     lazy-init="true">
@@ -270,6 +268,7 @@
     <property name="viewExceptionStrategy" ref="viewExceptionStrategy" />
     <property name="actionErrorStrategy"
       ref="actionErrorStrategyManager" />
+    <property name="flowStateManager" ref="flowStateManager" />
   </bean>
 
   <bean id="ARIResult" factory-bean="actionHandler"
@@ -290,18 +289,11 @@
     class="uk.org.ponder.rsf.flow.lite.FlowActionProxyBean"
     abstract="true">
     <property name="reflectiveCache" ref="reflectiveCache" />
-    <property name="beanLocator">
-      <ref bean="requestBeanLocator" />
-    </property>
-    <property name="viewParameters">
-      <ref bean="viewParameters" />
-    </property>
-    <property name="flowIDHolder">
-      <ref bean="flowLite-flowIDHolder" />
-    </property>
-    <property name="actionErrorStrategy">
-      <ref bean="actionErrorStrategyManager" />
-    </property>
+    <property name="beanLocator" ref="requestBeanLocator"/>
+    <property name="viewParameters" ref="viewParameters"/>
+    <property name="flowIDHolder" ref="flowLite-flowIDHolder"/>
+    <property name="actionErrorStrategy"
+      ref="actionErrorStrategyManager"/>
   </bean>
 
   <!-- End beans for FlowLite -->
@@ -325,27 +317,19 @@
 
   <bean id="formFixer"
     class="uk.org.ponder.rsf.componentprocessor.DefaultFormFixer">
-    <property name="viewParameters">
-      <ref local="viewParameters" />
-    </property>
-    <property name="viewStateHandler">
-      <ref bean="viewStateHandler" />
-    </property>
-    <!--
-      <property name="view">
-      <ref bean="view"/>
-      </property>-->
-    <property name="outgoingParams">
-      <ref bean="outgoingParams" />
-    </property>
+    <property name="viewParameters" ref="viewParameters"/>
+    <property name="viewStateHandler" ref="viewStateHandler"/>
+    <property name="URLRewriter" ref="URLRewriter"/>
+    <property name="outgoingParams" ref="outgoingParams"/>
   </bean>
 
   <bean id="valueFixer"
     class="uk.org.ponder.rsf.componentprocessor.ValueFixer">
-    <property name="beanLocator" ref="RSACSafeBeanLocator" />
+    <property name="beanLocator" ref="ELTargetBeanLocator" />
     <property name="modelAlterer" ref="DARApplier" />
     <property name="fossilizedConverter" ref="fossilizedConverter" />
     <property name="errorStateManager" ref="errorStateManager" />
+    <property name="renderFossilizedForms" ref="renderFossilizedForms"/>
   </bean>
 
   <!-- End "fixer" beans" -->
@@ -369,18 +353,12 @@
   <bean id="renderHandlerBracketer"
     class="uk.org.ponder.rsf.processor.RenderHandlerBracketer"
     lazy-init="true">
-    <property name="errorStateManager">
-      <ref local="errorStateManager" />
-    </property>
-    <property name="viewExceptionStrategy">
-      <ref bean="viewExceptionStrategy" />
-    </property>
-    <property name="viewParameters">
-      <ref local="viewParameters" />
-    </property>
-    <property name="renderHandler">
-      <ref bean="renderHandler" />
-    </property>
+    <property name="errorStateManager" ref="errorStateManager"/>
+    <property name="viewExceptionStrategy"
+      ref="viewExceptionStrategy"/>
+    <property name="viewParameters" ref="viewParameters"/>
+    <property name="renderHandler" ref="renderHandler"/>
+    <property name="redirectOnLevel1Error" ref="redirectOnLevel1Error"/>
   </bean>
 
   <!-- achieve two things here with laziness - renderHandler is not resolved in non-POST requests,
@@ -388,26 +366,14 @@
   <bean id="RSFRenderHandler"
     class="uk.org.ponder.rsf.processor.RSFRenderHandler"
     lazy-init="true">
-    <property name="errorStateManager">
-      <ref local="errorStateManager" />
-    </property>
-    <property name="viewParameters">
-      <ref local="viewParameters" />
-    </property>
-    <property name="viewGenerator">
-      <ref bean="viewGenerator" />
-    </property>
-    <property name="alterationWrapper">
-      <ref bean="alterationWrapper" />
-    </property>
-    <property name="statePreservationManager">
-      <ref local="statePreservationManager" />
-    </property>
-    <property name="viewProcessor">
-      <ref bean="viewProcessor" />
-    </property>
-    <property name="viewRender">
-      <ref bean="viewRender" />
-    </property>
+    <property name="errorStateManager" ref="errorStateManager"/>
+    <property name="viewParameters" ref="viewParameters"/>
+    <property name="viewGenerator" ref="viewGenerator"/>
+    <property name="alterationWrapper" ref="alterationWrapper"/>
+    <property name="statePreservationManager"
+      ref="statePreservationManager"/>
+    <property name="viewProcessor" ref="viewProcessor"/>
+    <property name="viewRender" ref="viewRender"/>
+    <property name="targettedMessageList" ref="targettedMessageList"/>
   </bean>
 </beans>

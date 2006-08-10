@@ -18,83 +18,62 @@
 
   <!-- A null "consumertype" field in this object will be treated as an 
     empty object. An "unreasonable bean". -->
-  <bean name="consumerInfo" class="uk.org.ponder.webapputil.ConsumerInfo">
+  <bean name="consumerInfo"
+    class="uk.org.ponder.webapputil.ConsumerInfo">
   </bean>
 
-<!-- TODO: Move all preservers and lists of them into application scope. -->
+  <!-- A list of the targetted messages accumulated during this request cycle. -->
+  <bean name="targettedMessageList" factory-bean="errorStateManager"
+    factory-method="getTargettedMessageList"/>
+
+  <bean id="redirectOnLevel1Error"
+    class="uk.org.ponder.springutil.BooleanFactory">
+    <property name="value" value="true" />
+  </bean>
+  
+  <bean id="renderFossilizedForms"
+    class="uk.org.ponder.springutil.BooleanFactory">
+    <property name="value" value="true"/>
+  </bean>
+
+  <!-- TODO: Move all preservers and lists of them into application scope. -->
   <bean id="defaultRSVCPreserver"
     class="uk.org.ponder.rsf.preservation.RSVCPreservationStrategy">
-    <property name="requestRSVC">
-      <ref bean="requestRSVC" />
-    </property>
-    <property name="preservingBeans">
-      <ref bean="requestAddressibleBeans" />
-    </property>
-    <property name="tokenStateHolder">
-      <ref bean="bandgapStateHolder" />
-    </property>
-    <property name="RSVCApplier">
-      <ref bean="RSVCApplier" />
-    </property>
+    <property name="requestRSVC" ref="requestRSVC" />
+    <property name="preservingBeans" ref="totalRequestAddressibleBeans" />
+    <property name="tokenStateHolder" ref="bandgapStateHolder" />
+    <property name="RSVCApplier" ref="RSVCApplier" />
   </bean>
 
   <bean id="requestFlowStatePreserver"
     class="uk.org.ponder.rsf.preservation.InURLPreservationStrategy">
-    <property name="beanModelAlterer">
-      <ref bean="DARApplier" />
-    </property>
-    <property name="requestMap">
-      <ref bean="requestMap" />
-    </property>
-    <property name="preservingBeanSpecs">
-      <ref bean="URLPreservingBeanSpecs" />
-    </property>
-    <property name="outgoingParams">
-      <ref bean="outgoingParams" />
-    </property>
+    <property name="beanModelAlterer" ref="DARApplier" />
+    <property name="requestMap" ref="requestMap" />
+    <property name="preservingBeanSpecs" ref="URLPreservingBeanSpecs" />
+    <property name="outgoingParams" ref="outgoingParams" />
   </bean>
-
 
 
   <bean id="defaultBeanCopyPreserver"
     class="uk.org.ponder.rsf.preservation.BeanCopyPreservationStrategy">
-    <property name="preservingBeans">
-      <ref bean="copyPreservingBeans" />
-    </property>
-    <property name="tokenStateHolder">
-      <ref bean="flowTokenStateHolder" />
-    </property>
-    <property name="beanModelAlterer">
-      <ref bean="DARApplier" />
-    </property>
+    <property name="preservingBeans" ref="copyPreservingBeans" />
+    <property name="tokenStateHolder" ref="flowTokenStateHolder" />
+    <property name="beanModelAlterer" ref="DARApplier" />
   </bean>
-
 
   <bean id="endFlowPreserver"
     class="uk.org.ponder.rsf.preservation.BeanCopyPreservationStrategy">
-    <property name="preservingBeans">
-      <ref bean="copyPreservingBeans" />
-    </property>
-    <property name="tokenStateHolder">
-      <ref bean="bandgapStateHolder" />
-    </property>
-    <property name="beanModelAlterer">
-      <ref bean="DARApplier" />
-    </property>
+    <property name="preservingBeans" ref="copyPreservingBeans" />
+    <property name="tokenStateHolder" ref="bandgapStateHolder" />
+    <property name="beanModelAlterer" ref="DARApplier" />
   </bean>
 
   <!-- Use this unless you are preserving the flowIDHolder by other means -->
   <bean id="flowScopeFlowStatePreserver"
     class="uk.org.ponder.rsf.preservation.BeanCopyPreservationStrategy">
-    <property name="tokenStateHolder">
-      <ref bean="flowTokenStateHolder" />
-    </property>
-    <property name="preservingBeans">
-      <ref bean="flowOnlyPreservingBeans" />
-    </property>
-    <property name="beanModelAlterer">
-      <ref bean="DARApplier" />
-    </property>
+    <property name="tokenStateHolder" ref="flowTokenStateHolder" />
+    <property name="preservingBeans" ref="flowOnlyPreservingBeans" />
+    <property name="beanModelAlterer" ref="DARApplier" />
   </bean>
 
   <bean id="statePreservationStrategies"
@@ -130,13 +109,14 @@
     it will block. -->
   <bean id="alterationWrapper"
     class="uk.org.ponder.rsf.flow.BasicScopedAlterationWrapper">
-    <property name="flowIDHolder" ref="flowLite-flowIDHolder"/>
-    <property name="lockGetter" ref="inMemoryLockGetter"/>
-    <property name="scopeLocks" ref="scopeLocks"/>
+    <property name="flowIDHolder" ref="flowLite-flowIDHolder" />
+    <property name="lockGetter" ref="inMemoryLockGetter" />
+    <property name="scopeLocks" ref="scopeLocks" />
   </bean>
 
   <!-- A template for BeanExploders -->
-  <bean id="beanExploder" class="uk.org.ponder.beanutil.entity.BeanExploder"
+  <bean id="beanExploder"
+    class="uk.org.ponder.beanutil.entity.BeanExploder"
     abstract="true">
     <property name="deepBeanCloner" ref="deepBeanCloner"></property>
   </bean>

@@ -32,7 +32,8 @@ public class ValueFixer implements ComponentProcessor {
   private BeanLocator beanlocator;
   private BeanModelAlterer alterer;
   private RequestSubmittedValueCache rsvc;
-  //private ErrorStateManager errorStateManager;
+  // private ErrorStateManager errorStateManager;
+  private boolean renderfossilized;
 
   public void setBeanLocator(BeanLocator beanlocator) {
     this.beanlocator = beanlocator;
@@ -42,14 +43,18 @@ public class ValueFixer implements ComponentProcessor {
     this.alterer = alterer;
   }
 
+  public void setRenderFossilizedForms(boolean renderfossilized) {
+    this.renderfossilized = renderfossilized;
+  }
+
   public void setErrorStateManager(ErrorStateManager errorStateManager) {
-    //this.errorStateManager = errorStateManager;
-    if (errorStateManager.errorstate != null) {
+    // this.errorStateManager = errorStateManager;
+    if (errorStateManager.errorstate.rsvc != null) {
       rsvc = errorStateManager.errorstate.rsvc;
     }
-    else rsvc = new RequestSubmittedValueCache();
+    else
+      rsvc = new RequestSubmittedValueCache();
   }
-  
 
   // This dependency is here so we can free FC from instance wiring cycle on
   // RenderSystem. A slight loss of efficiency since this component may never
@@ -65,12 +70,15 @@ public class ValueFixer implements ComponentProcessor {
       UIBound toprocess = (UIBound) toprocesso;
       // If there is a value in the SVE, return it to the control.
       SubmittedValueEntry sve = rsvc.byID(toprocess.getFullID());
+      boolean hadcached = false;
+      Object modelvalue = null;
       if (sve != null) {
         toprocess.updateValue(sve.newvalue);
+        hadcached = true;
       }
-      else if (toprocess.valuebinding != null
-          && (toprocess.acquireValue() == null || UITypes
-              .isPlaceholder(toprocess.acquireValue()))) {
+      if (toprocess.valuebinding != null
+          && (toprocess.acquireValue() == null
+              || UITypes.isPlaceholder(toprocess.acquireValue()) || hadcached)) {
         // a bound component ALWAYS contains a value of the correct type.
         Object oldvalue = toprocess.acquireValue();
         String stripbinding = toprocess.valuebinding.value;
@@ -86,7 +94,10 @@ public class ValueFixer implements ComponentProcessor {
           Logger.log.info("Error resolving EL reference " + stripbinding, e);
         }
         if (flatvalue != null) {
-          toprocess.updateValue(flatvalue);
+          modelvalue = flatvalue;
+          if (!hadcached) {
+            toprocess.updateValue(flatvalue);
+          }
         }
       }
       if (toprocess.submittingname == null) {
@@ -98,15 +109,21 @@ public class ValueFixer implements ComponentProcessor {
         // create
         // more classes that renderer could recognise to compute bindings, and
         // increase its knowledge about the rest of RSF.
-        if (toprocess.fossilize && toprocess.fossilizedbinding == null) {
+        if (toprocess.fossilize && toprocess.fossilizedbinding == null
+            && renderfossilized) {
           UIParameter fossilized = fossilizedconverter
-              .computeFossilizedBinding(toprocess);
+              .computeFossilizedBinding(toprocess, modelvalue);
           toprocess.fossilizedbinding = fossilized;
         }
         if (toprocess.darreshaper != null) {
           toprocess.fossilizedshaper = fossilizedconverter
               .computeReshaperBinding(toprocess);
         }
+      }
+      if (toprocess.acquireValue() == null) {
+        throw new IllegalArgumentException(
+            "Error following value fixup: null bound value found in component "
+                + toprocess + " with full ID " + toprocess.getFullID());
       }
     }
   }

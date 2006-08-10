@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.rsf.processor;
 
+import uk.org.ponder.errorutil.TargettedMessageList;
 import uk.org.ponder.rsf.componentprocessor.ViewProcessor;
 import uk.org.ponder.rsf.preservation.StatePreservationManager;
 import uk.org.ponder.rsf.renderer.ViewRender;
@@ -31,6 +32,11 @@ public class RSFRenderHandler implements RenderHandler {
 
   private StatePreservationManager presmanager;
   private ViewRender viewrender;
+  private TargettedMessageList targettedMessageList;
+
+  public void setTargettedMessageList(TargettedMessageList targettedMessageList) {
+    this.targettedMessageList = targettedMessageList;
+  }
 
   public void setViewGenerator(ViewGenerator viewgenerator) {
     this.viewgenerator = viewgenerator;
@@ -85,12 +91,10 @@ public class RSFRenderHandler implements RenderHandler {
         view = viewprocessor.getProcessedView();
       }
     }).run();
-
-    if (errorstatemanager.errorstate != null) {
-      viewrender.setMessages(errorstatemanager.errorstate.errors);
-      viewrender
+    viewrender.setMessages(targettedMessageList);
+    // TODO: globaltargetid detection has not been investigated for a while
+    viewrender
           .setGlobalMessageTarget(errorstatemanager.errorstate.globaltargetid);
-    }
     viewrender.setView(view);
     viewrender.render(pos);
   }

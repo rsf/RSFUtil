@@ -160,7 +160,7 @@ public class FossilizedConverter {
    */
   // NB! UIType is hardwired to use the static StringArrayParser, to avoid a
   // wireup graph cycle of FossilizedConverter on the HTMLRenderSystem.
-  public UIParameter computeFossilizedBinding(UIBound togenerate) {
+  public UIParameter computeFossilizedBinding(UIBound togenerate, Object modelvalue) {
     if (!togenerate.fossilize) {
       throw new IllegalArgumentException("Cannot compute fossilized binding "
           + "for non-fossilizing component with ID " + togenerate.getFullID());
@@ -168,7 +168,13 @@ public class FossilizedConverter {
     UIParameter togo = new UIParameter();
     togo.name = togenerate.submittingname + FOSSIL_SUFFIX;
     String oldvaluestring = null;
-    Object oldvalue = togenerate.acquireValue();
+    Object oldvalue = modelvalue == null? togenerate.acquireValue() : modelvalue;
+    if (oldvalue == null) {
+      throw new IllegalArgumentException(
+          "Error: cannot compute fossilized binding for component with full ID " + togenerate.getFullID()
+          + " since bound value is null");
+          
+    }
     UIType type = UITypes.forObject(oldvalue);
 
     if (type != null) {
@@ -234,8 +240,7 @@ public class FossilizedConverter {
             requiredclass, newvalues[0]);
         // The only non-erroneous case here is where newvalue is String[], and
         // oldvalue is some scalar type. Should new UITypes arise, this will
-        // need
-        // to be reviewed.
+        // need to be reviewed.
       }
 
     }

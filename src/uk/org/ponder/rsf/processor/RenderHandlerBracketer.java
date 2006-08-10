@@ -31,9 +31,14 @@ public class RenderHandlerBracketer {
   private ErrorStateManager errorstatemanager;
   private ViewParameters viewparams;
   private RenderHandler renderhandler;
+  private boolean redirectlevel1 = true;
 
   public void setViewExceptionStrategy(ViewExceptionStrategy ves) {
     this.ves = ves;
+  }
+  
+  public void setRedirectOnLevel1Error(boolean redirectlevel1) {
+    this.redirectlevel1 = redirectlevel1;
   }
   
   public void setErrorStateManager(ErrorStateManager errorstatemanager) {
@@ -55,7 +60,6 @@ public class RenderHandlerBracketer {
     boolean iserrorredirect = viewparams.errorredirect != null;
     // YES, reach into the original request! somewhat bad...
     viewparams.errorredirect = null;
-    ThreadErrorState.beginRequest();
     try {
       if (viewparams instanceof ErrorViewParameters) {
         throw UniversalRuntimeException.accumulate(new MalformedURLException(), 
@@ -89,7 +93,8 @@ public class RenderHandlerBracketer {
     }
 
     if (target instanceof ConfigurationException || target instanceof Error
-        || target instanceof PermissionException || iserrorredirect) {
+        || target instanceof PermissionException || iserrorredirect || 
+        !redirectlevel1) {
       throw invest;
     }
 

@@ -62,13 +62,23 @@ public class ErrorStateManager {
 
   public void init() {
     if (viewparams.errortoken != null) {
-      errorstate = (ErrorTokenState) errortsholder
+      ErrorTokenState storederrorstate = (ErrorTokenState) errortsholder
           .getTokenState(viewparams.errortoken);
-      if (errorstate == null) {
+      if (storederrorstate == null) {
         Logger.log.warn("Client requested error state " + viewparams.errortoken
             + " which has expired from the cache");
       }
+      else {
+        errorstate = storederrorstate;
+      }
     }
+    else {
+      errorstate = new ErrorTokenState();
+    }
+  }
+  
+  public TargettedMessageList getTargettedMessageList() {
+    return errorstate.errors;
   }
 
   public void setRequestRSVC(RequestSubmittedValueCache requestrsvc) {
@@ -82,8 +92,7 @@ public class ErrorStateManager {
   }
 
   public String allocateOutgoingToken() {
-    if (errorstate == null) {
-      errorstate = new ErrorTokenState();
+    if (errorstate.tokenID == null) {
       errorstate.tokenID = viewparams.errortoken == null ? allocateToken()
           : viewparams.errortoken;
     }
@@ -136,34 +145,28 @@ public class ErrorStateManager {
    *         there is no error.
    */
   public String requestComplete() {
-    try {
-      if (ThreadErrorState.isError()) {
-        TargettedMessageList errors = ThreadErrorState.getErrorState().errors;
-        // the errors arose from this cycle, and hence must be referred to
-        // by SVEs from this cycle. If it is a GET cycle, rsvc will be empty,
-        // but then all errors will have global target.
-        fixupErrors(errors, requestrsvc);
+    if (ThreadErrorState.isError()) {
+      TargettedMessageList errors = ThreadErrorState.getErrorState().errors;
+      // the errors arose from this cycle, and hence must be referred to
+      // by SVEs from this cycle. If it is a GET cycle, rsvc will be empty,
+      // but then all errors will have global target.
+      fixupErrors(errors, requestrsvc);
 
-        allocateOutgoingToken();
-        errorstate.globaltargetid = globaltargetid;
-        errorstate.rsvc = requestrsvc;
-        errorstate.errors = errors;
-        Logger.log.info(errorstate.rsvc.entries.size()
-            + " RSVC values stored under error token " + errorstate.tokenID);
-        errortsholder.putTokenState(errorstate.tokenID, errorstate);
-        return errorstate.tokenID;
-      }
-      else {
-        if (errorstate != null) {
-          errortsholder.clearTokenState(errorstate.tokenID);
-        }
-        return null;
-      }
+      allocateOutgoingToken();
+      errorstate.globaltargetid = globaltargetid;
+      errorstate.rsvc = requestrsvc;
+      errorstate.errors = errors;
+      Logger.log.info(errorstate.rsvc.entries.size()
+          + " RSVC values stored under error token " + errorstate.tokenID);
+      errortsholder.putTokenState(errorstate.tokenID, errorstate);
+      return errorstate.tokenID;
     }
-    finally {
-      ThreadErrorState.endRequest();
+    else {
+      if (errorstate.tokenID != null) {
+        errortsholder.clearTokenState(errorstate.tokenID);
+      }
+      return null;
     }
-
   }
 
 }

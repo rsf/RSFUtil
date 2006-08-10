@@ -16,6 +16,7 @@ import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.TargettedMessageList;
 import uk.org.ponder.mapping.BeanInvalidationModel;
 import uk.org.ponder.springutil.errors.SpringErrorConverter;
+import uk.org.ponder.util.UniversalRuntimeException;
 
 public class BeanGuardProcessor implements ApplicationContextAware {
 
@@ -36,6 +37,7 @@ public class BeanGuardProcessor implements ApplicationContextAware {
   
   public void processPostGuards(BeanInvalidationModel bim, TargettedMessageList errors, 
       WriteableBeanLocator rbl) {
+    BindException springerrors = null;
     for (int i = 0; i < guards.length; ++ i) {
       BeanGuard guarddef = guards[i];
       String mode = guarddef.getGuardMode();
@@ -64,10 +66,10 @@ public class BeanGuardProcessor implements ApplicationContextAware {
             }
             else if (guard instanceof Validator) {
               Validator guardv = (Validator) guard;
-              Errors temperrors = new BindException(guarded, guardedpath);
+              springerrors = new BindException(guarded, guardedpath);
               // TODO: We could try to store this excess info somewhere.
-              guardv.validate(guarded, temperrors);
-              SpringErrorConverter.appendErrors(errors, temperrors);
+              guardv.validate(guarded, springerrors);
+              SpringErrorConverter.appendErrors(errors, springerrors);
             }
           }
           catch (Exception e) {
@@ -77,6 +79,9 @@ public class BeanGuardProcessor implements ApplicationContextAware {
         }
       }
     }
+//    if (springerrors != null) {
+//      throw UniversalRuntimeException.accumulate(springerrors);
+//    }
   }
 
   
