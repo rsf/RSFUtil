@@ -16,6 +16,7 @@ import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
+import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UIOutputMultiline;
@@ -278,7 +279,8 @@ public class BasicHTMLRenderSystem implements RenderSystem {
           for (int i = 0; i < names.length; ++i) {
             pos.print("<option value=\"");
             String value = values[i];
-            if (value == null) value = Constants.NULL_STRING;
+            if (value == null)
+              value = Constants.NULL_STRING;
             xmlw.write(value);
             if (select.selected.contains(value)) {
               pos.print("\" selected=\"true");
@@ -328,12 +330,14 @@ public class BasicHTMLRenderSystem implements RenderSystem {
             throw new IllegalArgumentException("Empty URL in UILink at "
                 + torender.getFullID());
           }
-          URLRewriteSCR urlrewriter = (URLRewriteSCR) scrc
-              .getSCR(URLRewriteSCR.NAME);
-          if (!URLUtil.isAbsolute(target)) {
-            String rewritten = urlrewriter.resolveURL(target);
-            if (rewritten != null)
-              target = rewritten;
+          if (!(torendero instanceof UIInternalLink)) {
+            URLRewriteSCR urlrewriter = (URLRewriteSCR) scrc
+                .getSCR(URLRewriteSCR.NAME);
+            if (!URLUtil.isAbsolute(target)) {
+              String rewritten = urlrewriter.resolveURL(target);
+              if (rewritten != null)
+                target = rewritten;
+            }
           }
           attrcopy.put(attrname, target);
         }
