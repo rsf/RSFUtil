@@ -237,6 +237,11 @@ public class BasicHTMLRenderSystem implements RenderSystem {
           if (torendero instanceof UIInput) {
             value = ((UIInput) torender).getValue();
             if (uselump.textEquals("<textarea ")) {
+              if (UITypes.isPlaceholder(value)) {
+                // FORCE a blank value for input components if nothing from 
+                // model.
+                value = "";
+              }
               body = value;
             }
             else {
