@@ -55,14 +55,14 @@
 
   <bean id="defaultBeanCopyPreserver"
     class="uk.org.ponder.rsf.preservation.BeanCopyPreservationStrategy">
-    <property name="preservingBeans" ref="copyPreservingBeans" />
+    <property name="preservingBeans" ref="totalCopyPreservingBeans" />
     <property name="tokenStateHolder" ref="flowTokenStateHolder" />
     <property name="beanModelAlterer" ref="DARApplier" />
   </bean>
 
   <bean id="endFlowPreserver"
     class="uk.org.ponder.rsf.preservation.BeanCopyPreservationStrategy">
-    <property name="preservingBeans" ref="copyPreservingBeans" />
+    <property name="preservingBeans" ref="totalCopyPreservingBeans" />
     <property name="tokenStateHolder" ref="bandgapStateHolder" />
     <property name="beanModelAlterer" ref="DARApplier" />
   </bean>

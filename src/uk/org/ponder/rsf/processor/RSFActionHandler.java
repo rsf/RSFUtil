@@ -30,7 +30,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
-public class RSFActionHandler implements ActionHandler {
+public class RSFActionHandler implements ActionHandler, ErrorHandler {
   // application-scope dependencies
   private ARIResolver ariresolver;
   private RunnableWrapper postwrapper;
@@ -45,6 +45,7 @@ public class RSFActionHandler implements ActionHandler {
   private ViewExceptionStrategy ves;
   private ActionErrorStrategy actionerrorstrategy;
   private FlowStateManager flowstatemanager;
+  private TargettedMessageList messages;
 
   public void setFlowStateManager(FlowStateManager flowstatemanager) {
     this.flowstatemanager = flowstatemanager;
@@ -90,6 +91,10 @@ public class RSFActionHandler implements ActionHandler {
     this.actionerrorstrategy = actionerrorstrategy;
   }
   
+  public void setTargettedMessageList(TargettedMessageList messages) {
+    this.messages = messages;
+  }
+  
 // The public ARIResult after all inference is concluded. 
   private ARIResult ariresult = null;
 // The original raw action result - cannot make this final for wrapper access
@@ -106,36 +111,34 @@ public class RSFActionHandler implements ActionHandler {
     return ariresult;
   }
 
-  private Object handleError(Object actionresult, Exception exception,
-      TargettedMessageList messages) {
-    // an ARIResult is at the end-of-line.
+  public Object handleError(Object actionresult, Exception exception) {
+    // an ARIResult is at the end-of-line - this is now unsupported though.
     if (actionresult != null && !(actionresult instanceof String))
       return actionresult;
+    TargettedMessage tmessage = new TargettedMessage();
     Object newcode = actionerrorstrategy.handleError((String) actionresult,
-        exception, null, viewparams.viewID);
+        exception, null, viewparams.viewID, tmessage);
+
     if (newcode != null && !(newcode instanceof String))
-      return actionresult;
+      return newcode;
     for (int i = 0; i < messages.size(); ++i) {
       TargettedMessage message = messages.messageAt(i);
       if (message.exception != null) {
         Throwable target = message.exception instanceof UniversalRuntimeException?
             ((UniversalRuntimeException)message.exception).getTargetException() 
             : message.exception;
-        newcode = actionerrorstrategy.handleError((String) newcode,
-            (Exception) target, null, viewparams.viewID);
-        if (newcode instanceof TargettedMessage) {
-          TargettedMessage retarget = (TargettedMessage) newcode;
-          retarget.targetid = message.targetid;
-          messages.setMessageAt(i, (TargettedMessage) newcode);
-        }
-        newcode = null;
+        Object testcode = actionerrorstrategy.handleError((String) newcode,
+            (Exception) target, null, viewparams.viewID, message);
+        if (testcode != null) newcode = testcode;
       }
+    }
+    if (tmessage.messagecodes != null) {
+      messages.addMessage(tmessage);
     }
     return newcode;
   }
 
   public ViewParameters handle() {
-    final TargettedMessageList errors = ThreadErrorState.getErrorState().errors;
     final String actionmethod = PostDecoder.decodeAction(normalizedmap);
 
     try {
@@ -156,9 +159,9 @@ public class RSFActionHandler implements ActionHandler {
           catch (Exception e) {
             exception = e;
           }
-          Object newcode = handleError(actionresult, exception, errors);
+          Object newcode = handleError(actionresult, exception);
           exception = null;
-          if ((newcode == null && !errors.isError()) || newcode instanceof String) {
+          if ((newcode == null && !messages.isError()) || newcode instanceof String) {
             // only proceed to actually invoke action if no ARIResult already
             // note all this odd two-step procedure is only required to be able
             // to pass AES error returns and make them "appear" to be the
@@ -172,7 +175,7 @@ public class RSFActionHandler implements ActionHandler {
             catch (Exception e) {
               exception = e;
             }
-            newcode = handleError(actionresult, exception, errors);
+            newcode = handleError(actionresult, exception);
           }
           if (newcode != null)
             actionresult = newcode;
