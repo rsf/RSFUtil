@@ -70,11 +70,10 @@ public class ErrorStateManager {
       }
       else {
         errorstate = storederrorstate;
+        return;
       }
     }
-    else {
-      errorstate = new ErrorTokenState();
-    }
+    errorstate = new ErrorTokenState();
   }
   
   public TargettedMessageList getTargettedMessageList() {

@@ -321,7 +321,7 @@
     <property name="viewStateHandler" ref="viewStateHandler"/>
     <property name="URLRewriter" ref="URLRewriter"/>
     <property name="outgoingParams" ref="outgoingParams"/>
-    <property name="internalBaseURLProvider" ref="internalBaseURLProvider"/>
+    <property name="internalURLRewriter" ref="internalURLRewriter"/>
   </bean>
 
   <bean id="valueFixer"

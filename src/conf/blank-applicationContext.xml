@@ -10,23 +10,18 @@
 <beans>
   <bean id="messageSource"
     class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-    <property name="basename">
-      <value>WEB-INF/messages/messages</value>
-    </property>
-    <property name="cacheSeconds">
-      <value>10</value>
-    </property>
+    <property name="basename" value="WEB-INF/messages/messages" />
+    <property name="cacheSeconds" value="10" />
   </bean>
 
   <bean id="messageLocator"
     class="uk.org.ponder.springutil.SpringMessageLocator">
-    <property name="messageSource">
-      <ref local="messageSource" />
-    </property>
+    <property name="messageSource" ref="messageSource" />
   </bean>
-  
-  <bean id="ignoreFossilizedValues" class="uk.org.ponder.springutil.BooleanFactory">
-    <property name="value" value="false"/>
+
+  <bean id="ignoreFossilizedValues"
+    class="uk.org.ponder.springutil.BooleanFactory">
+    <property name="value" value="false" />
   </bean>
 
   <bean id="fatalErrorHandler"
@@ -70,9 +65,15 @@
 
   <bean name="baseURLProvider" parent="autoBaseURLProviderProxy" />
 
-  <bean name="internalBaseURLProvider" 
-    class="uk.org.ponder.rsf.viewstate.StaticInternalBaseURLProvider"/>
-    
+  <bean name="contextURLProvider"
+    class="uk.org.ponder.rsf.viewstate.CRIContextURLProvider">
+    <property name="consumerInfo" ref="consumerInfoProxy" />
+    <property name="baseURLProvider" ref="baseURLProvider" />
+  </bean>
+
+  <bean name="internalURLRewriter"
+    class="uk.org.ponder.rsf.viewstate.NullInternalURLRewriter" />
+
   <!-- The two properties of sbup
     are only relevant to users of the direct UI, where the URL that it appears
     at is somehow "unexpected". In order to use these values, it is necessary
@@ -103,6 +104,7 @@
   <bean id="viewStateHandler"
     class="uk.org.ponder.rsf.viewstate.RSFServletViewStateHandler">
     <property name="baseURLProvider" ref="baseURLProvider" />
+    <property name="contextURLProvider" ref="contextURLProvider"/>
     <property name="consumerInfo" ref="consumerInfoProxy" />
     <property name="viewParamsMapper" ref="viewParamsMapper" />
     <property name="ultimateRenderers" ref="ultimateRenderers" />
@@ -202,6 +204,7 @@
       ref="templateExtensionInferrer" />
     <property name="templateResolverStrategy"
       ref="templateResolverStrategy" />
+    <property name="baseURLProvider" ref="baseURLProvider" />
   </bean>
 
   <bean id="contentTypeInfoMap"
@@ -241,20 +244,15 @@
   <bean id="CRITemplateResolverStrategy"
     class="uk.org.ponder.rsf.templateresolver.CRITemplateResolverStrategy"
     lazy-init="true">
-    <property name="baseDirectory">
-      <value>/content/templates/</value>
-    </property>
-    <property name="consumerInfo">
-      <ref bean="consumerInfoProxy" />
-    </property>
+    <property name="baseDirectory" value="content/templates/" />
+    <property name="consumerInfo" ref="consumerInfoProxy" />
+    <property name="contextURLProvider" ref="contextURLProvider" />
   </bean>
 
   <bean id="viewResolver"
     class="uk.org.ponder.rsf.view.ConcreteViewResolver"
     init-method="init">
-    <property name="views">
-      <ref bean="staticViews" />
-    </property>
+    <property name="views" ref="staticViews" />
     <property name="autoComponentProducerManager"
       ref="autoComponentProducerManager" />
     <property name="viewResolvers">
@@ -278,17 +276,27 @@
   </bean>
 
   <bean id="frameworkRABeans" parent="requestAddressibleParent">
-    <property name="value" value="flowLite-flowIDHolder, destroyscope"/>
+    <property name="value" value="flowLite-flowIDHolder, destroyscope" />
+  </bean>
+
+  <bean id="frameworkCPBeans" parent="copyPreservingParent">
+    <property name="value" value="flowLite-flowIDHolder" />
   </bean>
 
   <bean id="messageSourceTLAB" parent="requestAddressibleParent"
-      class="uk.org.ponder.springutil.ByClassTLAB">
-    <property name="targetClass" value="uk.org.ponder.errorutil.MessageLocator"/>
+    class="uk.org.ponder.springutil.ByClassTLAB">
+    <property name="targetClass"
+      value="uk.org.ponder.errorutil.MessageLocator" />
   </bean>
 
   <!-- Backwards compatibility for old-fashioned users of RAB :P -->
   <bean id="RABeanConformer" parent="requestAddressibleParent">
-    <property name="value" ref="requestAddressibleBeans"/>
+    <property name="value" ref="requestAddressibleBeans" />
+  </bean>
+
+  <!-- Backwards compatibility for old-fashioned users of CPB -->
+  <bean id="CPBeanConformer" parent="copyPreservingParent">
+    <property name="value" ref="copyPreservingBeans" />
   </bean>
 
   <!--  Why did we let IDHolder be addressible? Isn't it always overwritten
@@ -336,12 +344,10 @@
     </property>
   </bean>
 
+  <!-- Old-fashioned scheme for specifying beans which should be preserved
+    via reference copying -->
   <bean id="copyPreservingBeans"
-    class="uk.org.ponder.springutil.StringListFactory">
-    <property name="strings">
-      <value>flowLite-flowIDHolder</value>
-    </property>
-  </bean>
+    class="uk.org.ponder.stringutil.StringList" />
 
   <bean id="scopedBeanCoordinator"
     class="uk.org.ponder.rsf.state.scope.ScopedBeanCoordinator">

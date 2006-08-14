@@ -29,21 +29,21 @@ public class URLRewriter {
   }
   
   public String rewriteContextURL(String path) {
-    return viewstatehandler.getResourceURL(path
+    return viewstatehandler.encodeResourceURL(path
           .substring(CONTEXT_PREFIX.length()));
   }
   
   /**
    * relpath has leading slash removed.
    */
-  public String rewriteResourceURL(String path, String relpath) {
+  public String rewriteResourceURL(String path, String resourcebase) {
     String resourceURL = null;
     if (!URLUtil.isAbsolute(path) && path.charAt(0) != '/') {
       if (isContextURL(path)) {
         resourceURL = rewriteContextURL(path);
       }
       else {
-        resourceURL = viewstatehandler.getResourceURL(relpath + path);
+        resourceURL = viewstatehandler.encodeResourceURL(resourcebase + path);
       }
     }
     if (Logger.log.isDebugEnabled()) {

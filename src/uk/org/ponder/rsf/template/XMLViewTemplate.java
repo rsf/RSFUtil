@@ -346,14 +346,13 @@ public class XMLViewTemplate implements ViewTemplate {
     }
   }
 
-  private String relativepath;
+  private String resourcebase;
 
-  public void setRelativePath(String relativepath) {
-    this.relativepath = relativepath;
+  public void setResourceBase(String resourcebase) {
+    this.resourcebase = resourcebase;
   }
-
-  public String getRelativePath() {
-    return relativepath;
+  public String getResourceBase() {
+    return resourcebase;
   }
 
 }

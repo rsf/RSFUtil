@@ -24,7 +24,7 @@ import uk.org.ponder.xml.XMLWriter;
 public class URLRewriteSCR implements StaticComponentRenderer {
   public static final String NAME = "rewrite-url";
   private URLRewriter rewriter;
-  private String relpath;
+  private String resourcebase;
 
   public String getName() {
     return NAME;
@@ -35,11 +35,11 @@ public class URLRewriteSCR implements StaticComponentRenderer {
   }
 
   public void setViewTemplate(ViewTemplate template) {
-    this.relpath = template.getRelativePath();
+    this.resourcebase = template.getResourceBase();
   }
 
   public String resolveURL(String toresolve) {
-    return rewriter.rewriteResourceURL(toresolve, relpath);
+    return rewriter.rewriteResourceURL(toresolve, resourcebase);
   }
 
   /**

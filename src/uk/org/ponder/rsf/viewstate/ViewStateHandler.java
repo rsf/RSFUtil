@@ -35,7 +35,7 @@ public interface ViewStateHandler {
   /** The equivalent of getFullURL for static resources that are not necessarily
    * under our control. These e.g. start with /content/...
    */
-  public String getResourceURL(String resourcepath);
+  public String encodeResourceURL(String resourcepath);
 
   /** Return a "fully resolved" complete URL linking to the view specified, which
    * is a valid URL resolvable on the internet at large.
