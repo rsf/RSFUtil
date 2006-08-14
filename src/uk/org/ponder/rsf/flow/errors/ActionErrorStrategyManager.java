@@ -14,7 +14,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
 /** A collection point for ActionErrorStrategies. Tries each strategy in 
  * turn, and if none match the criteria for the current error, adopts 
  * a default strategy. This passes through any exception, and queues a
- * general error message.
+ * general error message. 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  *
  */
@@ -39,11 +39,11 @@ public class ActionErrorStrategyManager implements ActionErrorStrategy {
   }
 
   public Object handleError(String returncode, Exception exception,
-      String flowstate, String viewID) {
+      String flowstate, String viewID, TargettedMessage message) {
     Object code = null;
     for (int i = 0; i < strategies.size(); ++i) {
       code = strategyAt(i)
-          .handleError(returncode, exception, flowstate, viewID);
+          .handleError(returncode, exception, flowstate, viewID, message);
       if (code != null)
         return code;
     }

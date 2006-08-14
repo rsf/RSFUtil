@@ -8,7 +8,7 @@ import uk.org.ponder.hashutil.EighteenIDGenerator;
 import uk.org.ponder.reflect.ReflectiveCache;
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.FlowIDHolder;
-import uk.org.ponder.rsf.flow.errors.ActionErrorStrategy;
+import uk.org.ponder.rsf.processor.ErrorHandler;
 import uk.org.ponder.rsf.request.ActionTarget;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.Logger;
@@ -36,7 +36,6 @@ public class FlowActionProxyBean implements ActionTarget {
   // less hassle to keep this here than manage as a dependency....
   private static EighteenIDGenerator idgenerator = new EighteenIDGenerator();
   private Flow flow;
-  private ActionErrorStrategy actionerrorstrategy;
 
   private ReflectiveCache reflectivecache;
   private BeanLocator rbl;
@@ -45,6 +44,7 @@ public class FlowActionProxyBean implements ActionTarget {
   private FlowIDHolder flowidholder;
 
   private boolean strict = false;
+  private ErrorHandler errorhandler;
 
   // These two are user configured properties
   public void setFlow(Flow flow) {
@@ -72,10 +72,11 @@ public class FlowActionProxyBean implements ActionTarget {
     this.flowidholder = flowidholder;
   }
 
-  public void setActionErrorStrategy(ActionErrorStrategy actionerrorstrategy) {
-    this.actionerrorstrategy = actionerrorstrategy;
+  public void setErrorHandler(ErrorHandler errorhandler) {
+    this.errorhandler = errorhandler;
   }
 
+  
   /**
    * Called in response to invocation of a command link. The "method" name
    * actually corresponds to the "on" text of the VIEW state. If the method name
@@ -158,8 +159,7 @@ public class FlowActionProxyBean implements ActionTarget {
         result = knownresult;
         knownresult = null; // consume the known result on the first occasion.
       }
-      actionerrorstrategy.handleError(result, exception, flowidholder
-          .getRequestFlowStateID(), viewparams.viewID);
+      errorhandler.handleError(result, exception);
 
       Transition trans2 = actionstate.transitions.transitionOn(result);
       newstate = flow.stateFor(trans2.to);

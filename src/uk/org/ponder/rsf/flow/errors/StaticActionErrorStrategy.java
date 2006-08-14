@@ -4,7 +4,6 @@
 package uk.org.ponder.rsf.flow.errors;
 
 import uk.org.ponder.errorutil.TargettedMessage;
-import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
 
@@ -42,14 +41,16 @@ public class StaticActionErrorStrategy implements ActionErrorStrategy {
   public Object newreturncode;
 
   public Object handleError(String returncode, Exception exception,
-      String flowstate, String viewID) {
+      String flowstate, String viewID, TargettedMessage message) {
     if ((this.returncode == null || this.returncode.equals(returncode))
         && (this.exceptionclass == null || exceptionclass.isInstance(exception))
         && (this.flowstate == null || this.flowstate.equals(flowstate))
         && (this.viewID == null || this.viewID.equals(viewID))) {
       if (messagekey != null) {
-        TargettedMessage tmessage = new TargettedMessage(messagekey,
-            messagetarget);
+        message.updateMessageCode(messagekey);
+        if (messagetarget != null) {
+          message.targetid = messagetarget;
+        }
         if (exception != null) {
           if (propagateexception) {
             throw UniversalRuntimeException.accumulate(exception);
@@ -57,7 +58,6 @@ public class StaticActionErrorStrategy implements ActionErrorStrategy {
           else {
             Logger.log.warn("Error invoking action", exception);
           }
-          return tmessage;
         }
       }
       return newreturncode == null? returncode : newreturncode;

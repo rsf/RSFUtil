@@ -269,6 +269,7 @@
     <property name="actionErrorStrategy"
       ref="actionErrorStrategyManager" />
     <property name="flowStateManager" ref="flowStateManager" />
+    <property name="targettedMessageList" ref="targettedMessageList"/>
   </bean>
 
   <bean id="ARIResult" factory-bean="actionHandler"
@@ -292,8 +293,7 @@
     <property name="beanLocator" ref="requestBeanLocator"/>
     <property name="viewParameters" ref="viewParameters"/>
     <property name="flowIDHolder" ref="flowLite-flowIDHolder"/>
-    <property name="actionErrorStrategy"
-      ref="actionErrorStrategyManager"/>
+    <property name="errorHandler" ref="actionHandler"/>
   </bean>
 
   <!-- End beans for FlowLite -->
