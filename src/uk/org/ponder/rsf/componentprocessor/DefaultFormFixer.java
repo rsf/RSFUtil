@@ -14,7 +14,7 @@ import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.request.EarlyRequestParser;
 import uk.org.ponder.rsf.view.View;
 import uk.org.ponder.rsf.view.ViewReceiver;
-import uk.org.ponder.rsf.viewstate.InternalBaseURLProvider;
+import uk.org.ponder.rsf.viewstate.InternalURLRewriter;
 import uk.org.ponder.rsf.viewstate.URLRewriter;
 import uk.org.ponder.rsf.viewstate.ViewParamUtil;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
@@ -41,7 +41,7 @@ public class DefaultFormFixer implements ComponentProcessor, ViewReceiver {
   private View view;
   private ParameterList outgoingparams;
   private URLRewriter urlrewriter;
-  private InternalBaseURLProvider ibup;
+  private InternalURLRewriter inturlrewriter;
 
   public void setViewParameters(ViewParameters viewparams) {
     this.viewparams = viewparams;
@@ -63,8 +63,8 @@ public class DefaultFormFixer implements ComponentProcessor, ViewReceiver {
     this.urlrewriter = urlrewriter;
   }
 
-  public void setInternalBaseURLProvider(InternalBaseURLProvider ibup) {
-    this.ibup = ibup;
+  public void setInternalURLRewriter(InternalURLRewriter inturlrewriter) {
+    this.inturlrewriter = inturlrewriter;
   }
 
   public void processComponent(UIComponent toprocesso) {
@@ -133,7 +133,10 @@ public class DefaultFormFixer implements ComponentProcessor, ViewReceiver {
     else {
       // We worry that in general IBUP processing is non-idempotent, but
       // I think we can depend on fixups occuring only once...
-      toprocess.targetURL = ibup.getInternalBaseURL() + toprocess.targetURL;
+      toprocess.targetURL = 
+        toprocess.type.equals(EarlyRequestParser.RENDER_REQUEST)?
+        inturlrewriter.rewriteRenderURL(toprocess.targetURL)
+        : inturlrewriter.rewriteActionURL(toprocess.targetURL);
     }
   }
   

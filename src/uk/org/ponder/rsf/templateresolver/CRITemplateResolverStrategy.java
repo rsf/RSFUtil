@@ -3,6 +3,8 @@
  */
 package uk.org.ponder.rsf.templateresolver;
 
+import uk.org.ponder.rsf.viewstate.BaseURLProvider;
+import uk.org.ponder.rsf.viewstate.ContextURLProvider;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.stringutil.StringList;
 import uk.org.ponder.webapputil.ConsumerInfo;
@@ -17,12 +19,18 @@ import uk.org.ponder.webapputil.ConsumerInfo;
  */
 
 public class CRITemplateResolverStrategy implements
-    SimpleTemplateResolverStrategy {
+    SimpleTemplateResolverStrategy, BaseAwareTemplateResolverStrategy {
   private String basedir;
 
   private ConsumerInfo ciproxy;
+
+  private ContextURLProvider cup;
   public static final String CONSUMERTYPE_SEPARATOR = "-";
 
+  public void setContextURLProvider(ContextURLProvider cup) {
+    this.cup = cup;
+  }
+  
   /**
    * Set the base directory in which template files will be sought. This must
    * contain both trailing slash and leading slash.
@@ -45,6 +53,14 @@ public class CRITemplateResolverStrategy implements
 
     togo.add(basedir + viewparams.viewID);
     return togo;
+  }
+
+  public String getExternalURLBase() {
+   return cup.getContextBaseURL();
+  }
+
+  public String getTemplateResourceBase() {
+    return "/";
   }
 
 }

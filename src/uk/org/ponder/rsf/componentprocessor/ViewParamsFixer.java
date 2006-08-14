@@ -7,18 +7,18 @@ import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.uitype.UITypes;
-import uk.org.ponder.rsf.viewstate.InternalBaseURLProvider;
+import uk.org.ponder.rsf.viewstate.InternalURLRewriter;
 import uk.org.ponder.rsf.viewstate.ViewStateHandler;
 
 public class ViewParamsFixer implements ComponentProcessor {
   private ViewStateHandler viewstatehandler;
-  private InternalBaseURLProvider ibup;
+  private InternalURLRewriter inturlrewriter;
   public void setViewStateHandler(ViewStateHandler viewstatehandler) {
     this.viewstatehandler = viewstatehandler;
   }
   
-  public void setInternalBaseURLProvider(InternalBaseURLProvider ibup) {
-    this.ibup = ibup;
+  public void setInternalURLRewriter(InternalURLRewriter inturlrewriter) {
+    this.inturlrewriter = inturlrewriter;
   }
   
   public void processComponent(UIComponent toprocesso) {
@@ -38,7 +38,7 @@ public class ViewParamsFixer implements ComponentProcessor {
           throw new IllegalArgumentException("UIInternalLink with fullID " + 
               toprocesso.getFullID() + " discovered with neither ViewParameters nor URL");
         }
-        toprocess.target.setValue(ibup.getInternalBaseURL() + target);
+        toprocess.target.setValue(inturlrewriter.rewriteRenderURL(target));
       }
     }
   }

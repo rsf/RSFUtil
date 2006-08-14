@@ -188,7 +188,7 @@
   <bean id="viewParamsFixer"
     class="uk.org.ponder.rsf.componentprocessor.ViewParamsFixer">
     <property name="viewStateHandler" ref="viewStateHandlerProxy"/>
-    <property name="internalBaseURLProvider" ref="internalBaseURLProvider"/>
+    <property name="internalURLRewriter" ref="internalURLRewriter"/>
   </bean>
 
   <!-- Used when operating an HTML-like form system whereby submitting controls
@@ -228,25 +228,27 @@
       value="totalRequestAddressibleBeans.collect" />
   </bean>
   
+  <bean id="copyPreservingParent"
+    class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
+    <property name="targetPath"
+      value="totalCopyPreservingBeans.collect" />
+  </bean>
+  
   <bean id="TLABPostProcessor" class="uk.org.ponder.springutil.TLABPostProcessor">
     <property name="mappingContext" ref="ELMappingContext"/>
   </bean>
 
   <bean id="totalRequestAddressibleBeans"
-    class="uk.org.ponder.springutil.StringListAggregatingFactory">
-  </bean>
+    class="uk.org.ponder.springutil.StringListAggregatingFactory"/>
+  
+  <bean id="totalCopyPreservingBeans"
+    class="uk.org.ponder.springutil.StringListAggregatingFactory"/>
 
   <bean id="templateExpander"
     class="uk.org.ponder.rsf.expander.TemplateExpander">
-    <property name="DARApplier">
-      <ref bean="DARApplier" />
-    </property>
-    <property name="deepBeanCloner">
-      <ref bean="deepBeanCloner" />
-    </property>
-    <property name="safeBeanLocator">
-      <ref bean="ELTargetBeanLocatorProxy" />
-    </property>
+    <property name="DARApplier" ref="DARApplier"/>
+    <property name="deepBeanCloner" ref="deepBeanCloner"/>
+    <property name="safeBeanLocator" ref="ELTargetBeanLocatorProxy"/>
   </bean>
 
   <bean id="staticRenderersProxy" parent="RSACBridgeProxy">

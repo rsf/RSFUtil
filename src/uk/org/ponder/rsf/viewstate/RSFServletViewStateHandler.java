@@ -26,9 +26,14 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
 
   private Map ultimaterenderers = new HashMap();
   private ViewParamsMapper vpmapper;
+  private ContextURLProvider cup;
 
   public void setBaseURLProvider(BaseURLProvider urlprovider) {
     this.urlprovider = urlprovider;
+  }
+  
+  public void setContextURLProvider(ContextURLProvider cup) {
+    this.cup = cup;
   }
 
   public void setConsumerInfo(ConsumerInfo ciproxy) {
@@ -41,13 +46,12 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
 
   public String getFullURL(ViewParameters viewparams) {
     // toHTTPRequest provides leading slash, and baseurl includes trailing slash
-    String requestparams = vpmapper.toHTTPRequest(viewparams)
-        .substring(1);
+    String requestparams = vpmapper.toHTTPRequest(viewparams).substring(1);
 
     String usebaseurl = urlprovider.getBaseURL();
     String extraparams = "";
     boolean quest = requestparams.indexOf('?') != -1;
-  
+
     ConsumerInfo ci = ciproxy.get();
     if (ci.urlbase != null) {
       usebaseurl = ci.urlbase;
@@ -63,19 +67,19 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
     }
     String baseurl = usebaseurl + requestparams;
     int hpos = baseurl.indexOf('#');
-    
-    String path = hpos == -1? baseurl + extraparams : baseurl.substring(0, hpos)
-         + extraparams + baseurl.substring(hpos);
+
+    String path = hpos == -1 ? baseurl + extraparams
+        : baseurl.substring(0, hpos) + extraparams + baseurl.substring(hpos);
     return path;
   }
-
 
   public String getActionURL(ViewParameters viewparams) {
     String fullURL = getFullURL(viewparams);
     int qpos = fullURL.indexOf('?');
-    return qpos == -1? fullURL : fullURL.substring(0, qpos);
+    return qpos == -1 ? fullURL
+        : fullURL.substring(0, qpos);
   }
-  
+
   public Map getAttrMap(ViewParameters viewparams) {
     Map togo = new HashMap();
     String fullURL = getFullURL(viewparams);
@@ -85,15 +89,14 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
     }
     return togo;
   }
-  
-  public String getResourceURL(String resourcepath) {
-    ConsumerInfo ci = ciproxy.get();
-    String useresurl = urlprovider.getResourceBaseURL();
-    // ConsumerRequestInfo cri = ConsumerRequestInfo.getConsumerRequestInfo();
-    if (ci.resourceurlbase != null) {
-      useresurl = ci.resourceurlbase;
+
+  public String encodeResourceURL(String resourcepath) {
+    if (URLUtil.isAbsolute(resourcepath) || resourcepath.charAt(0) == '/') {
+      return resourcepath;
     }
-    return useresurl + resourcepath;
+    else {
+      return cup.getContextBaseURL() + resourcepath;
+    }
   }
 
   // in servlet context, rendered URLs agree with ultimate ones.
@@ -115,6 +118,5 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
       ultimaterenderers.put(ultimate.getConsumerType(), ultimate);
     }
   }
-
 
 }
