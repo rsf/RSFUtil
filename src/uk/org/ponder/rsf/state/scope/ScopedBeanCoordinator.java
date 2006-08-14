@@ -43,7 +43,7 @@ public class ScopedBeanCoordinator implements ApplicationContextAware,
   
   public void setApplicationContext(ApplicationContext applicationContext) {
     String[] mannames = applicationContext.getBeanNamesForType(
-        ScopedBeanManager.class, false, true);
+        ScopedBeanManager.class, false, false);
     strategies = new TSHPreservationStrategy[mannames.length];
     managers = new ScopedBeanManager[mannames.length];
     for (int i = 0; i < mannames.length; ++i) {
