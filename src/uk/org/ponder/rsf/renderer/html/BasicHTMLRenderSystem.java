@@ -348,7 +348,14 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         }
         String value = torender.linktext == null ? null
             : torender.linktext.getValue();
-        rewriteLeaf(value, rendercontext);
+        if (value == null) {
+          XMLUtil.dumpAttributes(attrcopy, xmlw);
+          pos.println(">");
+          nextpos = endopen.lumpindex + 1;
+        }
+        else {
+          rewriteLeaf(value, rendercontext);
+        }
       }
 
       else if (torendero instanceof UICommand) {
