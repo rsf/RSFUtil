@@ -233,8 +233,15 @@
     <property name="targetPath"
       value="totalCopyPreservingBeans.collect" />
   </bean>
-  
+  <!-- 
+  We cannot register the PP in the container directly since any bean fetches
+  it causes triggers a Spring warning (admittedly at "INFO" level)
   <bean id="TLABPostProcessor" class="uk.org.ponder.springutil.TLABPostProcessor">
+    <property name="mappingContext" ref="ELMappingContext"/>
+  </bean>
+  -->
+  
+  <bean id="TLABPostProcessorLoader" class="uk.org.ponder.springutil.TLABLoaderListener">
     <property name="mappingContext" ref="ELMappingContext"/>
   </bean>
 
@@ -243,6 +250,17 @@
   
   <bean id="totalCopyPreservingBeans"
     class="uk.org.ponder.springutil.StringListAggregatingFactory"/>
+
+
+  <bean id="TPIAggregator" class="uk.org.ponder.rsf.template.TPIAggregator">
+    <property name="contentTypeInfoProxy" ref="contentTypeInfoProxy"/>
+  </bean>
+
+  <bean id="templateParseInterceptorParent"
+   class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
+    <property name="targetPath"
+      value="TPIAggregator.templateParseInterceptors" />
+  </bean>
 
   <bean id="templateExpander"
     class="uk.org.ponder.rsf.expander.TemplateExpander">

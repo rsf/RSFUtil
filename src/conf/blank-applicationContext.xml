@@ -205,6 +205,7 @@
     <property name="templateResolverStrategy"
       ref="templateResolverStrategy" />
     <property name="baseURLProvider" ref="baseURLProvider" />
+    <property name="TPIAggregator" ref="TPIAggregator"/>
   </bean>
 
   <bean id="contentTypeInfoMap"
@@ -264,6 +265,15 @@
     <property name="navigationCaseReceiver" ref="navigationCasePooler" />
   </bean>
 
+<!-- Derive from this parent in order to enable automatic detection of
+     relative URLs -->  
+  <bean id="relativeURLInferrerParent" parent="templateParseInterceptorParent"
+    abstract="true">
+    <property name="value">
+     <bean class="uk.org.ponder.rsf.renderer.html.RelativeURLInferringTPI"/>
+    </property>
+  </bean>
+
   <!--  override this bean with a concrete bean derived from XmlViewResolverDef -->
   <bean id="XMLViewResolver"
     class="uk.org.ponder.rsf.view.NullViewResolver" />
@@ -274,6 +284,20 @@
     <property name="templateExpander" ref="templateExpander" />
     <property name="viewParamsReceiver" ref="viewParametersParser" />
   </bean>
+
+  <bean id="staticViews" class="java.util.ArrayList">
+    <constructor-arg>
+      <list></list>
+    </constructor-arg>
+  </bean>
+
+  <bean id="ultimateRenderers" class="java.util.ArrayList">
+    <constructor-arg>
+      <list></list>
+    </constructor-arg>
+  </bean>
+
+  <!-- ******** THE REQUEST CONTAINER AND ADDRESSIBILITY ******** -->
 
   <bean id="frameworkRABeans" parent="requestAddressibleParent">
     <property name="value" value="flowLite-flowIDHolder, destroyscope" />
@@ -299,22 +323,10 @@
     <property name="value" ref="copyPreservingBeans" />
   </bean>
 
-  <!--  Why did we let IDHolder be addressible? Isn't it always overwritten
-    in any case? -->
+  <!-- An empty holder, since the framework's addressible beans are registered
+   via requestAddressibleParent -->
   <bean id="requestAddressibleBeans"
     class="uk.org.ponder.stringutil.StringList">
-  </bean>
-
-  <bean id="staticViews" class="java.util.ArrayList">
-    <constructor-arg>
-      <list></list>
-    </constructor-arg>
-  </bean>
-
-  <bean id="ultimateRenderers" class="java.util.ArrayList">
-    <constructor-arg>
-      <list></list>
-    </constructor-arg>
   </bean>
 
 
