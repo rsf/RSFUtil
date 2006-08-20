@@ -6,10 +6,12 @@ package uk.org.ponder.rsf.templateresolver;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import uk.org.ponder.rsf.template.TPIAggregator;
 import uk.org.ponder.rsf.template.XMLViewTemplate;
 import uk.org.ponder.rsf.view.ViewTemplate;
 import uk.org.ponder.rsf.viewstate.BaseURLProvider;
@@ -32,6 +34,7 @@ public class BasicTemplateResolver implements TemplateResolver,
   private int cachesecs;
   private SimpleTemplateResolverStrategy strs;
   private BaseURLProvider bup;
+  private TPIAggregator aggregator;
 
   public void setBaseURLProvider(BaseURLProvider bup) {
     this.bup = bup;
@@ -52,6 +55,10 @@ public class BasicTemplateResolver implements TemplateResolver,
 
   public void setTemplateResolverStrategy(SimpleTemplateResolverStrategy strs) {
     this.strs = strs;
+  }
+  
+  public void setTPIAggregator(TPIAggregator aggregator) {
+    this.aggregator = aggregator;
   }
 
   // this is a map of viewID onto template file.
@@ -81,11 +88,12 @@ public class BasicTemplateResolver implements TemplateResolver,
           "Cannot load template file from path " + fullpath);
     }
 
-    ViewTemplate template = null;
+    XMLViewTemplate template = null;
     if (is == CachingInputStreamSource.UP_TO_DATE) {
-      template = (ViewTemplate) templates.get(fullpath);
+      template = (XMLViewTemplate) templates.get(fullpath);
     }
     if (template == null) {
+      List tpis = aggregator.getFilteredTPIs();
       try {
         // possibly the reason is it had a parse error last time, which may have
         // been corrected
@@ -93,6 +101,7 @@ public class BasicTemplateResolver implements TemplateResolver,
           is = cachingiis.getNonCachingResolver().openStream(fullpath);
         }
         template = new XMLViewTemplate();
+        template.setTemplateParseInterceptors(tpis);
         template.parse(is);
         // there WILL be one slash in the path.
         int lastslashpos = fullpath.lastIndexOf('/');

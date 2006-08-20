@@ -5,6 +5,8 @@ package uk.org.ponder.rsf.template;
 
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
@@ -32,19 +34,26 @@ import uk.org.ponder.util.UniversalRuntimeException;
  */
 public class XMLViewTemplate implements ViewTemplate {
   public int INITIAL_LUMP_SIZE = 1000;
-  // a hypothetical "root lump" whose downmap contains root RSF components. 
-  public XMLLump rootlump; 
+  // a hypothetical "root lump" whose downmap contains root RSF components.
+  public XMLLump rootlump;
   public XMLLumpMMap globalmap;
 
   // private HashMap foridtocomponent = new HashMap();
 
   public XMLLump[] lumps;
-  // index of the first lump holding root document tag 
-  public int roottagindex; 
+  // index of the first lump holding root document tag
+  public int roottagindex;
   private CharWrap buffer;
 
   public boolean hasComponent(String ID) {
     return globalmap.hasID(ID);
+  }
+
+  private List parseinterceptors;
+
+  // TODO: This method belongs in XMLViewTemplateParser
+  public void setTemplateParseInterceptors(List parseinterceptors) {
+    this.parseinterceptors = parseinterceptors;
   }
 
   private void writeToken(int token, XmlPullParser parser, CharWrap w) {
@@ -131,80 +140,94 @@ public class XMLViewTemplate implements ViewTemplate {
       setLumpChars(backlump, null, 0, 0);
     }
     XMLLump headlump = newLump(parser);
-    if (roottagindex == -1) roottagindex = headlump.lumpindex;
+    if (roottagindex == -1)
+      roottagindex = headlump.lumpindex;
     String tagname = parser.getName();
     // standard text of |<tagname | to allow easy identification.
     setLumpString(headlump, XMLLump.tagToText(tagname));
     // HashMap forwardmap = new HashMap();
     // headlump.forwardmap = forwardmap;
     // current policy - every open tag gets a forwardmap, and separate lumps.
-    // eventually we want only thing with an ID as such.
+    // eventually we only want a lump where there is an rsf:id.
     int attrs = parser.getAttributeCount();
     if (attrs > 0) {
-      headlump.attributemap = new HashMap();
-    }
-    for (int i = 0; i < attrs; ++i) {
-      String attrname = parser.getAttributeName(i);
-      String attrvalue = parser.getAttributeValue(i);
-      XMLLump frontlump = newLump(parser);
-      CharWrap lumpac = new CharWrap();
-      if (i > 0) {
-        lumpac.append("\" ");
+      headlump.attributemap = new HashMap(attrs < 3? (attrs + 1)*2 : attrs * 2);
+
+      for (int i = 0; i < attrs; ++i) {
+        String attrname = parser.getAttributeName(i);
+        String attrvalue = parser.getAttributeValue(i);
+        headlump.attributemap.put(attrname, attrvalue);
       }
-      lumpac.append(attrname).append("=\"");
-      setLumpChars(frontlump, lumpac.storage, 0, lumpac.size);
-      // frontlump holds |" name="|
-      // valuelump just holds the value.
-      // This is a bit silly since we have all attrs in attrmap, but just
-      // MARGINALLY
-      // quicker to iterate over them this way!
-      XMLLump valuelump = newLump(parser);
-      setLumpString(valuelump, attrvalue);
-      headlump.attributemap.put(attrname, attrvalue);
-
-      if (attrname.equals(XMLLump.ID_ATTRIBUTE)) {
-        String ID = attrvalue;
-        if (ID.startsWith(XMLLump.FORID_PREFIX)
-            && ID.endsWith(XMLLump.FORID_SUFFIX)) {
-          ID = ID.substring(0, ID.length() - XMLLump.FORID_SUFFIX.length());
+      if (parseinterceptors != null) {
+        for (int i = 0; i < parseinterceptors.size(); ++i) {
+          TemplateParseInterceptor parseinterceptor = (TemplateParseInterceptor) parseinterceptors
+              .get(i);
+          parseinterceptor.adjustAttributes(tagname, headlump.attributemap);
         }
-        headlump.rsfID = ID;
-
-        XMLLump stacktop = findTopContainer();
-        stacktop.downmap.addLump(ID, headlump);
-        globalmap.addLump(ID, headlump);
-
-        SplitID split = new SplitID(ID);
-
-        if (split.prefix.equals(XMLLump.FORID_PREFIX)) {
-          // no special note, just prevent suffix logic.
+      }
+      boolean firstattr = true;
+      for (Iterator keyit = headlump.attributemap.keySet().iterator(); keyit
+          .hasNext();) {
+        String attrname = (String) keyit.next();
+        String attrvalue = (String) headlump.attributemap.get(attrname);
+        XMLLump frontlump = newLump(parser);
+        CharWrap lumpac = new CharWrap();
+        if (!firstattr) {
+          lumpac.append("\" ");
+          firstattr = false;
         }
-        // we need really to be able to locate 3 levels of id -
-        // for-message:message:to
-        // ideally we would also like to be able to locate repetition
-        // constructs too, hopefully the standard suffix-based computation
-        // will allow this. However we previously never allowed BOTH
-        // repetitious and non-repetitious constructs to share the same
-        // prefix, so revisit this to solve.
-        // }
-        else if (split.suffix != null) {
-          // a repetitive tag is found.
-          headlump.downmap = new XMLLumpMMap();
+        lumpac.append(attrname).append("=\"");
+        setLumpChars(frontlump, lumpac.storage, 0, lumpac.size);
+        // frontlump holds |" name="|
+        // valuelump just holds the value.
 
-          // Repetitions within a SCOPE should be UNIQUE and CONTIGUOUS.
-          XMLLump prevlast = stacktop.downmap.getFinal(split.prefix);
-          stacktop.downmap.setFinal(split.prefix, headlump);
-          if (prevlast != null) {
-            // only store transitions from non-initial state -
-            // TODO: see if transition system will ever be needed.
-            String prevsuffix = SplitID.getSuffix(prevlast.rsfID);
-            String transitionkey = split.prefix + SplitID.SEPARATOR
-                + prevsuffix + XMLLump.TRANSITION_SEPARATOR + split.suffix;
-            stacktop.downmap.addLump(transitionkey, prevlast);
-            globalmap.addLump(transitionkey, prevlast);
+        XMLLump valuelump = newLump(parser);
+        setLumpString(valuelump, attrvalue);
+
+        if (attrname.equals(XMLLump.ID_ATTRIBUTE)) {
+          String ID = attrvalue;
+          if (ID.startsWith(XMLLump.FORID_PREFIX)
+              && ID.endsWith(XMLLump.FORID_SUFFIX)) {
+            ID = ID.substring(0, ID.length() - XMLLump.FORID_SUFFIX.length());
           }
-        }
-      }
+          headlump.rsfID = ID;
+
+          XMLLump stacktop = findTopContainer();
+          stacktop.downmap.addLump(ID, headlump);
+          globalmap.addLump(ID, headlump);
+
+          SplitID split = new SplitID(ID);
+
+          if (split.prefix.equals(XMLLump.FORID_PREFIX)) {
+            // no special note, just prevent suffix logic.
+          }
+          // we need really to be able to locate 3 levels of id -
+          // for-message:message:to
+          // ideally we would also like to be able to locate repetition
+          // constructs too, hopefully the standard suffix-based computation
+          // will allow this. However we previously never allowed BOTH
+          // repetitious and non-repetitious constructs to share the same
+          // prefix, so revisit this to solve.
+          // }
+          else if (split.suffix != null) {
+            // a repetitive tag is found.
+            headlump.downmap = new XMLLumpMMap();
+
+            // Repetitions within a SCOPE should be UNIQUE and CONTIGUOUS.
+            XMLLump prevlast = stacktop.downmap.getFinal(split.prefix);
+            stacktop.downmap.setFinal(split.prefix, headlump);
+            if (prevlast != null) {
+              // only store transitions from non-initial state -
+              // TODO: see if transition system will ever be needed.
+              String prevsuffix = SplitID.getSuffix(prevlast.rsfID);
+              String transitionkey = split.prefix + SplitID.SEPARATOR
+                  + prevsuffix + XMLLump.TRANSITION_SEPARATOR + split.suffix;
+              stacktop.downmap.addLump(transitionkey, prevlast);
+              globalmap.addLump(transitionkey, prevlast);
+            }
+          }
+        } // end if rsf:id attribute
+      } // end for each attribute
     }
     XMLLump finallump = newLump(parser);
 
@@ -220,7 +243,9 @@ public class XMLViewTemplate implements ViewTemplate {
       processTagEnd(parser);
     }
   }
+
   boolean justended;
+
   private void processTagEnd(XmlPullParser parser) {
     // String tagname = parser.getName();
     XMLLump oldtop = tagstack.lumpAt(nestingdepth);
@@ -351,6 +376,7 @@ public class XMLViewTemplate implements ViewTemplate {
   public void setResourceBase(String resourcebase) {
     this.resourcebase = resourcebase;
   }
+
   public String getResourceBase() {
     return resourcebase;
   }
