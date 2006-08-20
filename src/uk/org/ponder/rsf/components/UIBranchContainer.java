@@ -79,8 +79,15 @@ public class UIBranchContainer extends UIContainer {
    * colon designating a leaf child.
    */
   public UIComponent getComponent(String id) {
-    return childmap == null ? null
-        : (UIComponent) childmap.get(id);
+    if (childmap == null) return null;
+    Object togo = childmap.get(id);
+    if (togo != null && !(togo instanceof UIComponent)) {
+      throw new IllegalArgumentException( 
+          "Error in view tree: component with id " + 
+          id + " was expected to be a leaf component but was a branch."
+          + "\n (did you forget to use a colon in the view template?)");
+    }
+    return  (UIComponent) togo;
   }
 
   /**

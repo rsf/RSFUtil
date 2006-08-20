@@ -150,21 +150,25 @@ public class XMLViewTemplate implements ViewTemplate {
     // current policy - every open tag gets a forwardmap, and separate lumps.
     // eventually we only want a lump where there is an rsf:id.
     int attrs = parser.getAttributeCount();
-    if (attrs > 0) {
-      headlump.attributemap = new HashMap(attrs < 3? (attrs + 1)*2 : attrs * 2);
+    headlump.attributemap = new HashMap(attrs < 3 ? (attrs + 1) * 2
+        : attrs * 2);
 
-      for (int i = 0; i < attrs; ++i) {
-        String attrname = parser.getAttributeName(i);
-        String attrvalue = parser.getAttributeValue(i);
-        headlump.attributemap.put(attrname, attrvalue);
+    for (int i = 0; i < attrs; ++i) {
+      String attrname = parser.getAttributeName(i);
+      String attrvalue = parser.getAttributeValue(i);
+      headlump.attributemap.put(attrname, attrvalue);
+    }
+    if (parseinterceptors != null) {
+      for (int i = 0; i < parseinterceptors.size(); ++i) {
+        TemplateParseInterceptor parseinterceptor = (TemplateParseInterceptor) parseinterceptors
+            .get(i);
+        parseinterceptor.adjustAttributes(tagname, headlump.attributemap);
       }
-      if (parseinterceptors != null) {
-        for (int i = 0; i < parseinterceptors.size(); ++i) {
-          TemplateParseInterceptor parseinterceptor = (TemplateParseInterceptor) parseinterceptors
-              .get(i);
-          parseinterceptor.adjustAttributes(tagname, headlump.attributemap);
-        }
-      }
+    }
+    if (headlump.attributemap.isEmpty()) {
+      headlump.attributemap = null;
+    }
+    else {
       boolean firstattr = true;
       for (Iterator keyit = headlump.attributemap.keySet().iterator(); keyit
           .hasNext();) {

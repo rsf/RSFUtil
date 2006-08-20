@@ -274,6 +274,9 @@
     </property>
   </bean>
 
+ <!-- Automatically rewrite relative URLs in the template file -->
+  <bean id="relativeURLInferrer" parent="relativeURLInferrerParent"/>
+
   <!--  override this bean with a concrete bean derived from XmlViewResolverDef -->
   <bean id="XMLViewResolver"
     class="uk.org.ponder.rsf.view.NullViewResolver" />
