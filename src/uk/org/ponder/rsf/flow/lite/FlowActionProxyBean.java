@@ -109,6 +109,8 @@ public class FlowActionProxyBean implements ActionTarget {
       }
     }
     else { // any action other than FLOW_START
+      // TODO: If this occurs on an ACTION cycle, should actually cause a VIEW
+      // redirect.
       if (flowidholder.getRequestFlowStateID() == null) {
         throw new IllegalStateException("Received flow action " + name
             + " for Flow " + flow.id + " without current flow state");
