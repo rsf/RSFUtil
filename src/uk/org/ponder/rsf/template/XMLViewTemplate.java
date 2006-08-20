@@ -174,8 +174,8 @@ public class XMLViewTemplate implements ViewTemplate {
         CharWrap lumpac = new CharWrap();
         if (!firstattr) {
           lumpac.append("\" ");
-          firstattr = false;
         }
+        firstattr = false;
         lumpac.append(attrname).append("=\"");
         setLumpChars(frontlump, lumpac.storage, 0, lumpac.size);
         // frontlump holds |" name="|
