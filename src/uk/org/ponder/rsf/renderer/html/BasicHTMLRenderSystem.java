@@ -350,7 +350,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
             : torender.linktext.getValue();
         if (value == null) {
           XMLUtil.dumpAttributes(attrcopy, xmlw);
-          pos.println(">");
+          pos.print(">");
           nextpos = endopen.lumpindex + 1;
         }
         else {
