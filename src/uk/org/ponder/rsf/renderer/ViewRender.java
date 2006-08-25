@@ -171,6 +171,9 @@ public class ViewRender {
                 // so that it can invoke it. Not urgent, we currently only have
                 // the TINIEST text forming repetition glue.
               }
+              else {
+                RenderUtil.dumpScan(lumps, renderend, targetlump.nestingdepth, pos, true);
+              }
             }
 
           }

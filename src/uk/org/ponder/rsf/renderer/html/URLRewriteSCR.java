@@ -112,11 +112,11 @@ public class URLRewriteSCR implements StaticComponentRenderer {
       }
       else {
         pos.print(">");
-        RenderUtil.dumpTillLump(lumps, endopen.lumpindex + 1,
-            close.lumpindex + 1, pos);
+//        RenderUtil.dumpTillLump(lumps, endopen.lumpindex + 1,
+//            close.lumpindex + 1, pos);
       }
     }
-    return ComponentRenderer.LEAF_TAG;
+    return ComponentRenderer.NESTING_TAG;
   }
 
 }
