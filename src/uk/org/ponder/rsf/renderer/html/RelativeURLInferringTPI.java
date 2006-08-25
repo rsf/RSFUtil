@@ -12,15 +12,17 @@ import uk.org.ponder.rsf.template.ContentTypedTPI;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.stringutil.URLUtil;
 
-/** This TemplateParseInterceptor automatically marks up all relative URLs
- * on relevant HTML tags with the rsf:id="scr=rewrite-url" attribute.
+/**
+ * This TemplateParseInterceptor automatically marks up all relative URLs on
+ * relevant HTML tags with the rsf:id="scr=rewrite-url" attribute.
+ * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
 
 public class RelativeURLInferringTPI implements ContentTypedTPI {
 
   public static Map tagToAttrName = new HashMap();
-  
+
   static {
     for (int i = 0; i < HTMLConstants.tagtoURL.length; ++i) {
       String[] tags = HTMLConstants.tagtoURL[i];
@@ -29,20 +31,24 @@ public class RelativeURLInferringTPI implements ContentTypedTPI {
       }
     }
   }
-  
+
   public void adjustAttributes(String tag, Map attributes) {
     String attrname = (String) tagToAttrName.get(tag);
-    if (attrname == null) return;
-    if (attributes.get(XMLLump.ID_ATTRIBUTE) != null) return;
+    if (attrname == null)
+      return;
+    if (attributes.get(XMLLump.ID_ATTRIBUTE) != null)
+      return;
     String url = (String) attributes.get(attrname);
-    if (url == null || URLUtil.isAbsolute(url) || url.charAt(0) == '/') return;
-    attributes.put(XMLLump.ID_ATTRIBUTE, XMLLump.SCR_PREFIX + URLRewriteSCR.NAME);
+    if (url == null || URLUtil.isAbsolute(url) || url.equals("")
+        || url.charAt(0) == '/' || url.charAt(0) == '#')
+      return;
+    attributes.put(XMLLump.ID_ATTRIBUTE, XMLLump.SCR_PREFIX
+        + URLRewriteSCR.NAME);
   }
 
   public String[] getInterceptedContentTypes() {
-    return new String[] {
-        ContentTypeInfoRegistry.HTML, ContentTypeInfoRegistry.HTML_FRAGMENT
-    };
+    return new String[] { ContentTypeInfoRegistry.HTML,
+        ContentTypeInfoRegistry.HTML_FRAGMENT };
   }
 
 }
