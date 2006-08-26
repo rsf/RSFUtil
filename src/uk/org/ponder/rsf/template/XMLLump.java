@@ -67,4 +67,7 @@ public class XMLLump {
   public String toDebugString() {
     return "lump index " + lumpindex + " line " + line + " column " + column;
   }
+  public String toString() {
+    return new String(buffer, start, length) + " at " + toDebugString();
+  }
 }

@@ -4,13 +4,14 @@
 package uk.org.ponder.rsf.state.guards;
 
 /** "Guards" the read or write access of a particular EL path, by allowing logic
- * supplied in a second bean to execute relative to the access - either before,
- * after or "around" it. 
+ * supplied in a second bean to execute relative to the access - either before (PRE),
+ * after (POST) or "around" (AROUND) it.  
  * 
  * Note that the scheduling of "POST" guards may be delayed until some later time
  * in request processing - do not rely on these for "synchronous" guarding,
  * although their execution *is* guaranteed.
  * 
+ * NB - only POST/WRITE guards are currently supported.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  *
  */
@@ -77,9 +78,12 @@ public class BeanGuard {
   public String getGuardEL() {
     return guardEL;
   }
-  /** A full "method binding" to a POJO validating bean which is assumed to
-   * be configured independently. If "guardEL" is not null, this consists
-   * of just the method name. If this value is null, assumed to be a 
+  /** A method to be invoked on a POJO-style validating bean.
+   * If "guardEL" or "guard" is not null, 
+   * guardMethod consists of just the method name. 
+   * If both guardEL and guard are null, this should be a "long path" of which
+   * the section to the last component is an EL representing guardEL. 
+   * If this value and guardProperty is null, assumed to be a 
    * non-POJO validator (e.g. Spring Validator).
    */
   public void setGuardMethod(String guardMethod) {
@@ -89,7 +93,10 @@ public class BeanGuard {
   public String getGuardMethod() {
     return guardMethod;
   }
-  
+  /** A property name on which the guarded object will be set onto the
+   * guard. If both guardEL and guard are null, this should be a "long path"
+   * of which the section to the last component is a EL representing guard EL.
+   */
   public void setGuardProperty(String guardProperty) {
     this.guardProperty = guardProperty;
   }
