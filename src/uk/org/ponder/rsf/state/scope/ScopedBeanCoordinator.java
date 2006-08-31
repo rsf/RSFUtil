@@ -18,14 +18,16 @@ import uk.org.ponder.rsf.request.EarlyRequestParser;
 import uk.org.ponder.stringutil.StringGetter;
 import uk.org.ponder.stringutil.StringList;
 
-/** The central manager of ScopedBeanManagers - will be one per 
- * application context. 
+/**
+ * The central manager of ScopedBeanManagers - will be one per application
+ * context.
+ * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
- *
+ * 
  */
 
-public class ScopedBeanCoordinator implements ApplicationContextAware, 
-  AutonomousStatePreservationStrategy {
+public class ScopedBeanCoordinator implements ApplicationContextAware,
+    AutonomousStatePreservationStrategy {
 
   private BeanModelAlterer alterer;
   private ScopedBeanManager[] managers;
@@ -40,7 +42,7 @@ public class ScopedBeanCoordinator implements ApplicationContextAware,
   public void setRequestTypeProxy(StringGetter requesttypeproxy) {
     this.requesttypeproxy = requesttypeproxy;
   }
-  
+
   public void setApplicationContext(ApplicationContext applicationContext) {
     String[] mannames = applicationContext.getBeanNamesForType(
         ScopedBeanManager.class, false, false);
@@ -62,7 +64,7 @@ public class ScopedBeanCoordinator implements ApplicationContextAware,
   public void setDestroyedScopeMap(Map destroyed) {
     this.destroyed = destroyed;
   }
-  
+
   public StringList restore(WriteableBeanLocator target) {
     StringList togo = new StringList();
     for (int i = 0; i < managers.length; ++i) {
@@ -78,16 +80,15 @@ public class ScopedBeanCoordinator implements ApplicationContextAware,
     return togo;
   }
 
-  
   public void preserve(BeanLocator source) {
     String requesttype = requesttypeproxy.get();
     for (int i = 0; i < managers.length; ++i) {
       String scopename = managers[i].getScopeName();
       // preserve *if* it was not destroyed, and *if* it is a render request,
       // ONLY if the manager was set to "always preserve"
-      if (!destroyed.containsKey(scopename) && 
-          !(requesttype.equals(EarlyRequestParser.RENDER_REQUEST)
-          || managers[i].getAlwaysPreserve()) ) {
+      if (!destroyed.containsKey(scopename)
+          && (!requesttype.equals(EarlyRequestParser.RENDER_REQUEST) 
+              || managers[i].getAlwaysPreserve())) {
         strategies[i].preserve(source, scopename);
       }
     }
