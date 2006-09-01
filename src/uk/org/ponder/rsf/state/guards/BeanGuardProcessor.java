@@ -69,7 +69,7 @@ public class BeanGuardProcessor implements ApplicationContextAware {
           Object guarded = darapplier.getBeanValue(match, rbl);
           try {
             if (guardmethod != null) {
-              darapplier.invokeBeanMethod(guardmethod, rbl);
+              darapplier.invokeBeanMethod(guardmethod, guard);
             }
             else if (guardproperty != null) {
               darapplier.setBeanValue(guardproperty, guard, guarded, errors);
