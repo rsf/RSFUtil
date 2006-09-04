@@ -192,7 +192,7 @@
       ref="startFlowStatePreservationStrategies" />
     <property name="endFlowStrategies"
       ref="endFlowStatePreservationStrategies" />
-    <property name="writeableBeanLocator" ref="RSACSafeBeanLocator" />
+    <property name="writeableBeanLocator" ref="ELTargetBeanLocator" />
     <property name="deadBeanLocator" ref="deadRequestBeanLocator" />
     <property name="scopeStrategies" ref="scopePreservationStrategies" />
   </bean>
