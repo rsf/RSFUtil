@@ -62,14 +62,17 @@ public class ErrorStateManager {
 
   public void init() {
     if (viewparams.errortoken != null) {
-      ErrorTokenState storederrorstate = (ErrorTokenState) errortsholder
+      Object storederrorstateo = errortsholder
           .getTokenState(viewparams.errortoken);
-      if (storederrorstate == null) {
+      if (storederrorstateo == null || 
+          !(storederrorstateo instanceof ErrorTokenState)) {
+        // it may be from a stale ClassLoader
         Logger.log.warn("Client requested error state " + viewparams.errortoken
             + " which has expired from the cache");
+        errortsholder.clearTokenState(viewparams.errortoken);
       }
       else {
-        errorstate = storederrorstate;
+        errorstate = (ErrorTokenState) storederrorstateo;
         return;
       }
     }
