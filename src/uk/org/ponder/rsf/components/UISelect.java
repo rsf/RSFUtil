@@ -69,6 +69,10 @@ public class UISelect extends UIComponent implements FixableComponent {
         optionnames.valuebinding = optionlist.valuebinding;
       }
     }
+    else {
+      throw new IllegalArgumentException("UISelect component with full ID " + 
+          getFullID() + " does not have optionnames set");
+    }
 
     selected = new StringSet();
     if (selection instanceof UIBoundList) {
