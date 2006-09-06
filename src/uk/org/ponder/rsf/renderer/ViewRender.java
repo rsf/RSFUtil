@@ -230,7 +230,7 @@ public class ViewRender {
     // matches exactly or in prefix.
     SplitID split = new SplitID(child.ID);
     XMLLumpList headlumps = sourcescope.downmap.headsForID(child.ID);
-    if (headlumps.size() == 0 && split.suffix != null) {
+    if (headlumps == null && split.suffix != null) {
       headlumps = sourcescope.downmap.headsForID(split.prefix
           + SplitID.SEPARATOR);
 //      if (headlumps.size() == 0) {
@@ -239,7 +239,7 @@ public class ViewRender {
 //                + " not found in scope " + sourcescope.toDebugString());
 //      }
     }
-    return headlumps.size() > 0? headlumps.lumpAt(0) : null;
+    return headlumps == null? null : headlumps.lumpAt(0);
   }
 
   private void dumpContainerHead(UIBranchContainer branch, 

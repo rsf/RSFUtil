@@ -123,6 +123,7 @@ public class BranchResolver {
 
   private void passDeficit(BestMatch bestmatch, UIBranchContainer container,
       XMLLumpList tocheck) {
+    if (tocheck == null) return;
     for (int i = 0; i < tocheck.size(); ++i) {
       XMLLump lump = tocheck.lumpAt(i);
       int deficit = evalDeficit(container, lump);
