@@ -66,8 +66,8 @@ public class XMLLumpMMap {
   
   public static final String FINAL_SUFFIX = "*final";
   
-  public static final boolean isFinal(String totest) {
-    return totest.endsWith(FINAL_SUFFIX);
+  public static final boolean isSpecial(String totest) {
+    return totest.endsWith(FINAL_SUFFIX) || totest.indexOf(XMLLump.TRANSITION_SEPARATOR) != -1;
   }
   public void setFinal(String ID, XMLLump lump) {
     idtolumps.put(ID + FINAL_SUFFIX, lump);
