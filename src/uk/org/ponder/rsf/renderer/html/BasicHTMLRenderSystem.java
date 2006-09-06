@@ -133,9 +133,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
     nextpos = outerclose.lumpindex + 1;
 
     XMLLumpList payloadlist = lump.downmap == null ? null
-        : lump.downmap.hasID(XMLLump.PAYLOAD_COMPONENT) ? lump.downmap
-            .headsForID(XMLLump.PAYLOAD_COMPONENT)
-            : null;
+        : lump.downmap.headsForID(XMLLump.PAYLOAD_COMPONENT);
     XMLLump payload = payloadlist == null ? null
         : payloadlist.lumpAt(0);
 

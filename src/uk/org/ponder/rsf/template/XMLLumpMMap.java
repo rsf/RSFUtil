@@ -9,7 +9,7 @@ import java.util.Iterator;
 import uk.org.ponder.stringutil.CharWrap;
 
 public class XMLLumpMMap {
-  private HashMap idtolumps = new HashMap();
+  private HashMap idtolumps = new HashMap(8);
   
   public String getHeadsDebug() {
     CharWrap message = new CharWrap();
@@ -27,6 +27,11 @@ public class XMLLumpMMap {
   }
   
   public XMLLumpList headsForID(String ID) {
+    XMLLumpList togo = (XMLLumpList) idtolumps.get(ID);
+    return togo;
+  }
+  
+  public XMLLumpList headsForIDEnsure(String ID) {
     XMLLumpList togo = (XMLLumpList) idtolumps.get(ID);
     if (togo == null) {
       togo = new XMLLumpList();
@@ -52,7 +57,7 @@ public class XMLLumpMMap {
   }
   
   public void addLump(String ID, XMLLump lump) {
-    XMLLumpList list = headsForID(ID);
+    XMLLumpList list = headsForIDEnsure(ID);
     list.add(lump);
     if (ID.indexOf(XMLLump.TRANSITION_SEPARATOR) == -1) {
       ++ concretes;
@@ -60,6 +65,10 @@ public class XMLLumpMMap {
   }
   
   public static final String FINAL_SUFFIX = "*final";
+  
+  public static final boolean isFinal(String totest) {
+    return totest.endsWith(FINAL_SUFFIX);
+  }
   public void setFinal(String ID, XMLLump lump) {
     idtolumps.put(ID + FINAL_SUFFIX, lump);
   }
