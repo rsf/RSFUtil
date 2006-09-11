@@ -8,11 +8,14 @@ import java.util.Map;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import sun.misc.GC;
 import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.beanutil.WriteableBeanLocator;
 import uk.org.ponder.rsf.preservation.AutonomousStatePreservationStrategy;
 import uk.org.ponder.rsf.preservation.BeanCopyPreservationStrategy;
+import uk.org.ponder.rsf.preservation.ExactBeanCopyPreservationStrategy;
+import uk.org.ponder.rsf.preservation.GenericBeanCopyPreservationStrategy;
 import uk.org.ponder.rsf.preservation.TSHPreservationStrategy;
 import uk.org.ponder.rsf.request.EarlyRequestParser;
 import uk.org.ponder.stringutil.StringGetter;
@@ -49,14 +52,33 @@ public class ScopedBeanCoordinator implements ApplicationContextAware,
     strategies = new TSHPreservationStrategy[mannames.length];
     managers = new ScopedBeanManager[mannames.length];
     for (int i = 0; i < mannames.length; ++i) {
-      ScopedBeanManager sbm = (ScopedBeanManager) applicationContext
+      final ScopedBeanManager sbm = (ScopedBeanManager) applicationContext
           .getBean(mannames[i]);
-      BeanCopyPreservationStrategy bcps = new BeanCopyPreservationStrategy();
-      bcps.setBeanModelAlterer(alterer);
-      bcps.setTokenStateHolder(sbm.getTokenStateHolder());
-      bcps.setPreservingBeans(sbm.getCopyPreservingBeanList());
-      bcps.setStorageExpected(false);
-      strategies[i] = bcps;
+      StringList targetkeys = sbm.getTargetPreservingKeyList();
+      GenericBeanCopyPreservationStrategy gbcps = null;
+      if (targetkeys != null) {
+        ExactBeanCopyPreservationStrategy ebcps = new ExactBeanCopyPreservationStrategy();
+        ebcps.setTargetPreservingKeys(sbm.getTargetPreservingKeyList());
+        gbcps = ebcps;
+      }
+      else {
+        BeanCopyPreservationStrategy bcps = new BeanCopyPreservationStrategy();
+        bcps.setStorageExpected(false);
+        gbcps = bcps;
+      }
+      gbcps.setBeanModelAlterer(alterer);
+      gbcps.setTokenStateHolder(sbm.getTokenStateHolder());
+      gbcps.setPreservingBeans(sbm.getCopyPreservingBeanList());
+      final GenericBeanCopyPreservationStrategy fgbcps = gbcps;
+      sbm.setBeanDestroyer(new BeanDestroyer() {
+        public void destroy() {
+          String scopeName = sbm.getScopeName();
+          fgbcps.clear(scopeName);
+          destroyed.put(scopeName, scopeName);
+        } 
+      });
+      
+      strategies[i] = gbcps;
       managers[i] = sbm;
     }
   }

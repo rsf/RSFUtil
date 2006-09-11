@@ -22,6 +22,7 @@ import uk.org.ponder.stringutil.StringList;
  */
 
 public class ScopedBeanManager implements BeanDestroyer, BeanNameAware {
+  public static final char SPEC_SPLIT_CHAR = '|';
   private String scopeName;
   private String copyPreservingBeans;
 
@@ -29,14 +30,22 @@ public class ScopedBeanManager implements BeanDestroyer, BeanNameAware {
   private Map destroyed;
   private boolean exclusive;
   private boolean alwaysPreserve;
+  
+  private StringList copyPreservingBeanList;
+  private StringList targetPreservingKeyList;
+  private BeanDestroyer destroyer;
 
   public void setDestroyedScopeMap(Map destroyed) {
     this.destroyed = destroyed;
   }
   
+  public void setBeanDestroyer(BeanDestroyer destroyer) {
+    this.destroyer = destroyer;
+  }
+  
   public void destroy() {
-    getTokenStateHolder().clearTokenState(scopeName);
-    destroyed.put(scopeName, scopeName);
+    destroyer.destroy();
+   
   }
 
   public void setScopeName(String scopeName) {
@@ -59,7 +68,7 @@ public class ScopedBeanManager implements BeanDestroyer, BeanNameAware {
     return exclusive;
   }
   /** Set to <code>true</code> if this is a "bad" kind of scope (with the
-   * potential to violate HTTP semanatics) that requires to be preserved
+   * potential to violate HTTP semantics) that requires to be preserved
    * on <code>RENDER</code> cycles as well as <code>ACTION</code> cycles.
    */
   public void setAlwaysPreserve(boolean alwaysPreserve) {
@@ -71,13 +80,38 @@ public class ScopedBeanManager implements BeanDestroyer, BeanNameAware {
   }
   
   public void setCopyPreservingBeans(String copyPreservingBeans) {
-    this.copyPreservingBeans = copyPreservingBeans;
+    StringList specs = StringList.fromString(copyPreservingBeans);
+    if (copyPreservingBeans.indexOf(SPEC_SPLIT_CHAR) != -1) {
+      copyPreservingBeanList = new StringList();
+      targetPreservingKeyList = new StringList();
+      for (int i = 0; i < specs.size(); ++ i) {
+        String spec = specs.stringAt(i);
+        int splitpos = spec.indexOf(SPEC_SPLIT_CHAR);
+        String bean = null, key = null;
+        if (splitpos == -1) {
+          bean = key = spec;
+        }
+        else {
+          bean = spec.substring(0, splitpos);
+          key = spec.substring(splitpos + 1);
+        }
+        copyPreservingBeanList.add(bean);
+        targetPreservingKeyList.add(key);
+      }
+    }
+    else {
+      copyPreservingBeanList = specs;
+    }
   }
 
   public StringList getCopyPreservingBeanList() {
-    return StringList.fromString(copyPreservingBeans);
+    return copyPreservingBeanList;
   }
 
+  public StringList getTargetPreservingKeyList() {
+    return targetPreservingKeyList;
+  }
+  
   public void setTokenStateHolder(TokenStateHolder tokenStateHolder) {
     this.tokenStateHolder = tokenStateHolder;
   }
