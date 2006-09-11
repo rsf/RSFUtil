@@ -36,7 +36,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
 // * hand, these beans will need a Session.lock() called on them in any case, so
 // * need to derive from the BCPS for a HibernateBCPS.
 public class BeanCopyPreservationStrategy implements TSHPreservationStrategy,
-    BeanNameAware {
+    BeanNameAware, GenericBeanCopyPreservationStrategy {
   private StringList beannames;
   private TokenStateHolder holder;
   private String basekey = "";
