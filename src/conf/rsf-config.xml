@@ -187,7 +187,7 @@
 
   <bean id="viewParamsFixer"
     class="uk.org.ponder.rsf.componentprocessor.ViewParamsFixer">
-    <property name="viewStateHandler" ref="viewStateHandlerProxy"/>
+    <property name="viewStateHandler" ref="viewStateHandler"/>
     <property name="internalURLRewriter" ref="internalURLRewriter"/>
   </bean>
 
@@ -374,18 +374,17 @@
     <property name="viewParamsMapper" ref="viewParamsMapper" />
     <property name="viewParametersParser" ref="viewParametersParser" />
   </bean>
-
+<!-- 
   <bean id="viewStateHandlerProxy" parent="RSACBridgeProxy">
     <property name="targetBeanName">
       <idref bean="viewStateHandler" />
     </property>
   </bean>
+  -->
 
   <bean id="URLRewriter"
     class="uk.org.ponder.rsf.viewstate.URLRewriter">
-    <property name="viewStateHandler">
-      <ref bean="viewStateHandlerProxy" />
-    </property>
+    <property name="viewStateHandler" ref="viewStateHandler"/>
   </bean>
 
   <bean id="listenerConnector"

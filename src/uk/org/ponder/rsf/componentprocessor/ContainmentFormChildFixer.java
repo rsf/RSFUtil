@@ -77,13 +77,8 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
             formID));
 
         if (getform) {
-          // slight "hack" to make cluster components in GET forms work
-          // correctly - presumably there is only ONE of them that will actually
-          // try to submit an HTML value.
-          int hypos = bound.submittingname.indexOf('-');
-          if (hypos != -1) {
-            bound.submittingname = bound.submittingname.substring(0, hypos);
-          }
+          bound.submittingname = reduceGETSubmittingName(bound.submittingname);
+         
         }
 
         toprocess.submittingcontrols.add(fullID);
@@ -115,6 +110,27 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
           .next());
       registerComponent(toprocess, nested);
     }
+  }
+
+  private static String reduceGETSubmittingName(String submittingname) {
+    String[] comps = submittingname.split(":", -1);
+    submittingname = "";
+    for (int i = 0; i < comps.length; ++ i) {
+      // append prefix.localID. for each component that has one
+      if ((i % 3) == 2) {
+        if (comps[i].length() != 0) 
+        submittingname += comps[i - 2] + "." + comps[i] + ".";
+      }
+    }
+    submittingname += comps[comps.length - 1];
+    // slight "hack" to make cluster components in GET forms work
+    // correctly - presumably there is only ONE of them that will actually
+    // try to submit an HTML value.
+    int hypos = submittingname.indexOf('-');
+    if (hypos != -1) {
+      submittingname = submittingname.substring(0, hypos);
+    }
+    return submittingname;
   }
 
   private void registerContainer(UIForm toprocess, UIContainer toregister) {
