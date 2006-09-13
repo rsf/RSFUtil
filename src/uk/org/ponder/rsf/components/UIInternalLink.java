@@ -14,7 +14,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * The <code>target</code> field will be filled in by a fixup prior to
  * rendering.
  * <p>
- * Note that the ViewParams object supplied as argument to the "make" methods
+ * Note that the ViewParameters object supplied as argument to the "make" methods
  * will be copied prior to being added.
  * 
  * @author Antranig Basman (amb26@ponder.org.uk)
