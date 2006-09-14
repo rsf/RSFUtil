@@ -202,8 +202,6 @@
     class="uk.org.ponder.rsf.templateresolver.BasicTemplateResolver">
     <property name="templateExtensionInferrer"
       ref="templateExtensionInferrer" />
-    <property name="templateResolverStrategy"
-      ref="templateResolverStrategy" />
     <property name="baseURLProvider" ref="baseURLProvider" />
     <property name="TPIAggregator" ref="TPIAggregator"/>
   </bean>
@@ -248,6 +246,11 @@
     <property name="baseDirectory" value="content/templates/" />
     <property name="consumerInfo" ref="consumerInfoProxy" />
     <property name="contextURLProvider" ref="contextURLProvider" />
+  </bean>
+
+  <!--  Backwards compatibility for old users of templateResolverStrategy -->
+  <bean parent="templateContributorParent">
+    <property name="value" ref="templateResolverStrategy"/>
   </bean>
 
   <bean id="viewResolver"

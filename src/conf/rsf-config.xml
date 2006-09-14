@@ -262,6 +262,12 @@
       value="TPIAggregator.templateParseInterceptors" />
   </bean>
 
+  <bean id="templateContributorParent"
+   class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
+    <property name="targetPath"
+      value="viewTemplateResolver.templateResolverStrategies" />
+  </bean>
+
   <bean id="templateExpander"
     class="uk.org.ponder.rsf.expander.TemplateExpander">
     <property name="DARApplier" ref="DARApplier"/>

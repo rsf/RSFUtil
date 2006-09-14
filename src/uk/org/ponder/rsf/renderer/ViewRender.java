@@ -11,6 +11,7 @@ import uk.org.ponder.errorutil.TargettedMessageList;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.content.ContentTypeInfo;
+import uk.org.ponder.rsf.template.XMLCompositeViewTemplate;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.template.XMLLumpList;
 import uk.org.ponder.rsf.template.XMLLumpMMap;
@@ -25,26 +26,24 @@ import uk.org.ponder.xml.XMLUtil;
 import uk.org.ponder.xml.XMLWriter;
 
 /**
- * Encapsulates the request-specific process of rendering a view - 
- * a request-scope bean containing the implementation of the IKAT rendering
- * algorithm. 
+ * Encapsulates the request-specific process of rendering a view - a
+ * request-scope bean containing the implementation of the IKAT rendering
+ * algorithm.
  * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
 public class ViewRender {
-  private XMLViewTemplate template; // here only as a reminder for inversion
-  private XMLLump[] lumps;
-  private int roottagindex;
-  private XMLLump rootlump;
+  private XMLViewTemplate t;
   private XMLLumpMMap globalmap;
+
   private View view;
   private RenderSystem renderer;
   private PrintOutputStream pos;
   private XMLWriter xmlw;
 
   private Map branchmap;
-  
+
   private TargettedMessageList messagelist;
   // a map of HTMLLumps to StringList of messages due to be delivered to
   // that component when it is reached (registered with a FORID prefix)
@@ -58,23 +57,26 @@ public class ViewRender {
   private DecoratorManager decoratormanager;
 
   public void setViewTemplate(ViewTemplate viewtemplateo) {
-    // TODO: hack for now - will we have other kinds of template?
-    XMLViewTemplate viewtemplate = (XMLViewTemplate) viewtemplateo;
-    this.template = viewtemplate;
-    this.lumps = template.lumps;
-    this.rootlump = template.rootlump;
-    this.globalmap = template.globalmap;
-    this.roottagindex = template.roottagindex;
+    if (viewtemplateo instanceof XMLCompositeViewTemplate) {
+      XMLCompositeViewTemplate viewtemplate = (XMLCompositeViewTemplate) viewtemplateo;
+      t = viewtemplate.roottemplate;
+      globalmap = viewtemplate.globalmap;
+    }
+    else {
+      t = (XMLViewTemplate) viewtemplateo;
+      globalmap = t.globalmap;
+    }
+    
   }
-   
+
   public void setView(View view) {
     this.view = view;
   }
-  
+
   public void setRenderSystem(RenderSystem renderer) {
     this.renderer = renderer;
   }
-  
+
   public void setContentTypeInfo(ContentTypeInfo contenttypeinfo) {
     this.contenttypeinfo = contenttypeinfo;
   }
@@ -82,33 +84,35 @@ public class ViewRender {
   public void setMessages(TargettedMessageList messages) {
     this.messagelist = messages;
   }
-  
+
   public void setGlobalMessageTarget(String globalmessagetarget) {
     this.globalmessagetarget = globalmessagetarget;
   }
-  
+
   public void setMessageRenderer(MessageRenderer messagerenderer) {
     this.messagerenderer = messagerenderer;
   }
-  
+
   public void setDecoratorManager(DecoratorManager decoratormanager) {
     this.decoratormanager = decoratormanager;
   }
-  
+
   public void render(PrintOutputStream pos) {
-    branchmap = BranchResolver.resolveBranches(globalmap, view.viewroot, rootlump);
-    messagetargets = MessageTargetter.targetMessages(branchmap, view, 
+    branchmap = BranchResolver.resolveBranches(globalmap, view.viewroot,
+        t.rootlump);
+    messagetargets = MessageTargetter.targetMessages(branchmap, view,
         messagelist, globalmessagetarget);
     String declaration = contenttypeinfo.get().declaration;
-    if (declaration != null) pos.print(declaration);
+    if (declaration != null)
+      pos.print(declaration);
     this.pos = pos;
     this.xmlw = new XMLWriter(pos);
     rendereddeadletters = false;
-    renderRecurse(view.viewroot, rootlump, lumps[roottagindex]);
+    renderRecurse(view.viewroot, t.rootlump, t.lumps[t.roottagindex]);
   }
 
-  private void renderRecurse(UIBranchContainer basecontainer, XMLLump parentlump,
-      XMLLump baselump) {
+  private void renderRecurse(UIBranchContainer basecontainer,
+      XMLLump parentlump, XMLLump baselump) {
 
     int renderindex = baselump.lumpindex;
     int basedepth = parentlump.nestingdepth;
@@ -116,15 +120,16 @@ public class ViewRender {
     while (true) {
       // continue scanning along this template section until we either each
       // the last lump, or the recursion level.
-      renderindex = RenderUtil.dumpScan(lumps, renderindex, basedepth, pos, true);
-      if (renderindex == lumps.length)
+      renderindex = RenderUtil.dumpScan(t.lumps, renderindex, basedepth, pos,
+          true);
+      if (renderindex == t.lumps.length)
         break;
-      XMLLump lump = lumps[renderindex];
+      XMLLump lump = t.lumps[renderindex];
       if (lump.nestingdepth < basedepth)
         break;
 
       String id = lump.rsfID;
-      boolean ismessage = id.startsWith(XMLLump.FORID_PREFIX); 
+      boolean ismessage = id.startsWith(XMLLump.FORID_PREFIX);
       if (id != null && !ismessage && id.indexOf(SplitID.SEPARATOR) != -1) {
         // we have entered a repetitive domain, by diagnosis of the template.
         // Seek in the component tree for the child list that must be here
@@ -140,7 +145,7 @@ public class ViewRender {
             if (child instanceof UIBranchContainer) {
               XMLLump targetlump = (XMLLump) branchmap.get(child);
               if (targetlump != null) {
-                XMLLump firstchild = lumps[targetlump.open_end.lumpindex + 1];
+                XMLLump firstchild = t.lumps[targetlump.open_end.lumpindex + 1];
                 dumpContainerHead((UIBranchContainer) child, targetlump);
                 renderRecurse((UIBranchContainer) child, targetlump, firstchild);
               }
@@ -149,9 +154,10 @@ public class ViewRender {
               XMLLump targetlump = findChild(parentlump, child);
               // this case may trigger if there are suffix-specific renderers
               // but no fallback.
-              if (targetlump == null) continue;
-              int renderend = renderer.renderComponent(child, view, lumps,
-                  targetlump.lumpindex, pos, contenttypeinfo.IDStrategy);
+              if (targetlump == null)
+                continue;
+              int renderend = renderer.renderComponent(child, view, targetlump, 
+                  pos, contenttypeinfo.IDStrategy);
               if (i != children.size() - 1) {
                 // at this point, magically locate any "glue" that matches the
                 // transition
@@ -159,7 +165,8 @@ public class ViewRender {
                 // along
                 // until we reach the next component with a matching id prefix.
                 // NB transition matching is not implemented and may never be.
-                RenderUtil.dumpScan(lumps, renderend, targetlump.nestingdepth - 1, pos, false);
+                RenderUtil.dumpScan(t.lumps, renderend,
+                    targetlump.nestingdepth - 1, pos, false);
                 // we discard any index reached by this dump, continuing the
                 // controlled sequence as long as there are any children.
                 // given we are in the middle of a sequence here, we expect to
@@ -172,7 +179,8 @@ public class ViewRender {
                 // the TINIEST text forming repetition glue.
               }
               else {
-                RenderUtil.dumpScan(lumps, renderend, targetlump.nestingdepth, pos, true);
+                RenderUtil.dumpScan(t.lumps, renderend,
+                    targetlump.nestingdepth, pos, true);
               }
             }
 
@@ -180,19 +188,20 @@ public class ViewRender {
         }
         else {
           if (Logger.log.isDebugEnabled()) {
-          Logger.log.debug("No component with prefix " + prefix
-              + " found for domain at template lump " + renderindex +", skipping");
+            Logger.log.debug("No component with prefix " + prefix
+                + " found for domain at template lump " + renderindex
+                + ", skipping");
           }
         }
         // at this point, magically locate the "postamble" from lump, and
         // reset the index.
-//        Logger.log.info("Stack returned: skipping domain from ");
-//        debugLump(lump);
+        // Logger.log.info("Stack returned: skipping domain from ");
+        // debugLump(lump);
         XMLLump finallump = parentlump.downmap.getFinal(prefix);
         XMLLump closefinal = finallump.close_tag;
         renderindex = closefinal.lumpindex + 1;
-//        Logger.log.info("to ");
-//        debugLump(lumps[renderindex]);
+        // Logger.log.info("to ");
+        // debugLump(lumps[renderindex]);
       }
       else {
         // no colon - continue template-driven.
@@ -202,11 +211,12 @@ public class ViewRender {
         if (id != null) {
           if (ismessage) {
             TargettedMessageList messages = messagetargets.getMessages(lump);
-            if (messages == null) messages = new TargettedMessageList();
+            if (messages == null)
+              messages = new TargettedMessageList();
             if (!rendereddeadletters) {
               rendereddeadletters = true;
-              TargettedMessageList deadmessages = 
-                messagetargets.getMessages(MessageTargetter.DEAD_LETTERS);
+              TargettedMessageList deadmessages = messagetargets
+                  .getMessages(MessageTargetter.DEAD_LETTERS);
               if (deadmessages != null) {
                 messages.addMessages(deadmessages);
               }
@@ -218,7 +228,7 @@ public class ViewRender {
           }
         }
         // if we find a leaf component, render it.
-        renderindex = renderer.renderComponent(component, view, lumps, renderindex,
+        renderindex = renderer.renderComponent(component, view, lump, 
             pos, contenttypeinfo.IDStrategy);
       } // end if unrepeatable component.
     }
@@ -233,31 +243,34 @@ public class ViewRender {
     if (headlumps == null && split.suffix != null) {
       headlumps = sourcescope.downmap.headsForID(split.prefix
           + SplitID.SEPARATOR);
-//      if (headlumps.size() == 0) {
-//        throw UniversalRuntimeException.accumulate(new IOException(),
-//            "Error in template file: peer for component with ID " + child.ID
-//                + " not found in scope " + sourcescope.toDebugString());
-//      }
+      // if (headlumps.size() == 0) {
+      // throw UniversalRuntimeException.accumulate(new IOException(),
+      // "Error in template file: peer for component with ID " + child.ID
+      // + " not found in scope " + sourcescope.toDebugString());
+      // }
     }
-    return headlumps == null? null : headlumps.lumpAt(0);
+    return headlumps == null ? null
+        : headlumps.lumpAt(0);
   }
 
-  private void dumpContainerHead(UIBranchContainer branch, 
-      XMLLump targetlump) {
+  private void dumpContainerHead(UIBranchContainer branch, XMLLump targetlump) {
     HashMap attrcopy = new HashMap();
     attrcopy.putAll(targetlump.attributemap);
-    String IDStrategy = RenderUtil.determineIDStrategy(branch, contenttypeinfo.IDStrategy);
+    String IDStrategy = RenderUtil.determineIDStrategy(branch,
+        contenttypeinfo.IDStrategy);
     RenderUtil.adjustForID(attrcopy, IDStrategy, branch.getFullID());
     decoratormanager.decorate(branch.decorators, targetlump.getTag(), attrcopy);
     // TODO: normalise this silly space business
-    pos.write(targetlump.buffer, targetlump.start, targetlump.length - 1);
+    pos.write(targetlump.parent.buffer, targetlump.start, targetlump.length - 1);
     XMLUtil.dumpAttributes(attrcopy, xmlw);
     pos.print(">");
   }
 
-  public static String debugLump(XMLLump debug, XMLLump[] lumps) {
+  public static String debugLump(XMLLump debug) {
+    XMLLump[] lumps = debug.parent.lumps;
     CharWrap message = new CharWrap();
-    message.append("Lump index " + debug.lumpindex + " (line " + debug.line + " column " + debug.column + ") ");
+    message.append("Lump index " + debug.lumpindex + " (line " + debug.line
+        + " column " + debug.column + ") ");
     int frontpoint = debug.lumpindex - 5;
     if (frontpoint < 0)
       frontpoint = 0;
@@ -269,7 +282,7 @@ public class ViewRender {
         message.append("(*)");
       }
       XMLLump lump = lumps[i];
-      message.append(lump.buffer, lump.start, lump.length);
+      message.append(lump.parent.buffer, lump.start, lump.length);
     }
     if (debug.downmap != null) {
       message.append("\nDownmap here: ").append(debug.downmap.getHeadsDebug());

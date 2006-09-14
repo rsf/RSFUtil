@@ -13,18 +13,15 @@ import uk.org.ponder.xml.XMLWriter;
 
 public class TagRenderContext {
   public Map attrcopy;
-  public XMLLump[] lumps;
   public XMLLump uselump;
   public XMLLump endopen;
   public XMLLump close;
   public PrintOutputStream pos;
   public XMLWriter xmlw;
 
-  public TagRenderContext(Map attrcopy, XMLLump[] lumps, XMLLump uselump,
+  public TagRenderContext(Map attrcopy, XMLLump uselump,
       XMLLump endopen, XMLLump close, PrintOutputStream pos, XMLWriter xmlw) {
-    super();
     this.attrcopy = attrcopy;
-    this.lumps = lumps;
     this.uselump = uselump;
     this.endopen = endopen;
     this.close = close;

@@ -18,7 +18,9 @@ public class XMLLump {
   public int lumpindex;
   public int line, column;
   public int nestingdepth;
-  public char[] buffer;
+  
+  public XMLViewTemplate parent;
+ 
   public int start, length;
   public String rsfID;
   public XMLLump open_end = null;        // lump containing " >"
@@ -52,7 +54,7 @@ public class XMLLump {
     this.nestingdepth = nestingdepth;
   }
   public boolean textEquals(String tocheck) {
-    return ArrayUtil.equals(tocheck, buffer, start, length);
+    return ArrayUtil.equals(tocheck, parent.buffer, start, length);
   }
   public static String tagToText(String tagname) {
     return "<" + tagname + " ";
@@ -61,13 +63,13 @@ public class XMLLump {
     return text.substring(1, text.length() - 1);
   }
   public String getTag() {
-    return new String(buffer, start + 1, length - 2);
+    return new String(parent.buffer, start + 1, length - 2);
   }
   
   public String toDebugString() {
     return "lump index " + lumpindex + " line " + line + " column " + column;
   }
   public String toString() {
-    return new String(buffer, start, length) + " at " + toDebugString();
+    return new String(parent.buffer, start, length) + " at " + toDebugString();
   }
 }

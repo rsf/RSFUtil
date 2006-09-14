@@ -75,4 +75,15 @@ public class XMLLumpMMap {
   public XMLLump getFinal(String ID) {
     return (XMLLump) idtolumps.get(ID + FINAL_SUFFIX);
   }
+
+  public void aggregate(XMLLumpMMap toaccrete) {
+    for (Iterator it = toaccrete.iterator(); it.hasNext();) {
+      String key = (String) it.next();
+      XMLLumpList list = toaccrete.headsForID(key);
+      for (int i = 0; i < list.size(); ++ i) {
+        addLump(key, list.lumpAt(i));
+      }
+    }
+  }
+  
 }

@@ -101,7 +101,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
 
   private void closeTag(PrintOutputStream pos, XMLLump uselump) {
     pos.print("</");
-    pos.write(uselump.buffer, uselump.start + 1, uselump.length - 2);
+    pos.write(uselump.parent.buffer, uselump.start + 1, uselump.length - 2);
     pos.print(">");
   }
 
@@ -122,10 +122,11 @@ public class BasicHTMLRenderSystem implements RenderSystem {
   // with renderer-per-component "class" as before, plus interceptors.
   // Although a lot of the parameterisation now lies in the allowable tag
   // set at target.
-  public int renderComponent(UIComponent torendero, View view, XMLLump[] lumps,
-      int lumpindex, PrintOutputStream pos, String IDStrategy) {
+  public int renderComponent(UIComponent torendero, View view, XMLLump lump, 
+      PrintOutputStream pos, String IDStrategy) {
     XMLWriter xmlw = new XMLWriter(pos);
-    XMLLump lump = lumps[lumpindex];
+    int lumpindex = lump.lumpindex;
+    XMLLump[] lumps = lump.parent.lumps;
     int nextpos = -1;
     XMLLump outerendopen = lump.open_end;
     XMLLump outerclose = lump.close_tag;
@@ -151,7 +152,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
                   + scrname + " at lump " + lump.toDebugString());
           scr = NullRewriteSCR.instance;
         }
-        int tagtype = scr.render(lumps, lumpindex, xmlw);
+        int tagtype = scr.render(lump, xmlw);
         nextpos = tagtype == ComponentRenderer.LEAF_TAG ? outerclose.lumpindex + 1
             : outerendopen.lumpindex + 1;
       }
@@ -184,10 +185,10 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       decoratormanager.decorate(torendero.decorators, uselump.getTag(),
           attrcopy);
 
-      TagRenderContext rendercontext = new TagRenderContext(attrcopy, lumps,
+      TagRenderContext rendercontext = new TagRenderContext(attrcopy, 
           uselump, endopen, close, pos, xmlw);
       // ALWAYS dump the tag name, this can never be rewritten. (probably?!)
-      pos.write(uselump.buffer, uselump.start, uselump.length);
+      pos.write(uselump.parent.buffer, uselump.start, uselump.length);
       // TODO: Note that these are actually BOUND now. Create some kind of
       // defaultBoundRenderer.
       if (torendero instanceof UIBound) {
@@ -337,7 +338,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
             URLRewriteSCR urlrewriter = (URLRewriteSCR) scrc
                 .getSCR(URLRewriteSCR.NAME);
             if (!URLUtil.isAbsolute(target)) {
-              String rewritten = urlrewriter.resolveURL(target);
+              String rewritten = urlrewriter.resolveURL(uselump.parent, target);
               if (rewritten != null)
                 target = rewritten;
             }
@@ -439,7 +440,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
   }
 
   private void renderUnchanged(TagRenderContext c) {
-    RenderUtil.dumpTillLump(c.lumps, c.uselump.lumpindex + 1,
+    RenderUtil.dumpTillLump(c.uselump.parent.lumps, c.uselump.lumpindex + 1,
         c.close.lumpindex + 1, c.pos);
   }
 
@@ -469,7 +470,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
     }
     else {
       c.pos.print(">");
-      RenderUtil.dumpTillLump(c.lumps, c.endopen.lumpindex + 1,
+      RenderUtil.dumpTillLump(c.uselump.parent.lumps, c.endopen.lumpindex + 1,
           c.close.lumpindex + 1, c.pos);
     }
   }

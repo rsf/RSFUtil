@@ -10,7 +10,7 @@ import uk.org.ponder.rsf.renderer.ComponentRenderer;
 import uk.org.ponder.rsf.renderer.RenderUtil;
 import uk.org.ponder.rsf.renderer.StaticComponentRenderer;
 import uk.org.ponder.rsf.template.XMLLump;
-import uk.org.ponder.rsf.view.ViewTemplate;
+import uk.org.ponder.rsf.view.BasedViewTemplate;
 import uk.org.ponder.rsf.viewstate.URLRewriter;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.xml.XMLUtil;
@@ -24,7 +24,7 @@ import uk.org.ponder.xml.XMLWriter;
 public class URLRewriteSCR implements StaticComponentRenderer {
   public static final String NAME = "rewrite-url";
   private URLRewriter rewriter;
-  private String resourcebase;
+//  private String resourcebase;
 
   public String getName() {
     return NAME;
@@ -34,11 +34,8 @@ public class URLRewriteSCR implements StaticComponentRenderer {
     this.rewriter = resolver;
   }
 
-  public void setViewTemplate(ViewTemplate template) {
-    this.resourcebase = template.getResourceBase();
-  }
-
-  public String resolveURL(String toresolve) {
+  public String resolveURL(BasedViewTemplate template, String toresolve) {
+    String resourcebase = template.getResourceBase();
     return rewriter.rewriteResourceURL(toresolve, resourcebase);
   }
 
@@ -54,10 +51,11 @@ public class URLRewriteSCR implements StaticComponentRenderer {
    * @return Either <code>null</code> if no modification was performed, or a
    *         modifiable attribute map.
    */
-  public HashMap getResolvedURLMap(HashMap attrs, String name, HashMap cloned) {
+  public HashMap getResolvedURLMap(
+      BasedViewTemplate template, HashMap attrs, String name, HashMap cloned) {
     String toresolve = (String) attrs.get(name);
     if (toresolve == null || rewriter == null) return cloned;
-    String resolved = resolveURL(toresolve);
+    String resolved = resolveURL(template, toresolve);
     if (resolved == null) {
       return cloned;
     }
@@ -86,23 +84,22 @@ public class URLRewriteSCR implements StaticComponentRenderer {
     return null;
   }
 
-  public int render(XMLLump[] lumps, int lumpindex, XMLWriter xmlw) {
+  public int render(XMLLump lump, XMLWriter xmlw) {
     PrintOutputStream pos = xmlw.getInternalWriter();
     HashMap newattrs = null;
-    XMLLump lump = lumps[lumpindex];
     XMLLump close = lump.close_tag;
     XMLLump endopen = lump.open_end;
     String linkattr = getLinkAttribute(lump);
     if (linkattr != null) {
-      newattrs = getResolvedURLMap(lump.attributemap, linkattr, newattrs);
+      newattrs = getResolvedURLMap(lump.parent, lump.attributemap, linkattr, newattrs);
     }
     for (int i = 0; i < HTMLConstants.ubiquitousURL.length; ++i) {
-      newattrs = getResolvedURLMap(lump.attributemap,
+      newattrs = getResolvedURLMap(lump.parent, lump.attributemap,
           HTMLConstants.ubiquitousURL[i], newattrs);
     }
-    xmlw.writeRaw(lump.buffer, lump.start, lump.length);
+    xmlw.writeRaw(lump.parent.buffer, lump.start, lump.length);
     if (newattrs == null) {
-      RenderUtil.dumpTillLump(lumps, lumpindex + 1, close.lumpindex + 1, pos);
+      RenderUtil.dumpTillLump(lump.parent.lumps, lump.lumpindex + 1, close.lumpindex + 1, pos);
     }
     else {
       newattrs.remove(XMLLump.ID_ATTRIBUTE);

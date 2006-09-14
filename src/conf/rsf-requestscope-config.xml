@@ -207,7 +207,6 @@
   <bean id="URLRewriteSCR"
     class="uk.org.ponder.rsf.renderer.html.URLRewriteSCR">
     <property name="URLRewriter" ref="URLRewriter" />
-    <property name="viewTemplate" ref="viewTemplate" />
   </bean>
 
   <!-- A set of static renderers to be used for this request -->

@@ -71,17 +71,17 @@ public class BasicSCR implements StaticComponentRenderer {
     return values.iterator();
   }
  
-  public int render(XMLLump[] lumps, int lumpindex, XMLWriter xmlw) {
+  public int render(XMLLump lump, XMLWriter xmlw) {
     PrintOutputStream pos = xmlw.getInternalWriter();
     
-    XMLLump lump = lumps[lumpindex];
+    //XMLLump lump = lumps[lumpindex];
     XMLLump close = lump.close_tag;
     XMLLump endopen = lump.open_end;
     if (tag != null) {
       pos.print("<").print(tag).print(" ");
     }
     else {
-      pos.write(lump.buffer, lump.start, lump.length);
+      pos.write(lump.parent.buffer, lump.start, lump.length);
     }
     HashMap newattrs = new HashMap();
     newattrs.putAll(lump.attributemap);
@@ -96,12 +96,12 @@ public class BasicSCR implements StaticComponentRenderer {
       if (tag_type == ComponentRenderer.LEAF_TAG) {
         if (body != null && body_strategy.equals(REPLACE_BODY)) {
           pos.print(body);
-          pos.write(close.buffer, close.start, close.length);
+          pos.write(close.parent.buffer, close.start, close.length);
         }
         else {
           if (body != null) { 
             pos.print(body);
-            RenderUtil.dumpTillLump(lumps, endopen.lumpindex + 1,
+            RenderUtil.dumpTillLump(lump.parent.lumps, endopen.lumpindex + 1,
             close.lumpindex + 1, pos);
           }
         } // end if complete body replacement
