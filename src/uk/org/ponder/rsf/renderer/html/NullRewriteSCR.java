@@ -25,11 +25,11 @@ public class NullRewriteSCR implements StaticComponentRenderer {
     return null;
   }
 
-  public int render(XMLLump[] lumps, int lumpindex, XMLWriter xmlw) {
+  public int render(XMLLump lump, XMLWriter xmlw) {
     PrintOutputStream pos = xmlw.getInternalWriter();
-    XMLLump lump = lumps[lumpindex];
     XMLLump endopen = lump.open_end;
-    RenderUtil.dumpTillLump(lumps, lumpindex, endopen.lumpindex + 1, pos);
+    RenderUtil.dumpTillLump(lump.parent.lumps, lump.lumpindex, 
+        endopen.lumpindex + 1, pos);
     return ComponentRenderer.NESTING_TAG;
   }
 

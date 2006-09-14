@@ -34,7 +34,7 @@ public class RenderUtil {
     // for (; start < limit; ++ start) {
     // target.print(lumps[start].text);
     // }
-    target.write(lumps[start].buffer, lumps[start].start, lumps[limit].start
+    target.write(lumps[start].parent.buffer, lumps[start].start, lumps[limit].start
         - lumps[start].start);
     return limit;
   }
@@ -52,7 +52,7 @@ public class RenderUtil {
   public static int dumpScan(XMLLump[] lumps, int renderindex, int basedepth,
       PrintOutputStream target, boolean closeparent) {
     int start = lumps[renderindex].start;
-    char[] buffer = lumps[renderindex].buffer;
+    char[] buffer = lumps[renderindex].parent.buffer;
     while (true) {
       if (renderindex == lumps.length)
         break;

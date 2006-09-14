@@ -12,12 +12,15 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import uk.org.ponder.rsf.template.TPIAggregator;
+import uk.org.ponder.rsf.template.XMLCompositeViewTemplate;
 import uk.org.ponder.rsf.template.XMLViewTemplate;
+import uk.org.ponder.rsf.template.XMLViewTemplateParser;
 import uk.org.ponder.rsf.view.ViewTemplate;
 import uk.org.ponder.rsf.viewstate.BaseURLProvider;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.springutil.CachingInputStreamSource;
 import uk.org.ponder.stringutil.StringList;
+import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 /**
@@ -32,14 +35,14 @@ public class BasicTemplateResolver implements TemplateResolver,
 
   private TemplateExtensionInferrer tei;
   private int cachesecs;
-  private SimpleTemplateResolverStrategy strs;
   private BaseURLProvider bup;
   private TPIAggregator aggregator;
+  private List strategies;
 
   public void setBaseURLProvider(BaseURLProvider bup) {
     this.bup = bup;
   }
-  
+
   /**
    * Set the lag in seconds at which the filesystem will be polled for changes
    * in the view template. If this value is 0 or the resource is not a
@@ -53,10 +56,10 @@ public class BasicTemplateResolver implements TemplateResolver,
     this.tei = tei;
   }
 
-  public void setTemplateResolverStrategy(SimpleTemplateResolverStrategy strs) {
-    this.strs = strs;
+  public void setTemplateResolverStrategies(List strategies) {
+    this.strategies = strategies;
   }
-  
+
   public void setTPIAggregator(TPIAggregator aggregator) {
     this.aggregator = aggregator;
   }
@@ -67,6 +70,46 @@ public class BasicTemplateResolver implements TemplateResolver,
   private CachingInputStreamSource cachingiis;
 
   public ViewTemplate locateTemplate(ViewParameters viewparams) {
+    TemplateResolverStrategy rootstrategy = null;
+    XMLCompositeViewTemplate xcvt = strategies.size() == 1 ? null : 
+        new XMLCompositeViewTemplate();
+    for (int i = 0; i < strategies.size(); ++i) {
+      TemplateResolverStrategy trs = (TemplateResolverStrategy) strategies
+          .get(i);
+      if (trs.isRootResolver()) {
+        if (rootstrategy != null) {
+          Logger.log.warn("Duplicate root TemplateResolverStrategy " + trs
+              + " found, using first entry " + rootstrategy);
+        }
+        else {
+          rootstrategy = trs;
+        }
+      }
+    }
+    if (rootstrategy == null) {
+      rootstrategy = (TemplateResolverStrategy) strategies.get(0);
+      Logger.log
+          .warn("No root TemplateResolverStrategy found, using first entry of "
+              + rootstrategy);
+    }
+    
+    for (int i = 0; i < strategies.size(); ++i) {
+      TemplateResolverStrategy trs = (TemplateResolverStrategy) strategies
+          .get(i);
+      XMLViewTemplate template = locateTemplate(viewparams, trs);
+      if (xcvt != null) {
+        xcvt.globalmap.aggregate(template.globalmap);
+      }
+      else {
+        return template;
+      }
+    }
+    
+    return xcvt;
+  }
+
+  private XMLViewTemplate locateTemplate(ViewParameters viewparams,
+      TemplateResolverStrategy strs) {
     String resourcebase = "/";
     if (strs instanceof BaseAwareTemplateResolverStrategy) {
       BaseAwareTemplateResolverStrategy batrs = (BaseAwareTemplateResolverStrategy) strs;
@@ -100,9 +143,9 @@ public class BasicTemplateResolver implements TemplateResolver,
         if (is == CachingInputStreamSource.UP_TO_DATE) {
           is = cachingiis.getNonCachingResolver().openStream(fullpath);
         }
-        template = new XMLViewTemplate();
-        template.setTemplateParseInterceptors(tpis);
-        template.parse(is);
+        XMLViewTemplateParser parser = new XMLViewTemplateParser();
+        parser.setTemplateParseInterceptors(tpis);
+        template = (XMLViewTemplate) parser.parse(is);
         // there WILL be one slash in the path.
         int lastslashpos = fullpath.lastIndexOf('/');
         String resourcebaseext = fullpath.substring(1, lastslashpos + 1);

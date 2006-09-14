@@ -25,9 +25,7 @@ public interface RenderSystem extends RenderSystemDecoder {
    * static rewrite rule, in which case the System will invoke the relevant SCR.
    * @param view The view currently being rendered - necessary to resolve
    * any inter-component references.
-   * @param lumps The full array of XMLLump object specifing the condensed
-   * representation of the template set.
-   * @param lumpindex The index of the lump (head lump holding open tag) where
+   * @param lump The lump (head lump holding open tag) where
    * the tag appears within the template requiring rewrite.
    * @param pos The output stream where the transformed template data is to be
    * written.
@@ -35,8 +33,8 @@ public interface RenderSystem extends RenderSystemDecoder {
    *  {@link uk.org.ponder.rsf.content.ContentTypeInfo} determining the strategy
    *  to be used for assigning ID attributes.
    */
-  public int renderComponent(UIComponent torender, View view, XMLLump[] lumps, 
-      int lumpindex, PrintOutputStream pos, String IDstrategy);
+  public int renderComponent(UIComponent torender, View view, XMLLump lump, 
+      PrintOutputStream pos, String IDstrategy);
 
  
   public void setStaticRenderers(StaticRendererCollection scrc);

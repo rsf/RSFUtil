@@ -17,7 +17,7 @@ import uk.org.ponder.stringutil.StringList;
  *
  */
 
-public interface SimpleTemplateResolverStrategy {
+public interface TemplateResolverStrategy {
   /** @param viewparams The view parameters for the view being rendered.
    * @return A (modifiable) list of resource names (as supplied to some kind of 
    * InputStreamSource) MINUS extension, that will be searched, IN ORDER,
@@ -25,4 +25,8 @@ public interface SimpleTemplateResolverStrategy {
    * paths from the context root of the webapp, omitting the leading slash.
    */
   public StringList resolveTemplatePath(ViewParameters viewparams);
+  /** Returns <code>true</code> if this is a resolver for root templates 
+   * (i.e. those at which rendering begins for a view)
+   */
+  public boolean isRootResolver();
 }

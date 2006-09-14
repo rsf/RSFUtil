@@ -15,9 +15,7 @@ public interface StaticComponentRenderer {
    */
   public String getName();
   /** Renders the rewritten template data to the output stream.
-   * @param lumps The array of lumps specifying the condensed template 
-   * representation.
-   * @param lumpindex The index of the lump corresponding to the opening tag holding
+   * @param lump The  lump corresponding to the opening tag holding
    * the <code>rsf:id</code> matching this renderer's name.
    * @param xmlw The {@link XMLWriter} to which the rewritten data is to be
    * sent.
@@ -26,5 +24,5 @@ public interface StaticComponentRenderer {
    * depending on whether just the opening tag or also the closing tag was consumed from 
    * the template. 
    */
-  public int render(XMLLump[] lumps, int lumpindex, XMLWriter xmlw);
+  public int render(XMLLump lump, XMLWriter xmlw);
 }

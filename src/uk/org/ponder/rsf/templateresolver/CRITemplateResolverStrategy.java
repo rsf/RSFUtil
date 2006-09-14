@@ -3,7 +3,6 @@
  */
 package uk.org.ponder.rsf.templateresolver;
 
-import uk.org.ponder.rsf.viewstate.BaseURLProvider;
 import uk.org.ponder.rsf.viewstate.ContextURLProvider;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.stringutil.StringList;
@@ -19,12 +18,14 @@ import uk.org.ponder.webapputil.ConsumerInfo;
  */
 
 public class CRITemplateResolverStrategy implements
-    SimpleTemplateResolverStrategy, BaseAwareTemplateResolverStrategy {
+    TemplateResolverStrategy, BaseAwareTemplateResolverStrategy {
   private String basedir;
 
   private ConsumerInfo ciproxy;
 
   private ContextURLProvider cup;
+
+  private boolean rootresolver = true;
   public static final String CONSUMERTYPE_SEPARATOR = "-";
 
   public void setContextURLProvider(ContextURLProvider cup) {
@@ -41,6 +42,10 @@ public class CRITemplateResolverStrategy implements
 
   public void setConsumerInfo(ConsumerInfo ci) {
     this.ciproxy = ci;
+  }
+  
+  public void setIsRootResolver(boolean rootresolver) {
+    this.rootresolver = rootresolver;
   }
 
   public StringList resolveTemplatePath(ViewParameters viewparams) {
@@ -61,6 +66,10 @@ public class CRITemplateResolverStrategy implements
 
   public String getTemplateResourceBase() {
     return "/";
+  }
+
+  public boolean isRootResolver() {
+    return rootresolver;
   }
 
 }
