@@ -7,6 +7,12 @@ import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.expander.TemplateExpander;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
+/** A ViewComponentProducer that returns components deserialized from an
+ * XML representation (after having been subject to a process of "expansion"
+ * specified by the RSF "pseudocomponents" UISwitch and UIReplicator).
+ * @author Antranig Basman (antranig@caret.cam.ac.uk)
+ *
+ */
 public class XMLViewComponentProducer implements ViewComponentProducer {
   private String viewID;
   private UIContainer templatecontainer;
