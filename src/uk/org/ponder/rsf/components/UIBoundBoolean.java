@@ -37,6 +37,11 @@ public class UIBoundBoolean extends UIBound {
     parent.addComponent(togo);
     return togo;
   }
+
+  public static UIBoundBoolean make(UIContainer parent, String ID,
+       String binding) {
+    return make(parent, ID, binding, null);
+  }
   
   public static UIBoundBoolean make(UIContainer parent, String ID,
        Boolean initvalue) {
