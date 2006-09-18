@@ -3,7 +3,6 @@
  */
 package uk.org.ponder.rsf.renderer.html;
 
-import uk.org.ponder.rsf.renderer.ContributingSCR;
 import uk.org.ponder.rsf.renderer.StaticComponentRenderer;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.xml.XMLWriter;
@@ -15,7 +14,7 @@ import uk.org.ponder.xml.XMLWriter;
  *
  */
 
-public class HeadContributingSCR implements StaticComponentRenderer, ContributingSCR {
+public class HeadContributingSCR implements StaticComponentRenderer {
   public static final String CONTRIBUTE_NAME = "head";
 
   public String getName() {
