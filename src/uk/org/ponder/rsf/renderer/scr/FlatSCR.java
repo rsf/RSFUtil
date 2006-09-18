@@ -1,12 +1,14 @@
 /*
  * Created on Sep 23, 2005
  */
-package uk.org.ponder.rsf.renderer;
+package uk.org.ponder.rsf.renderer.scr;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import uk.org.ponder.rsf.renderer.ComponentRenderer;
+import uk.org.ponder.rsf.renderer.RenderUtil;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.xml.NameValue;

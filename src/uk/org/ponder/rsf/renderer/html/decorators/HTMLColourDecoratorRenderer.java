@@ -8,7 +8,7 @@ import java.util.Map;
 import uk.org.ponder.htmlutil.HTMLUtil;
 import uk.org.ponder.rsf.components.decorators.UIColourDecorator;
 import uk.org.ponder.rsf.components.decorators.UIDecorator;
-import uk.org.ponder.rsf.renderer.DecoratorRenderer;
+import uk.org.ponder.rsf.renderer.decorator.DecoratorRenderer;
 
 public class HTMLColourDecoratorRenderer implements DecoratorRenderer {
 

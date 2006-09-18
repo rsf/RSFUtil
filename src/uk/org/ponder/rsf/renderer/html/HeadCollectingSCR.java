@@ -3,8 +3,8 @@
  */
 package uk.org.ponder.rsf.renderer.html;
 
-import uk.org.ponder.rsf.renderer.CollectingSCR;
-import uk.org.ponder.rsf.renderer.StaticComponentRenderer;
+import uk.org.ponder.rsf.renderer.scr.CollectingSCR;
+import uk.org.ponder.rsf.renderer.scr.StaticComponentRenderer;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.xml.XMLWriter;
 

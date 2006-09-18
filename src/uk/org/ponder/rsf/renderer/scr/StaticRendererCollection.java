@@ -1,10 +1,11 @@
 /*
  * Created on Sep 23, 2005
  */
-package uk.org.ponder.rsf.renderer;
+package uk.org.ponder.rsf.renderer.scr;
 
 import java.util.HashMap;
 import java.util.List;
+
 
 public class StaticRendererCollection {
   // a hashmap of either Strings or Component classes 
