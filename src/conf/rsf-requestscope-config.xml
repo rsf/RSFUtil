@@ -206,7 +206,7 @@
 
   <!-- A set of static renderers to be used for this request -->
   <bean id="staticRenderers"
-    class="uk.org.ponder.rsf.renderer.StaticRendererCollection">
+    class="uk.org.ponder.rsf.renderer.scr.StaticRendererCollection">
     <property name="staticRenderers">
       <list>
         <ref local="URLRewriteSCR" />

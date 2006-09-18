@@ -6,6 +6,9 @@ package uk.org.ponder.rsf.view;
 import uk.org.ponder.rsf.template.XMLLumpMMap;
 
 public class GenericViewTemplate implements ViewTemplate {
+  // a map from scr= name to list of lumps referenced, for collectingSCRs
+  public XMLLumpMMap collectmap;
+  
   public XMLLumpMMap globalmap = new XMLLumpMMap();
   
   public boolean hasComponent(String ID) {

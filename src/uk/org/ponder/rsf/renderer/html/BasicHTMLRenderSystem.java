@@ -37,6 +37,7 @@ import uk.org.ponder.rsf.request.FossilizedConverter;
 import uk.org.ponder.rsf.request.SubmittedValueEntry;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.template.XMLLumpList;
+import uk.org.ponder.rsf.template.XMLLumpMMap;
 import uk.org.ponder.rsf.uitype.UITypes;
 import uk.org.ponder.rsf.view.View;
 import uk.org.ponder.streamutil.StreamCopyUtil;
@@ -119,12 +120,13 @@ public class BasicHTMLRenderSystem implements RenderSystem {
     }
   }
 
+
   // No, this method will not stay like this forever! We plan on an architecture
   // with renderer-per-component "class" as before, plus interceptors.
   // Although a lot of the parameterisation now lies in the allowable tag
   // set at target.
   public int renderComponent(UIComponent torendero, View view, XMLLump lump, 
-      PrintOutputStream pos, String IDStrategy) {
+      PrintOutputStream pos, String IDStrategy, XMLLumpMMap collecteds) {
     XMLWriter xmlw = new XMLWriter(pos);
     int lumpindex = lump.lumpindex;
     XMLLump[] lumps = lump.parent.lumps;
@@ -153,7 +155,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
                   + scrname + " at lump " + lump.toDebugString());
           scr = NullRewriteSCR.instance;
         }
-        int tagtype = scr.render(lump, xmlw);
+        int tagtype = RenderUtil.renderSCR(scr, lump, xmlw, collecteds);
         nextpos = tagtype == ComponentRenderer.LEAF_TAG ? outerclose.lumpindex + 1
             : outerendopen.lumpindex + 1;
       }

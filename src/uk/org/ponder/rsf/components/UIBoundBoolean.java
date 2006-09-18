@@ -5,26 +5,30 @@ package uk.org.ponder.rsf.components;
 
 import uk.org.ponder.rsf.uitype.BooleanUIType;
 
-/** Component holding a single boolean value, which will peer with a component
+/**
+ * Component holding a single boolean value, which will peer with a component
  * like a checkbox or radio button.
+ * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
 public class UIBoundBoolean extends UIBound {
-  
+
   public boolean getValue() {
-    return ((Boolean)value).booleanValue();
+    return ((Boolean) value).booleanValue();
   }
 
   public void setValue(boolean value) {
-    this.value = value? Boolean.TRUE : Boolean.FALSE;
+    this.value = value ? Boolean.TRUE
+        : Boolean.FALSE;
   }
+
   public UIBoundBoolean() {
     value = BooleanUIType.instance.getPlaceholder();
     fossilize = true;
     willinput = true;
   }
-  
+
   public static UIBoundBoolean make(UIContainer parent, String ID,
       String binding, Boolean initvalue) {
     UIBoundBoolean togo = new UIBoundBoolean();
@@ -39,17 +43,23 @@ public class UIBoundBoolean extends UIBound {
   }
 
   public static UIBoundBoolean make(UIContainer parent, String ID,
-       String binding) {
+      String binding) {
     return make(parent, ID, binding, null);
   }
-  
+
   public static UIBoundBoolean make(UIContainer parent, String ID,
-       Boolean initvalue) {
+      Boolean initvalue) {
     return make(parent, ID, null, initvalue);
   }
-  
+
   public static UIBoundBoolean make(UIContainer parent, String ID,
       boolean initvalue) {
-   return make(parent, ID, null, initvalue? Boolean.TRUE : Boolean.FALSE);
- }
+    return make(parent, ID, null, initvalue ? Boolean.TRUE
+        : Boolean.FALSE);
+  }
+
+  /** Suitable for a non-bound control such as in a GET form */
+  public static UIBoundBoolean make(UIContainer parent, String ID) {
+    return make(parent, ID, null, (Boolean) null);
+  }
 }

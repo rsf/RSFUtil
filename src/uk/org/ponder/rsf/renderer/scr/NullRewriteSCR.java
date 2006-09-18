@@ -16,9 +16,9 @@ import uk.org.ponder.xml.XMLWriter;
  *
  */
 
-public class NullRewriteSCR implements StaticComponentRenderer {
+public class NullRewriteSCR implements BasicSCR {
   
-  public static final StaticComponentRenderer instance = new NullRewriteSCR();
+  public static final BasicSCR instance = new NullRewriteSCR();
   
   public String getName() {
     return null;

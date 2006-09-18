@@ -7,7 +7,6 @@ import java.util.Map;
 
 import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.TargettedMessageList;
-import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.rsf.flow.ARIResolver;
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterpreter;

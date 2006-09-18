@@ -12,7 +12,6 @@ import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 
 import uk.org.ponder.arrayutil.ArrayUtil;
-import uk.org.ponder.rsf.renderer.StaticComponentRenderer;
 import uk.org.ponder.rsf.renderer.ViewRender;
 import uk.org.ponder.rsf.util.SplitID;
 import uk.org.ponder.rsf.view.ViewTemplate;
@@ -114,9 +113,9 @@ public class XMLViewTemplateParser implements ViewTemplateParser {
   }
 
 
-  private void checkCollect(String id, XMLLump headlump) {
-    if (id.startsWith(XMLLump.SCR_COLLECT_PREFIX)) {
-      String scr = id.substring(XMLLump.SCR_COLLECT_PREFIX.length());
+  private void checkContribute(String id, XMLLump headlump) {
+    if (id.startsWith(XMLLump.SCR_CONTRIBUTE_PREFIX)) {
+      String scr = id.substring(XMLLump.SCR_CONTRIBUTE_PREFIX.length());
       t.collectmap.addLump(scr, headlump);
     }
   }
@@ -186,7 +185,7 @@ public class XMLViewTemplateParser implements ViewTemplateParser {
               && ID.endsWith(XMLLump.FORID_SUFFIX)) {
             ID = ID.substring(0, ID.length() - XMLLump.FORID_SUFFIX.length());
           }
-          checkCollect(ID, headlump);
+          checkContribute(ID, headlump);
           headlump.rsfID = ID;
 
           XMLLump stacktop = findTopContainer();

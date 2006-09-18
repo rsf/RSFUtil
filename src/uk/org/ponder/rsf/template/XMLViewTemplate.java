@@ -28,9 +28,6 @@ implements BasedViewTemplate {
   
   public char[] buffer;
   
-  // a map from scr= name to list of lumps referenced, for collectingSCRs
-  public XMLLumpMMap collectmap;
-
   private String resourcebase;
 
   public void setResourceBase(String resourcebase) {

@@ -8,7 +8,7 @@ import java.util.HashMap;
 import uk.org.ponder.htmlutil.HTMLConstants;
 import uk.org.ponder.rsf.renderer.ComponentRenderer;
 import uk.org.ponder.rsf.renderer.RenderUtil;
-import uk.org.ponder.rsf.renderer.scr.StaticComponentRenderer;
+import uk.org.ponder.rsf.renderer.scr.BasicSCR;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.view.BasedViewTemplate;
 import uk.org.ponder.rsf.viewstate.URLRewriter;
@@ -21,7 +21,7 @@ import uk.org.ponder.xml.XMLWriter;
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
 
-public class URLRewriteSCR implements StaticComponentRenderer {
+public class URLRewriteSCR implements BasicSCR {
   public static final String NAME = "rewrite-url";
   private URLRewriter rewriter;
 //  private String resourcebase;
