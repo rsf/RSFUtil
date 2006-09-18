@@ -39,6 +39,8 @@ public class XMLLump {
   // URL rewriting (issued URLs beginning with root /). NEVER issue a component
   // with this ID!
   public static final String SCR_PREFIX = "scr=";
+  // Value for rsf:id that represents a CollectingSCR
+  public static final String SCR_COLLECT_PREFIX = "scr=collect-";
   public static final String URL_REWRITE = "rewrite-url";
   // A value for the rsf:id attribute indicating that the actual (leaf) component
   // to be targetted by component rendering is somewhere inside the component
