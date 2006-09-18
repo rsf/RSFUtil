@@ -1,7 +1,7 @@
 /*
  * Created on May 17, 2006
  */
-package uk.org.ponder.rsf.renderer;
+package uk.org.ponder.rsf.renderer.decorator;
 
 import java.util.Map;
 

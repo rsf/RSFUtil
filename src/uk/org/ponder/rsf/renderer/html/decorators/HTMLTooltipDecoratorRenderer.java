@@ -7,7 +7,7 @@ import java.util.Map;
 
 import uk.org.ponder.rsf.components.decorators.UIDecorator;
 import uk.org.ponder.rsf.components.decorators.UITooltipDecorator;
-import uk.org.ponder.rsf.renderer.DecoratorRenderer;
+import uk.org.ponder.rsf.renderer.decorator.DecoratorRenderer;
 
 public class HTMLTooltipDecoratorRenderer implements DecoratorRenderer {
 

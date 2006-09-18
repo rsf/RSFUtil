@@ -1,8 +1,9 @@
 /*
  * Created on Sep 23, 2005
  */
-package uk.org.ponder.rsf.renderer;
+package uk.org.ponder.rsf.renderer.scr;
 
+import uk.org.ponder.rsf.renderer.ComponentRenderer;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.xml.XMLWriter;
 
