@@ -10,6 +10,6 @@ package uk.org.ponder.rsf.renderer;
  *
  */
 
-public interface CollectingSCR {
+public interface ContributingSCR {
 
 }
