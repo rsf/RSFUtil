@@ -4,8 +4,11 @@
 package uk.org.ponder.rsf.renderer;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import uk.org.ponder.errorutil.TargettedMessageList;
 import uk.org.ponder.rsf.components.UIBranchContainer;
@@ -43,7 +46,9 @@ public class ViewRender {
   private PrintOutputStream pos;
   private XMLWriter xmlw;
 
+  //a map of UIBranchContainer to XMLLump
   private Map branchmap;
+  private XMLLumpMMap collected;
 
   private TargettedMessageList messagelist;
   // a map of HTMLLumps to StringList of messages due to be delivered to
@@ -98,9 +103,22 @@ public class ViewRender {
     this.decoratormanager = decoratormanager;
   }
 
+  private void collectContributions() {
+    collected = new XMLLumpMMap();
+    Set seenset = new HashSet();
+    for (Iterator lumpit = branchmap.values().iterator(); lumpit.hasNext();) {
+      XMLLump headlump = (XMLLump) lumpit.next();
+      if (!seenset.contains(headlump.parent)) {
+        collected.aggregate(headlump.parent.collectmap);
+        seenset.add(headlump.parent);
+      }
+    }
+  }
+  
   public void render(PrintOutputStream pos) {
     branchmap = BranchResolver.resolveBranches(globalmap, view.viewroot,
         t.rootlump);
+    collectContributions();
     messagetargets = MessageTargetter.targetMessages(branchmap, view,
         messagelist, globalmessagetarget);
     String declaration = contenttypeinfo.get().declaration;
@@ -158,7 +176,7 @@ public class ViewRender {
               if (targetlump == null)
                 continue;
               int renderend = renderer.renderComponent(child, view, targetlump, 
-                  pos, contenttypeinfo.IDStrategy);
+                  pos, contenttypeinfo.IDStrategy, collected);
               if (i != children.size() - 1) {
                 // at this point, magically locate any "glue" that matches the
                 // transition
@@ -230,7 +248,7 @@ public class ViewRender {
         }
         // if we find a leaf component, render it.
         renderindex = renderer.renderComponent(component, view, lump, 
-            pos, contenttypeinfo.IDStrategy);
+            pos, contenttypeinfo.IDStrategy, collected);
       } // end if unrepeatable component.
     }
   }

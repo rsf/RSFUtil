@@ -8,6 +8,7 @@ import uk.org.ponder.rsf.renderer.decorator.DecoratorManager;
 import uk.org.ponder.rsf.renderer.scr.StaticRendererCollection;
 import uk.org.ponder.rsf.request.RenderSystemDecoder;
 import uk.org.ponder.rsf.template.XMLLump;
+import uk.org.ponder.rsf.template.XMLLumpMMap;
 import uk.org.ponder.rsf.view.View;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 
@@ -36,7 +37,7 @@ public interface RenderSystem extends RenderSystemDecoder {
    *  to be used for assigning ID attributes.
    */
   public int renderComponent(UIComponent torender, View view, XMLLump lump, 
-      PrintOutputStream pos, String IDstrategy);
+      PrintOutputStream pos, String IDstrategy, XMLLumpMMap collected);
 
  
   public void setStaticRenderers(StaticRendererCollection scrc);

@@ -304,7 +304,7 @@
   </bean>
 
   <bean id="decoratorManager"
-    class="uk.org.ponder.rsf.renderer.DecoratorManager">
+    class="uk.org.ponder.rsf.renderer.decorator.DecoratorManager">
     <property name="contentTypeInfo" ref="contentTypeInfoProxy" />
   </bean>
 

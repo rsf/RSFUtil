@@ -13,8 +13,13 @@ import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.components.decorators.UIDecorator;
 import uk.org.ponder.rsf.components.decorators.UIIDStrategyDecorator;
 import uk.org.ponder.rsf.content.ContentTypeInfo;
+import uk.org.ponder.rsf.renderer.scr.BasicSCR;
+import uk.org.ponder.rsf.renderer.scr.CollectingSCR;
+import uk.org.ponder.rsf.renderer.scr.StaticComponentRenderer;
 import uk.org.ponder.rsf.request.FossilizedConverter;
 import uk.org.ponder.rsf.template.XMLLump;
+import uk.org.ponder.rsf.template.XMLLumpList;
+import uk.org.ponder.rsf.template.XMLLumpMMap;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.stringutil.URLEncoder;
@@ -159,5 +164,23 @@ public class RenderUtil {
         return key;
     }
     return null;
+  }
+
+  
+  public static int renderSCR(StaticComponentRenderer scr, XMLLump lump, 
+       XMLWriter xmlw, XMLLumpMMap collecteds) {
+    if (scr instanceof BasicSCR) {
+      return ((BasicSCR)scr).render(lump, xmlw);
+    }
+    else {
+      CollectingSCR collector = (CollectingSCR) scr;
+      String[] tocollect = collector.getCollectingNames();
+      XMLLumpList collected = new XMLLumpList();
+      for (int i = 0; i < tocollect.length; ++ i) {
+        XMLLumpList thiscollect = collecteds.headsForID(tocollect[i]);
+        collected.addAll(thiscollect);
+      }
+      return collector.render(lump, collected, xmlw);
+    }
   }
 }

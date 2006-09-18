@@ -268,6 +268,13 @@
 
   <!-- Automatically rewrite relative URLs in the template file -->
   <bean id="relativeURLInferrer" parent="relativeURLInferrerParent" />
+  
+  <!-- Automatically aggregate collected <head> matter from multi-template sets -->
+  <bean id="headCollectInferrer" parent="templateParseInterceptorParent">
+   <property name="value">
+      <bean class="uk.org.ponder.rsf.renderer.html.HeadInferringTPI" />
+    </property>
+  </bean>
 
   <!--  override this bean with a concrete bean derived from XmlViewResolverDef -->
   <bean id="XMLViewResolver" class="uk.org.ponder.rsf.view.NullViewResolver" />
@@ -335,7 +342,7 @@
     class="uk.org.ponder.rsf.renderer.html.decorators.HTMLTooltipDecoratorRenderer" />
 
   <bean id="FreeAttributeDecoratorRenderer"
-    class="uk.org.ponder.rsf.renderer.FreeAttributeDecoratorRenderer" />
+    class="uk.org.ponder.rsf.renderer.decorator.FreeAttributeDecoratorRenderer" />
 
 
   <!--  ***** STATE MANAGEMENT and TOKENS ***** -->
