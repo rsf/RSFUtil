@@ -35,6 +35,12 @@
     class="uk.org.ponder.springutil.BooleanFactory">
     <property name="value" value="true"/>
   </bean>
+  
+  <!--  Don't use an alias for this since we imagine it will be overridden -->
+  <bean id="pageProducer" 
+    class="org.springframework.beans.factory.config.BeanReferenceFactoryBean">
+      <property name="targetBeanName" value="viewCollector"/>
+  </bean>
 
   <!-- TODO: Move all preservers and lists of them into application scope. -->
   <bean id="defaultRSVCPreserver"

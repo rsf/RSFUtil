@@ -12,6 +12,7 @@ import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 
 import uk.org.ponder.arrayutil.ArrayUtil;
+import uk.org.ponder.rsf.renderer.StaticComponentRenderer;
 import uk.org.ponder.rsf.renderer.ViewRender;
 import uk.org.ponder.rsf.util.SplitID;
 import uk.org.ponder.rsf.view.ViewTemplate;
@@ -112,6 +113,14 @@ public class XMLViewTemplateParser implements ViewTemplateParser {
     // lumps[lumpindex - 1].text = w.toString();
   }
 
+
+  private void checkCollect(String id, XMLLump headlump) {
+    if (id.startsWith(XMLLump.SCR_COLLECT_PREFIX)) {
+      String scr = id.substring(XMLLump.SCR_COLLECT_PREFIX.length());
+      t.collectmap.addLump(scr, headlump);
+    }
+  }
+  
   private void processTagStart(XmlPullParser parser, boolean isempty) {
     if (justended) {
       // avoid the pathological case where we have for example
@@ -177,6 +186,7 @@ public class XMLViewTemplateParser implements ViewTemplateParser {
               && ID.endsWith(XMLLump.FORID_SUFFIX)) {
             ID = ID.substring(0, ID.length() - XMLLump.FORID_SUFFIX.length());
           }
+          checkCollect(ID, headlump);
           headlump.rsfID = ID;
 
           XMLLump stacktop = findTopContainer();
@@ -291,6 +301,7 @@ public class XMLViewTemplateParser implements ViewTemplateParser {
     t.rootlump.downmap = new XMLLumpMMap();
     t.rootlump.nestingdepth = -1;
     t.roottagindex = -1;
+    t.collectmap = new XMLLumpMMap();
     justended = false;
   }
 
