@@ -16,15 +16,14 @@ package uk.org.ponder.rsf.components;
 public class UIJointContainer extends UIBranchContainer {
   public String jointID;
   
-  public static UIJointContainer makeJoint(UIContainer parent, String ID, String jointID) {
-    UIJointContainer togo = new UIJointContainer();
-    togo.ID = ID;
-    togo.jointID = jointID;
-    parent.addComponent(togo);
-    return togo;
+  public UIJointContainer (UIContainer parent, String ID, String jointID) {
+    this.ID = ID;
+    this.jointID = jointID;
+    parent.addComponent(this);
   }
-  public static UIJointContainer makeClient(UIContainer parent, String ID) {
-    return makeJoint(parent, ID, null);
+  
+  public UIJointContainer (UIContainer parent, String ID) {
+    this(parent, ID, null);
   }
   
 }

@@ -287,8 +287,8 @@
   <!-- End beans for FlowLite -->
 
   <bean id="pageBasicProducer"
-    class="uk.org.ponder.rsf.producers.support.PageProducer">
-    <property name="collectedProducer" ref="viewCollector" />
+    class="org.springframework.beans.factory.config.BeanReferenceFactoryBean">
+    <property name="targetBeanName" ref="viewCollector" />
   </bean>
 
   <!-- Collects together all ViewProducers, and selects those appropriate for 

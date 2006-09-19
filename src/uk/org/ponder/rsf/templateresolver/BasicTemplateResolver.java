@@ -71,18 +71,23 @@ public class BasicTemplateResolver implements TemplateResolver,
 
   public ViewTemplate locateTemplate(ViewParameters viewparams) {
     TemplateResolverStrategy rootstrategy = null;
-    XMLCompositeViewTemplate xcvt = strategies.size() == 1 ? null : 
-        new XMLCompositeViewTemplate();
+    int highestpriority = 0;
+    XMLCompositeViewTemplate xcvt = strategies.size() == 1 ? null
+        : new XMLCompositeViewTemplate();
+
     for (int i = 0; i < strategies.size(); ++i) {
       TemplateResolverStrategy trs = (TemplateResolverStrategy) strategies
           .get(i);
-      if (trs.isRootResolver()) {
+      int thispri = trs instanceof RootAwareTRS? 
+          ((RootAwareTRS) trs).getRootResolverPriority(): 1;
+      if (thispri > highestpriority) {
+        rootstrategy = trs;
+        highestpriority = thispri;
+      }
+      if (thispri == highestpriority && thispri != 0) {
         if (rootstrategy != null) {
           Logger.log.warn("Duplicate root TemplateResolverStrategy " + trs
               + " found, using first entry " + rootstrategy);
-        }
-        else {
-          rootstrategy = trs;
         }
       }
     }
@@ -92,19 +97,23 @@ public class BasicTemplateResolver implements TemplateResolver,
           .warn("No root TemplateResolverStrategy found, using first entry of "
               + rootstrategy);
     }
-    
+
     for (int i = 0; i < strategies.size(); ++i) {
       TemplateResolverStrategy trs = (TemplateResolverStrategy) strategies
           .get(i);
       XMLViewTemplate template = locateTemplate(viewparams, trs);
+     
       if (xcvt != null) {
         xcvt.globalmap.aggregate(template.globalmap);
+        if (trs == rootstrategy) {
+          xcvt.roottemplate = template;
+        }
       }
       else {
         return template;
       }
     }
-    
+
     return xcvt;
   }
 
