@@ -161,6 +161,7 @@ public class XMLViewTemplateParser implements ViewTemplateParser {
     }
     else {
       boolean firstattr = true;
+      attrs = headlump.attributemap.size(); // TPI may have changed it
       for (Iterator keyit = headlump.attributemap.keySet().iterator(); keyit
           .hasNext();) {
         String attrname = (String) keyit.next();
@@ -299,6 +300,7 @@ public class XMLViewTemplateParser implements ViewTemplateParser {
     t.rootlump = new XMLLump();
     t.rootlump.downmap = new XMLLumpMMap();
     t.rootlump.nestingdepth = -1;
+    t.rootlump.parent = t;
     t.roottagindex = -1;
     t.collectmap = new XMLLumpMMap();
     justended = false;

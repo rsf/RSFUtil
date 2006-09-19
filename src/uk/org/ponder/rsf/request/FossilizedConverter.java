@@ -204,7 +204,7 @@ public class FossilizedConverter {
     }
     else {
       UIParameter togo = new UIParameter();
-      togo.name = getReshaperKey(togenerate.getFullID());
+      togo.name = getReshaperKey(togenerate.submittingname);
       togo.value = togenerate.darreshaper.value;
       return togo;
     }
