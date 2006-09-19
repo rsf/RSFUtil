@@ -13,6 +13,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import uk.org.ponder.rsac.RSACBeanLocator;
+import uk.org.ponder.util.Logger;
 
 /**
  * The main servlet for the RSF system. Hands off immediately to the 
@@ -23,6 +24,8 @@ import uk.org.ponder.rsac.RSACBeanLocator;
 public class ReasonableServlet extends HttpServlet {
   private RSACBeanLocator rsacbeanlocator;
   public void init(ServletConfig config) {
+    Logger.log.warn("ReasonableServlet starting up for context "
+        + config.getServletContext().getRealPath(""));
     ServletContext sc = config.getServletContext();
     WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(sc);
     rsacbeanlocator = (RSACBeanLocator) 

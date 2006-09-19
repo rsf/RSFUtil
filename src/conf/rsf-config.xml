@@ -262,10 +262,16 @@
       value="TPIAggregator.templateParseInterceptors" />
   </bean>
 
-  <bean id="templateContributorParent"
-   class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
+  <bean id="autoTemplateContributeTLAB" class="uk.org.ponder.springutil.ByClassTLAB">
+    <property name="deliverBeans" value="true"/>
     <property name="targetPath"
       value="viewTemplateResolver.templateResolverStrategies" />
+    <property name="targetClass" value="uk.org.ponder.rsf.templateresolver.TemplateResolverStrategy"/>
+  </bean>
+
+  <bean id="templateContributorParent"
+   class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
+   
   </bean>
 
   <bean id="templateExpander"

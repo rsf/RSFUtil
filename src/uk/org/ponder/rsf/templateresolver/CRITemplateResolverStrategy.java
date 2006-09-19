@@ -25,7 +25,7 @@ public class CRITemplateResolverStrategy implements
 
   private ContextURLProvider cup;
 
-  private boolean rootresolver = true;
+  private int rootpriority = 1;
   public static final String CONSUMERTYPE_SEPARATOR = "-";
 
   public void setContextURLProvider(ContextURLProvider cup) {
@@ -44,8 +44,8 @@ public class CRITemplateResolverStrategy implements
     this.ciproxy = ci;
   }
   
-  public void setIsRootResolver(boolean rootresolver) {
-    this.rootresolver = rootresolver;
+  public void setRootResolverPriority(int rootpriority) {
+    this.rootpriority = rootpriority;
   }
 
   public StringList resolveTemplatePath(ViewParameters viewparams) {
@@ -68,8 +68,8 @@ public class CRITemplateResolverStrategy implements
     return "/";
   }
 
-  public boolean isRootResolver() {
-    return rootresolver;
+  public int getRootResolverPriority() {
+    return rootpriority;
   }
 
 }

@@ -92,7 +92,9 @@
   </bean>
   <bean id="directUIResourceBaseURL" class="java.lang.String">
     <constructor-arg>
-      <value>http://www.unexpected.hosting.environment/servletcontext/</value>
+      <value>
+        http://www.unexpected.hosting.environment/servletcontext/
+      </value>
     </constructor-arg>
   </bean>
 
@@ -111,13 +113,15 @@
 
   <!-- ***** NAVIGATION and ACTION RESULTS ***** -->
 
-  <bean id="siteMapDef" class="uk.org.ponder.rsf.viewstate.XMLSiteMapLoader"
+  <bean id="siteMapDef"
+    class="uk.org.ponder.rsf.viewstate.XMLSiteMapLoader"
     parent="XMLFactoryBean" abstract="true">
     <property name="location" value="/WEB-INF/sitemap.xml" />
     <property name="viewParametersReceiver" ref="viewParametersParser" />
   </bean>
 
-  <bean id="JSFNavigationMap" parent="XMLFactoryBean" lazy-init="true">
+  <bean id="JSFNavigationMap" parent="XMLFactoryBean"
+    lazy-init="true">
     <!-- 
       <property name="location" value="/WEB-INF/navigation-map.xml"/>
     -->
@@ -128,7 +132,8 @@
   <!-- This standard bean name is given a default implementation to always
     defer to the default ARI. However this will be overridden should the actual
     action invokation ALREADY return an ARIResult, as with a FlowActionProxyBean. -->
-  <bean name="ARIResolver" class="uk.org.ponder.rsf.flow.NullARIResolver">
+  <bean name="ARIResolver"
+    class="uk.org.ponder.rsf.flow.NullARIResolver">
     <property name="actionResultInterpreter">
       <ref bean="actionResultInterpreter" />
     </property>
@@ -165,11 +170,14 @@
   <bean id="XMLActionErrorStrategyDef" parent="XMLFactoryBean"
     abstract="true">
     <property name="objectType">
-      <value>uk.org.ponder.rsf.flow.errors.ActionErrorStrategyManager</value>
+      <value>
+        uk.org.ponder.rsf.flow.errors.ActionErrorStrategyManager
+      </value>
     </property>
   </bean>
 
-  <bean id="XMLActionErrorStrategies" parent="XMLActionErrorStrategyDef" />
+  <bean id="XMLActionErrorStrategies"
+    parent="XMLActionErrorStrategyDef" />
 
   <bean id="defaultViewProxy" parent="RSACStringBridge">
     <property name="targetBeanName">
@@ -192,7 +200,8 @@
 
   <bean id="viewTemplateResolver"
     class="uk.org.ponder.rsf.templateresolver.BasicTemplateResolver">
-    <property name="templateExtensionInferrer" ref="templateExtensionInferrer" />
+    <property name="templateExtensionInferrer"
+      ref="templateExtensionInferrer" />
     <property name="baseURLProvider" ref="baseURLProvider" />
     <property name="TPIAggregator" ref="TPIAggregator" />
   </bean>
@@ -228,22 +237,33 @@
     <property name="contentType" value="HTML" />
   </bean>
 
-  <bean id="templateResolverStrategy" parent="CRITemplateResolverStrategy" />
+  <bean id="templateResolverStrategy"
+    parent="CRITemplateResolverStrategy" />
+
+  <bean id="rootTemplateContributorParent"
+    class="uk.org.ponder.rsf.templateresolver.StaticTemplateResolverStrategy"
+    abstract="true">
+    <property name="contextURLProvider" ref="contextURLProvider" />
+    <property name="rootResolverPriority" value="2" />
+    <property name="baseDirectory" ref="defaultTemplatePath"/>
+  </bean>
+  
+ <!-- Default path, relative to the webapp base, to find template files.
+ Should end with a / and not begin with one. -->
+  <bean id="defaultTemplatePath" class="java.lang.String">
+    <constructor-arg value="content/templates/"/>
+  </bean>
 
   <bean id="CRITemplateResolverStrategy"
     class="uk.org.ponder.rsf.templateresolver.CRITemplateResolverStrategy"
-    lazy-init="true">
-    <property name="baseDirectory" value="content/templates/" />
+    lazy-init="true" abstract="true">
+    <property name="baseDirectory" ref="defaultTemplatePath" />
     <property name="consumerInfo" ref="consumerInfoProxy" />
     <property name="contextURLProvider" ref="contextURLProvider" />
   </bean>
 
-  <!--  Backwards compatibility for old users of templateResolverStrategy -->
-  <bean parent="templateContributorParent">
-    <property name="value" ref="templateResolverStrategy" />
-  </bean>
-
-  <bean id="viewResolver" class="uk.org.ponder.rsf.view.ConcreteViewResolver"
+  <bean id="viewResolver"
+    class="uk.org.ponder.rsf.view.ConcreteViewResolver"
     init-method="init">
     <property name="views" ref="staticViews" />
     <property name="autoComponentProducerManager"
@@ -259,28 +279,31 @@
 
   <!-- Derive from this parent in order to enable automatic detection of
     relative URLs -->
-  <bean id="relativeURLInferrerParent" parent="templateParseInterceptorParent"
-    abstract="true">
+  <bean id="relativeURLInferrerParent"
+    parent="templateParseInterceptorParent" abstract="true">
     <property name="value">
-      <bean class="uk.org.ponder.rsf.renderer.html.RelativeURLInferringTPI" />
+      <bean
+        class="uk.org.ponder.rsf.renderer.html.RelativeURLInferringTPI" />
     </property>
   </bean>
 
   <!-- Automatically rewrite relative URLs in the template file -->
   <bean id="relativeURLInferrer" parent="relativeURLInferrerParent" />
-  
+
   <!-- Automatically aggregate collected <head> matter from multi-template sets -->
-  <bean id="headCollectInferrer" parent="templateParseInterceptorParent">
-   <property name="value">
+  <bean id="headCollectInferrer"
+    parent="templateParseInterceptorParent">
+    <property name="value">
       <bean class="uk.org.ponder.rsf.renderer.html.HeadInferringTPI" />
     </property>
   </bean>
 
   <!--  override this bean with a concrete bean derived from XmlViewResolverDef -->
-  <bean id="XMLViewResolver" class="uk.org.ponder.rsf.view.NullViewResolver" />
+  <bean id="XMLViewResolver"
+    class="uk.org.ponder.rsf.view.NullViewResolver" />
 
-  <bean id="XMLViewResolverDef" class="uk.org.ponder.rsf.view.XMLViewResolver"
-    abstract="true">
+  <bean id="XMLViewResolverDef"
+    class="uk.org.ponder.rsf.view.XMLViewResolver" abstract="true">
     <property name="XMLProvider" ref="XMLProvider" />
     <property name="templateExpander" ref="templateExpander" />
     <property name="viewParamsReceiver" ref="viewParametersParser" />
@@ -310,7 +333,8 @@
 
   <bean id="messageSourceTLAB" parent="requestAddressibleParent"
     class="uk.org.ponder.springutil.ByClassTLAB">
-    <property name="targetClass" value="uk.org.ponder.errorutil.MessageLocator" />
+    <property name="targetClass"
+      value="uk.org.ponder.errorutil.MessageLocator" />
   </bean>
 
   <!-- Backwards compatibility for old-fashioned users of RAB :P -->
@@ -350,13 +374,16 @@
   <bean id="URLPreservingBeanSpecs"
     class="uk.org.ponder.springutil.StringListFactory">
     <property name="strings">
-      <value>flowstateid|flowLite-flowIDHolder.requestFlowStateID</value>
+      <value>
+        flowstateid|flowLite-flowIDHolder.requestFlowStateID
+      </value>
     </property>
   </bean>
 
   <!-- Old-fashioned scheme for specifying beans which should be preserved
     via reference copying -->
-  <bean id="copyPreservingBeans" class="uk.org.ponder.stringutil.StringList" />
+  <bean id="copyPreservingBeans"
+    class="uk.org.ponder.stringutil.StringList" />
 
   <bean id="scopedBeanCoordinator"
     class="uk.org.ponder.rsf.state.scope.ScopedBeanCoordinator">
