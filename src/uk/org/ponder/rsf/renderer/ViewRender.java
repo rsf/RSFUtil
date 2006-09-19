@@ -108,6 +108,7 @@ public class ViewRender {
     Set seenset = new HashSet();
     for (Iterator lumpit = branchmap.values().iterator(); lumpit.hasNext();) {
       XMLLump headlump = (XMLLump) lumpit.next();
+      if (headlump.parent == null) continue; // skip root lump
       if (!seenset.contains(headlump.parent)) {
         collected.aggregate(headlump.parent.collectmap);
         seenset.add(headlump.parent);
