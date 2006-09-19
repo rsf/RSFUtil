@@ -13,9 +13,9 @@
     writeable - filters and the like might populate it before request handling
     with consumer-specific rewriters. -->
   <bean id="consumerStaticRenderers"
-    class="uk.org.ponder.rsf.renderer.StaticRendererCollection">
+    class="uk.org.ponder.rsf.renderer.scr.StaticRendererCollection">
   </bean>
-
+ 
   <!-- A null "consumertype" field in this object will be treated as an 
     empty object. An "unreasonable bean". -->
   <bean name="consumerInfo"
