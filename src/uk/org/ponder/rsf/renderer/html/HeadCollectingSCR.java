@@ -41,8 +41,8 @@ public class HeadCollectingSCR implements CollectingSCR {
     for (int i = 0; i < collected.size(); ++ i) {
       XMLLump collump = collected.lumpAt(i);
       urlRewriteSCR.render(collump, xmlw);
-      RenderUtil.dumpTillLump(collump.parent.lumps, lump.open_end.lumpindex + 1, 
-          lump.close_tag.lumpindex + 1, pos);
+      RenderUtil.dumpTillLump(collump.parent.lumps, collump.open_end.lumpindex + 1, 
+          collump.close_tag.lumpindex + 1, pos);
     }
     return ComponentRenderer.NESTING_TAG; 
   }

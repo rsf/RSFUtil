@@ -178,7 +178,9 @@ public class RenderUtil {
       XMLLumpList collected = new XMLLumpList();
       for (int i = 0; i < tocollect.length; ++ i) {
         XMLLumpList thiscollect = collecteds.headsForID(tocollect[i]);
-        collected.addAll(thiscollect);
+        if (thiscollect != null) {
+          collected.addAll(thiscollect);
+        }
       }
       return collector.render(lump, collected, xmlw);
     }

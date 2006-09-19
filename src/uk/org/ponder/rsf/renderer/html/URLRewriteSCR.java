@@ -99,7 +99,7 @@ public class URLRewriteSCR implements BasicSCR {
     }
     xmlw.writeRaw(lump.parent.buffer, lump.start, lump.length);
     if (newattrs == null) {
-      RenderUtil.dumpTillLump(lump.parent.lumps, lump.lumpindex + 1, close.lumpindex + 1, pos);
+      RenderUtil.dumpTillLump(lump.parent.lumps, lump.lumpindex + 1, endopen.lumpindex + 1, pos);
     }
     else {
       newattrs.remove(XMLLump.ID_ATTRIBUTE);

@@ -38,7 +38,7 @@ import uk.org.ponder.xml.XMLWriter;
  * 
  */
 public class ViewRender {
-  private XMLViewTemplate t;
+  private XMLViewTemplate roott;
   private XMLLumpMMap globalmap;
 
   private View view;
@@ -65,12 +65,12 @@ public class ViewRender {
   public void setViewTemplate(ViewTemplate viewtemplateo) {
     if (viewtemplateo instanceof XMLCompositeViewTemplate) {
       XMLCompositeViewTemplate viewtemplate = (XMLCompositeViewTemplate) viewtemplateo;
-      t = viewtemplate.roottemplate;
+      roott = viewtemplate.roottemplate;
       globalmap = viewtemplate.globalmap;
     }
     else {
-      t = (XMLViewTemplate) viewtemplateo;
-      globalmap = t.globalmap;
+      roott = (XMLViewTemplate) viewtemplateo;
+      globalmap = roott.globalmap;
     }
     
   }
@@ -108,7 +108,6 @@ public class ViewRender {
     Set seenset = new HashSet();
     for (Iterator lumpit = branchmap.values().iterator(); lumpit.hasNext();) {
       XMLLump headlump = (XMLLump) lumpit.next();
-      if (headlump.parent == null) continue; // skip root lump
       if (!seenset.contains(headlump.parent)) {
         collected.aggregate(headlump.parent.collectmap);
         seenset.add(headlump.parent);
@@ -118,7 +117,7 @@ public class ViewRender {
   
   public void render(PrintOutputStream pos) {
     branchmap = BranchResolver.resolveBranches(globalmap, view.viewroot,
-        t.rootlump);
+        roott.rootlump);
     collectContributions();
     messagetargets = MessageTargetter.targetMessages(branchmap, view,
         messagelist, globalmessagetarget);
@@ -128,7 +127,7 @@ public class ViewRender {
     this.pos = pos;
     this.xmlw = new XMLWriter(pos);
     rendereddeadletters = false;
-    renderRecurse(view.viewroot, t.rootlump, t.lumps[t.roottagindex]);
+    renderRecurse(view.viewroot, roott.rootlump, roott.lumps[roott.roottagindex]);
   }
 
   private void renderRecurse(UIBranchContainer basecontainer,
@@ -136,15 +135,16 @@ public class ViewRender {
 
     int renderindex = baselump.lumpindex;
     int basedepth = parentlump.nestingdepth;
+    XMLViewTemplate tl = parentlump.parent;
 
     while (true) {
       // continue scanning along this template section until we either each
       // the last lump, or the recursion level.
-      renderindex = RenderUtil.dumpScan(t.lumps, renderindex, basedepth, pos,
+      renderindex = RenderUtil.dumpScan(tl.lumps, renderindex, basedepth, pos,
           true);
-      if (renderindex == t.lumps.length)
+      if (renderindex == tl.lumps.length)
         break;
-      XMLLump lump = t.lumps[renderindex];
+      XMLLump lump = tl.lumps[renderindex];
       if (lump.nestingdepth < basedepth)
         break;
 
@@ -165,7 +165,9 @@ public class ViewRender {
             if (child instanceof UIBranchContainer) {
               XMLLump targetlump = (XMLLump) branchmap.get(child);
               if (targetlump != null) {
-                XMLLump firstchild = t.lumps[targetlump.open_end.lumpindex + 1];
+                // may have jumped template file
+                XMLViewTemplate t2 = targetlump.parent;
+                XMLLump firstchild = t2.lumps[targetlump.open_end.lumpindex + 1];
                 dumpContainerHead((UIBranchContainer) child, targetlump);
                 renderRecurse((UIBranchContainer) child, targetlump, firstchild);
               }
@@ -185,7 +187,7 @@ public class ViewRender {
                 // along
                 // until we reach the next component with a matching id prefix.
                 // NB transition matching is not implemented and may never be.
-                RenderUtil.dumpScan(t.lumps, renderend,
+                RenderUtil.dumpScan(tl.lumps, renderend,
                     targetlump.nestingdepth - 1, pos, false);
                 // we discard any index reached by this dump, continuing the
                 // controlled sequence as long as there are any children.
@@ -199,7 +201,7 @@ public class ViewRender {
                 // the TINIEST text forming repetition glue.
               }
               else {
-                RenderUtil.dumpScan(t.lumps, renderend,
+                RenderUtil.dumpScan(tl.lumps, renderend,
                     targetlump.nestingdepth, pos, true);
               }
             }

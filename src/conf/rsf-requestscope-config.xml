@@ -203,6 +203,10 @@
     class="uk.org.ponder.rsf.renderer.html.URLRewriteSCR">
     <property name="URLRewriter" ref="URLRewriter" />
   </bean>
+  
+  <bean id="headCollectSCR" class="uk.org.ponder.rsf.renderer.html.HeadCollectingSCR">
+    <property name="URLRewriteSCR" ref="URLRewriteSCR"/>
+  </bean>
 
   <!-- A set of static renderers to be used for this request -->
   <bean id="staticRenderers"
@@ -210,6 +214,7 @@
     <property name="staticRenderers">
       <list>
         <ref local="URLRewriteSCR" />
+        <ref bean="headCollectSCR" />
         <ref bean="consumerStaticRenderers" />
       </list>
     </property>
@@ -288,7 +293,7 @@
 
   <bean id="pageBasicProducer"
     class="org.springframework.beans.factory.config.BeanReferenceFactoryBean">
-    <property name="targetBeanName" ref="viewCollector" />
+    <property name="targetBeanName" value="viewCollector" />
   </bean>
 
   <!-- Collects together all ViewProducers, and selects those appropriate for 
