@@ -57,8 +57,14 @@ public class UIBranchContainer extends UIContainer {
   // in the 4 scopes.
   private transient UIComponent[] flatchildren;
 
-  // NB - the parent of an IKATContainer WILL BE an IKATContainer when it is
-  // fixed up - but intermediately, it may be something like a Form...
+ /** Constructs a "repeating" BranchContainer, uniquely identified by the 
+  * "localID" passed as the 3rd argument. Suitable, for example, for creating a
+  * table row.
+  * @param The parent container to which the returned branch should be added.
+  * @param The RSF ID for the branch (must contain a colon character)
+  * @param The local ID identifying this branch instance (must be unique for
+  * each branch with the same ID in this branch)
+  */
   public static UIBranchContainer make(UIContainer parent, String ID, String localID) {
     if (ID.indexOf(':') == -1) {
       throw new IllegalArgumentException("Branch container ID must contain a colon character :");
@@ -70,6 +76,11 @@ public class UIBranchContainer extends UIContainer {
     return togo;
   }
 
+  /** Constructs a simple BranchContainer, used to group components or to
+   * cause a rendering switch. Suitable where there will be just one
+   * branch with this ID within its container.
+   * @see 
+   */
   public static UIBranchContainer make(UIContainer parent, String ID) {
     return make(parent, ID, "");
   }
