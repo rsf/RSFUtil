@@ -243,7 +243,8 @@ public class ViewRender {
                 messages.addMessages(deadmessages);
               }
             }
-            component = messagerenderer.renderMessageList(messages);
+            component = messages.size() == 0 ? null : 
+              messagerenderer.renderMessageList(messages);
           }
           else {
             component = basecontainer.getComponent(id);
