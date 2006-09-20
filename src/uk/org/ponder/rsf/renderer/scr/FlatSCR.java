@@ -20,7 +20,7 @@ import uk.org.ponder.xml.XMLWriter;
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  *
  */
-public class FlatSCR implements StaticComponentRenderer {
+public class FlatSCR implements BasicSCR {
   /** A value for the <code>body_strategy</code> field, indicating that this
    * renderer will append to any existing tag body that it discovers.
    */
