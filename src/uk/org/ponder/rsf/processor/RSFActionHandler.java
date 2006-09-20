@@ -49,7 +49,7 @@ public class RSFActionHandler implements ActionHandler, ErrorHandler {
   public void setFlowStateManager(FlowStateManager flowstatemanager) {
     this.flowstatemanager = flowstatemanager;
   }
-  
+
   public void setErrorStateManager(ErrorStateManager errorstatemanager) {
     this.errorstatemanager = errorstatemanager;
   }
@@ -85,19 +85,21 @@ public class RSFActionHandler implements ActionHandler, ErrorHandler {
   public void setViewExceptionStrategy(ViewExceptionStrategy ves) {
     this.ves = ves;
   }
-// actually the ActionErrorStrategyManager
+
+  // actually the ActionErrorStrategyManager
   public void setActionErrorStrategy(ActionErrorStrategy actionerrorstrategy) {
     this.actionerrorstrategy = actionerrorstrategy;
   }
-  
+
   public void setTargettedMessageList(TargettedMessageList messages) {
     this.messages = messages;
   }
-  
-// The public ARIResult after all inference is concluded. 
+
+  // The public ARIResult after all inference is concluded.
   private ARIResult ariresult = null;
-// The original raw action result - cannot make this final for wrapper access
+  // The original raw action result - cannot make this final for wrapper access
   private Object actionresult = null;
+
   /**
    * The result of this post cycle will be of interest to some other request
    * beans, in particular the alteration wrapper. This bean must however be
@@ -123,12 +125,21 @@ public class RSFActionHandler implements ActionHandler, ErrorHandler {
     for (int i = 0; i < messages.size(); ++i) {
       TargettedMessage message = messages.messageAt(i);
       if (message.exception != null) {
-        Throwable target = message.exception instanceof UniversalRuntimeException?
-            ((UniversalRuntimeException)message.exception).getTargetException() 
+        Throwable target = message.exception instanceof UniversalRuntimeException ? ((UniversalRuntimeException) message.exception)
+            .getTargetException()
             : message.exception;
-        Object testcode = actionerrorstrategy.handleError((String) newcode,
-            (Exception) target, null, viewparams.viewID, message);
-        if (testcode != null) newcode = testcode;
+        try {
+          Object testcode = actionerrorstrategy.handleError((String) newcode,
+              (Exception) target, null, viewparams.viewID, message);
+          if (testcode != null)
+            newcode = testcode;
+        }
+        catch (Exception e) {
+          // rethrow *original* more accurate URE, as per Az discovery
+          throw UniversalRuntimeException.accumulate(message.exception,
+              "Error invoking action");
+        }
+
       }
     }
     if (tmessage.messagecodes != null) {
@@ -146,7 +157,7 @@ public class RSFActionHandler implements ActionHandler, ErrorHandler {
       // invoke all state-altering operations within the runnable wrapper.
       postwrapper.wrapRunnable(new Runnable() {
         public void run() {
-       
+
           if (viewparams.flowtoken != null) {
             presmanager.restore(viewparams.flowtoken,
                 viewparams.endflow != null);
@@ -160,7 +171,8 @@ public class RSFActionHandler implements ActionHandler, ErrorHandler {
           }
           Object newcode = handleError(actionresult, exception);
           exception = null;
-          if ((newcode == null && !messages.isError()) || newcode instanceof String) {
+          if ((newcode == null && !messages.isError())
+              || newcode instanceof String) {
             // only proceed to actually invoke action if no ARIResult already
             // note all this odd two-step procedure is only required to be able
             // to pass AES error returns and make them "appear" to be the
@@ -191,7 +203,7 @@ public class RSFActionHandler implements ActionHandler, ErrorHandler {
         }
       }).run();
       presmanager.scopePreserve();
-      
+
       flowstatemanager.inferFlowState(viewparams, ariresult);
 
       // moved inside since this may itself cause an error!
