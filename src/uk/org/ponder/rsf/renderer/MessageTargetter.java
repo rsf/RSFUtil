@@ -33,7 +33,7 @@ public class MessageTargetter {
 
     public void checkTarget(String ID) {
       XMLLumpList forlumps = container.downmap.headsForID(ID);
-      if (forlumps != null & forlumps.size() > 0) {
+      if (forlumps != null && forlumps.size() > 0) {
         bestfor = forlumps.lumpAt(0);
       }
     }
