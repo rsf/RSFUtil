@@ -123,7 +123,8 @@
   <bean id="beanExploder"
     class="uk.org.ponder.beanutil.entity.BeanExploder"
     abstract="true">
-    <property name="deepBeanCloner" ref="deepBeanCloner"></property>
+    <property name="deepBeanCloner" ref="deepBeanCloner"/>
+    <property name="ELEvaluator" ref="ELEvaluator"/>
   </bean>
 
 </beans>

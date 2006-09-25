@@ -3,6 +3,8 @@
  */
 package uk.org.ponder.rsf.components;
 
+import uk.org.ponder.rsf.util.RSFUtil;
+
 public class UISimpleContainer extends UIContainer {
   private ComponentList children = null;
 
@@ -21,6 +23,14 @@ public class UISimpleContainer extends UIContainer {
     children.add(toadd);
   }
 
+
+  public void move(UIComponent child, UIContainer target) {
+    boolean removed = children.remove(child);
+    if (!removed) RSFUtil.failRemove(child);
+    child.updateFullID(null); // remove cached ID
+    if (target != null) target.addComponent(child);
+  }
+  
 
   /**
    * "Fold" this container into its parent by shifting all children into the
@@ -45,5 +55,6 @@ public class UISimpleContainer extends UIContainer {
   public void fold(UIContainer target) {
     
   }
+
   
 }

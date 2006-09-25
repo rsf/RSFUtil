@@ -16,7 +16,8 @@ import uk.org.ponder.beanutil.BeanUtil;
 public class ELReference {
   public ELReference() {}
   public ELReference(String value) {
-    this.value = BeanUtil.stripELNoisy(value);
+    String stripped = BeanUtil.stripEL(value);
+    this.value = stripped == null? value : stripped;
   }
   public String value;
   public static ELReference make(String value) {

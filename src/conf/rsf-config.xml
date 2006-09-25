@@ -269,9 +269,13 @@
     <property name="targetClass" value="uk.org.ponder.rsf.templateresolver.TemplateResolverStrategy"/>
   </bean>
 
+
+<!-- A basic "internal" template contributor -->
   <bean id="templateContributorParent"
-   class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
-   
+   class="uk.org.ponder.rsf.templateresolver.StaticTemplateResolverStrategy" abstract="true">
+     <property name="rootResolverPriority" value="0"/>
+     <property name="contextURLProvider" ref="contextURLProvider" />
+     <property name="baseDirectory" ref="defaultTemplatePath"/>
   </bean>
 
   <bean id="templateExpander"
@@ -317,6 +321,12 @@
   <bean id="ELTargetBeanLocatorProxy" parent="RSACBridgeProxy">
     <property name="targetBeanName">
       <idref bean="ELTargetBeanLocator" />
+    </property>
+  </bean>
+  
+  <bean id="ELEvaluatorProxy" parent="RSACBridgeProxy">
+   <property name="targetBeanName">
+      <idref bean="ELEvaluator" />
     </property>
   </bean>
 

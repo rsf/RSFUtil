@@ -12,7 +12,11 @@ import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIBranchContainer;
+import uk.org.ponder.rsf.components.UIInput;
+import uk.org.ponder.rsf.components.UIJointContainer;
 import uk.org.ponder.rsf.components.UIParameter;
+import uk.org.ponder.rsf.renderer.ViewRender;
+import uk.org.ponder.rsf.view.ViewRoot;
 import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.util.AssertionException;
 
@@ -33,6 +37,19 @@ public class RSFUtil {
       if (tocheck instanceof UIForm)
         return (UIForm) tocheck;
       tocheck = tocheck.parent;
+    }
+    return null;
+  }
+  
+  /**
+   * This method returns an enclosing ViewRoot instance, where one is present 
+   * in the tree (it should be, in every well-formed tree)
+   */
+  public static ViewRoot findViewRoot(UIComponent tofind) {
+    while (tofind != null) {
+      if (tofind instanceof ViewRoot)
+         return (ViewRoot) tofind;
+      tofind = tofind.parent;
     }
     return null;
   }
@@ -146,6 +163,11 @@ public class RSFUtil {
       }
     }
     return toappend.toString();
+  }
+  
+  public static void failRemove(UIComponent failed) {
+    throw new IllegalArgumentException(
+        "Tried to remove " + failed.getFullID() + " which is not a child of this container");
   }
 
 }
