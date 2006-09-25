@@ -21,7 +21,7 @@ public class NullRewriteSCR implements BasicSCR {
   public static final BasicSCR instance = new NullRewriteSCR();
   
   public String getName() {
-    return null;
+    return "null";
   }
 
   public int render(XMLLump lump, XMLWriter xmlw) {
