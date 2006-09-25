@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import uk.org.ponder.rsf.util.RSFUtil;
 import uk.org.ponder.rsf.util.SplitID;
 import uk.org.ponder.stringutil.CharWrap;
 
@@ -79,7 +80,7 @@ public class UIBranchContainer extends UIContainer {
   /** Constructs a simple BranchContainer, used to group components or to
    * cause a rendering switch. Suitable where there will be just one
    * branch with this ID within its container.
-   * @see 
+   * @see #make(UIContainer, String, String)
    */
   public static UIBranchContainer make(UIContainer parent, String ID) {
     return make(parent, ID, "");
@@ -174,8 +175,7 @@ public class UIBranchContainer extends UIContainer {
   public void addComponent(UIComponent toadd) {
     toadd.parent = this;
 
-    SplitID split = toadd.ID == null ? null
-        : new SplitID(toadd.ID);
+    SplitID split = new SplitID(toadd.ID);
     String childkey = split.prefix;
     if (toadd.ID != null && split.suffix == null) {
       childmap.put(childkey, toadd);
@@ -188,6 +188,27 @@ public class UIBranchContainer extends UIContainer {
       }
       children.add(toadd);
     }
+  }
+
+  public void move(UIComponent tomove, UIContainer target) {
+    SplitID split = new SplitID(tomove.ID);
+    String childkey = split.prefix;
+    if (split.suffix == null) {
+      Object tomovetest = childmap.remove(childkey);
+      if (tomove != tomovetest) {
+        RSFUtil.failRemove(tomove);
+      }
+    }
+    else {
+      List children = (List) childmap.get(childkey);
+      if (children == null) {
+        RSFUtil.failRemove(tomove);
+      }
+      boolean removed = children.remove(tomove);
+      if (!removed) RSFUtil.failRemove(tomove);
+    }
+    tomove.updateFullID(null); // remove cached ID
+    if (target != null) target.addComponent(tomove);
   }
 
 }
