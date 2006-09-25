@@ -208,13 +208,17 @@
     <property name="URLRewriteSCR" ref="URLRewriteSCR"/>
   </bean>
 
+  <bean id="nullSCR" class="uk.org.ponder.rsf.renderer.scr.NullRewriteSCR"/>
+
   <!-- A set of static renderers to be used for this request -->
+  <!-- TODO: this should really be at app scope, with a proxy for consumer -->
   <bean id="staticRenderers"
     class="uk.org.ponder.rsf.renderer.scr.StaticRendererCollection">
     <property name="staticRenderers">
       <list>
         <ref local="URLRewriteSCR" />
         <ref bean="headCollectSCR" />
+        <ref bean="nullSCR"/>
         <ref bean="consumerStaticRenderers" />
       </list>
     </property>
