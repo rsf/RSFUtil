@@ -78,17 +78,18 @@ public class BasicTemplateResolver implements TemplateResolver,
     for (int i = 0; i < strategies.size(); ++i) {
       TemplateResolverStrategy trs = (TemplateResolverStrategy) strategies
           .get(i);
-      int thispri = trs instanceof RootAwareTRS? 
-          ((RootAwareTRS) trs).getRootResolverPriority(): 1;
-      if (thispri > highestpriority) {
-        rootstrategy = trs;
-        highestpriority = thispri;
-      }
+      int thispri = trs instanceof RootAwareTRS ? ((RootAwareTRS) trs)
+          .getRootResolverPriority()
+          : 1;
       if (thispri == highestpriority && thispri != 0) {
         if (rootstrategy != null) {
           Logger.log.warn("Duplicate root TemplateResolverStrategy " + trs
               + " found, using first entry " + rootstrategy);
         }
+      }
+      if (thispri > highestpriority) {
+        rootstrategy = trs;
+        highestpriority = thispri;
       }
     }
     if (rootstrategy == null) {
@@ -102,7 +103,7 @@ public class BasicTemplateResolver implements TemplateResolver,
       TemplateResolverStrategy trs = (TemplateResolverStrategy) strategies
           .get(i);
       XMLViewTemplate template = locateTemplate(viewparams, trs);
-     
+
       if (xcvt != null) {
         xcvt.globalmap.aggregate(template.globalmap);
         if (trs == rootstrategy) {
