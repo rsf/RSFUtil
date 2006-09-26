@@ -7,7 +7,7 @@ public abstract class UIContainer extends UIComponent {
 
   public abstract void addComponent(UIComponent toadd);
   public abstract ComponentList flattenChildren();
-  public abstract void move(UIComponent child, UIContainer target);
+  public abstract void remove(UIComponent child);
   
   /** A list of key/value pairs which should represent EL bindings
    * ({@link UIELBinding}). Note that the bindings which are added to a

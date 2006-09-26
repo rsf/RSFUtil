@@ -77,8 +77,7 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
             formID));
 
         if (getform) {
-          bound.submittingname = reduceGETSubmittingName(bound.submittingname);
-         
+          bound.submittingname = reduceGETSubmittingName(bound.submittingname);    
         }
 
         toprocess.submittingcontrols.add(fullID);

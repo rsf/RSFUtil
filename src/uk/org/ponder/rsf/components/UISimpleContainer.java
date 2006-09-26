@@ -24,11 +24,10 @@ public class UISimpleContainer extends UIContainer {
   }
 
 
-  public void move(UIComponent child, UIContainer target) {
+  public void remove(UIComponent child) {
     boolean removed = children.remove(child);
     if (!removed) RSFUtil.failRemove(child);
     child.updateFullID(null); // remove cached ID
-    if (target != null) target.addComponent(child);
   }
   
 

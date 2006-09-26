@@ -190,7 +190,7 @@ public class UIBranchContainer extends UIContainer {
     }
   }
 
-  public void move(UIComponent tomove, UIContainer target) {
+  public void remove(UIComponent tomove) {
     SplitID split = new SplitID(tomove.ID);
     String childkey = split.prefix;
     if (split.suffix == null) {
@@ -208,7 +208,6 @@ public class UIBranchContainer extends UIContainer {
       if (!removed) RSFUtil.failRemove(tomove);
     }
     tomove.updateFullID(null); // remove cached ID
-    if (target != null) target.addComponent(tomove);
   }
 
 }

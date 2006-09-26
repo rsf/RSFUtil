@@ -18,8 +18,9 @@ public class PlainTextInputEvolver implements TextInputEvolver {
   public UIJointContainer evolveTextInput(UIInput toevolve) {
     UIJointContainer joint = new UIJointContainer(toevolve.parent,
         COMPONENT_ID, toevolve.ID);
-    toevolve.parent.move(toevolve, joint);
-    toevolve.ID = "textarea";
+    toevolve.parent.remove(toevolve);
+    toevolve.ID = "input";
+    joint.addComponent(toevolve);
     return joint;
   }
 }
