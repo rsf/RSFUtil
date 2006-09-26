@@ -17,7 +17,7 @@ public class PlainTextInputEvolver implements TextInputEvolver {
   public static final String COMPONENT_ID = "plainTextEditor:";
   public UIJointContainer evolveTextInput(UIInput toevolve) {
     UIJointContainer joint = new UIJointContainer(toevolve.parent,
-        COMPONENT_ID, toevolve.ID);
+        toevolve.ID, COMPONENT_ID);
     toevolve.parent.remove(toevolve);
     toevolve.ID = "input";
     joint.addComponent(toevolve);
