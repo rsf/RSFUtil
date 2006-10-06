@@ -182,13 +182,13 @@
 
   <bean id="messageFixer"
     class="uk.org.ponder.rsf.componentprocessor.MessageFixer">
-    <property name="messageLocator" ref="messageLocator"/>
+    <property name="messageLocator" ref="messageLocator" />
   </bean>
 
   <bean id="viewParamsFixer"
     class="uk.org.ponder.rsf.componentprocessor.ViewParamsFixer">
-    <property name="viewStateHandler" ref="viewStateHandler"/>
-    <property name="internalURLRewriter" ref="internalURLRewriter"/>
+    <property name="viewStateHandler" ref="viewStateHandler" />
+    <property name="internalURLRewriter" ref="internalURLRewriter" />
   </bean>
 
   <!-- Used when operating an HTML-like form system whereby submitting controls
@@ -227,62 +227,70 @@
     <property name="targetPath"
       value="totalRequestAddressibleBeans.collect" />
   </bean>
-  
+
   <bean id="copyPreservingParent"
     class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
     <property name="targetPath"
       value="totalCopyPreservingBeans.collect" />
   </bean>
   <!-- 
-  We cannot register the PP in the container directly since any bean fetches
-  it causes triggers a Spring warning (admittedly at "INFO" level)
-  <bean id="TLABPostProcessor" class="uk.org.ponder.springutil.TLABPostProcessor">
+    We cannot register the PP in the container directly since any bean fetches
+    it causes triggers a Spring warning (admittedly at "INFO" level)
+    <bean id="TLABPostProcessor" class="uk.org.ponder.springutil.TLABPostProcessor">
     <property name="mappingContext" ref="ELMappingContext"/>
-  </bean>
+    </bean>
   -->
-  
-  <bean id="TLABPostProcessorLoader" class="uk.org.ponder.springutil.TLABLoaderListener">
-    <property name="mappingContext" ref="ELMappingContext"/>
+
+  <bean id="TLABPostProcessorLoader"
+    class="uk.org.ponder.springutil.TLABLoaderListener">
+    <property name="mappingContext" ref="ELMappingContext" />
   </bean>
 
   <bean id="totalRequestAddressibleBeans"
-    class="uk.org.ponder.springutil.StringListAggregatingFactory"/>
-  
+    class="uk.org.ponder.springutil.StringListAggregatingFactory" />
+
   <bean id="totalCopyPreservingBeans"
-    class="uk.org.ponder.springutil.StringListAggregatingFactory"/>
+    class="uk.org.ponder.springutil.StringListAggregatingFactory" />
 
 
-  <bean id="TPIAggregator" class="uk.org.ponder.rsf.template.TPIAggregator">
-    <property name="contentTypeInfoProxy" ref="contentTypeInfoProxy"/>
+  <bean id="TPIAggregator"
+    class="uk.org.ponder.rsf.template.TPIAggregator">
+    <property name="contentTypeInfoProxy" ref="contentTypeInfoProxy" />
   </bean>
 
   <bean id="templateParseInterceptorParent"
-   class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
+    class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
     <property name="targetPath"
       value="TPIAggregator.templateParseInterceptors" />
   </bean>
 
-  <bean id="autoTemplateContributeTLAB" class="uk.org.ponder.springutil.ByClassTLAB">
-    <property name="deliverBeans" value="true"/>
+  <bean parent="templateParseInterceptorParent"
+    class="uk.org.ponder.rsf.template.RSFNamespaceRemovingTPI" />
+
+  <bean id="autoTemplateContributeTLAB"
+    class="uk.org.ponder.springutil.ByClassTLAB">
+    <property name="deliverBeans" value="true" />
     <property name="targetPath"
       value="viewTemplateResolver.templateResolverStrategies" />
-    <property name="targetClass" value="uk.org.ponder.rsf.templateresolver.TemplateResolverStrategy"/>
+    <property name="targetClass"
+      value="uk.org.ponder.rsf.templateresolver.TemplateResolverStrategy" />
   </bean>
 
 
-<!-- A basic "internal" template contributor -->
+  <!-- A basic "internal" template contributor -->
   <bean id="templateContributorParent"
-   class="uk.org.ponder.rsf.templateresolver.StaticTemplateResolverStrategy" abstract="true">
-     <property name="rootResolverPriority" value="0"/>
-     <property name="contextURLProvider" ref="contextURLProvider" />
-     <property name="baseDirectory" ref="defaultTemplatePath"/>
+    class="uk.org.ponder.rsf.templateresolver.StaticTemplateResolverStrategy"
+    abstract="true">
+    <property name="rootResolverPriority" value="0" />
+    <property name="contextURLProvider" ref="contextURLProvider" />
+    <property name="baseDirectory" ref="defaultTemplatePath" />
   </bean>
 
   <bean id="templateExpander"
     class="uk.org.ponder.rsf.expander.TemplateExpander">
-    <property name="DARApplier" ref="DARApplier"/>
-    <property name="deepBeanCloner" ref="deepBeanCloner"/>
-    <property name="safeBeanLocator" ref="ELTargetBeanLocatorProxy"/>
+    <property name="DARApplier" ref="DARApplier" />
+    <property name="deepBeanCloner" ref="deepBeanCloner" />
+    <property name="safeBeanLocator" ref="ELTargetBeanLocatorProxy" />
   </bean>
 
   <bean id="staticRenderersProxy" parent="RSACBridgeProxy">
@@ -323,9 +331,9 @@
       <idref bean="ELTargetBeanLocator" />
     </property>
   </bean>
-  
+
   <bean id="ELEvaluatorProxy" parent="RSACBridgeProxy">
-   <property name="targetBeanName">
+    <property name="targetBeanName">
       <idref bean="ELEvaluator" />
     </property>
   </bean>
@@ -396,17 +404,17 @@
     <property name="viewParamsMapper" ref="viewParamsMapper" />
     <property name="viewParametersParser" ref="viewParametersParser" />
   </bean>
-<!-- 
-  <bean id="viewStateHandlerProxy" parent="RSACBridgeProxy">
+  <!-- 
+    <bean id="viewStateHandlerProxy" parent="RSACBridgeProxy">
     <property name="targetBeanName">
-      <idref bean="viewStateHandler" />
+    <idref bean="viewStateHandler" />
     </property>
-  </bean>
+    </bean>
   -->
 
   <bean id="URLRewriter"
     class="uk.org.ponder.rsf.viewstate.URLRewriter">
-    <property name="viewStateHandler" ref="viewStateHandler"/>
+    <property name="viewStateHandler" ref="viewStateHandler" />
   </bean>
 
   <bean id="listenerConnector"
