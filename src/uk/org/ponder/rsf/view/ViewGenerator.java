@@ -4,7 +4,6 @@
 package uk.org.ponder.rsf.view;
 
 import java.io.ByteArrayOutputStream;
-import java.util.List;
 
 import org.apache.log4j.Level;
 
