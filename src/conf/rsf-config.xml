@@ -27,6 +27,11 @@
   <bean id="containerTypeRegistry"
     class="uk.org.ponder.saxalizer.mapping.ContainerTypeRegistry" />
 
+  <bean id="indexPropertyAccessor"
+    class="uk.org.ponder.beanutil.IndexedPropertyAccessor">
+    <property name="containerTypeRegistry" ref="containerTypeRegistry" />
+  </bean>
+
   <bean id="ELDefaultInferrer"
     class="uk.org.ponder.saxalizer.mapping.DefaultMapperInferrer"
     init-method="init">
@@ -264,8 +269,11 @@
       value="TPIAggregator.templateParseInterceptors" />
   </bean>
 
-  <bean parent="templateParseInterceptorParent"
-    class="uk.org.ponder.rsf.template.RSFNamespaceRemovingTPI" />
+  <bean parent="templateParseInterceptorParent">
+    <property name="value">
+      <bean class="uk.org.ponder.rsf.template.RSFNamespaceRemovingTPI" />
+    </property>
+  </bean>
 
   <bean id="autoTemplateContributeTLAB"
     class="uk.org.ponder.springutil.ByClassTLAB">
