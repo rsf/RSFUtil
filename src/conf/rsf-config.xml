@@ -44,6 +44,7 @@
     <property name="reflectiveCache" ref="reflectiveCache" />
     <property name="defaultInferrer" ref="ELDefaultInferrer" />
     <property name="staticLeafParser" ref="staticLeafParser" />
+    <property name="indexedPropertyAccessor" ref="indexPropertyAccessor"/>
   </bean>
 
   <bean id="streamResolver"
