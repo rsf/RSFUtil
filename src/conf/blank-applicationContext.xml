@@ -209,10 +209,17 @@
   <bean id="contentTypeInfoMap"
     class="uk.org.ponder.rsf.content.ContentTypeInfoRegistry"
     factory-method="getContentTypeInfoMap" />
-
+    
+<!-- An example definition that will resolve every extension as ".html"
   <bean id="templateExtensionInferrer"
     class="uk.org.ponder.rsf.templateresolver.StaticTemplateExtensionInferrer">
     <property name="extension" value="html" />
+  </bean>
+-->
+
+  <bean id="templateExtensionInferrer"
+    class="uk.org.ponder.rsf.templateresolver.ContentTypeAwareTEI">
+    <property name="contentTypeInfo" ref="contentTypeInfoProxy"/>
   </bean>
 
   <!--  RSF defaults to using the BasicHTMLRenderSystem for all requests. 
