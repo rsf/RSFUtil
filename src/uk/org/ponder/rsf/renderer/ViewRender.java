@@ -254,6 +254,10 @@ public class ViewRender {
         renderindex = renderer.renderComponent(component, view, lump, 
             pos, contenttypeinfo.IDStrategy, collected);
       } // end if unrepeatable component.
+      if (renderindex == tl.lumps.length) {
+        // deal with the case where component was root element - Ryan of 11/10/06
+        break;
+      }
     }
   }
 
