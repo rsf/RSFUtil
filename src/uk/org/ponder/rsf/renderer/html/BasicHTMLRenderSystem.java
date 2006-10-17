@@ -290,7 +290,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
               value = Constants.NULL_STRING;
             xmlw.write(value);
             if (select.selected.contains(value)) {
-              pos.print("\" selected=\"true");
+              pos.print("\" selected=\"selected");
             }
             pos.print("\">");
             xmlw.write(names[i]);

@@ -18,18 +18,20 @@ import uk.org.ponder.rsf.view.ViewTemplate;
 import uk.org.ponder.rsf.view.ViewTemplateParser;
 import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.util.UniversalRuntimeException;
+import uk.org.ponder.xml.XMLUtil;
 
 /**
  * The parser for the IKAT view template, implemented using the XPP3 "rapid" XML
  * pull parser. Returns an XMLViewTemplate, which can be recognised by the
  * {@link ViewRender}, embodying the IKAT algorithm.
+ * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
- *
+ * 
  */
 
 public class XMLViewTemplateParser implements ViewTemplateParser {
   private XMLViewTemplate t;
-  
+
   public int INITIAL_LUMP_SIZE = 1000;
   private CharWrap buffer;
 
@@ -112,14 +114,13 @@ public class XMLViewTemplateParser implements ViewTemplateParser {
     // lumps[lumpindex - 1].text = w.toString();
   }
 
-
   private void checkContribute(String id, XMLLump headlump) {
     if (id.startsWith(XMLLump.SCR_CONTRIBUTE_PREFIX)) {
       String scr = id.substring(XMLLump.SCR_CONTRIBUTE_PREFIX.length());
       t.collectmap.addLump(scr, headlump);
     }
   }
-  
+
   private void processTagStart(XmlPullParser parser, boolean isempty) {
     if (justended) {
       // avoid the pathological case where we have for example
@@ -156,31 +157,19 @@ public class XMLViewTemplateParser implements ViewTemplateParser {
         parseinterceptor.adjustAttributes(tagname, headlump.attributemap);
       }
     }
+    attrs = headlump.attributemap.size(); // TPI may have changed it
     if (headlump.attributemap.isEmpty()) {
       headlump.attributemap = null;
     }
     else {
       boolean firstattr = true;
-      attrs = headlump.attributemap.size(); // TPI may have changed it
       for (Iterator keyit = headlump.attributemap.keySet().iterator(); keyit
           .hasNext();) {
         String attrname = (String) keyit.next();
         String attrvalue = (String) headlump.attributemap.get(attrname);
-        XMLLump frontlump = newLump(parser);
-        CharWrap lumpac = new CharWrap();
-        if (!firstattr) {
-          lumpac.append("\" ");
-        }
-        firstattr = false;
-        lumpac.append(attrname).append("=\"");
-        setLumpChars(frontlump, lumpac.storage, 0, lumpac.size);
-        // frontlump holds |" name="|
-        // valuelump just holds the value.
-
-        XMLLump valuelump = newLump(parser);
-        setLumpString(valuelump, attrvalue);
 
         if (attrname.equals(XMLLump.ID_ATTRIBUTE)) {
+          --attrs; // reduce count which is kept for close tag accounting below
           String ID = attrvalue;
           if (ID.startsWith(XMLLump.FORID_PREFIX)
               && ID.endsWith(XMLLump.FORID_SUFFIX)) {
@@ -223,7 +212,22 @@ public class XMLViewTemplateParser implements ViewTemplateParser {
               t.globalmap.addLump(transitionkey, prevlast);
             }
           }
-        } // end if rsf:id attribute
+        }
+        else { // is not rsf:id attribute
+          XMLLump frontlump = newLump(parser);
+          CharWrap lumpac = new CharWrap();
+          if (!firstattr) {
+            lumpac.append("\" ");
+          }
+          firstattr = false;
+          lumpac.append(attrname).append("=\"");
+          setLumpChars(frontlump, lumpac.storage, 0, lumpac.size);
+          // frontlump holds |" name="|
+          // valuelump just holds the value.
+
+          XMLLump valuelump = newLump(parser);
+          setLumpString(valuelump, XMLUtil.encode(attrvalue));
+        }
       } // end for each attribute
     }
     XMLLump finallump = newLump(parser);
@@ -277,7 +281,7 @@ public class XMLViewTemplateParser implements ViewTemplateParser {
     togo.column = parser.getColumnNumber();
     togo.parent = t;
     t.lumps[lumpindex] = togo;
-    
+
     ++lumpindex;
     return togo;
   }
@@ -307,7 +311,7 @@ public class XMLViewTemplateParser implements ViewTemplateParser {
   }
 
   public ViewTemplate parse(InputStream xmlstream) {
-//    long time = System.currentTimeMillis();
+    // long time = System.currentTimeMillis();
     init();
     XmlPullParser parser = new MXParser();
     try {
