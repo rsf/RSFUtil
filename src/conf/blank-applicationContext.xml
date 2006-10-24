@@ -209,17 +209,17 @@
   <bean id="contentTypeInfoMap"
     class="uk.org.ponder.rsf.content.ContentTypeInfoRegistry"
     factory-method="getContentTypeInfoMap" />
-    
-<!-- An example definition that will resolve every extension as ".html"
-  <bean id="templateExtensionInferrer"
+
+  <!-- An example definition that will resolve every extension as ".html"
+    <bean id="templateExtensionInferrer"
     class="uk.org.ponder.rsf.templateresolver.StaticTemplateExtensionInferrer">
     <property name="extension" value="html" />
-  </bean>
--->
+    </bean>
+  -->
 
   <bean id="templateExtensionInferrer"
     class="uk.org.ponder.rsf.templateresolver.ContentTypeAwareTEI">
-    <property name="contentTypeInfo" ref="contentTypeInfoProxy"/>
+    <property name="contentTypeInfo" ref="contentTypeInfoProxy" />
   </bean>
 
   <!--  RSF defaults to using the BasicHTMLRenderSystem for all requests. 
@@ -252,13 +252,13 @@
     abstract="true">
     <property name="contextURLProvider" ref="contextURLProvider" />
     <property name="rootResolverPriority" value="2" />
-    <property name="baseDirectory" ref="defaultTemplatePath"/>
+    <property name="baseDirectory" ref="defaultTemplatePath" />
   </bean>
-  
- <!-- Default path, relative to the webapp base, to find template files.
- Should end with a / and not begin with one. -->
+
+  <!-- Default path, relative to the webapp base, to find template files.
+    Should end with a / and not begin with one. -->
   <bean id="defaultTemplatePath" class="java.lang.String">
-    <constructor-arg value="content/templates/"/>
+    <constructor-arg value="content/templates/" />
   </bean>
 
   <bean id="CRITemplateResolverStrategy"
@@ -363,16 +363,19 @@
 
   <!--  ***** DECORATORS **** -->
 
-  <bean id="HTMLColourDecoratorRenderer"
+  <bean
     class="uk.org.ponder.rsf.renderer.html.decorators.HTMLColourDecoratorRenderer" />
 
-  <bean id="HTMLStyleDecoratorRenderer"
+  <bean
     class="uk.org.ponder.rsf.renderer.html.decorators.HTMLStyleDecoratorRenderer" />
 
-  <bean id="HTMLTooltipDecoratorRenderer"
+  <bean
     class="uk.org.ponder.rsf.renderer.html.decorators.HTMLTooltipDecoratorRenderer" />
 
-  <bean id="FreeAttributeDecoratorRenderer"
+  <bean
+    class="uk.org.ponder.rsf.renderer.html.decorators.HTMLLabelTargetDecoratorRenderer" />
+
+  <bean
     class="uk.org.ponder.rsf.renderer.decorator.FreeAttributeDecoratorRenderer" />
 
 
