@@ -12,7 +12,7 @@ import uk.org.ponder.rsf.view.View;
 import uk.org.ponder.rsf.view.ViewGenerator;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
-import uk.org.ponder.util.RunnableWrapper;
+import uk.org.ponder.util.RunnableInvoker;
 
 /**
  * Controls the operation of a "render cycle" of RSF. Locates component
@@ -26,7 +26,7 @@ public class RSFRenderHandler implements RenderHandler {
   // all request-scope dependencies
   private ViewGenerator viewgenerator;
   private ErrorStateManager errorstatemanager;
-  private RunnableWrapper getwrapper;
+  private RunnableInvoker getwrapper;
   private ViewProcessor viewprocessor;
   private ViewParameters viewparams;
 
@@ -46,7 +46,7 @@ public class RSFRenderHandler implements RenderHandler {
     this.errorstatemanager = errorstatemanager;
   }
 
-  public void setAlterationWrapper(RunnableWrapper getwrapper) {
+  public void setAlterationWrapper(RunnableInvoker getwrapper) {
     this.getwrapper = getwrapper;
   }
 
@@ -77,7 +77,7 @@ public class RSFRenderHandler implements RenderHandler {
   public void handle(PrintOutputStream pos) {
     // *outside* alteration wrapper so that AW may be BeanFetchBracketed.
     presmanager.scopeRestore();
-    getwrapper.wrapRunnable(new Runnable() {
+    getwrapper.invokeRunnable(new Runnable() {
       public void run() {
         if (viewparams.flowtoken != null) {
           presmanager.restore(viewparams.flowtoken, viewparams.endflow != null);
@@ -91,7 +91,7 @@ public class RSFRenderHandler implements RenderHandler {
         viewprocessor.setView(view);
         view = viewprocessor.getProcessedView();
       }
-    }).run();
+    });
     viewrender.setMessages(targettedMessageList);
     // TODO: globaltargetid detection has not been investigated for a while
     viewrender

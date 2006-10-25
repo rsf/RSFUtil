@@ -19,7 +19,7 @@ import uk.org.ponder.rsf.state.ErrorStateManager;
 import uk.org.ponder.rsf.state.RSVCApplier;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.Logger;
-import uk.org.ponder.util.RunnableWrapper;
+import uk.org.ponder.util.RunnableInvoker;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 /**
@@ -32,7 +32,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
 public class RSFActionHandler implements ActionHandler, ErrorHandler {
   // application-scope dependencies
   private ARIResolver ariresolver;
-  private RunnableWrapper postwrapper;
+  private RunnableInvoker postwrapper;
   private RequestSubmittedValueCache requestrsvc;
 
   // request-scope dependencies
@@ -66,7 +66,7 @@ public class RSFActionHandler implements ActionHandler, ErrorHandler {
     this.requestrsvc = requestrsvc;
   }
 
-  public void setAlterationWrapper(RunnableWrapper postwrapper) {
+  public void setAlterationWrapper(RunnableInvoker postwrapper) {
     this.postwrapper = postwrapper;
   }
 
@@ -155,7 +155,7 @@ public class RSFActionHandler implements ActionHandler, ErrorHandler {
       // Do this FIRST in case it discovers any scopelocks required
       presmanager.scopeRestore();
       // invoke all state-altering operations within the runnable wrapper.
-      postwrapper.wrapRunnable(new Runnable() {
+      postwrapper.invokeRunnable(new Runnable() {
         public void run() {
 
           if (viewparams.flowtoken != null) {
@@ -201,7 +201,7 @@ public class RSFActionHandler implements ActionHandler, ErrorHandler {
             ariresult = ari.interpretActionResult(viewparams, actionresult);
           }
         }
-      }).run();
+      });
       presmanager.scopePreserve();
 
       flowstatemanager.inferFlowState(viewparams, ariresult);
