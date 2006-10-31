@@ -90,7 +90,7 @@ public class FlowActionProxyBean implements ActionTarget {
   public Object invokeAction(String name, String knownresult) {
     State newstate;
     ARIResult togo = new ARIResult();
-    togo.resultingview = viewparams.copyBase();
+    ViewParameters resultingview = viewparams.copyBase(); 
 
     if (name.equals(ARIResult.FLOW_START)) {
       if (!flowidholder.isEmpty()) {
@@ -171,8 +171,9 @@ public class FlowActionProxyBean implements ActionTarget {
     ViewableState viewstate = (ViewableState) newstate;
     flowidholder.setRequestFlowStateID(newstate.id);
     flowidholder.setFlowStateID(newstate.id);
-    togo.resultingview.viewID = viewstate.viewID;
-    togo.resultingview.flowtoken = flowidholder.getFlowToken();
+    resultingview.viewID = viewstate.viewID;
+    resultingview.flowtoken = flowidholder.getFlowToken();
+    togo.resultingview = resultingview;
 
     if (togo.propagatebeans == null) { // if not filled in as FLOW_START
 

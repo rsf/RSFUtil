@@ -18,6 +18,8 @@ import uk.org.ponder.rsf.processor.HandlerHook;
 import uk.org.ponder.rsf.processor.RenderHandlerBracketer;
 import uk.org.ponder.rsf.renderer.RenderUtil;
 import uk.org.ponder.rsf.request.EarlyRequestParser;
+import uk.org.ponder.rsf.viewstate.AnyViewParameters;
+import uk.org.ponder.rsf.viewstate.RawViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewStateHandler;
 import uk.org.ponder.servletutil.ServletResponseWriter;
@@ -120,7 +122,7 @@ public class RootHandlerBean implements HandlerHook {
 
   private void handlePost() {
 
-    ViewParameters redirect = actionhandler.handle();
+    AnyViewParameters redirect = actionhandler.handle();
 
     issueRedirect(redirect, response);
   }
@@ -130,9 +132,10 @@ public class RootHandlerBean implements HandlerHook {
   // the redirect directly to the client via this connection.
   // TODO: This method might need some state, depending on the client.
   // maybe we can do this all with "request beans"?
-  public void issueRedirect(ViewParameters viewparams,
+  public void issueRedirect(AnyViewParameters viewparams,
       HttpServletResponse response) {
-    String path = viewstatehandler.getFullURL(viewparams);
+    String path = viewparams instanceof RawViewParameters ? ((RawViewParameters) viewparams).URL
+        : viewstatehandler.getFullURL((ViewParameters) viewparams);
     path = RenderUtil.appendAttributes(path, RenderUtil
         .makeURLAttributes(outgoingparams));
     // TODO: This is a hack, pending a bit more thought.

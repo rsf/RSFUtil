@@ -17,6 +17,7 @@ import uk.org.ponder.rsf.preservation.StatePreservationManager;
 import uk.org.ponder.rsf.request.RequestSubmittedValueCache;
 import uk.org.ponder.rsf.state.ErrorStateManager;
 import uk.org.ponder.rsf.state.RSVCApplier;
+import uk.org.ponder.rsf.viewstate.AnyViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.RunnableInvoker;
@@ -148,7 +149,7 @@ public class RSFActionHandler implements ActionHandler, ErrorHandler {
     return newcode;
   }
 
-  public ViewParameters handle() {
+  public AnyViewParameters handle() {
     final String actionmethod = PostDecoder.decodeAction(normalizedmap);
 
     try {
@@ -226,8 +227,10 @@ public class RSFActionHandler implements ActionHandler, ErrorHandler {
     }
     finally {
       String errortoken = errorstatemanager.requestComplete();
-
-      ariresult.resultingview.errortoken = errortoken;
+      
+      if (ariresult.resultingview instanceof ViewParameters) {
+        ((ViewParameters)ariresult.resultingview).errortoken = errortoken;
+      }
     }
     return ariresult.resultingview;
   }

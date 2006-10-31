@@ -19,6 +19,7 @@ public class ContentTypeInfoRegistry {
   public static final String SVG = "SVG";
   public static final String RSS_0_91 = "RSS-0.91";
   public static final String RSS_2 = "RSS-2.0";
+  public static final String REDIRECT = "REDIRECT";
   /** A default ContentTypeInfo entry for HTML content */
   
   public static final ContentTypeInfo HTML_CONTENTINFO = 
@@ -60,8 +61,7 @@ public class ContentTypeInfoRegistry {
   public static final ContentTypeInfo SVG_CONTENTINFO = 
     new ContentTypeInfo(SVG, "svg", "",
         "image/svg+xml; charset=UTF-8",
-        ContentTypeInfo.ID_FULL
-        
+        ContentTypeInfo.ID_FULL 
         );
   
   private static Map contentmap = new HashMap();

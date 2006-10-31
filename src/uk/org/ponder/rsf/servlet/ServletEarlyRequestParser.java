@@ -35,13 +35,14 @@ public class ServletEarlyRequestParser implements EarlyRequestParser {
   public void setHttpServletRequest(HttpServletRequest request) {
     this.request = request;
   }
-  
+
   public void init() {
     Logger.log.info("begin parseRequest for " + request.getRequestURI());
     if (multipartresolver.isMultipart(request)) {
       try {
         this.request = multipartresolver.resolveMultipart(request);
-        this.multipartmap = ((MultipartHttpServletRequest)request).getFileMap();
+        this.multipartmap = ((MultipartHttpServletRequest) request)
+            .getFileMap();
       }
       catch (Exception e) {
         throw UniversalRuntimeException.accumulate(e,
@@ -58,7 +59,7 @@ public class ServletEarlyRequestParser implements EarlyRequestParser {
     catch (UnsupportedEncodingException uee) {
       throw UniversalRuntimeException.accumulate(uee,
           "Fatal internal error: UTF-8 encoding not found");
-    }    
+    }
   }
 
   public Map getRequestMap() {
@@ -68,7 +69,7 @@ public class ServletEarlyRequestParser implements EarlyRequestParser {
   public Map getMultipartMap() {
     return multipartmap;
   }
-  
+
   /**
    * The pathinfo as returned from the request. This INCLUDES an initial slash
    * but no final slash.

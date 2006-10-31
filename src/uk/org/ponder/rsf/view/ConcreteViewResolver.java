@@ -8,8 +8,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import uk.org.ponder.rsf.componentprocessor.ViewProcessor;
+import uk.org.ponder.rsf.flow.jsfnav.DynamicNavigationCaseReporter;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReceiver;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
+import uk.org.ponder.rsf.viewstate.UltimateURLRenderer;
 import uk.org.ponder.rsf.viewstate.ViewParamsReceiver;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 import uk.org.ponder.util.UniversalRuntimeException;
@@ -19,8 +22,8 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * ComponentProducer requests into a fixed collection of configured beans, set
  * up by the setViews() method. Can also fall back to a set of generic
  * ViewResolvers should initial lookup fail. This is the default RSF
- * ViewResolver - it is an application scope bean, although it collaborates
- * with the AutoComponentProducerManager to accept request-scope producers.
+ * ViewResolver - it is an application scope bean, although it collaborates with
+ * the AutoComponentProducerManager to accept request-scope producers.
  * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
@@ -47,19 +50,22 @@ public class ConcreteViewResolver implements ViewResolver {
   public void setViewParametersReceiver(ViewParamsReceiver vpreceiver) {
     this.vpreceiver = vpreceiver;
   }
-  
+
   public void setNavigationCaseReceiver(NavigationCaseReceiver ncreceiver) {
     this.ncreceiver = ncreceiver;
   }
-  
+
   private List pendingviews = new ArrayList();
-// Apologies for this lack of abstraction. There is currently only one of these,
-// and we do use it for two purposes...
-  public void setAutoComponentProducerManager(AutoComponentProducerManager requestmanager) {
+
+  // Apologies for this lack of abstraction. There is currently only one of
+  // these,
+  // and we do use it for two purposes...
+  public void setAutoComponentProducerManager(
+      AutoComponentProducerManager requestmanager) {
     this.automanager = requestmanager;
     pendingviews.addAll(requestmanager.getProducers());
   }
-  
+
   /**
    * Sets a static list of ViewComponentProducers which will be used as a first
    * pass to resolve requests for incoming views. Any plain ComponentProducers
@@ -68,9 +74,9 @@ public class ConcreteViewResolver implements ViewResolver {
   public void setViews(List viewlist) {
     pendingviews.addAll(viewlist);
   }
-  
+
   public void init() {
-    for (int i = 0; i < pendingviews.size(); ++ i) {
+    for (int i = 0; i < pendingviews.size(); ++i) {
       ComponentProducer view = (ComponentProducer) pendingviews.get(i);
       // view.setMessageLocator(messagelocator);
       String key = ALL_VIEW_PRODUCER;
@@ -83,14 +89,17 @@ public class ConcreteViewResolver implements ViewResolver {
         if (view instanceof DefaultView) {
           vpreceiver.setDefaultView(key);
         }
-        if (view instanceof NavigationCaseReporter) {
-          ncreceiver.receiveNavigationCases(key, ((NavigationCaseReporter)view).reportNavigationCases());
+        if (view instanceof NavigationCaseReporter
+            && !(view instanceof DynamicNavigationCaseReporter)) {
+          ncreceiver.receiveNavigationCases(key,
+              ((NavigationCaseReporter) view).reportNavigationCases());
         }
       }
       addView(key, view);
     }
     pendingviews.clear();
   }
+
   /**
    * Sets a list of slave ViewResolvers which will be polled in sequence should
    * no static producer be registered, until the first which returns a non-null
@@ -141,9 +150,16 @@ public class ConcreteViewResolver implements ViewResolver {
   }
 
   private void mapProducers(List producers) {
-    for (int i = 0; i < producers.size(); ++ i) {
+    for (int i = 0; i < producers.size(); ++i) {
       ComponentProducer producer = (ComponentProducer) producers.get(i);
-      producers.set(i, automanager.wrapProducer(producer));
+      ComponentProducer ultimate = automanager.wrapProducer(producer);
+      if (ultimate instanceof DynamicNavigationCaseReporter
+          && ultimate instanceof ViewComponentProducer) {
+        ncreceiver.receiveNavigationCases(((ViewComponentProducer) ultimate)
+            .getViewID(), ((NavigationCaseReporter) ultimate)
+            .reportNavigationCases());
+      }
+      producers.set(i, ultimate);
     }
   }
 

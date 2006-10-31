@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.rsf.flow;
 
+import uk.org.ponder.rsf.viewstate.AnyViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /** An object summarising the return from the ActionResultInterpreter. This
@@ -59,11 +60,11 @@ public class ARIResult {
    * will be overwritten by RSF with a unique token before it is dispensed
    * to the client via the client redirect.
    */
-  public ViewParameters resultingview;
+  public AnyViewParameters resultingview;
   
   /** Use this access method if loading via a proxy **/
   
-  public ViewParameters getResultingView() {
+  public AnyViewParameters getResultingView() {
     return resultingview;
   }
   /** A result code indicating the propagation status of any multi-request state
