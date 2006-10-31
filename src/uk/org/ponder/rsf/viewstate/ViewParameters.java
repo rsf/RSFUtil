@@ -26,7 +26,7 @@ import uk.org.ponder.reflect.DeepBeanCloner;
 // in fact, since we only ever have ONE view id, in fact we could simply
 // omit baseurl!!
 
-public abstract class ViewParameters {
+public abstract class ViewParameters implements AnyViewParameters {
   /** A globally unique key identifying view-specific state that is held on the
    * server, restorable in the form of a request-scope bean container. Need not
    * be set. 

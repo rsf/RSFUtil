@@ -4,7 +4,7 @@
 package uk.org.ponder.rsf.processor;
 
 import uk.org.ponder.rsf.flow.ARIResult;
-import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.rsf.viewstate.AnyViewParameters;
 
 /**
  * The interface from the RootHandlerBean to the ActionHandler, responsible
@@ -21,6 +21,6 @@ public interface ActionHandler {
    * @return The resulting view state, which will be presented to the
    * RenderHandler on the next cycle.
    */
-  public ViewParameters handle();
+  public AnyViewParameters handle();
   public ARIResult getARIResult();
 }

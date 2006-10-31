@@ -80,4 +80,8 @@ public class ViewParamUtil {
     return parser.parse(pathinfo, params); 
   }
 
+  public static String getAnyFullURL(AnyViewParameters viewparams, ViewStateHandler vsh) {
+    return viewparams instanceof RawViewParameters ? ((RawViewParameters) viewparams).URL
+        : vsh.getFullURL((ViewParameters) viewparams);
+  }
 }
