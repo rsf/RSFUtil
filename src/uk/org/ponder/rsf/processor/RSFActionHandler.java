@@ -211,7 +211,7 @@ public class RSFActionHandler implements ActionHandler, ErrorHandler {
       String submitting = PostDecoder.decodeSubmittingControl(normalizedmap);
       errorstatemanager.globaltargetid = submitting;
     }
-    catch (Exception e) {
+    catch (Throwable e) { // avoid masking errors from the finally block
       Logger.log.error("Error invoking action", e);
       // ThreadErrorState.addError(new TargettedMessage(
       // CoreMessages.GENERAL_ACTION_ERROR));
