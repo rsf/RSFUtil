@@ -10,6 +10,9 @@
     <url>http://www.caret.cam.ac.uk/</url>
   </organization>
   <inceptionYear>2005</inceptionYear>
+  <properties>
+    <deploy.type>jar</deploy.type>
+  </properties>
   <logo>/images/logo.gif</logo>
   <shortDescription>RSFUtil implements the RSF web framework</shortDescription>
   <description> RSFUtil provides the rsfutil.jar package. </description>
