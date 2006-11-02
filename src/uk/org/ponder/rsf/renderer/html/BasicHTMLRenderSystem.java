@@ -334,10 +334,11 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         if (attrname != null) {
           String target = torender.target.getValue();
           if (target == null || target.length() == 0) {
-            throw new IllegalArgumentException("Empty URL in UILink at "
-                + torender.getFullID());
+            // some people may perversely want empty links - but they would always
+            // refer to *real* self and hence not be rewritten.
+            target = "";
           }
-          if (!(torendero instanceof UIInternalLink)) {
+          else if (!(torendero instanceof UIInternalLink)) {
             URLRewriteSCR urlrewriter = (URLRewriteSCR) scrc
                 .getSCR(URLRewriteSCR.NAME);
             if (!URLUtil.isAbsolute(target)) {
