@@ -363,21 +363,24 @@
 
   <!--  ***** DECORATORS **** -->
 
-  <bean
+
+  <bean id="HTMLColourDecoratorRenderer"
     class="uk.org.ponder.rsf.renderer.html.decorators.HTMLColourDecoratorRenderer" />
 
-  <bean
+  <bean id="HTMLStyleDecoratorRenderer"
     class="uk.org.ponder.rsf.renderer.html.decorators.HTMLStyleDecoratorRenderer" />
 
-  <bean
+  <bean id="HTMLTooltipDecoratorRenderer"
     class="uk.org.ponder.rsf.renderer.html.decorators.HTMLTooltipDecoratorRenderer" />
 
-  <bean
-    class="uk.org.ponder.rsf.renderer.html.decorators.HTMLLabelTargetDecoratorRenderer" />
-
-  <bean
+  <bean id="FreeAttributeDecoratorRenderer"
     class="uk.org.ponder.rsf.renderer.decorator.FreeAttributeDecoratorRenderer" />
 
+  <bean id="HTMLLabelTargetDecoratorRenderer"
+    class="uk.org.ponder.rsf.renderer.html.decorators.HTMLLabelTargetDecoratorRenderer" />
+
+  <bean id="CSSDecoratorRenderer"
+     class="uk.org.ponder.rsf.renderer.html.decorators.CSSDecoratorRenderer" />
 
   <!--  ***** STATE MANAGEMENT and TOKENS ***** -->
 
