@@ -78,8 +78,4 @@ public class UIForm extends UISimpleContainer {
     return togo;
   }
   
-  public static UIForm make(UIContainer parent) {
-    return make(parent, BasicComponentIDs.BASIC_FORM);
-  }
-  
 }
