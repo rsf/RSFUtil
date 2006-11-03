@@ -189,7 +189,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
           attrcopy);
 
       TagRenderContext rendercontext = new TagRenderContext(attrcopy, 
-          uselump, endopen, close, pos, xmlw);
+          uselump, endopen, close, pos, xmlw, nextpos);
       // ALWAYS dump the tag name, this can never be rewritten. (probably?!)
       pos.write(uselump.parent.buffer, uselump.start, uselump.length);
       // TODO: Note that these are actually BOUND now. Create some kind of
@@ -199,7 +199,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         if (!torender.willinput) {
           if (torendero.getClass() == UIOutput.class) {
             String value = ((UIOutput) torendero).getValue();
-            rewriteLeaf(value, rendercontext);
+            rewriteLeafOpen(value, rendercontext);
           }
           else if (torendero.getClass() == UIOutputMultiline.class) {
             StringList value = ((UIOutputMultiline) torendero).getValue();
@@ -352,9 +352,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         String value = torender.linktext == null ? null
             : torender.linktext.getValue();
         if (value == null) {
-          XMLUtil.dumpAttributes(attrcopy, xmlw);
-          pos.print(">");
-          nextpos = endopen.lumpindex + 1;
+          replaceAttributesOpen(rendercontext);
         }
         else {
           rewriteLeaf(value, rendercontext);
@@ -390,8 +388,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         // form fixer guarantees that this URL is attribute free.
         attrcopy.put("action", torender.targetURL);
 
-        XMLUtil.dumpAttributes(attrcopy, xmlw);
-        pos.println(">");
+        replaceAttributesOpen(rendercontext);
         for (int i = 0; i < torender.parameters.size(); ++i) {
           UIParameter param = torender.parameters.parameterAt(i);
           RenderUtil.dumpHiddenField(param.name, param.value, xmlw);
@@ -405,7 +402,6 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         // domain.
         // Assuming there are no paths *IN* through forms that do not also lead
         // *OUT* there will be no problem. Check what this *MEANS* tomorrow.
-        nextpos = endopen.lumpindex + 1;
       }
       else if (torendero instanceof UIVerbatim) {
         UIVerbatim torender = (UIVerbatim) torendero;
@@ -437,12 +433,12 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         RenderUtil.dumpTillLump(lumps, close.lumpindex + 1,
             outerclose.lumpindex + 1, pos);
       }
-
+      nextpos = rendercontext.nextpos;
     }
-
+    
     return nextpos;
   }
-
+  
   private void renderUnchanged(TagRenderContext c) {
     RenderUtil.dumpTillLump(c.uselump.parent.lumps, c.uselump.lumpindex + 1,
         c.close.lumpindex + 1, c.pos);
@@ -455,6 +451,13 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       replaceAttributes(c);
   }
 
+  private void rewriteLeafOpen(String value, TagRenderContext c) {
+    if (value != null && !UITypes.isPlaceholder(value))
+      replaceBody(value, c);
+    else
+      replaceAttributesOpen(c);
+  }
+  
   private void replaceBody(String value, TagRenderContext c) {
     XMLUtil.dumpAttributes(c.attrcopy, c.xmlw);
     c.pos.print(">");
@@ -468,6 +471,13 @@ public class BasicHTMLRenderSystem implements RenderSystem {
     dumpTemplateBody(c);
   }
 
+  private void replaceAttributesOpen(TagRenderContext c) {
+    XMLUtil.dumpAttributes(c.attrcopy, c.xmlw);
+    c.pos.print(">");
+ 
+    c.nextpos = c.endopen.lumpindex + 1;
+  }
+  
   private void dumpTemplateBody(TagRenderContext c) {
     if (c.endopen.lumpindex == c.close.lumpindex) {
       c.pos.print("/>");

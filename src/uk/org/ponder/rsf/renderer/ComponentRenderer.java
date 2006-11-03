@@ -20,9 +20,9 @@ public interface ComponentRenderer {
    * end_close + 1.
    */
   public static final int LEAF_TAG = 1;
-  /** Returning this value signifies that a trunk tag has been consumed (slightly
-   * rare - e.g. &lt;form&gt; or &lt;body&gt;) from the template, and that
-   * the instruction pointer will be stepped along to end_open + 1.
+  /** Returning this value signifies that a trunk tag has been consumed from 
+   * the template, and that the instruction pointer will be stepped along to 
+   * end_open + 1.
    */
   public static final int NESTING_TAG = 2;
   /** @param component The component to be rendered (possibly null)

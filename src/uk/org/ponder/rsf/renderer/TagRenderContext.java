@@ -19,14 +19,17 @@ public class TagRenderContext {
   public PrintOutputStream pos;
   public XMLWriter xmlw;
 
+  public int nextpos;
+  
   public TagRenderContext(Map attrcopy, XMLLump uselump,
-      XMLLump endopen, XMLLump close, PrintOutputStream pos, XMLWriter xmlw) {
+      XMLLump endopen, XMLLump close, PrintOutputStream pos, XMLWriter xmlw, int nextpos) {
     this.attrcopy = attrcopy;
     this.uselump = uselump;
     this.endopen = endopen;
     this.close = close;
     this.pos = pos;
     this.xmlw = xmlw;
+    this.nextpos = nextpos;
   }
 
 }
