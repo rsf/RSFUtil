@@ -19,11 +19,13 @@ import uk.org.ponder.saxalizer.SAXalXMLProvider;
  * key/value pairs suitable for transit over HTTP.
  * 
  * <p>In case of an HTTP submission, these are encoded as key/value in the
- * request map (via hidden form fields) as follows: <br>key =
- * componentid-fossil, value=[i|o]uitype-name#{bean.member}oldvalue <br>Alternatively,
+ * request map (via hidden form fields) as follows: 
+ * <br>key = componentid-fossil, value=[i|o]uitype-name#{bean.member}oldvalue 
+ * <br>Alternatively,
  * this SVE may represent a "fast EL" binding, without a component. In this
- * case, it has the form <br>key = [deletion|el]-binding, value =
- * [e|o]#{el.lvalue}rvalue, where rvalue may represent an EL rvalue, a
+ * case, it has the form 
+ * <br>key = [deletion|el]-binding, value = [e|o]#{el.lvalue}rvalue, 
+ * where rvalue may represent an EL rvalue, a
  * SAXLeafType or a Object. <br>The actual value submission is encoded in the
  * RenderSystem for UIInputBase, but is generally expected to simply follow <br>key =
  * componentid, value = newvalue.
