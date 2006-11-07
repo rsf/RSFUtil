@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                      http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>rsfutil</artifactId>
+  <packaging>jar</packaging>
+  <name>J-RSFUtil</name>
+  <groupId>uk.org.ponder</groupId>
+  <version>0.6.4</version>
+  <organization>
+    <name>CARET, University of Cambridge</name>
+    <url>http://www.caret.cam.ac.uk/</url>
+  </organization>
+  <inceptionYear>2005</inceptionYear>
+  <properties>
+    <deploy.type>jar</deploy.type>
+  </properties>
+  <description>RSFUtil implements the RSF web framework.</description>
+  <developers>
+    <developer>
+      <id>amb26</id>
+      <name>Antranig Basman</name>
+      <email>antranig@caret.cam.ac.uk</email>
+      <url>http://www.caret.cam.ac.uk/contact/people/index.html</url>
+      <organization>CARET</organization>
+      <organizationUrl>http://www.caret.cam.ac.uk/</organizationUrl>
+      <roles>
+        <role>Developer</role>
+        <role>Project Manager</role>
+      </roles>
+      <timezone>0</timezone>
+      <properties />
+    </developer>
+    <developer>
+      <id>andrew</id>
+      <name>Andrew Thornton</name>
+      <email>andrew@caret.cam.ac.uk</email>
+      <url>http://www.caret.cam.ac.uk/contact/people/index.html</url>
+      <organization>CARET</organization>
+      <organizationUrl>http://www.caret.cam.ac.uk/</organizationUrl>
+      <roles>
+        <role>Developer</role>
+      </roles>
+      <timezone>0</timezone>
+      <properties />
+    </developer>
+  </developers>
+  <licenses>
+    <license>
+      <name>CARET Open Source licence</name>
+      <url>
+        http://saffron.caret.cam.ac.uk/cgi-bin/cvsweb/rep/FlowTalkServlet/licence.txt?rev=1.1;content-type=text%2Fplain
+      </url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <mailingLists>
+    <mailingList>
+      <name>${pom.name} Dev List</name>
+    </mailingList>
+    <mailingList>
+      <name>${pom.name} User List</name>
+    </mailingList>
+  </mailingLists>
+  <!-- 
+    <gumpRepositoryId>caret-saffron-svn</gumpRepositoryId>
+    <siteAddress>saffron.caret.cam.ac.uk</siteAddress>
+    <siteDirectory>/home/gump/project-websites/RSFUtil/</siteDirectory>
+    <distributionSite>saffron.caret.cam.ac.uk</distributionSite>
+    <distributionDirectory>
+    /home/gump/project-downloads/RSFUtil
+    </distributionDirectory>
+  -->
+  <scm>
+    <connection>
+      scm:svn:https://saffron.caret.cam.ac.uk/svn/projects/RSFUtil/trunk
+    </connection>
+    <developerConnection>
+      scm:svn:https://saffron.caret.cam.ac.uk/svn/projects/RSFUtil/trunk
+    </developerConnection>
+    <url>https://saffron.caret.cam.ac.uk/cgi-bin/viewcvs.cgi/</url>
+  </scm>
+  <reports>
+    <report>maven-jdepend-plugin</report>
+    <report>maven-changelog-plugin</report>
+    <report>maven-changes-plugin</report>
+    <report>maven-checkstyle-plugin</report>
+    <report>maven-dashboard-plugin</report>
+    <report>maven-developer-activity-plugin</report>
+    <report>maven-file-activity-plugin</report>
+    <report>maven-javadoc-plugin</report>
+    <report>maven-license-plugin</report>
+    <report>maven-linkcheck-plugin</report>
+    <report>maven-faq-plugin</report>
+    <report>maven-multiproject-plugin</report>
+    <report>maven-multichanges-plugin</report>
+    <report>maven-tasklist-plugin</report>
+  </reports>
+  <dependencies>
+    <dependency>
+      <groupId>uk.org.ponder</groupId>
+      <artifactId>ponderutilcore</artifactId>
+      <version>1.1.4</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>uk.org.ponder</groupId>
+      <artifactId>j-servletutil</artifactId>
+      <version>1.1.4</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>servletapi</groupId>
+      <artifactId>servletapi</artifactId>
+      <version>2.3</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.9</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring</artifactId>
+      <version>1.2.8</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>xpp3</groupId>
+      <artifactId>xpp3</artifactId>
+      <!--  appears that ibiblio has file structure screwed up for RC8_min -->
+      <version>1.1.3.4-RC8</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>3.1</version>
+      <type>jar</type>
+    </dependency>
+     <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <resources>
+      <resource>
+        <directory>src/</directory>
+        <targetPath>/</targetPath>
+        <includes>
+          <include>**/*.xml</include>
+        </includes>
+        <filtering>false</filtering>
+      </resource>
+    </resources>
+  </build>
+</project>
+

@@ -12,7 +12,7 @@ package uk.org.ponder.rsf.components;
  * and add rendering components as childen of the link.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
-public class UILink extends UISimpleContainer {
+public class UILink extends UIComponent {
   /** A string representing the target of this link - e.g. in an HTML system,
    * a URL. In HTML in particular, the special prefix $context/ will be 
    * resolved onto the context for the current webapp - that is, the directory
