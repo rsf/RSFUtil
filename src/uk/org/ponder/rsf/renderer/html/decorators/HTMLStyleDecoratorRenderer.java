@@ -17,7 +17,14 @@ public class HTMLStyleDecoratorRenderer implements DecoratorRenderer {
 
   public void modifyAttributes(UIDecorator decoratoro, String tagname, Map tomodify) {
     UIStyleDecorator decorator = (UIStyleDecorator) decoratoro;
-    tomodify.put("class", decorator.styleclass);
+    String classes = (String) tomodify.get("class");
+    if (classes == null) {
+      classes = decorator.styleclass;
+    }
+    else {
+      classes = classes + " " + decorator.styleclass;
+    }
+    tomodify.put("class", classes);
   }
 
   public String getContentTypes() {
