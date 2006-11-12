@@ -10,15 +10,25 @@ package uk.org.ponder.rsf.content;
  */
 
 public class ContentTypeInfo {
+  /** A constant representing the standard "full" ID allocation strategy, 
+   * derived from the full ID of a component. Appropriate for HTML and similar
+   * dialects.
+   */
   public static final String ID_FULL = "full";
+  /** Suppress generation of the "id" attribute. Appropriate for some types
+   * of pure XML response.
+   */
   public static final String ID_NONE = "none";
+  /** Pass through the rsf:id attribute unchanged. Appropriate for the
+   * (so far untried) strategy of using RSF to render RSF templates.
+   */ 
   public static final String ID_RSF = "RSF";
   
   /** The name of the content/request type - e.g. HTML for html, AJAX for
    * (XML) AJAX, XUL for XUL etc - {@link ContentTypeInfoRegistry} for examples.
    */
   public String typename;
-  /** The extension, omitting period "." to be used when looking for templates
+  /** The extension, omitting period ".", to be used when looking for templates
    * in the filesystem.
    */
   public String fileextension;

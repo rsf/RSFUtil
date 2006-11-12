@@ -13,5 +13,9 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  */
 
 public interface ContentTypeResolver {
+  /** @return The String key for the content type to be used when 
+   * rendering the view with the supplied parameters, or <code>null</code>
+   * if this resolver has no information for this view. 
+   */ 
   public String resolveContentType(ViewParameters viewparams);
 }

@@ -276,7 +276,7 @@
     </property>
   </bean>
 
-  <bean id="autoTemplateContributeTLAB"
+  <bean id="autoTemplateContributorTLAB"
     class="uk.org.ponder.springutil.ByClassTLAB">
     <property name="deliverBeans" value="true" />
     <property name="targetPath"
@@ -308,10 +308,28 @@
     </property>
   </bean>
 
+  <bean id="contentTypeInfoFactory"
+    class="uk.org.ponder.rsf.content.ContentTypeInfoFactory">
+    <property name="contentTypeInfoMap" ref="contentTypeInfoMap" />
+    <property name="viewParameters" ref="viewParametersProxy" />
+    <property name="reflectiveCache" ref="reflectiveCache"/>
+  </bean>
+
   <bean id="contentTypeInfoProxy" parent="RSACBridgePeaProxy">
     <property name="targetBeanName">
       <idref bean="contentTypeInfo" />
     </property>
+  </bean>
+
+  <bean id="contentTypeResolverTLAB"
+    class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
+    <property name="targetPath"
+      value="contentTypeInfoFactory.contentTypeResolvers" />
+  </bean>
+
+  <!-- Backwards compatibility for old users of contentTypeResolver -->
+  <bean parent="contentTypeResolverTLAB">
+    <property name="value" ref="contentTypeResolver" />
   </bean>
 
   <bean id="requestTypeProxy" parent="RSACStringBridge">
@@ -353,6 +371,8 @@
     </property>
   </bean>
 
+<!-- *** Definitions for ViewParameters and URL handling *** -->
+
   <bean id="autoBaseURLProviderProxy" parent="RSACBridgeProxy">
     <property name="targetBeanName">
       <idref bean="autoBaseURLProvider" />
@@ -378,6 +398,8 @@
     <property name="targetBeanName">
       <idref bean="viewParameters" />
     </property>
+    <!-- Enough information to find the get() method -->
+    <property name="targetClass" value="uk.org.ponder.rsf.viewstate.ViewParameters"/>
   </bean>
 
   <bean id="viewParamsMappingInfoManager"
@@ -426,6 +448,19 @@
     <property name="viewStateHandler" ref="viewStateHandler" />
   </bean>
 
+<!-- *** Standard framework SCR definitions *** -->
+
+  <bean id="URLRewriteSCR"
+    class="uk.org.ponder.rsf.renderer.html.URLRewriteSCR">
+    <property name="URLRewriter" ref="URLRewriter" />
+  </bean>
+  
+  <bean id="headCollectSCR" class="uk.org.ponder.rsf.renderer.html.HeadCollectingSCR">
+    <property name="URLRewriteSCR" ref="URLRewriteSCR"/>
+  </bean>
+
+  <bean id="nullSCR" class="uk.org.ponder.rsf.renderer.scr.NullRewriteSCR"/>
+
   <bean id="listenerConnector"
     class="uk.org.ponder.iocevent.BeetleConnector" />
 
@@ -436,6 +471,7 @@
   </bean>
 
   <!--  The core parent definitions for the different kinds of RSAC proxies -->
+  
   <bean id="RSACBridgeProxy" class="uk.org.ponder.rsac.RSACBridgeProxy"
     abstract="true">
     <property name="RSACBeanLocator" ref="RSACBeanLocator" />
@@ -501,4 +537,9 @@
     class="uk.org.ponder.rsf.flow.jsfnav.NavigationCasePooler">
     <property name="reflectiveCache" ref="reflectiveCache" />
   </bean>
+    
+  <!-- Beans for UVB (the Universal View Bus) -->
+  <bean id="UVBScope" parent="beanScopeParent">
+    <property name="copyPreservingBeans" value="UVBBean"/>
+  </bean>  
 </beans>

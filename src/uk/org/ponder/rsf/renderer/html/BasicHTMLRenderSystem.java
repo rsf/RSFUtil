@@ -180,11 +180,9 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         lumpindex = payload.lumpindex;
       }
 
-      String fullID = torendero.getFullID();
       HashMap attrcopy = new HashMap();
       attrcopy.putAll(uselump.attributemap);
-      IDStrategy = RenderUtil.determineIDStrategy(torendero, IDStrategy);
-      RenderUtil.adjustForID(attrcopy, IDStrategy, fullID);
+      RenderUtil.adjustForID(attrcopy, IDStrategy, torendero);
       decoratormanager.decorate(torendero.decorators, uselump.getTag(),
           attrcopy);
 

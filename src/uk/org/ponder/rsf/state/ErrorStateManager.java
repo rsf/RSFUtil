@@ -80,7 +80,7 @@ public class ErrorStateManager {
   }
   
   public TargettedMessageList getTargettedMessageList() {
-    return errorstate.errors;
+    return errorstate.messages;
   }
 
   public void setRequestRSVC(RequestSubmittedValueCache requestrsvc) {
@@ -103,7 +103,7 @@ public class ErrorStateManager {
 
   // Convert errors which are currently referring to bean paths back onto
   // their fields as specified in RSVC. Called at the END of a POST cycle.
-  private void fixupErrors(TargettedMessageList tml,
+  private void fixupMessages(TargettedMessageList tml,
       RequestSubmittedValueCache rsvc) {
     for (int i = 0; i < tml.size(); ++i) {
       TargettedMessage tm = tml.messageAt(i);
@@ -147,17 +147,22 @@ public class ErrorStateManager {
    *         there is no error.
    */
   public String requestComplete() {
-    if (ThreadErrorState.isError()) {
-      TargettedMessageList errors = ThreadErrorState.getErrorState().errors;
+    TargettedMessageList messages = ThreadErrorState.getErrorState().messages;
+    if (messages.size() > 0) {
+     
       // the errors arose from this cycle, and hence must be referred to
       // by SVEs from this cycle. If it is a GET cycle, rsvc will be empty,
       // but then all errors will have global target.
-      fixupErrors(errors, requestrsvc);
+      fixupMessages(messages, requestrsvc);
 
       allocateOutgoingToken();
       errorstate.globaltargetid = globaltargetid;
-      errorstate.rsvc = requestrsvc;
-      errorstate.errors = errors;
+      if (messages.isError()) {
+        // do not store the rsvc if no error, submitted values were accepted
+        // we are propagating messages only
+        errorstate.rsvc = requestrsvc;
+      }
+      errorstate.messages = messages;
       Logger.log.info(errorstate.rsvc.entries.size()
           + " RSVC values stored under error token " + errorstate.tokenID);
       errortsholder.putTokenState(errorstate.tokenID, errorstate);

@@ -64,7 +64,7 @@ public class ExactBeanCopyPreservationStrategy implements
   }
 
   public int restore(WriteableBeanLocator target, String tokenid) {
-    TargettedMessageList messages = ThreadErrorState.getErrorState().errors;
+    TargettedMessageList messages = ThreadErrorState.getErrorState().messages;
     int cbeans = 0;
     for (int i = 0; i < targetkeys.size(); ++i) {
       String key = targetkeys.stringAt(i);
