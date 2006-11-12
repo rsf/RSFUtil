@@ -39,8 +39,8 @@ public class RenderUtil {
     // for (; start < limit; ++ start) {
     // target.print(lumps[start].text);
     // }
-    target.write(lumps[start].parent.buffer, lumps[start].start, lumps[limit].start
-        - lumps[start].start);
+    target.write(lumps[start].parent.buffer, lumps[start].start,
+        lumps[limit].start - lumps[start].start);
     return limit;
   }
 
@@ -77,24 +77,31 @@ public class RenderUtil {
     return renderindex;
   }
 
-  public static String determineIDStrategy(UIComponent component,
-      String defaultStrategy) {
+  public static void adjustForID(Map attrcopy, String defaultstrategy,
+      UIComponent component) {
+    String ID = null;
+    String IDstrategy = defaultstrategy;
+
     if (component.decorators != null) {
       for (int i = 0; i < component.decorators.size(); ++i) {
         UIDecorator dec = component.decorators.decoratorAt(i);
         if (dec instanceof UIIDStrategyDecorator) {
-          defaultStrategy = ((UIIDStrategyDecorator) dec).IDStrategy;
+          UIIDStrategyDecorator ids = (UIIDStrategyDecorator) dec;
+          IDstrategy = ids.IDStrategy;
+          if (ids.IDStrategy.equals(UIIDStrategyDecorator.ID_MANUAL)) {
+            ID = ids.ID;
+          }
+          break;
         }
       }
     }
-    return defaultStrategy;
-  }
-
-  public static void adjustForID(Map attrcopy, String IDStrategy, String fullID) {
-    if (IDStrategy.equals(ContentTypeInfo.ID_FULL)) {
-      attrcopy.put("id", fullID);
+    if (ID == null) {
+      if (IDstrategy.equals(ContentTypeInfo.ID_FULL)) {
+        ID = component.getFullID();
+      }
     }
-    if (!IDStrategy.equals(ContentTypeInfo.ID_RSF)) {
+    attrcopy.put("id", ID);
+    if (!IDstrategy.equals(ContentTypeInfo.ID_RSF)) {
       attrcopy.remove(XMLLump.ID_ATTRIBUTE);
     }
   }
@@ -166,17 +173,16 @@ public class RenderUtil {
     return null;
   }
 
-  
-  public static int renderSCR(StaticComponentRenderer scr, XMLLump lump, 
-       XMLWriter xmlw, XMLLumpMMap collecteds) {
+  public static int renderSCR(StaticComponentRenderer scr, XMLLump lump,
+      XMLWriter xmlw, XMLLumpMMap collecteds) {
     if (scr instanceof BasicSCR) {
-      return ((BasicSCR)scr).render(lump, xmlw);
+      return ((BasicSCR) scr).render(lump, xmlw);
     }
     else {
       CollectingSCR collector = (CollectingSCR) scr;
       String[] tocollect = collector.getCollectingNames();
       XMLLumpList collected = new XMLLumpList();
-      for (int i = 0; i < tocollect.length; ++ i) {
+      for (int i = 0; i < tocollect.length; ++i) {
         XMLLumpList thiscollect = collecteds.headsForID(tocollect[i]);
         if (thiscollect != null) {
           collected.addAll(thiscollect);

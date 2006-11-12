@@ -55,13 +55,6 @@
     <property name="actionHandler" ref="RSFActionHandler" />
   </bean>
 
-  <bean id="contentTypeInfoFactory"
-    class="uk.org.ponder.rsf.content.ContentTypeInfoFactory">
-    <property name="contentTypeInfoMap" ref="contentTypeInfoMap" />
-    <property name="contentTypeResolver" ref="contentTypeResolver" />
-    <property name="viewParameters" ref="viewParameters" />
-  </bean>
-
   <bean id="renderSystem" factory-bean="renderSystemResolver"
     factory-method="getRenderSystem" />
 
@@ -122,6 +115,8 @@
     <property name="beanModelAlterer" ref="DARApplier" />
   </bean>
 
+<!-- The ViewParameters object giving rise to the current request. Highly
+  polymorphic, in general of some user-defined type. -->
   <bean id="viewParameters"
     class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
     <property name="singleton" value="true" />
@@ -199,24 +194,13 @@
     class="uk.org.ponder.rsf.components.ParameterList">
   </bean>
 
-  <bean id="URLRewriteSCR"
-    class="uk.org.ponder.rsf.renderer.html.URLRewriteSCR">
-    <property name="URLRewriter" ref="URLRewriter" />
-  </bean>
-  
-  <bean id="headCollectSCR" class="uk.org.ponder.rsf.renderer.html.HeadCollectingSCR">
-    <property name="URLRewriteSCR" ref="URLRewriteSCR"/>
-  </bean>
-
-  <bean id="nullSCR" class="uk.org.ponder.rsf.renderer.scr.NullRewriteSCR"/>
-
   <!-- A set of static renderers to be used for this request -->
   <!-- TODO: this should really be at app scope, with a proxy for consumer -->
   <bean id="staticRenderers"
     class="uk.org.ponder.rsf.renderer.scr.StaticRendererCollection">
     <property name="staticRenderers">
       <list>
-        <ref local="URLRewriteSCR" />
+        <ref bean="URLRewriteSCR" />
         <ref bean="headCollectSCR" />
         <ref bean="nullSCR"/>
         <ref bean="consumerStaticRenderers" />
@@ -379,5 +363,16 @@
     <property name="viewProcessor" ref="viewProcessor" />
     <property name="viewRender" ref="viewRender" />
     <property name="targettedMessageList" ref="targettedMessageList" />
+  </bean>
+  
+  <!-- Beans for UVB (the Universal View Bus) -->
+  
+  <bean id="UVBBean" class="uk.org.ponder.rsf.builtin.UVBBean">
+    <property name="requestBeanGetter" ref="ELEvaluator"/>
+  </bean>
+  
+  <bean id="UVBView" class="uk.org.ponder.rsf.builtin.UVBProducer">
+    <property name="UVBBean" ref="UVBBean"/>
+    <property name="beanDestroyer" ref="UVBScope"/>
   </bean>
 </beans>

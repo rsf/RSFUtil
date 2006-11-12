@@ -109,7 +109,7 @@ public class BeanCopyPreservationStrategy implements TSHPreservationStrategy,
       for (Iterator keyit = beans.keySet().iterator(); keyit.hasNext();) {
         String beanname = (String) keyit.next();
         Object bean = beans.get(beanname);
-        TargettedMessageList messages = ThreadErrorState.getErrorState().errors;
+        TargettedMessageList messages = ThreadErrorState.getErrorState().messages;
         alterer.setBeanValue(beanname, target, bean, messages);
       }
       return beans.size();

@@ -8,11 +8,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import uk.org.ponder.rsf.componentprocessor.ViewProcessor;
+import uk.org.ponder.rsf.content.ContentTypeReceiver;
+import uk.org.ponder.rsf.content.ContentTypeReporter;
 import uk.org.ponder.rsf.flow.jsfnav.DynamicNavigationCaseReporter;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReceiver;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
-import uk.org.ponder.rsf.viewstate.UltimateURLRenderer;
 import uk.org.ponder.rsf.viewstate.ViewParamsReceiver;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 import uk.org.ponder.util.UniversalRuntimeException;
@@ -41,7 +41,9 @@ public class ConcreteViewResolver implements ViewResolver {
   private boolean unknowniserror = true;
   private ViewParamsReceiver vpreceiver;
   private NavigationCaseReceiver ncreceiver;
+  private ContentTypeReceiver ctreceiver;
   private AutoComponentProducerManager automanager;
+  
 
   public void setUnknownViewIsError(boolean unknowniserror) {
     this.unknowniserror = unknowniserror;
@@ -55,6 +57,10 @@ public class ConcreteViewResolver implements ViewResolver {
     this.ncreceiver = ncreceiver;
   }
 
+  public void setContentTypeReceiver(ContentTypeReceiver ctreceiver) {
+    this.ctreceiver = ctreceiver;
+  }
+  
   private List pendingviews = new ArrayList();
 
   // Apologies for this lack of abstraction. There is currently only one of
@@ -93,6 +99,10 @@ public class ConcreteViewResolver implements ViewResolver {
             && !(view instanceof DynamicNavigationCaseReporter)) {
           ncreceiver.receiveNavigationCases(key,
               ((NavigationCaseReporter) view).reportNavigationCases());
+        }
+        if (view instanceof ContentTypeReporter) {
+          ctreceiver.setContentType(key, 
+              ((ContentTypeReporter)view).getContentType());
         }
       }
       addView(key, view);

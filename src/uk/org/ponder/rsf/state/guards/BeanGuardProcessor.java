@@ -15,28 +15,52 @@ import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.TargettedMessageList;
 import uk.org.ponder.mapping.BeanInvalidationModel;
 import uk.org.ponder.springutil.errors.SpringErrorConverter;
+import uk.org.ponder.util.RunnableInvoker;
+
+/** Collects all BeanGuard definitions from the context, and supervises
+ * their application. 
+ * @author Antranig Basman (antranig@caret.cam.ac.uk)
+ */
+
+// TODO: This implementation currently scales very badly - cost of every
+// bean model write is proportional to number of guards.
 
 public class BeanGuardProcessor implements ApplicationContextAware {
 
   private BeanGuard[] guards;
   private BeanModelAlterer darapplier;
-  
+
   public void setApplicationContext(ApplicationContext applicationContext) {
-    String[] guardnames = applicationContext.getBeanNamesForType(BeanGuard.class, false, false);
+    String[] guardnames = applicationContext.getBeanNamesForType(
+        BeanGuard.class, false, false);
     guards = new BeanGuard[guardnames.length];
-    for (int i = 0; i < guardnames.length; ++ i) {
+    for (int i = 0; i < guardnames.length; ++i) {
       guards[i] = (BeanGuard) applicationContext.getBean(guardnames[i]);
-    }  
+    }
   }
-  
+
   public void setBeanModelAlterer(BeanModelAlterer darapplier) {
     this.darapplier = darapplier;
   }
-  
-  public void processPostGuards(BeanInvalidationModel bim, TargettedMessageList errors, 
-      WriteableBeanLocator rbl) {
+
+  public RunnableInvoker getGuardProcessor(final BeanInvalidationModel bim,
+      final TargettedMessageList errors, final WriteableBeanLocator rbl) {
+    return new RunnableInvoker() {
+      public void invokeRunnable(Runnable torun) {
+        processGuards(bim, errors, rbl, torun);
+      }
+    };
+  }
+
+  public void processPostGuards(BeanInvalidationModel bim,
+      TargettedMessageList errors, WriteableBeanLocator rbl) {
+    processGuards(bim, errors, rbl, null);
+  }
+
+  private void processGuards(BeanInvalidationModel bim,
+      TargettedMessageList errors, WriteableBeanLocator rbl, Runnable toinvoke) {
     BindException springerrors = null;
-    for (int i = 0; i < guards.length; ++ i) {
+    for (int i = 0; i < guards.length; ++i) {
       BeanGuard guarddef = guards[i];
       String mode = guarddef.getGuardMode();
       String timing = guarddef.getGuardTiming();
@@ -47,10 +71,10 @@ public class BeanGuardProcessor implements ApplicationContextAware {
       if (guardEL != null && guardmethod != null) {
         guardmethod = PathUtil.composePath(guardEL, guardmethod);
       }
-      if (mode.equals(BeanGuard.WRITE) && 
-          timing == null || timing.equals(BeanGuard.POST)) {
+      if (mode.equals(BeanGuard.WRITE) && timing == null
+          || timing.equals(BeanGuard.POST)) {
         // for each POST-WRITE guard for an invalidated path, execute it.
-        String match = bim.invalidPathMatch(guardedpath); 
+        String match = bim.invalidPathMatch(guardedpath);
         if (match != null) {
           Object guard = guarddef.getGuard();
           if (guard == null && guardEL == null) {
@@ -68,7 +92,20 @@ public class BeanGuardProcessor implements ApplicationContextAware {
           }
           Object guarded = darapplier.getBeanValue(match, rbl);
           try {
-            if (guardmethod != null) {
+            if (guard instanceof RunnableInvoker) {
+              if (toinvoke == null) {
+                throw new IllegalArgumentException(
+                    "Configuration error: Bean Guard "
+                        + guard
+                        + " at "
+                        + guardEL
+                        + " was required in AROUND mode but does not implement RunnableInvoker");
+              }
+              else {
+                ((RunnableInvoker) guard).invokeRunnable(toinvoke);
+              }
+            }
+            else if (guardmethod != null) {
               darapplier.invokeBeanMethod(guardmethod, guard);
             }
             else if (guardproperty != null) {
@@ -83,16 +120,16 @@ public class BeanGuardProcessor implements ApplicationContextAware {
             }
           }
           catch (Exception e) {
-            TargettedMessage message = new TargettedMessage(e.getMessage(), e, match);
+            TargettedMessage message = new TargettedMessage(e.getMessage(), e,
+                match);
             errors.addMessage(message);
           }
         }
       }
     }
-//    if (springerrors != null) {
-//      throw UniversalRuntimeException.accumulate(springerrors);
-//    }
+    // if (springerrors != null) {
+    // throw UniversalRuntimeException.accumulate(springerrors);
+    // }
   }
 
-  
 }

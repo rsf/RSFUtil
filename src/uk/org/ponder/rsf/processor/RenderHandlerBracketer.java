@@ -111,7 +111,7 @@ public class RenderHandlerBracketer {
     
     TargettedMessage newerror = 
       new TargettedMessage(CoreMessages.GENERAL_SHOW_ERROR,  new Object[] { tokenid });
-    ThreadErrorState.addError(newerror);
+    ThreadErrorState.addMessage(newerror);
     return defaultparameters;
   }
 

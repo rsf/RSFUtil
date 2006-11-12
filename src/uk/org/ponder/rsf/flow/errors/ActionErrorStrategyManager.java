@@ -50,7 +50,7 @@ public class ActionErrorStrategyManager implements ActionErrorStrategy {
     if (exception != null && code == null) {
 //      Logger.log.warn("Error invoking action", exception);
       if (!ThreadErrorState.isError()) {
-        ThreadErrorState.addError(new TargettedMessage(
+        ThreadErrorState.addMessage(new TargettedMessage(
            CoreMessages.GENERAL_ACTION_ERROR));
       }
       throw UniversalRuntimeException.accumulate(exception,

@@ -19,5 +19,5 @@ public class ErrorTokenState implements Serializable {
   // These are only stored for an erroneous POST. For a correct one, 
   // they fuse with the StatePreservationStrategy.
   public RequestSubmittedValueCache rsvc;
-  public TargettedMessageList errors = new TargettedMessageList();
+  public TargettedMessageList messages = new TargettedMessageList();
 }

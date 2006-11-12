@@ -282,6 +282,7 @@
     </property>
     <property name="viewParametersReceiver" ref="viewParametersParser" />
     <property name="navigationCaseReceiver" ref="navigationCasePooler" />
+    <property name="contentTypeReceiver" ref="contentTypeInfoFactory"/>
   </bean>
 
   <!-- Derive from this parent in order to enable automatic detection of
@@ -380,7 +381,7 @@
     class="uk.org.ponder.rsf.renderer.html.decorators.HTMLLabelTargetDecoratorRenderer" />
 
   <bean id="CSSDecoratorRenderer"
-     class="uk.org.ponder.rsf.renderer.html.decorators.CSSDecoratorRenderer" />
+    class="uk.org.ponder.rsf.renderer.html.decorators.CSSDecoratorRenderer" />
 
   <!--  ***** STATE MANAGEMENT and TOKENS ***** -->
 
