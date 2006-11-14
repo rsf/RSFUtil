@@ -10,9 +10,7 @@ import uk.org.ponder.stringutil.StringList;
  * Resolves an incoming set of ViewParameters onto a list of template path names
  * (minus extension) to be searched for an appropriate template file.
  * <p>
- * The view is assumed to be rendered from a single template.
- * <p>
- * Use of this interfaces implies the use of templates from webapp-local
+ * Use of this interface implies the use of templates from webapp-local
  * storage, as in general served by the DefaultServlet. For more finegrained
  * control over template location and mapping, use the
  * {@link BaseAwareTemplateResolverStrategy}.

@@ -72,6 +72,8 @@ public class BasicTemplateResolver implements TemplateResolver,
   public ViewTemplate locateTemplate(ViewParameters viewparams) {
     TemplateResolverStrategy rootstrategy = null;
     int highestpriority = 0;
+    // NB if we really want this optimisation, it must be based on #
+    // of RETURNED templates, not the number of strategies!
     XMLCompositeViewTemplate xcvt = strategies.size() == 1 ? null
         : new XMLCompositeViewTemplate();
 
@@ -98,47 +100,76 @@ public class BasicTemplateResolver implements TemplateResolver,
           .warn("No root TemplateResolverStrategy found, using first entry of "
               + rootstrategy);
     }
-
+    StringList tried = new StringList();
     for (int i = 0; i < strategies.size(); ++i) {
       TemplateResolverStrategy trs = (TemplateResolverStrategy) strategies
           .get(i);
-      XMLViewTemplate template = locateTemplate(viewparams, trs);
+      boolean isexpected = trs instanceof ExpectedTRS ? ((ExpectedTRS) trs)
+          .isExpected()
+          : true;
+      boolean ismultiple = trs instanceof MultipleTemplateResolverStrategy ? ((MultipleTemplateResolverStrategy) trs)
+          .isMultiple()
+          : false;
 
-      if (xcvt != null) {
-        xcvt.globalmap.aggregate(template.globalmap);
-        if (trs == rootstrategy) {
-          xcvt.roottemplate = template;
+      StringList bases = trs.resolveTemplatePath(viewparams);
+
+      StringList[] usebases;
+      if (ismultiple) {
+        usebases = new StringList[bases.size()];
+        for (int j = 0; j < usebases.length; ++j) {
+          usebases[j] = new StringList(bases.stringAt(j));
         }
       }
       else {
-        return template;
+        usebases = new StringList[] { bases };
       }
+      for (int j = 0; j < usebases.length; ++j) {
+        XMLViewTemplate template = locateTemplate(viewparams, trs, usebases[j],
+            isexpected ? tried : null);
+        if (template != null) {
+          tried = null;
+          if (xcvt != null) {
+            xcvt.globalmap.aggregate(template.globalmap);
+            if (trs == rootstrategy) {
+              xcvt.roottemplate = template;
+            }
+          }
+          else {
+            return template;
+          }
+        } // end if template returned
+      }
+    }
+    if (tried != null) {
+      throw UniversalRuntimeException.accumulate(new FileNotFoundException(),
+          "Cannot load template file from any of paths " + tried.toString());
     }
 
     return xcvt;
   }
 
   private XMLViewTemplate locateTemplate(ViewParameters viewparams,
-      TemplateResolverStrategy strs) {
+      TemplateResolverStrategy strs, StringList bases, StringList tried) {
     String resourcebase = "/";
     if (strs instanceof BaseAwareTemplateResolverStrategy) {
       BaseAwareTemplateResolverStrategy batrs = (BaseAwareTemplateResolverStrategy) strs;
       resourcebase = batrs.getTemplateResourceBase();
     }
 
-    StringList bases = strs.resolveTemplatePath(viewparams);
     String extension = tei.inferTemplateExtension(viewparams);
     InputStream is = null;
     String fullpath = null;
     for (int i = 0; i < bases.size(); ++i) {
       fullpath = resourcebase + bases.stringAt(i) + "." + extension;
+      if (tried != null) {
+        tried.add(fullpath);
+      }
       is = cachingiis.openStream(fullpath);
       if (is != null)
         break;
     }
     if (is == null) {
-      throw UniversalRuntimeException.accumulate(new FileNotFoundException(),
-          "Cannot load template file from path " + fullpath);
+      return null;
     }
 
     XMLViewTemplate template = null;

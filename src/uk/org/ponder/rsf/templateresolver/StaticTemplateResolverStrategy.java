@@ -15,7 +15,8 @@ import uk.org.ponder.stringutil.StringList;
  */
 
 public class StaticTemplateResolverStrategy implements RootAwareTRS,
-    MultipleTemplateResolverStrategy, BaseAwareTemplateResolverStrategy {
+    MultipleTemplateResolverStrategy, BaseAwareTemplateResolverStrategy, 
+    ExpectedTRS {
   private String templateResourceBase = "/";
   private int rootResolverPriority = 1;
   private String names;
@@ -23,6 +24,7 @@ public class StaticTemplateResolverStrategy implements RootAwareTRS,
   private String externalURLbase;
   private String basedir;
   private boolean ismultiple = true;
+  private boolean expected;
 
   public void setContextURLProvider(ContextURLProvider cup) {
     this.cup = cup;
@@ -77,6 +79,14 @@ public class StaticTemplateResolverStrategy implements RootAwareTRS,
 
   public int getRootResolverPriority() {
     return rootResolverPriority;
+  }
+
+  public void setExpected(boolean expected) {
+    this.expected = expected;
+  }
+  
+  public boolean isExpected() {
+    return expected;
   }
 
 

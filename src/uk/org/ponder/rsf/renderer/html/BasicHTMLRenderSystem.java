@@ -12,13 +12,12 @@ import uk.org.ponder.rsf.components.UIAnchor;
 import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBoundList;
+import uk.org.ponder.rsf.components.UIBoundString;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIForm;
-import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UILink;
-import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UIOutputMultiline;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.components.UISelect;
@@ -120,12 +119,11 @@ public class BasicHTMLRenderSystem implements RenderSystem {
     }
   }
 
-
   // No, this method will not stay like this forever! We plan on an architecture
   // with renderer-per-component "class" as before, plus interceptors.
   // Although a lot of the parameterisation now lies in the allowable tag
   // set at target.
-  public int renderComponent(UIComponent torendero, View view, XMLLump lump, 
+  public int renderComponent(UIComponent torendero, View view, XMLLump lump,
       PrintOutputStream pos, String IDStrategy, XMLLumpMMap collecteds) {
     XMLWriter xmlw = new XMLWriter(pos);
     int lumpindex = lump.lumpindex;
@@ -186,69 +184,49 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       decoratormanager.decorate(torendero.decorators, uselump.getTag(),
           attrcopy);
 
-      TagRenderContext rendercontext = new TagRenderContext(attrcopy, 
-          uselump, endopen, close, pos, xmlw, nextpos);
+      TagRenderContext rendercontext = new TagRenderContext(attrcopy, uselump,
+          endopen, close, pos, xmlw, nextpos);
       // ALWAYS dump the tag name, this can never be rewritten. (probably?!)
       pos.write(uselump.parent.buffer, uselump.start, uselump.length);
       // TODO: Note that these are actually BOUND now. Create some kind of
       // defaultBoundRenderer.
       if (torendero instanceof UIBound) {
         UIBound torender = (UIBound) torendero;
-        if (!torender.willinput) {
-          if (torendero.getClass() == UIOutput.class) {
-            String value = ((UIOutput) torendero).getValue();
-            rewriteLeafOpen(value, rendercontext);
+
+        if (torendero.getClass() == UIOutputMultiline.class) {
+          StringList value = ((UIOutputMultiline) torendero).getValue();
+          if (value == null) {
+            RenderUtil.dumpTillLump(lumps, lumpindex + 1, close.lumpindex + 1,
+                pos);
           }
-          else if (torendero.getClass() == UIOutputMultiline.class) {
-            StringList value = ((UIOutputMultiline) torendero).getValue();
-            if (value == null) {
-              RenderUtil.dumpTillLump(lumps, lumpindex + 1,
-                  close.lumpindex + 1, pos);
-            }
-            else {
-              XMLUtil.dumpAttributes(attrcopy, xmlw);
-              pos.print(">");
-              for (int i = 0; i < value.size(); ++i) {
-                if (i != 0) {
-                  pos.print("<br/>");
-                }
-                xmlw.write(value.stringAt(i));
+          else {
+            XMLUtil.dumpAttributes(attrcopy, xmlw);
+            pos.print(">");
+            for (int i = 0; i < value.size(); ++i) {
+              if (i != 0) {
+                pos.print("<br/>");
               }
-              closeTag(pos, uselump);
+              xmlw.write(value.stringAt(i));
             }
+            closeTag(pos, uselump);
           }
-          else if (torender.getClass() == UIAnchor.class) {
-            String value = ((UIAnchor) torendero).getValue();
-            if (UITypes.isPlaceholder(value)) {
-              renderUnchanged(rendercontext);
-            }
-            else {
-              attrcopy.put("name", value);
-              replaceAttributes(rendercontext);
-            }
+        }
+        else if (torender.getClass() == UIAnchor.class) {
+          String value = ((UIAnchor) torendero).getValue();
+          if (UITypes.isPlaceholder(value)) {
+            renderUnchanged(rendercontext);
+          }
+          else {
+            attrcopy.put("name", value);
+            replaceAttributes(rendercontext);
           }
         }
         // factor out component-invariant processing of UIBound.
-        else { // Bound with willinput = true
-          attrcopy.put("name", torender.submittingname);
-          // attrcopy.put("id", fullID);
-          String value = "";
-          String body = null;
-          if (torendero instanceof UIInput) {
-            value = ((UIInput) torender).getValue();
-            if (uselump.textEquals("<textarea ")) {
-              if (UITypes.isPlaceholder(value)) {
-                // FORCE a blank value for input components if nothing from 
-                // model.
-                value = "";
-              }
-              body = value;
-            }
-            else {
-              attrcopy.put("value", value);
-            }
+        else { // non-Anchor, non-Multiline
+          if (torender.willinput) {
+            attrcopy.put("name", torender.submittingname);
           }
-          else if (torendero instanceof UIBoundBoolean) {
+          if (torendero instanceof UIBoundBoolean) {
             if (((UIBoundBoolean) torender).getValue()) {
               attrcopy.put("checked", "yes");
             }
@@ -256,8 +234,27 @@ public class BasicHTMLRenderSystem implements RenderSystem {
               attrcopy.remove("checked");
             }
             attrcopy.put("value", "true");
+            rewriteLeaf(null, rendercontext);
           }
-          rewriteLeaf(body, rendercontext);
+          else { // Non-boolean must be String
+            String value = ((UIBoundString) torender).getValue();
+            if (uselump.textEquals("<textarea ")) {
+              if (UITypes.isPlaceholder(value)) {
+                // FORCE a blank value for input components if nothing from
+                // model.
+                value = "";
+              }
+              rewriteLeaf(value, rendercontext);
+            }
+            else if (uselump.textEquals("<input ")) {
+              attrcopy.put("value", value);
+              rewriteLeaf(null, rendercontext);
+            }
+            else {
+              rewriteLeafOpen(value, rendercontext);
+            }
+          }
+
           // unify hidden field processing? ANY parameter children found must
           // be dumped as hidden fields.
         }
@@ -332,7 +329,8 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         if (attrname != null) {
           String target = torender.target.getValue();
           if (target == null || target.length() == 0) {
-            // some people may perversely want empty links - but they would always
+            // some people may perversely want empty links - but they would
+            // always
             // refer to *real* self and hence not be rewritten.
             target = "";
           }
@@ -433,10 +431,10 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       }
       nextpos = rendercontext.nextpos;
     }
-    
+
     return nextpos;
   }
-  
+
   private void renderUnchanged(TagRenderContext c) {
     RenderUtil.dumpTillLump(c.uselump.parent.lumps, c.uselump.lumpindex + 1,
         c.close.lumpindex + 1, c.pos);
@@ -455,7 +453,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
     else
       replaceAttributesOpen(c);
   }
-  
+
   private void replaceBody(String value, TagRenderContext c) {
     XMLUtil.dumpAttributes(c.attrcopy, c.xmlw);
     c.pos.print(">");
@@ -472,10 +470,10 @@ public class BasicHTMLRenderSystem implements RenderSystem {
   private void replaceAttributesOpen(TagRenderContext c) {
     XMLUtil.dumpAttributes(c.attrcopy, c.xmlw);
     c.pos.print(">");
- 
+
     c.nextpos = c.endopen.lumpindex + 1;
   }
-  
+
   private void dumpTemplateBody(TagRenderContext c) {
     if (c.endopen.lumpindex == c.close.lumpindex) {
       c.pos.print("/>");

@@ -18,14 +18,17 @@ import uk.org.ponder.webapputil.ConsumerInfo;
  */
 
 public class CRITemplateResolverStrategy implements
-    TemplateResolverStrategy, BaseAwareTemplateResolverStrategy {
-  private String basedir;
+    TemplateResolverStrategy, BaseAwareTemplateResolverStrategy, RootAwareTRS {
+  private String basedir = "";
 
   private ConsumerInfo ciproxy;
 
   private ContextURLProvider cup;
 
   private int rootpriority = 1;
+
+  /** The default is to seek ServletContext resources in the current webapp **/
+  private String trbase = "/";
   public static final String CONSUMERTYPE_SEPARATOR = "-";
 
   public void setContextURLProvider(ContextURLProvider cup) {
@@ -65,9 +68,13 @@ public class CRITemplateResolverStrategy implements
   }
 
   public String getTemplateResourceBase() {
-    return "/";
+    return trbase;
   }
 
+  public void setTemplateResourceBase(String trbase) {
+    this.trbase = trbase;
+  }
+  
   public int getRootResolverPriority() {
     return rootpriority;
   }
