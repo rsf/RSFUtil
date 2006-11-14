@@ -165,6 +165,7 @@
     <property name="beanInvalidationModel" ref="beanInvalidationModel" />
     <property name="beanGuardProcessor" ref="beanGuardProcessor" />
     <property name="ignoreFossilizedValues" ref="ignoreFossilizedValues" />
+    <property name="targettedMessageList" ref="targettedMessageList"/>
   </bean>
 
   <!--  requires input of requestRSVC in order to fix up errors at the

@@ -11,12 +11,14 @@ import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.util.UniversalRuntimeException;
 
-/** A collection point for ActionErrorStrategies. Tries each strategy in 
- * turn, and if none match the criteria for the current error, adopts 
- * a default strategy. This passes through any exception, and queues a
- * general error message. 
+/**
+ * A collection point for ActionErrorStrategies. Tries each strategy in turn,
+ * and if none match the criteria for the current error, adopts a default
+ * strategy. This passes through any exception, and queues a general error
+ * message.
+ * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
- *
+ * 
  */
 
 public class ActionErrorStrategyManager implements ActionErrorStrategy {
@@ -41,17 +43,20 @@ public class ActionErrorStrategyManager implements ActionErrorStrategy {
   public Object handleError(String returncode, Exception exception,
       String flowstate, String viewID, TargettedMessage message) {
     Object code = null;
+    Exception tohandle = (Exception) (exception instanceof UniversalRuntimeException ? ((UniversalRuntimeException) exception)
+        .getTargetException()
+        : exception);
     for (int i = 0; i < strategies.size(); ++i) {
-      code = strategyAt(i)
-          .handleError(returncode, exception, flowstate, viewID, message);
+      code = strategyAt(i).handleError(returncode, tohandle, flowstate, viewID,
+          message);
       if (code != null)
         return code;
     }
     if (exception != null && code == null) {
-//      Logger.log.warn("Error invoking action", exception);
+      // Logger.log.warn("Error invoking action", exception);
       if (!ThreadErrorState.isError()) {
         ThreadErrorState.addMessage(new TargettedMessage(
-           CoreMessages.GENERAL_ACTION_ERROR));
+            CoreMessages.GENERAL_ACTION_ERROR));
       }
       throw UniversalRuntimeException.accumulate(exception,
           "Error invoking action");

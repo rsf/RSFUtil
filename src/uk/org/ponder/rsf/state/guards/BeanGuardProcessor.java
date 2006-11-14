@@ -3,6 +3,9 @@
  */
 package uk.org.ponder.rsf.state.guards;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.validation.BindException;
@@ -58,9 +61,18 @@ public class BeanGuardProcessor implements ApplicationContextAware {
     processGuards(bim, errors, rbl, null);
   }
 
+  private List appendWrapper(List toappend, RunnableInvoker invoker) {
+    if (toappend == null) {
+      toappend = new ArrayList();
+    }
+    toappend.add(invoker);
+    return toappend;
+  }
+  
   private void processGuards(BeanInvalidationModel bim,
       TargettedMessageList errors, WriteableBeanLocator rbl, Runnable toinvoke) {
     BindException springerrors = null;
+    List wrappers = null;
     for (int i = 0; i < guards.length; ++i) {
       BeanGuard guarddef = guards[i];
       String mode = guarddef.getGuardMode();
@@ -103,15 +115,12 @@ public class BeanGuardProcessor implements ApplicationContextAware {
                         + " was required in AROUND mode but does not implement RunnableInvoker");
               }
               else {
-                ((RunnableInvoker) guard).invokeRunnable(toinvoke);
+                wrappers = appendWrapper(wrappers, (RunnableInvoker) guard);
               }
             }
             else {
-              if (toinvoke != null) {
-                // simply invoking op now, postguards will be later
-                toinvoke.run(); 
-              }
-              else {
+              // now invoking postguards
+              if (toinvoke == null) {
                 if (guardmethod != null) {
                   darapplier.invokeBeanMethod(guardmethod, guard);
                 }
@@ -137,9 +146,30 @@ public class BeanGuardProcessor implements ApplicationContextAware {
         }
       }
     }
+    if (toinvoke != null) {
+      invokeWrappers(wrappers, toinvoke);
+    }
     // if (springerrors != null) {
     // throw UniversalRuntimeException.accumulate(springerrors);
     // }
   }
 
+  private void invokeWrappers(final List wrappers, final Runnable toinvoke) {
+    if (wrappers == null) {
+      toinvoke.run();
+    }
+    else {
+      new Runnable() {
+        int i = 0;
+        public void run() {
+          if (i == wrappers.size()) toinvoke.run();
+          else {
+            RunnableInvoker invoker = (RunnableInvoker) wrappers.get(i);
+            ++i;
+            invoker.invokeRunnable(this);
+          }
+        }
+      }.run();
+    }
+  }
 }
