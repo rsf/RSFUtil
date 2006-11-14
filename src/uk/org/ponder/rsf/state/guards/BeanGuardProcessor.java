@@ -17,14 +17,15 @@ import uk.org.ponder.mapping.BeanInvalidationModel;
 import uk.org.ponder.springutil.errors.SpringErrorConverter;
 import uk.org.ponder.util.RunnableInvoker;
 
-/** Collects all BeanGuard definitions from the context, and supervises
- * their application. 
+/**
+ * Collects all BeanGuard definitions from the context, and supervises their
+ * application.
+ * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
 
 // TODO: This implementation currently scales very badly - cost of every
 // bean model write is proportional to number of guards.
-
 public class BeanGuardProcessor implements ApplicationContextAware {
 
   private BeanGuard[] guards;
@@ -105,18 +106,27 @@ public class BeanGuardProcessor implements ApplicationContextAware {
                 ((RunnableInvoker) guard).invokeRunnable(toinvoke);
               }
             }
-            else if (guardmethod != null) {
-              darapplier.invokeBeanMethod(guardmethod, guard);
-            }
-            else if (guardproperty != null) {
-              darapplier.setBeanValue(guardproperty, guard, guarded, errors);
-            }
-            else if (guard instanceof Validator) {
-              Validator guardv = (Validator) guard;
-              springerrors = new BindException(guarded, guardedpath);
-              // TODO: We could try to store this excess info somewhere.
-              guardv.validate(guarded, springerrors);
-              SpringErrorConverter.appendErrors(errors, springerrors);
+            else {
+              if (toinvoke != null) {
+                // simply invoking op now, postguards will be later
+                toinvoke.run(); 
+              }
+              else {
+                if (guardmethod != null) {
+                  darapplier.invokeBeanMethod(guardmethod, guard);
+                }
+                else if (guardproperty != null) {
+                  darapplier
+                      .setBeanValue(guardproperty, guard, guarded, errors);
+                }
+                else if (guard instanceof Validator) {
+                  Validator guardv = (Validator) guard;
+                  springerrors = new BindException(guarded, guardedpath);
+                  // TODO: We could try to store this excess info somewhere.
+                  guardv.validate(guarded, springerrors);
+                  SpringErrorConverter.appendErrors(errors, springerrors);
+                }
+              }
             }
           }
           catch (Exception e) {
