@@ -89,9 +89,9 @@ public class DefaultFormFixer implements ComponentProcessor, ViewReceiver {
       }
       if (child instanceof UIBound) {
         UIBound boundchild = (UIBound) child;
-        if (boundchild.submittingname == null) {
+        if (boundchild.submittingname == null && boundchild.willinput) {
           Logger.log.warn("Submitting name for " + boundchild.getFullID()
-              + " not set by previos fixup");
+              + " not set by previous fixup");
           boundchild.submittingname = boundchild.getFullID();
         }
         submittingnames.add(boundchild.submittingname);

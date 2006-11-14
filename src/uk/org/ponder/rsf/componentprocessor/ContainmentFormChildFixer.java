@@ -56,7 +56,7 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
   public void setRenderFossilizedForms(boolean renderfossilized) {
     this.renderfossilized = renderfossilized;
   }
-  
+
   private void registerComponent(UIForm toprocess, UIComponent child) {
     // TODO: produce some useful diagnostic on an attempt to create a nested
     // form. This is "presumably" forbidden in every dialect but HTML, and
@@ -68,18 +68,18 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
       boolean getform = toprocess.type
           .equals(EarlyRequestParser.RENDER_REQUEST);
       // in the case of an "unmanaged" form, this will generate submitting names
-      // that the processor is "not expecting" in repetitious cases. 
-      if (RSFUtil.isBound(child) || getform) {
+      // that the processor is "not expecting" in repetitious cases.
+      UIBound bound = (UIBound) child;
+      if (bound.willinput || getform) {
         String fullID = child.getFullID();
         String formID = toprocess.getFullID();
-        UIBound bound = (UIBound) child;
+
         bound.submittingname = fullID.substring(RSFUtil.commonPath(fullID,
             formID));
 
         if (getform) {
-          bound.submittingname = reduceGETSubmittingName(bound.submittingname);    
+          bound.submittingname = reduceGETSubmittingName(bound.submittingname);
         }
-
         toprocess.submittingcontrols.add(fullID);
       }
     }
@@ -114,11 +114,11 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
   private static String reduceGETSubmittingName(String submittingname) {
     String[] comps = submittingname.split(":", -1);
     submittingname = "";
-    for (int i = 0; i < comps.length; ++ i) {
+    for (int i = 0; i < comps.length; ++i) {
       // append prefix.localID. for each component that has one
       if ((i % 3) == 2) {
-        if (comps[i].length() != 0) 
-        submittingname += comps[i - 2] + "." + comps[i] + ".";
+        if (comps[i].length() != 0)
+          submittingname += comps[i - 2] + "." + comps[i] + ".";
       }
     }
     submittingname += comps[comps.length - 1];
