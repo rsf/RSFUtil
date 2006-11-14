@@ -9,7 +9,6 @@ import uk.org.ponder.beanutil.WriteableBeanLocator;
 import uk.org.ponder.conversion.LeafObjectParser;
 import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.TargettedMessageList;
-import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.mapping.BeanInvalidationBracketer;
 import uk.org.ponder.mapping.BeanInvalidationModel;
 import uk.org.ponder.mapping.DARList;

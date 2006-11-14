@@ -4,8 +4,10 @@
 package uk.org.ponder.rsf.preservation;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.BeanNameAware;
 
@@ -42,6 +44,22 @@ public class BeanCopyPreservationStrategy implements TSHPreservationStrategy,
   private String basekey = "";
   private BeanModelAlterer alterer;
   private boolean expected = true;
+  private boolean classLoaderInternal = true;
+  
+  private Set ourLoaders;
+  
+  public void setClassLoaderInternal(boolean classLoaderInternal) {
+    this.classLoaderInternal = classLoaderInternal;
+  }
+
+  public BeanCopyPreservationStrategy() {
+    ourLoaders = new HashSet();
+    ClassLoader ours = getClass().getClassLoader();
+    while (ours != null) {
+      ourLoaders.add(ours);
+      ours = ours.getParent();
+    }
+  }
 
   public void setPreservingBeans(StringList beannames) {
     this.beannames = beannames;
@@ -89,7 +107,9 @@ public class BeanCopyPreservationStrategy implements TSHPreservationStrategy,
     }
     String token = basekey + tokenid;
     holder.putTokenState(token, beans);
-    Logger.log.info("BeanCopy saved " + beans.size() + " beans to token " + token);
+    if (beans.size() != 0) {
+      Logger.log.info("BeanCopy saved " + beans.size() + " beans to token " + token);
+    }
     return beans.size();
   }
 
@@ -109,8 +129,16 @@ public class BeanCopyPreservationStrategy implements TSHPreservationStrategy,
       for (Iterator keyit = beans.keySet().iterator(); keyit.hasNext();) {
         String beanname = (String) keyit.next();
         Object bean = beans.get(beanname);
-        TargettedMessageList messages = ThreadErrorState.getErrorState().messages;
-        alterer.setBeanValue(beanname, target, bean, messages);
+        ClassLoader beanloader = bean.getClass().getClassLoader();
+        if (classLoaderInternal && !ourLoaders.contains(beanloader)) {
+          Logger.log.warn("Bean " + bean +" with name " + beanname + 
+              " from unrecognized ClassLoader " + beanloader.getClass().getName() +"@" + System.identityHashCode(beanloader) + " was destroyed from preservation");
+          beans.remove(beanname);
+        }
+        else {
+          TargettedMessageList messages = ThreadErrorState.getErrorState().messages;
+          alterer.setBeanValue(beanname, target, bean, messages);
+        }
       }
       return beans.size();
     }
