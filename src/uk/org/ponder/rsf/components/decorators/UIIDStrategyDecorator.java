@@ -21,13 +21,13 @@ public class UIIDStrategyDecorator extends UIDecorator {
   public static final String ID_MANUAL = "manual";
   
   public static final UIIDStrategyDecorator ID_FULL = 
-    new UIIDStrategyDecorator(ContentTypeInfo.ID_FULL);
+    new UIIDStrategyDecorator(true, ContentTypeInfo.ID_FULL);
   
   public static final UIIDStrategyDecorator ID_NONE = 
-    new UIIDStrategyDecorator(ContentTypeInfo.ID_NONE);
+    new UIIDStrategyDecorator(true, ContentTypeInfo.ID_NONE);
   
   public static final UIIDStrategyDecorator ID_RSF = 
-    new UIIDStrategyDecorator(ContentTypeInfo.ID_RSF);
+    new UIIDStrategyDecorator(true, ContentTypeInfo.ID_RSF);
   
   public String IDStrategy;
   
@@ -39,6 +39,10 @@ public class UIIDStrategyDecorator extends UIDecorator {
   public UIIDStrategyDecorator(String ID) {
     this.ID = ID;
     this.IDStrategy = ID_MANUAL;
+  }
+  
+  public UIIDStrategyDecorator(boolean builtin, String IDStrategy) {
+    this.IDStrategy = IDStrategy;
   }
   
   public UIIDStrategyDecorator() {}

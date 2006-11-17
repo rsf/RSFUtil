@@ -3,7 +3,6 @@
  */
 package uk.org.ponder.rsf.templateresolver;
 
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -70,40 +69,21 @@ public class BasicTemplateResolver implements TemplateResolver,
   private CachingInputStreamSource cachingiis;
 
   public ViewTemplate locateTemplate(ViewParameters viewparams) {
-    TemplateResolverStrategy rootstrategy = null;
-    int highestpriority = 0;
+
     // NB if we really want this optimisation, it must be based on #
     // of RETURNED templates, not the number of strategies!
     XMLCompositeViewTemplate xcvt = strategies.size() == 1 ? null
         : new XMLCompositeViewTemplate();
-
+    int highestpriority = 0;
+    StringList tried = new StringList();
+    
     for (int i = 0; i < strategies.size(); ++i) {
       TemplateResolverStrategy trs = (TemplateResolverStrategy) strategies
           .get(i);
       int thispri = trs instanceof RootAwareTRS ? ((RootAwareTRS) trs)
           .getRootResolverPriority()
           : 1;
-      if (thispri == highestpriority && thispri != 0) {
-        if (rootstrategy != null) {
-          Logger.log.warn("Duplicate root TemplateResolverStrategy " + trs
-              + " found, using first entry " + rootstrategy);
-        }
-      }
-      if (thispri > highestpriority) {
-        rootstrategy = trs;
-        highestpriority = thispri;
-      }
-    }
-    if (rootstrategy == null) {
-      rootstrategy = (TemplateResolverStrategy) strategies.get(0);
-      Logger.log
-          .warn("No root TemplateResolverStrategy found, using first entry of "
-              + rootstrategy);
-    }
-    StringList tried = new StringList();
-    for (int i = 0; i < strategies.size(); ++i) {
-      TemplateResolverStrategy trs = (TemplateResolverStrategy) strategies
-          .get(i);
+      
       boolean isexpected = trs instanceof ExpectedTRS ? ((ExpectedTRS) trs)
           .isExpected()
           : true;
@@ -123,16 +103,25 @@ public class BasicTemplateResolver implements TemplateResolver,
       else {
         usebases = new StringList[] { bases };
       }
+      
       for (int j = 0; j < usebases.length; ++j) {
         XMLViewTemplate template = locateTemplate(viewparams, trs, usebases[j],
             isexpected ? tried : null);
         if (template != null) {
-          tried = null;
           if (xcvt != null) {
             xcvt.globalmap.aggregate(template.globalmap);
-            if (trs == rootstrategy) {
-              xcvt.roottemplate = template;
+            
+            if (thispri == highestpriority && thispri != 0) {
+              if (xcvt.roottemplate != null) {
+                Logger.log.warn("Duplicate root TemplateResolverStrategy " + trs
+                    + " found at priority " + thispri +", using first entry");
+              }
             }
+            if (thispri > highestpriority) {
+              xcvt.roottemplate = template;
+              highestpriority = thispri;
+            }
+
           }
           else {
             return template;
@@ -140,11 +129,12 @@ public class BasicTemplateResolver implements TemplateResolver,
         } // end if template returned
       }
     }
-    if (tried != null) {
-      throw UniversalRuntimeException.accumulate(new FileNotFoundException(),
-          "Cannot load template file from any of paths " + tried.toString());
+    
+    if (xcvt != null && xcvt.roottemplate == null) {
+      throw UniversalRuntimeException.accumulate(new IllegalArgumentException(),
+          "No TemplateResolverStrategy which was marked as a root resolver (rootPriority > 0) " +
+          "returned a template: tried paths (expected) " + tried.toString());
     }
-
     return xcvt;
   }
 

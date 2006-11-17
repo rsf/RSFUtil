@@ -62,5 +62,8 @@ public class SubmittedValueEntry implements Serializable {
    * cause of filling in <code>newvalue</code>
    */
   public boolean isdeletion = false;
- 
+  /** If set to <code>true</code> the application of this SVE will pass all
+   * "unchanged value culling" and be definitely applied to the model.
+   */
+  public boolean mustapply = false;
 }

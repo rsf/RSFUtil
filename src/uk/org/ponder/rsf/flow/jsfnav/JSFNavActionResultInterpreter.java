@@ -40,7 +40,9 @@ public class JSFNavActionResultInterpreter implements ActionResultInterpreter {
         // TODO: Fix up these rules wrt. specificity of overrides to agree
         // more with JSF semantics
         if (navcase.fromOutcome == null || navcase.fromOutcome.equals(result)) {
-          togo.resultingview = navcase.toViewId;
+          if (navcase.resultingView != null) {
+            togo.resultingview = navcase.resultingView;
+          }
           togo.propagatebeans = navcase.flowCondition;
         }
       }

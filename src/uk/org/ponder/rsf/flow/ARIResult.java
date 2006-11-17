@@ -72,10 +72,10 @@ public class ARIResult {
    * FLOW_ String values above.
    */
   public String propagatebeans;
-  /** An access method, for those who like that sort of thing. Certainly people
-   * who use AOP are rather keen on them...
+  /** Access method for the above field.
    * @return
    */
+  // TODO: convert this to a Pea Proxy
   public String getPropagateBeans() {
     return propagatebeans;
   }

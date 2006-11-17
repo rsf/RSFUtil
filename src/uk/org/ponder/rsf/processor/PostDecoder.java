@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import uk.org.ponder.arrayutil.ArrayUtil;
 import uk.org.ponder.rsf.request.EarlyRequestParser;
 import uk.org.ponder.rsf.request.FossilizedConverter;
 import uk.org.ponder.rsf.request.RenderSystemDecoder;
@@ -55,6 +56,18 @@ public class PostDecoder {
     rendersystemdecoder.normalizeRequestMap(normalizedrequest);
   }
 
+  private static void fuseStrings(SubmittedValueEntry existing,
+      SubmittedValueEntry sve) {
+    if (existing.newvalue instanceof String) {
+      existing.newvalue = new String[] { (String) existing.newvalue,
+          (String) sve.newvalue };
+    }
+    else {
+      existing.newvalue = ArrayUtil.append((Object[]) existing.newvalue,
+          sve.newvalue);
+    }
+  }
+
   // This method is expected to be called by accreteRSVC
   public void parseRequest(RequestSubmittedValueCache rsvc) {
     // Firstly acquire all non-component ("pure") bindings
@@ -69,7 +82,13 @@ public class PostDecoder {
           try {
             SubmittedValueEntry sve = fossilizedconverter.parseBinding(key,
                 values[i]);
-            rsvc.addEntry(sve);
+            SubmittedValueEntry existing = rsvc.byPath(sve.valuebinding);
+            if (existing != null) {
+              fuseStrings(existing, sve);
+            }
+            else {
+              rsvc.addEntry(sve);
+            }
             Logger.log.info("Discovered noncomponent binding for "
                 + sve.valuebinding + " rvalue " + sve.newvalue);
           }

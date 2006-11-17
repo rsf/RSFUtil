@@ -538,8 +538,13 @@
     <property name="reflectiveCache" ref="reflectiveCache" />
   </bean>
     
-  <!-- Beans for UVB (the Universal View Bus) -->
-  <bean id="UVBScope" parent="beanScopeParent">
-    <property name="copyPreservingBeans" value="UVBBean"/>
-  </bean>  
+
+  <!-- UVBBean forms a flow -->
+  <bean parent="copyPreservingParent">
+     <property name="value" value="UVBBean"/>
+  </bean>
+  
+  <bean parent="requestAddressibleParent">
+    <property name="value" value="UVBBean"/>
+  </bean>
 </beans>
