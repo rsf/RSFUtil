@@ -78,7 +78,7 @@ public class RSVCApplier {
       for (int i = 0; i < rsvc.entries.size(); ++i) {
         SubmittedValueEntry sve = rsvc.entryAt(i);
         // check against "old" values
-        if (sve.componentid != null && !ignoreFossilizedValues) {
+        if (sve.componentid != null && !ignoreFossilizedValues && !sve.mustapply) {
           if (sve.oldvalue != null && sve.valuebinding != null) {
             versioncheckpolicy.checkOldVersion(sve); // will blow on error
 

@@ -3,7 +3,9 @@
  */
 package uk.org.ponder.rsf.builtin;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import uk.org.ponder.conversion.StaticLeafParser;
@@ -17,27 +19,35 @@ import uk.org.ponder.rsf.components.decorators.UIFreeAttributeDecorator;
 import uk.org.ponder.rsf.components.decorators.UIIDStrategyDecorator;
 import uk.org.ponder.rsf.content.ContentTypeInfoRegistry;
 import uk.org.ponder.rsf.content.ContentTypeReporter;
+import uk.org.ponder.rsf.flow.ARIResult;
+import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
+import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.state.scope.BeanDestroyer;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
-public class UVBProducer implements ViewComponentProducer, ContentTypeReporter {
+public class UVBProducer implements ViewComponentProducer, ContentTypeReporter, 
+  NavigationCaseReporter {
   public static final String VIEW_ID = "UVBview";
-  private BeanDestroyer beanDestroyer;
+//  private BeanDestroyer beanDestroyer;
   private StaticLeafParser leafparser;
   private UVBBean uvbbean;
   private TargettedMessageList tml;
   private MessageLocator messageLocator;
 
+  public void setLeafParser(StaticLeafParser leafparser) {
+    this.leafparser = leafparser;
+  }
+
   public void setMessageLocator(MessageLocator messageLocator) {
     this.messageLocator = messageLocator;
   }
-
+/**
   public void setBeanDestroyer(BeanDestroyer beanDestroyer) {
     this.beanDestroyer = beanDestroyer;
   }
-
+**/
   public String getViewID() {
     return VIEW_ID;
   }
@@ -52,11 +62,14 @@ public class UVBProducer implements ViewComponentProducer, ContentTypeReporter {
 
   public void fillComponents(UIContainer tofill, ViewParameters viewparamso,
       ComponentChecker checker) {
-    for (int i = 0; i < uvbbean.paths.length; ++i) {
-      String path = uvbbean.paths[i];
-      Object bean = uvbbean.values[i];
-      UIOutput out = UIOutput.make(tofill, ":" + path, leafparser.render(bean));
-      out.decorators = new DecoratorList(UIIDStrategyDecorator.ID_FULL);
+    if (uvbbean.paths != null) {
+      for (int i = 0; i < uvbbean.paths.length; ++i) {
+        String path = uvbbean.paths[i];
+        Object bean = uvbbean.values[i];
+        UIOutput out = UIOutput.make(tofill, ":" + i, leafparser
+            .render(bean));
+        out.decorators = new DecoratorList(new UIIDStrategyDecorator(path));
+      }
     }
     for (int i = 0; i < tml.size(); ++i) {
       TargettedMessage message = tml.messageAt(i);
@@ -69,12 +82,21 @@ public class UVBProducer implements ViewComponentProducer, ContentTypeReporter {
           message.severity == TargettedMessage.SEVERITY_ERROR ? "error"
               : "info");
       out.decorators = new DecoratorList(new UIFreeAttributeDecorator(attrmap));
+      out.decorators.add(UIIDStrategyDecorator.ID_FULL);
     }
-    beanDestroyer.destroy();
+//    beanDestroyer.destroy();
   }
 
   public String getContentType() {
     return ContentTypeInfoRegistry.AJAX;
   }
 
+  public List reportNavigationCases() {
+    List togo = new ArrayList();
+    togo.add(new NavigationCase(null, null, ARIResult.FLOW_ONESTEP));
+    return togo;
+  }
+
+  
+  
 }

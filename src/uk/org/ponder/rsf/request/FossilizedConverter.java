@@ -33,6 +33,7 @@ import uk.org.ponder.saxalizer.SAXalXMLProvider;
 
 public class FossilizedConverter {
   public static final char INPUT_COMPONENT = 'i';
+  public static final char INPUT_COMPONENT_WILLAPPLY = 'j';
   public static final char OUTPUT_COMPONENT = 'o';
   public static final char EL_BINDING = 'e';
   public static final char OBJECT_BINDING = 'o';
@@ -103,6 +104,7 @@ public class FossilizedConverter {
   public SubmittedValueEntry parseFossil(String key, String value) {
     SubmittedValueEntry togo = new SubmittedValueEntry();
 
+    togo.mustapply = value.charAt(0) == 'j';
     int firsthash = value.indexOf('#');
     String uitypename = value.substring(1, firsthash);
     int endcurly = value.indexOf('}');
@@ -231,7 +233,8 @@ public class FossilizedConverter {
    */
   public void fixupNewValue(SubmittedValueEntry sve,
       RenderSystemDecoder rendersystemstatic, String key, String value) {
-    if (value.charAt(0) == INPUT_COMPONENT) {
+    char typechar = value.charAt(0); 
+    if (typechar == INPUT_COMPONENT || typechar == INPUT_COMPONENT_WILLAPPLY) {
       rendersystemstatic.fixupUIType(sve);
       Class requiredclass = sve.oldvalue.getClass();
       if (sve.newvalue != null && sve.newvalue.getClass() != requiredclass) {

@@ -6,16 +6,16 @@
 
   <!-- A request scope bean locator locating beans from THIS container! -->
   <bean id="requestBeanLocator" factory-bean="RSACBeanLocator"
-    factory-method="getBeanLocator">
-  </bean>
+    factory-method="getBeanLocator"/>
 
   <bean id="deadRequestBeanLocator" factory-bean="RSACBeanLocator"
-    factory-method="getDeadBeanLocator">
-  </bean>
+    factory-method="getDeadBeanLocator"/>
+
+  <bean id="RSACLazarusList" class="uk.org.ponder.rsac.RSACLazarusList" 
+    lazy-init="true"/>
 
   <bean id="httpServletFactory"
-    class="uk.org.ponder.rsac.servlet.HttpServletFactory">
-  </bean>
+    class="uk.org.ponder.rsac.servlet.HttpServletFactory"/>
 
   <bean id="httpServletRequest" factory-bean="httpServletFactory"
     factory-method="getHttpServletRequest" />
@@ -374,6 +374,9 @@
   
   <bean id="UVBView" class="uk.org.ponder.rsf.builtin.UVBProducer">
     <property name="UVBBean" ref="UVBBean"/>
-    <property name="beanDestroyer" ref="UVBScope"/>
+<!--     <property name="beanDestroyer" ref="UVBScope"/> -->
+    <property name="targettedMessageList" ref="targettedMessageList"/>
+    <property name="messageLocator" ref="messageLocator"/>
+    <property name="leafParser" ref="staticLeafParser"/>
   </bean>
 </beans>

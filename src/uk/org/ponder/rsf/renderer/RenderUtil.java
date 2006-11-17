@@ -100,7 +100,9 @@ public class RenderUtil {
         ID = component.getFullID();
       }
     }
-    attrcopy.put("id", ID);
+    if (ID != null) {
+      attrcopy.put("id", ID);
+    }
     if (!IDstrategy.equals(ContentTypeInfo.ID_RSF)) {
       attrcopy.remove(XMLLump.ID_ATTRIBUTE);
     }
