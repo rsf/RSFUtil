@@ -62,7 +62,7 @@ public class IDDefunnellingReshaper implements DARReshaper {
       Object newentity = null;
       if (toshape.data != null) {
       //    data has already been conformed in type to "oldvalue" and so is at least scalar
-        String newentitypath = BeanUtil.composeEL(entityname, (String)toshape.data);
+        String newentitypath = PathUtil.buildPath(entityname, (String)toshape.data);
         newentity = bma.getBeanValue(newentitypath, rbl);
       }
       DataAlterationRequest togo = new DataAlterationRequest(cutback, newentity);
