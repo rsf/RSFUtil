@@ -96,7 +96,7 @@ public class BeanCopyPreservationStrategy implements TSHPreservationStrategy,
         for (Iterator beanit = iterablebean.iterator(); beanit.hasNext(); ) {
           String subbeanname = (String) beanit.next();
           Object subbean = iterablebean.locateBean(subbeanname);
-          String fullpath = PathUtil.composePath(beanname, subbeanname);
+          String fullpath = PathUtil.buildPath(beanname, subbeanname);
           beans.put(fullpath, subbean);
         }
       }

@@ -5,6 +5,7 @@ package uk.org.ponder.rsf.viewstate;
 
 import uk.org.ponder.beanutil.BeanGetter;
 import uk.org.ponder.beanutil.BeanUtil;
+import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.beanutil.entity.EntityID;
 import uk.org.ponder.stringutil.StringList;
 import uk.org.ponder.stringutil.URLUtil;
@@ -52,7 +53,7 @@ public class EntityCentredViewParameters extends ViewParameters {
   }
   
   public String getELPath() {
-    return BeanUtil.composeEL(entity.entityname, entity.ID);
+    return PathUtil.buildPath(entity.entityname, entity.ID);
   }
   
   /** Fetch the references entity from the supplied beangetter */
