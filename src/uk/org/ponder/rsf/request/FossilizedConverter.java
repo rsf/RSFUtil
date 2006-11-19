@@ -78,7 +78,7 @@ public class FossilizedConverter {
   public SubmittedValueEntry parseBinding(String key, String value) {
     SubmittedValueEntry togo = new SubmittedValueEntry();
     togo.isEL = value.charAt(0) == EL_BINDING;
-    int endcurly = value.indexOf('}');
+    int endcurly = findEndCurly(value);
     togo.valuebinding = value.substring(3, endcurly);
     togo.newvalue = value.substring(endcurly + 1);
     if (key.equals(DELETION_KEY)) {
@@ -107,7 +107,7 @@ public class FossilizedConverter {
     togo.mustapply = value.charAt(0) == 'j';
     int firsthash = value.indexOf('#');
     String uitypename = value.substring(1, firsthash);
-    int endcurly = value.indexOf('}');
+    int endcurly = findEndCurly(value);
     togo.valuebinding = value.substring(firsthash + 2, endcurly);
     String oldvaluestring = value.substring(endcurly + 1);
 
@@ -126,6 +126,14 @@ public class FossilizedConverter {
     togo.componentid = key.substring(0, key.length() - FOSSIL_SUFFIX.length());
 
     return togo;
+  }
+
+  private int findEndCurly(String value) {
+    for (int i = 0; i < value.length(); ++ i) {
+      char c = value.charAt(i);
+      if (c == '}' && (i == 0 || value.charAt(i - 1) != '\\')) return i;
+    }
+    return -1;
   }
 
   public String computeBindingValue(String lvalue, Object rvalue) {
