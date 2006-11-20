@@ -12,7 +12,6 @@ import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterpreter;
 import uk.org.ponder.rsf.flow.FlowStateManager;
 import uk.org.ponder.rsf.flow.errors.ActionErrorStrategy;
-import uk.org.ponder.rsf.flow.errors.ViewExceptionStrategy;
 import uk.org.ponder.rsf.preservation.StatePreservationManager;
 import uk.org.ponder.rsf.request.RequestSubmittedValueCache;
 import uk.org.ponder.rsf.state.ErrorStateManager;
@@ -42,7 +41,6 @@ public class RSFActionHandler implements ActionHandler, ErrorHandler {
   private ErrorStateManager errorstatemanager;
   private RSVCApplier rsvcapplier;
   private StatePreservationManager presmanager; // no, not that of OS/2
-  private ViewExceptionStrategy ves;
   private ActionErrorStrategy actionerrorstrategy;
   private FlowStateManager flowstatemanager;
   private TargettedMessageList messages;
@@ -81,10 +79,6 @@ public class RSFActionHandler implements ActionHandler, ErrorHandler {
 
   public void setStatePreservationManager(StatePreservationManager presmanager) {
     this.presmanager = presmanager;
-  }
-
-  public void setViewExceptionStrategy(ViewExceptionStrategy ves) {
-    this.ves = ves;
   }
 
   // actually the ActionErrorStrategyManager

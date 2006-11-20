@@ -44,6 +44,10 @@ public class ContentTypeInfo {
    */
   public String IDStrategy;
   
+  /** Whether the content type supports "direct" Action -> Render redirects.
+   */
+  public boolean directRedirects = true;
+  
   public ContentTypeInfo() {}
 
   public ContentTypeInfo(String typename, String fileextension, String declaration, String contentTypeHeader) {
@@ -55,12 +59,13 @@ public class ContentTypeInfo {
   }
   
   public ContentTypeInfo(String typename, String fileextension, String declaration, String contentTypeHeader, 
-      String IDStrategy) {
+      String IDStrategy, boolean directRedirects) {
     this.typename = typename;
     this.fileextension = fileextension;
     this.declaration = declaration;
     this.contentTypeHeader = contentTypeHeader;
     this.IDStrategy = IDStrategy;
+    this.directRedirects = directRedirects;
   }
   
   /** Pea proxying method **/
