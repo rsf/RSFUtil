@@ -31,7 +31,7 @@ public class ReasonableServlet extends HttpServlet {
     rsacbeanlocator = (RSACBeanLocator) 
       wac.getBean(RSACBeanLocator.RSAC_BEAN_LOCATOR_NAME);
   }
-  
+
   protected void service(HttpServletRequest requst, HttpServletResponse response) {
     rsacbeanlocator.getBeanLocator().locateBean("rootHandlerBean");
   }

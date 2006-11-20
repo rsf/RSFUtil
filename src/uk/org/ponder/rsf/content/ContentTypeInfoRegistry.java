@@ -27,13 +27,13 @@ public class ContentTypeInfoRegistry {
         + "PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\""
         + " \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">",
         "text/html; charset=UTF-8",
-        ContentTypeInfo.ID_FULL
+        ContentTypeInfo.ID_FULL, false
         );
   
   public static final ContentTypeInfo HTML_FRAGMENT_CONTENTINFO = 
     new ContentTypeInfo(HTML_FRAGMENT, "html",  "",
         "text/html; charset=UTF-8",
-        ContentTypeInfo.ID_FULL
+        ContentTypeInfo.ID_FULL, false
         );
   
   public static final ContentTypeInfo AJAX_CONTENTINFO = 

@@ -18,6 +18,7 @@ import uk.org.ponder.rsf.processor.HandlerHook;
 import uk.org.ponder.rsf.processor.RenderHandlerBracketer;
 import uk.org.ponder.rsf.renderer.RenderUtil;
 import uk.org.ponder.rsf.request.EarlyRequestParser;
+import uk.org.ponder.rsf.request.LazarusRedirector;
 import uk.org.ponder.rsf.viewstate.AnyViewParameters;
 import uk.org.ponder.rsf.viewstate.RawViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
@@ -50,6 +51,7 @@ public class RootHandlerBean implements HandlerHook {
   private HandlerHook handlerhook;
   private ContentTypeInfo contenttypeinfo;
   private FatalErrorHandler fatalErrorHandler;
+  private LazarusRedirector lazarusRedirector;
 
   public void setHttpServletRequest(HttpServletRequest request) {
     this.request = request;
@@ -84,6 +86,14 @@ public class RootHandlerBean implements HandlerHook {
     this.fatalErrorHandler = fatalErrorHandler;
   }
 
+  public void setContentTypeInfo(ContentTypeInfo contenttypeinfo) {
+    this.contenttypeinfo = contenttypeinfo;
+  }
+
+  public void setLazarusRedirector(LazarusRedirector lazarusRedirector) {
+    this.lazarusRedirector = lazarusRedirector;
+  }
+  
   public boolean handle() {
     if (handlerhook == null || !handlerhook.handle()) {
       if (requesttype.equals(EarlyRequestParser.RENDER_REQUEST)) {
@@ -132,26 +142,29 @@ public class RootHandlerBean implements HandlerHook {
   // the redirect directly to the client via this connection.
   // TODO: This method might need some state, depending on the client.
   // maybe we can do this all with "request beans"?
-  public void issueRedirect(AnyViewParameters viewparams,
+  public void issueRedirect(AnyViewParameters viewparamso,
       HttpServletResponse response) {
-    String path = viewparams instanceof RawViewParameters ? ((RawViewParameters) viewparams).URL
-        : viewstatehandler.getFullURL((ViewParameters) viewparams);
+    String path = viewparamso instanceof RawViewParameters ? ((RawViewParameters) viewparamso).URL
+        : viewstatehandler.getFullURL((ViewParameters) viewparamso);
     path = RenderUtil.appendAttributes(path, RenderUtil
         .makeURLAttributes(outgoingparams));
     // TODO: This is a hack, pending a bit more thought.
 
     Logger.log.info("Redirecting to " + path);
     try {
-      response.sendRedirect(path);
+      if (contenttypeinfo.directRedirects && viewparamso instanceof ViewParameters)  {
+        ViewParameters viewparams = (ViewParameters) viewparamso;
+
+      }
+      else {
+        response.sendRedirect(path);
+      }
     }
     catch (IOException ioe) {
       Logger.log.warn("Error redirecting to URL " + path, ioe);
     }
   }
 
-  public void setContentTypeInfo(ContentTypeInfo contenttypeinfo) {
-    this.contenttypeinfo = contenttypeinfo;
-  }
 
   public static PrintOutputStream setupResponseWriter(String contenttype,
       HttpServletRequest request, HttpServletResponse response) {
