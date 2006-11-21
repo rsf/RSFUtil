@@ -61,7 +61,7 @@ public class ContentTypeInfoRegistry {
   public static final ContentTypeInfo SVG_CONTENTINFO = 
     new ContentTypeInfo(SVG, "svg", "",
         "image/svg+xml; charset=UTF-8",
-        ContentTypeInfo.ID_FULL 
+        ContentTypeInfo.ID_FULL , true
         );
   
   private static Map contentmap = new HashMap();
