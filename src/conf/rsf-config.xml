@@ -158,6 +158,10 @@
     <property name="wrappingBean" value="ErrorBBTarget" />
   </bean>
 
+  <bean id="RSACLazarusListProxy" parent="RSACBridgeProxy">
+    <property name="targetBeanName" value="RSACLazarusList"/>
+  </bean>
+
   <!-- ******    RSF-SPECIFIC DEFINITIONS BELOW HERE    *******    -->
 
   <bean id="RSFMappingLoader"
@@ -413,6 +417,11 @@
     <property name="beanModelAlterer" ref="DARApplier" />
     <property name="VPMappingInfoManager"
       ref="viewParamsMappingInfoManager" />
+  </bean>
+
+  <bean id="lazarusRedirector" class="uk.org.ponder.rsf.request.LazarusRedirector">
+    <property name="lazarusListReceiver" ref="RSACLazarusListProxy"/>
+    <property name="viewParamsMapper" ref="viewParamsMapper"/>
   </bean>
 
   <!--  Lazy loading needed to break dependence cycle - SiteMap via BasicViewParamsParser

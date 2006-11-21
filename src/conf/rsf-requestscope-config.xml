@@ -12,10 +12,12 @@
     factory-method="getDeadBeanLocator"/>
 
   <bean id="RSACLazarusList" class="uk.org.ponder.rsac.RSACLazarusList" 
-    lazy-init="true"/>
+    lazy-init="true">
+    <property name="RSACBeanLocator" ref="RSACBeanLocator"/>
+  </bean>
 
   <bean id="httpServletFactory"
-    class="uk.org.ponder.rsac.servlet.HttpServletFactory"/>
+    class="uk.org.ponder.rsac.servlet.StaticHttpServletFactory"/>
 
   <bean id="httpServletRequest" factory-bean="httpServletFactory"
     factory-method="getHttpServletRequest" />
@@ -87,6 +89,7 @@
     <property name="handlerHook" ref="handlerHook" />
     <property name="contentTypeInfo" ref="contentTypeInfo" />
     <property name="fatalErrorHandler" ref="fatalErrorHandler" />
+    <property name="lazarusRedirector" ref="lazarusRedirector" />
   </bean>
 
   <bean id="rootHandlerBean" parent="rootHandlerBeanBase">
@@ -249,7 +252,6 @@
     <property name="RSVCApplier" ref="RSVCApplier" />
     <property name="normalizedRequestMap" ref="normalizedRequest" />
     <property name="statePreservationManager" ref="statePreservationManager" />
-    <property name="viewExceptionStrategy" ref="viewExceptionStrategy" />
     <property name="actionErrorStrategy" ref="actionErrorStrategyManager" />
     <property name="flowStateManager" ref="flowStateManager" />
     <property name="targettedMessageList" ref="targettedMessageList" />

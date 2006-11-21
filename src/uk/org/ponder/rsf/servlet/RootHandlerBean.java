@@ -20,6 +20,7 @@ import uk.org.ponder.rsf.renderer.RenderUtil;
 import uk.org.ponder.rsf.request.EarlyRequestParser;
 import uk.org.ponder.rsf.request.LazarusRedirector;
 import uk.org.ponder.rsf.viewstate.AnyViewParameters;
+import uk.org.ponder.rsf.viewstate.NoViewParameters;
 import uk.org.ponder.rsf.viewstate.RawViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewStateHandler;
@@ -144,6 +145,8 @@ public class RootHandlerBean implements HandlerHook {
   // maybe we can do this all with "request beans"?
   public void issueRedirect(AnyViewParameters viewparamso,
       HttpServletResponse response) {
+    if (viewparamso instanceof NoViewParameters) return;
+    
     String path = viewparamso instanceof RawViewParameters ? ((RawViewParameters) viewparamso).URL
         : viewstatehandler.getFullURL((ViewParameters) viewparamso);
     path = RenderUtil.appendAttributes(path, RenderUtil
@@ -154,7 +157,7 @@ public class RootHandlerBean implements HandlerHook {
     try {
       if (contenttypeinfo.directRedirects && viewparamso instanceof ViewParameters)  {
         ViewParameters viewparams = (ViewParameters) viewparamso;
-
+        lazarusRedirector.lazarusRedirect(viewparams);
       }
       else {
         response.sendRedirect(path);
