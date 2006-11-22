@@ -164,6 +164,34 @@
 
   <!-- ******    RSF-SPECIFIC DEFINITIONS BELOW HERE    *******    -->
 
+  <bean id="RSACResourceLocator"
+    class="uk.org.ponder.rsac.servlet.ServletRSACResourceLocator">
+  </bean>
+
+  <bean id="RSACBeanLocatorFactory"
+    class="uk.org.ponder.rsac.RSACBeanLocatorFactory">
+    <property name="RSACResourceLocator">
+      <ref local="RSACResourceLocator" />
+    </property>
+  </bean>
+
+  <bean id="RSACBeanLocator" factory-bean="RSACBeanLocatorFactory"
+    factory-method="getRSACBeanLocator" init-method="init">
+    <property name="mappingContext" ref="ELMappingContext" />
+    <property name="reflectiveCache" ref="reflectiveCache" />
+  </bean>
+
+  <bean id="fallbackBeans" factory-bean="RSACBeanLocator"
+    factory-method="getFallbackBeans" lazy-init="true">
+  </bean>
+
+  <bean id="IDGenerator"
+    class="uk.org.ponder.hashutil.EighteenIDGenerator" />
+
+  <bean id="requestLocaleProxy" parent="RSACLocaleBridge">
+    <property name="targetBeanName" value="requestLocale" />
+  </bean>
+
   <bean id="RSFMappingLoader"
     class="uk.org.ponder.rsf.mappings.RSFMappingLoader">
     <property name="viewParamsLeafParser" ref="viewParamsLeafParser" />
@@ -208,29 +236,6 @@
     <property name="mappingContext" ref="ELMappingContext" />
   </bean>
 
-  <bean id="RSACResourceLocator"
-    class="uk.org.ponder.rsac.servlet.ServletRSACResourceLocator">
-  </bean>
-
-  <bean id="RSACBeanLocatorFactory"
-    class="uk.org.ponder.rsac.RSACBeanLocatorFactory">
-    <property name="RSACResourceLocator">
-      <ref local="RSACResourceLocator" />
-    </property>
-  </bean>
-
-  <bean id="RSACBeanLocator" factory-bean="RSACBeanLocatorFactory"
-    factory-method="getRSACBeanLocator" init-method="init">
-    <property name="mappingContext" ref="ELMappingContext" />
-    <property name="reflectiveCache" ref="reflectiveCache" />
-  </bean>
-
-  <bean id="fallbackBeans" factory-bean="RSACBeanLocator"
-    factory-method="getFallbackBeans" lazy-init="true">
-  </bean>
-
-  <bean id="IDGenerator"
-    class="uk.org.ponder.hashutil.EighteenIDGenerator" />
 
   <bean id="requestAddressibleParent"
     class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
