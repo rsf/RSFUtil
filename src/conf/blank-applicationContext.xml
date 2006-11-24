@@ -204,6 +204,7 @@
       ref="templateExtensionInferrer" />
     <property name="baseURLProvider" ref="baseURLProvider" />
     <property name="TPIAggregator" ref="TPIAggregator" />
+    <property name="resourceLoader" ref="resourceLoader"/>
   </bean>
 
   <bean id="contentTypeInfoMap"

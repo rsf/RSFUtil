@@ -7,8 +7,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.springframework.core.io.ResourceLoader;
 
 import uk.org.ponder.rsf.template.TPIAggregator;
 import uk.org.ponder.rsf.template.XMLCompositeViewTemplate;
@@ -29,8 +28,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
-public class BasicTemplateResolver implements TemplateResolver,
-    ApplicationContextAware {
+public class BasicTemplateResolver implements TemplateResolver {
 
   private TemplateExtensionInferrer tei;
   private int cachesecs;
@@ -42,6 +40,10 @@ public class BasicTemplateResolver implements TemplateResolver,
     this.bup = bup;
   }
 
+  public void setResourceLoader(ResourceLoader resourceLoader) {
+    cachingiis = new CachingInputStreamSource(resourceLoader, cachesecs);
+  }
+  
   /**
    * Set the lag in seconds at which the filesystem will be polled for changes
    * in the view template. If this value is 0 or the resource is not a
@@ -157,6 +159,9 @@ public class BasicTemplateResolver implements TemplateResolver,
       is = cachingiis.openStream(fullpath);
       if (is != null)
         break;
+      if (is == null && tried == null) {
+        Logger.log.info("Failed to load template from " + fullpath);
+      }
     }
     if (is == null) {
       return null;
@@ -194,10 +199,6 @@ public class BasicTemplateResolver implements TemplateResolver,
       }
     }
     return template;
-  }
-
-  public void setApplicationContext(ApplicationContext applicationContext) {
-    cachingiis = new CachingInputStreamSource(applicationContext, cachesecs);
   }
 
 }

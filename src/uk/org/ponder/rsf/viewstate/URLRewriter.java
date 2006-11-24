@@ -3,6 +3,8 @@
  */
 package uk.org.ponder.rsf.viewstate;
 
+import org.springframework.util.StringUtils;
+
 import uk.org.ponder.stringutil.URLUtil;
 import uk.org.ponder.util.Logger;
 
@@ -46,6 +48,7 @@ public class URLRewriter {
         resourceURL = viewstatehandler.encodeResourceURL(resourcebase + path);
       }
     }
+    resourceURL = StringUtils.cleanPath(resourceURL);
     if (Logger.log.isDebugEnabled()) {
       Logger.log.debug("getResourceURL returning " + resourceURL + " for path "
           + path);

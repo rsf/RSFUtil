@@ -188,6 +188,9 @@
   <bean id="IDGenerator"
     class="uk.org.ponder.hashutil.EighteenIDGenerator" />
 
+  <bean id="resourceLoader"
+    class="uk.org.ponder.springutil.ExtraContextResourceLoader" />
+
   <bean id="requestLocaleProxy" parent="RSACLocaleBridge">
     <property name="targetBeanName" value="requestLocale" />
   </bean>

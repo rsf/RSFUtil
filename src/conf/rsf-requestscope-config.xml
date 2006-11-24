@@ -6,18 +6,18 @@
 
   <!-- A request scope bean locator locating beans from THIS container! -->
   <bean id="requestBeanLocator" factory-bean="RSACBeanLocator"
-    factory-method="getBeanLocator"/>
+    factory-method="getBeanLocator" />
 
   <bean id="deadRequestBeanLocator" factory-bean="RSACBeanLocator"
-    factory-method="getDeadBeanLocator"/>
+    factory-method="getDeadBeanLocator" />
 
-  <bean id="RSACLazarusList" class="uk.org.ponder.rsac.RSACLazarusList" 
+  <bean id="RSACLazarusList" class="uk.org.ponder.rsac.RSACLazarusList"
     lazy-init="true">
-    <property name="RSACBeanLocator" ref="RSACBeanLocator"/>
+    <property name="RSACBeanLocator" ref="RSACBeanLocator" />
   </bean>
 
   <bean id="httpServletFactory"
-    class="uk.org.ponder.rsac.servlet.StaticHttpServletFactory"/>
+    class="uk.org.ponder.rsac.servlet.StaticHttpServletFactory" />
 
   <bean id="httpServletRequest" factory-bean="httpServletFactory"
     factory-method="getHttpServletRequest" />
@@ -32,8 +32,8 @@
     <property name="multipartResolver" ref="multipartResolver" />
   </bean>
 
-  <bean id="requestLocale" factory-bean="httpServletRequest" 
-    factory-method="getLocale"/>
+  <bean id="requestLocale" factory-bean="httpServletRequest"
+    factory-method="getLocale" />
 
   <bean id="requestMap" factory-bean="earlyRequestParser"
     factory-method="getRequestMap" />
@@ -72,22 +72,26 @@
     factory-method="getActionHandler" />
 
   <bean id="autoBaseURLProvider"
-    class="uk.org.ponder.rsf.servlet.AutoBaseURLProvider" init-method="init">
+    class="uk.org.ponder.rsf.servlet.AutoBaseURLProvider"
+    init-method="init">
     <property name="httpServletRequest">
       <ref bean="httpServletRequestProxy" />
     </property>
   </bean>
 
   <!--  This bean can go away once we implement parent factories and bean references -->
-  <bean id="handlerHook" class="uk.org.ponder.rsf.processor.NullHandlerHook">
+  <bean id="handlerHook"
+    class="uk.org.ponder.rsf.processor.NullHandlerHook">
   </bean>
 
   <bean id="rootHandlerBeanBase" abstract="true"
-    class="uk.org.ponder.rsf.servlet.RootHandlerBean" init-method="handle">
+    class="uk.org.ponder.rsf.servlet.RootHandlerBean"
+    init-method="handle">
     <property name="requestType" ref="requestType" />
     <property name="viewStateHandler" ref="viewStateHandler" />
     <property name="outgoingParams" ref="outgoingParams" />
-    <property name="renderHandlerBracketer" ref="renderHandlerBracketer" />
+    <property name="renderHandlerBracketer"
+      ref="renderHandlerBracketer" />
     <property name="actionHandler" ref="actionHandler" />
     <property name="handlerHook" ref="handlerHook" />
     <property name="contentTypeInfo" ref="contentTypeInfo" />
@@ -113,7 +117,8 @@
   <bean id="RSACSafeBeanLocator"
     class="uk.org.ponder.beanutil.SecuredBeanLocator">
     <property name="beanLocator" ref="ELTargetBeanLocator" />
-    <property name="permittedBeanRoots" ref="totalRequestAddressibleBeans" />
+    <property name="permittedBeanRoots"
+      ref="totalRequestAddressibleBeans" />
   </bean>
 
   <bean id="ELEvaluator" class="uk.org.ponder.beanutil.ELEvaluator">
@@ -121,8 +126,8 @@
     <property name="beanModelAlterer" ref="DARApplier" />
   </bean>
 
-<!-- The ViewParameters object giving rise to the current request. Highly
-  polymorphic, in general of some user-defined type. -->
+  <!-- The ViewParameters object giving rise to the current request. Highly
+    polymorphic, in general of some user-defined type. -->
   <bean id="viewParameters"
     class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
     <property name="singleton" value="true" />
@@ -170,13 +175,15 @@
     <property name="beanModelAlterer" ref="DARApplier" />
     <property name="beanInvalidationModel" ref="beanInvalidationModel" />
     <property name="beanGuardProcessor" ref="beanGuardProcessor" />
-    <property name="ignoreFossilizedValues" ref="ignoreFossilizedValues" />
-    <property name="targettedMessageList" ref="targettedMessageList"/>
+    <property name="ignoreFossilizedValues"
+      ref="ignoreFossilizedValues" />
+    <property name="targettedMessageList" ref="targettedMessageList" />
   </bean>
 
   <!--  requires input of requestRSVC in order to fix up errors at the
     end of a cycle -->
-  <bean id="errorStateManager" class="uk.org.ponder.rsf.state.ErrorStateManager"
+  <bean id="errorStateManager"
+    class="uk.org.ponder.rsf.state.ErrorStateManager"
     init-method="init">
     <property name="TSHolder" ref="bandgapStateHolder" />
     <property name="viewParameters" ref="viewParameters" />
@@ -188,7 +195,8 @@
     <property name="strategies" ref="statePreservationStrategies" />
     <property name="startFlowStrategies"
       ref="startFlowStatePreservationStrategies" />
-    <property name="endFlowStrategies" ref="endFlowStatePreservationStrategies" />
+    <property name="endFlowStrategies"
+      ref="endFlowStatePreservationStrategies" />
     <property name="writeableBeanLocator" ref="ELTargetBeanLocator" />
     <property name="deadBeanLocator" ref="deadRequestBeanLocator" />
     <property name="scopeStrategies" ref="scopePreservationStrategies" />
@@ -209,7 +217,7 @@
       <list>
         <ref bean="URLRewriteSCR" />
         <ref bean="headCollectSCR" />
-        <ref bean="nullSCR"/>
+        <ref bean="nullSCR" />
         <ref bean="consumerStaticRenderers" />
       </list>
     </property>
@@ -240,13 +248,16 @@
     <property name="decoratorManager" ref="decoratorManager" />
   </bean>
 
-  <bean id="flowStateManager" class="uk.org.ponder.rsf.flow.FlowStateManager">
+  <bean id="flowStateManager"
+    class="uk.org.ponder.rsf.flow.FlowStateManager">
     <property name="errorStateManager" ref="errorStateManager" />
-    <property name="statePreservationManager" ref="statePreservationManager" />
+    <property name="statePreservationManager"
+      ref="statePreservationManager" />
   </bean>
 
   <bean id="RSFActionHandler"
-    class="uk.org.ponder.rsf.processor.RSFActionHandler" lazy-init="true">
+    class="uk.org.ponder.rsf.processor.RSFActionHandler"
+    lazy-init="true">
     <property name="errorStateManager" ref="errorStateManager" />
     <property name="ARIResolver" ref="ARIResolver" />
     <property name="viewParameters" ref="viewParameters" />
@@ -254,8 +265,10 @@
     <property name="alterationWrapper" ref="alterationWrapper" />
     <property name="RSVCApplier" ref="RSVCApplier" />
     <property name="normalizedRequestMap" ref="normalizedRequest" />
-    <property name="statePreservationManager" ref="statePreservationManager" />
-    <property name="actionErrorStrategy" ref="actionErrorStrategyManager" />
+    <property name="statePreservationManager"
+      ref="statePreservationManager" />
+    <property name="actionErrorStrategy"
+      ref="actionErrorStrategyManager" />
     <property name="flowStateManager" ref="flowStateManager" />
     <property name="targettedMessageList" ref="targettedMessageList" />
   </bean>
@@ -275,7 +288,8 @@
   </bean>
 
   <bean id="flowLite-flowProxyBean"
-    class="uk.org.ponder.rsf.flow.lite.FlowActionProxyBean" abstract="true">
+    class="uk.org.ponder.rsf.flow.lite.FlowActionProxyBean"
+    abstract="true">
     <property name="reflectiveCache" ref="reflectiveCache" />
     <property name="beanLocator" ref="requestBeanLocator" />
     <property name="viewParameters" ref="viewParameters" />
@@ -292,13 +306,15 @@
 
   <!-- Collects together all ViewProducers, and selects those appropriate for 
     this request -->
-  <bean id="viewCollector" class="uk.org.ponder.rsf.view.ViewCollector">
+  <bean id="viewCollector"
+    class="uk.org.ponder.rsf.view.ViewCollector">
     <property name="viewResolver" ref="viewResolver" />
     <property name="viewParameters" ref="viewParameters" />
     <property name="componentChecker" ref="viewTemplate" />
   </bean>
 
-  <bean id="viewGenerator" class="uk.org.ponder.rsf.view.ViewGenerator">
+  <bean id="viewGenerator"
+    class="uk.org.ponder.rsf.view.ViewGenerator">
     <!-- The default pageProducer is the ViewCollection -->
     <property name="pageProducer" ref="pageProducer" />
     <property name="navigationCaseReceiver" ref="navigationCasePooler" />
@@ -360,28 +376,30 @@
   <!-- achieve two things here with laziness - renderHandler is not resolved in non-POST requests,
     and ALSO is not resolved until first use, to allow exception bracketing -->
   <bean id="RSFRenderHandler"
-    class="uk.org.ponder.rsf.processor.RSFRenderHandler" lazy-init="true">
+    class="uk.org.ponder.rsf.processor.RSFRenderHandler"
+    lazy-init="true">
     <property name="errorStateManager" ref="errorStateManager" />
     <property name="viewParameters" ref="viewParameters" />
     <property name="viewGenerator" ref="viewGenerator" />
     <property name="alterationWrapper" ref="alterationWrapper" />
-    <property name="statePreservationManager" ref="statePreservationManager" />
+    <property name="statePreservationManager"
+      ref="statePreservationManager" />
     <property name="viewProcessor" ref="viewProcessor" />
     <property name="viewRender" ref="viewRender" />
     <property name="targettedMessageList" ref="targettedMessageList" />
   </bean>
-  
+
   <!-- Beans for UVB (the Universal View Bus) -->
-  
+
   <bean id="UVBBean" class="uk.org.ponder.rsf.builtin.UVBBean">
-    <property name="requestBeanGetter" ref="ELEvaluator"/>
+    <property name="requestBeanGetter" ref="ELEvaluator" />
   </bean>
-  
+
   <bean id="UVBView" class="uk.org.ponder.rsf.builtin.UVBProducer">
-    <property name="UVBBean" ref="UVBBean"/>
-<!--     <property name="beanDestroyer" ref="UVBScope"/> -->
-    <property name="targettedMessageList" ref="targettedMessageList"/>
-    <property name="messageLocator" ref="messageLocator"/>
-    <property name="leafParser" ref="staticLeafParser"/>
+    <property name="UVBBean" ref="UVBBean" />
+    <!--     <property name="beanDestroyer" ref="UVBScope"/> -->
+    <property name="targettedMessageList" ref="targettedMessageList" />
+    <property name="messageLocator" ref="messageLocator" />
+    <property name="leafParser" ref="staticLeafParser" />
   </bean>
 </beans>
