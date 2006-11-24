@@ -102,7 +102,7 @@ public class BranchResolver {
     BestMatch bestmatch = new BestMatch();
     if (Logger.log.isDebugEnabled()) {
       Logger.log
-          .debug("Resolving call from container " + child.debugChildren());
+          .debug("Resolving call for ID " + searchID + " from container " + child.debugChildren());
     }
     // first get lumps in THIS SCOPE with EXACTLY MATCHING ID.
     XMLLumpList scopelumps = sourcescope.downmap.headsForID(searchID);

@@ -71,6 +71,9 @@ public class StaticTemplateResolverStrategy implements RootAwareTRS,
 
   public void setTemplateResourceBase(String templateResourceBase) {
     this.templateResourceBase = templateResourceBase;
+    if (this.templateResourceBase.startsWith("..")) {
+      this.templateResourceBase = "/" + templateResourceBase;
+    }
   }
   
   public String getTemplateResourceBase() {
