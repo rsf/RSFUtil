@@ -109,6 +109,13 @@ public abstract class UIBound extends UIComponent {
    * <code>fossilize</code> flag MUST also be set to true.
    */
   public boolean willinput = false;
+  
+  /** A field recording whether "unchanged value detection" will apply to this
+   * component's submission. If this flag is set to <code>true</code>, submitted
+   * values will *always* be applied to the model irrespective of any 
+   * environment settings. 
+   */
+  public boolean mustapply = false;
   /**
    * The key/value pair that will be submitted to implement the fossilized
    * binding. Component producers should NOT attempt to set this field, it will
