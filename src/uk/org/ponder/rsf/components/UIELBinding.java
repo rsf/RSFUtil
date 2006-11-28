@@ -13,10 +13,20 @@ package uk.org.ponder.rsf.components;
 
 public class UIELBinding extends UIParameter {
   public UIELBinding() {}
-  public UIELBinding(String lvalue, Object rvalue) {
+  public UIELBinding(String lvalue, Object rvalue, boolean virtual) {
     valuebinding = new ELReference(lvalue);
     this.rvalue = rvalue; 
+    this.virtual = virtual;
   }
+  public UIELBinding(String lvalue, Object rvalue) {
+    this(lvalue, rvalue, false);
+  }
+  /** If set to <code>true</code>, represents a "virtual" EL binding, that is,
+   * one that is rendered inactive by default, to be "discovered" by some
+   * client-side mechanism. Virtual bindings represent an "alternate execution path"
+   * through the request container.
+   */
+  public boolean virtual;
   /** The "target" of this binding - an EL bean path that will be written
    * when this binding is received. Includes #{}.
    */

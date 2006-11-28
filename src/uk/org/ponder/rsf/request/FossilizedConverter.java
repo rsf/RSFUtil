@@ -19,13 +19,11 @@ import uk.org.ponder.saxalizer.SAXalXMLProvider;
  * key/value pairs suitable for transit over HTTP.
  * 
  * <p>In case of an HTTP submission, these are encoded as key/value in the
- * request map (via hidden form fields) as follows: 
- * <br>key = componentid-fossil, value=[i|o]uitype-name#{bean.member}oldvalue 
- * <br>Alternatively,
+ * request map (via hidden form fields) as follows: <br>key =
+ * componentid-fossil, value=[i|o]uitype-name#{bean.member}oldvalue <br>Alternatively,
  * this SVE may represent a "fast EL" binding, without a component. In this
- * case, it has the form 
- * <br>key = [deletion|el]-binding, value = [e|o]#{el.lvalue}rvalue, 
- * where rvalue may represent an EL rvalue, a
+ * case, it has the form <br>key = [deletion|el]-binding, value =
+ * [e|o]#{el.lvalue}rvalue, where rvalue may represent an EL rvalue, a
  * SAXLeafType or a Object. <br>The actual value submission is encoded in the
  * RenderSystem for UIInputBase, but is generally expected to simply follow <br>key =
  * componentid, value = newvalue.
@@ -33,7 +31,7 @@ import uk.org.ponder.saxalizer.SAXalXMLProvider;
 
 public class FossilizedConverter {
   public static final char INPUT_COMPONENT = 'i';
-  public static final char INPUT_COMPONENT_WILLAPPLY = 'j';
+  public static final char INPUT_COMPONENT_MUSTAPPLY = 'j';
   public static final char OUTPUT_COMPONENT = 'o';
   public static final char EL_BINDING = 'e';
   public static final char OBJECT_BINDING = 'o';
@@ -52,6 +50,7 @@ public class FossilizedConverter {
   public static final String VALUE_DELETION_KEY = "valuedeletion"
       + BINDING_SUFFIX;
   public static final String ELBINDING_KEY = "el" + BINDING_SUFFIX;
+  public static final String VIRTUALELBINDING_KEY = "virtual-" + ELBINDING_KEY;
 
   private SAXalXMLProvider xmlprovider;
 
@@ -71,7 +70,9 @@ public class FossilizedConverter {
   }
 
   public boolean isNonComponentBinding(String key) {
-    return key.endsWith(BINDING_SUFFIX);
+    // TODO: After 0.7.0 reform the bindings encoding system so that
+    // virtual bindings can be nameless.
+    return key.endsWith(BINDING_SUFFIX) && !key.equals(VIRTUALELBINDING_KEY);
   }
 
   /** Parse a "non-component binding" key/value pair * */
@@ -104,7 +105,7 @@ public class FossilizedConverter {
   public SubmittedValueEntry parseFossil(String key, String value) {
     SubmittedValueEntry togo = new SubmittedValueEntry();
 
-    togo.mustapply = value.charAt(0) == 'j';
+    togo.mustapply = value.charAt(0) == INPUT_COMPONENT_MUSTAPPLY;
     int firsthash = value.indexOf('#');
     String uitypename = value.substring(1, firsthash);
     int endcurly = findEndCurly(value);
@@ -129,9 +130,10 @@ public class FossilizedConverter {
   }
 
   private int findEndCurly(String value) {
-    for (int i = 0; i < value.length(); ++ i) {
+    for (int i = 0; i < value.length(); ++i) {
       char c = value.charAt(i);
-      if (c == '}' && (i == 0 || value.charAt(i - 1) != '\\')) return i;
+      if (c == '}' && (i == 0 || value.charAt(i - 1) != '\\'))
+        return i;
     }
     return -1;
   }
@@ -143,11 +145,11 @@ public class FossilizedConverter {
     }
     else {
       // The value type will be inferred on delivery, for Object bindings.
-      return OBJECT_BINDING + "#{" + lvalue + "}" + 
-        (rvalue == null? "" : ConvertUtil.render(rvalue, xmlprovider));
+      return OBJECT_BINDING + "#{" + lvalue + "}" + (rvalue == null ? ""
+          : ConvertUtil.render(rvalue, xmlprovider));
     }
   }
-  
+
   public void computeDeletionBinding(UIDeletionBinding binding) {
     if (binding.deletetarget == null) {
       binding.name = DELETION_KEY;
@@ -155,13 +157,16 @@ public class FossilizedConverter {
     }
     else {
       binding.name = VALUE_DELETION_KEY;
-      binding.value = computeBindingValue(binding.deletebinding.value, binding.deletetarget);
+      binding.value = computeBindingValue(binding.deletebinding.value,
+          binding.deletetarget);
     }
   }
 
   public void computeELBinding(UIELBinding binding) {
-    binding.name = ELBINDING_KEY;
-    binding.value = computeBindingValue(binding.valuebinding.value, binding.rvalue);
+    binding.name = binding.virtual ? ELBINDING_KEY
+        : VIRTUALELBINDING_KEY;
+    binding.value = computeBindingValue(binding.valuebinding.value,
+        binding.rvalue);
   }
 
   /**
@@ -172,7 +177,8 @@ public class FossilizedConverter {
    */
   // NB! UIType is hardwired to use the static StringArrayParser, to avoid a
   // wireup graph cycle of FossilizedConverter on the HTMLRenderSystem.
-  public UIParameter computeFossilizedBinding(UIBound togenerate, Object modelvalue) {
+  public UIParameter computeFossilizedBinding(UIBound togenerate,
+      Object modelvalue) {
     if (!togenerate.fossilize) {
       throw new IllegalArgumentException("Cannot compute fossilized binding "
           + "for non-fossilizing component with ID " + togenerate.getFullID());
@@ -180,12 +186,13 @@ public class FossilizedConverter {
     UIParameter togo = new UIParameter();
     togo.name = togenerate.submittingname + FOSSIL_SUFFIX;
     String oldvaluestring = null;
-    Object oldvalue = modelvalue == null? togenerate.acquireValue() : modelvalue;
+    Object oldvalue = modelvalue == null ? togenerate.acquireValue()
+        : modelvalue;
     if (oldvalue == null) {
       throw new IllegalArgumentException(
-          "Error: cannot compute fossilized binding for component with full ID " + togenerate.getFullID()
-          + " since bound value is null");
-          
+          "Error: cannot compute fossilized binding for component with full ID "
+              + togenerate.getFullID() + " since bound value is null");
+
     }
     UIType type = UITypes.forObject(oldvalue);
 
@@ -200,9 +207,10 @@ public class FossilizedConverter {
     }
     String typestring = type == null ? ""
         : type.getName();
-    togo.value = (togenerate.willinput ? INPUT_COMPONENT
-        : OUTPUT_COMPONENT) + typestring + "#{" + togenerate.valuebinding.value
-        + "}" + oldvaluestring;
+    togo.value = (togenerate.mustapply ? INPUT_COMPONENT_MUSTAPPLY
+        : (togenerate.willinput ? INPUT_COMPONENT
+            : OUTPUT_COMPONENT)) + typestring + "#{"
+        + togenerate.valuebinding.value + "}" + oldvaluestring;
     return togo;
   }
 
@@ -236,13 +244,12 @@ public class FossilizedConverter {
    * <p>
    * Note that oldvalue is now always not null here.
    * 
-   * @param value
-   *          The value assigned to the fossilized binding
+   * @param value The value assigned to the fossilized binding
    */
   public void fixupNewValue(SubmittedValueEntry sve,
       RenderSystemDecoder rendersystemstatic, String key, String value) {
-    char typechar = value.charAt(0); 
-    if (typechar == INPUT_COMPONENT || typechar == INPUT_COMPONENT_WILLAPPLY) {
+    char typechar = value.charAt(0);
+    if (typechar == INPUT_COMPONENT || typechar == INPUT_COMPONENT_MUSTAPPLY) {
       rendersystemstatic.fixupUIType(sve);
       Class requiredclass = sve.oldvalue.getClass();
       if (sve.newvalue != null && sve.newvalue.getClass() != requiredclass) {

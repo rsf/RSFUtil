@@ -27,6 +27,7 @@ import uk.org.ponder.stringutil.StringList;
  * in.
  * <p>
  * This fixer is HTML/HTTP SPECIFIC, and should not execute for other idioms.
+ * It typically executes as the very first in the pipeline if it executes at all.
  * <p>
  * Note that it also is responsible for setting the "Submitting Control" packed
  * attribute for UICommand objects.
@@ -70,8 +71,8 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
       // in the case of an "unmanaged" form, this will generate submitting names
       // that the processor is "not expecting" in repetitious cases.
       UIBound bound = (UIBound) child;
+      String fullID = child.getFullID();
       if (bound.willinput || getform) {
-        String fullID = child.getFullID();
         String formID = toprocess.getFullID();
 
         bound.submittingname = fullID.substring(RSFUtil.commonPath(fullID,
@@ -81,6 +82,11 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
           bound.submittingname = reduceGETSubmittingName(bound.submittingname);
         }
         toprocess.submittingcontrols.add(fullID);
+      }
+      else {
+        // case of a non-inputting control that needs to be nonetheless located
+        // on the client side. This is actually the non-HTML default.
+        bound.submittingname = fullID;
       }
     }
     // TODO: clarify UIForm/UICommand relationship for WAP-style forms.
