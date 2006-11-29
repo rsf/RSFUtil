@@ -10,7 +10,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * the ViewParameters of a new (and hopefully more valid view) that the
  * client is to be redirected to in the event of this level-1 error. If an
  * error occurs whilst rendering this page, a fatal error will be declared
- * (customisable by {@link uk.org.ponder.rsf.processor.FatalErrorHandler}.
+ * (customisable by {@link uk.org.ponder.rsf.processor.FatalErrorHandler}).
  * @author Antranig Basman (amb26@ponder.org.uk)
  *
  */
