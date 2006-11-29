@@ -160,7 +160,7 @@ public class BasicTemplateResolver implements TemplateResolver {
       if (is != null)
         break;
       if (is == null && tried == null) {
-        Logger.log.info("Failed to load template from " + fullpath);
+//        Logger.log.info("Failed to load template from " + fullpath);
       }
     }
     if (is == null) {
