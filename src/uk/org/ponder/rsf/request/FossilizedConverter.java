@@ -50,7 +50,7 @@ public class FossilizedConverter {
   public static final String VALUE_DELETION_KEY = "valuedeletion"
       + BINDING_SUFFIX;
   public static final String ELBINDING_KEY = "el" + BINDING_SUFFIX;
-  public static final String VIRTUALELBINDING_KEY = "virtual-" + ELBINDING_KEY;
+  public static final String VIRTUAL_ELBINDING_KEY = "virtual-" + ELBINDING_KEY;
 
   private SAXalXMLProvider xmlprovider;
 
@@ -72,7 +72,7 @@ public class FossilizedConverter {
   public boolean isNonComponentBinding(String key) {
     // TODO: After 0.7.0 reform the bindings encoding system so that
     // virtual bindings can be nameless.
-    return key.endsWith(BINDING_SUFFIX) && !key.equals(VIRTUALELBINDING_KEY);
+    return key.endsWith(BINDING_SUFFIX) && !key.equals(VIRTUAL_ELBINDING_KEY);
   }
 
   /** Parse a "non-component binding" key/value pair * */
@@ -163,8 +163,7 @@ public class FossilizedConverter {
   }
 
   public void computeELBinding(UIELBinding binding) {
-    binding.name = binding.virtual ? ELBINDING_KEY
-        : VIRTUALELBINDING_KEY;
+    binding.name = binding.virtual ? VIRTUAL_ELBINDING_KEY : ELBINDING_KEY;
     binding.value = computeBindingValue(binding.valuebinding.value,
         binding.rvalue);
   }

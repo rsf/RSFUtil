@@ -18,6 +18,9 @@ public class UIELBinding extends UIParameter {
     this.rvalue = rvalue; 
     this.virtual = virtual;
   }
+  /** Create a binding that will assign the Object or EL reference <code>rvalue</code>
+   * to the EL path <code>lvalue</code> in the following request cycle. 
+   */
   public UIELBinding(String lvalue, Object rvalue) {
     this(lvalue, rvalue, false);
   }

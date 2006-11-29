@@ -83,7 +83,7 @@ public class PostDecoder {
             SubmittedValueEntry sve = fossilizedconverter.parseBinding(key,
                 values[i]);
             SubmittedValueEntry existing = rsvc.byPath(sve.valuebinding);
-            if (existing != null) {
+            if (existing != null && existing.componentid == null) {
               fuseStrings(existing, sve);
             }
             else {

@@ -14,7 +14,9 @@ import java.util.List;
  */
 public class RequestSubmittedValueCache implements Serializable {
   public void addEntry(SubmittedValueEntry sve) {
-    idmap.put(sve.componentid, sve);
+    if (sve.componentid != null) {
+      idmap.put(sve.componentid, sve);
+    }
     pathmap.put(sve.valuebinding, sve);
     entries.add(sve);
   }
