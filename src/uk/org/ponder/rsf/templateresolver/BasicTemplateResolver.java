@@ -140,7 +140,7 @@ public class BasicTemplateResolver implements TemplateResolver {
     return xcvt;
   }
 
-  private XMLViewTemplate locateTemplate(ViewParameters viewparams,
+  public XMLViewTemplate locateTemplate(ViewParameters viewparams,
       TemplateResolverStrategy strs, StringList bases, StringList tried) {
     String resourcebase = "/";
     if (strs instanceof BaseAwareTemplateResolverStrategy) {
