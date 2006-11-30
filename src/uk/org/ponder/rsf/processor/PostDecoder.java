@@ -58,6 +58,7 @@ public class PostDecoder {
 
   private static void fuseStrings(SubmittedValueEntry existing,
       SubmittedValueEntry sve) {
+    if (existing.isEL) return; // avoid having to optimise PFS client
     if (existing.newvalue instanceof String) {
       existing.newvalue = new String[] { (String) existing.newvalue,
           (String) sve.newvalue };
