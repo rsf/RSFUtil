@@ -35,6 +35,8 @@
   <bean id="requestLocale" factory-bean="httpServletRequest"
     factory-method="getLocale" />
 
+  <bean id="requestTimeZone" class="uk.org.ponder.springutil.TimeZoneFactory"/>
+
   <bean id="requestMap" factory-bean="earlyRequestParser"
     factory-method="getRequestMap" />
 
