@@ -13,6 +13,7 @@ import java.util.Set;
 import uk.org.ponder.errorutil.TargettedMessageList;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIComponent;
+import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.content.ContentTypeInfo;
 import uk.org.ponder.rsf.renderer.decorator.DecoratorManager;
 import uk.org.ponder.rsf.template.XMLCompositeViewTemplate;
@@ -156,7 +157,7 @@ public class ViewRender {
         // at this component, and process them in order, looking them up in
         // the forward map, which must ALSO be here.
         String prefix = SplitID.getPrefix(id);
-        List children = basecontainer.getComponents(prefix);
+        List children = fetchComponents(basecontainer, prefix);
         // these are all children with the same prefix, which will be rendered
         // synchronously.
         if (children != null) {
@@ -247,7 +248,8 @@ public class ViewRender {
               messagerenderer.renderMessageList(messages);
           }
           else {
-            component = basecontainer.getComponent(id);
+            component = fetchComponent(basecontainer, id);
+          
           }
         }
         // if we find a leaf component, render it.
@@ -259,6 +261,26 @@ public class ViewRender {
         break;
       }
     }
+  }
+
+  private static UIComponent fetchComponent(UIBranchContainer basecontainer, 
+      String id) {
+    while (basecontainer != null) {
+      UIComponent togo = basecontainer.getComponent(id);
+      if (togo != null) return togo;
+      basecontainer = (UIBranchContainer) basecontainer.parent;
+    }
+    return null;
+  }
+  
+  private static List fetchComponents(UIBranchContainer basecontainer, 
+      String id) {
+    while (basecontainer != null) {
+      List togo = basecontainer.getComponents(id);
+      if (togo != null) return togo;
+      basecontainer = (UIBranchContainer) basecontainer.parent;
+    }
+    return null;
   }
 
   private XMLLump findChild(XMLLump sourcescope, UIComponent child) {
