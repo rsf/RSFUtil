@@ -108,10 +108,10 @@ public class RenderUtil {
     }
   }
 
-  public static void dumpHiddenField(String name, String value, XMLWriter xmlw) {
+  public static void dumpHiddenField(UIParameter todump, XMLWriter xmlw) {
     xmlw.writeRaw("<input type=\"hidden\" ");
-    XMLUtil.dumpAttribute("name", name, xmlw);
-    XMLUtil.dumpAttribute("value", value, xmlw);
+    XMLUtil.dumpAttribute(todump.virtual? "id" : "name", todump.name, xmlw);
+    XMLUtil.dumpAttribute("value", todump.value, xmlw);
     xmlw.writeRaw(" />\n");
   }
 

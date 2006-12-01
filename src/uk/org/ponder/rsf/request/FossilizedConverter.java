@@ -183,6 +183,7 @@ public class FossilizedConverter {
           + "for non-fossilizing component with ID " + togenerate.getFullID());
     }
     UIParameter togo = new UIParameter();
+    togo.virtual = !togenerate.willinput;
     togo.name = togenerate.submittingname + FOSSIL_SUFFIX;
     String oldvaluestring = null;
     Object oldvalue = modelvalue == null ? togenerate.acquireValue()

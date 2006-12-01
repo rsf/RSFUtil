@@ -15,6 +15,12 @@ package uk.org.ponder.rsf.components;
 public class UIParameter {
   public String name;
   public String value;
+  /** If set to <code>true</code>, represents a "virtual" binding/parameter, that is,
+   * one that is rendered inactive by default, to be "discovered" by some
+   * client-side mechanism. Virtual bindings represent an "alternate execution path"
+   * through the request container.
+   */
+  public boolean virtual;
   public UIParameter() {}
   public UIParameter(String name, String value) {
     this.name = name;

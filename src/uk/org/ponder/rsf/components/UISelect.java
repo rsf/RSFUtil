@@ -46,7 +46,7 @@ public class UISelect extends UIComponent implements FixableComponent {
     togo.optionlist.setValue(values);
     togo.optionnames = new UIBoundList();
     togo.optionnames.setValue(labels);
-    togo.selection = new UIOutput();
+    togo.selection = new UIInput();
     if (value != null) {
       ((UIOutput) togo.selection).setValue(value);
     }
@@ -73,16 +73,20 @@ public class UISelect extends UIComponent implements FixableComponent {
       throw new IllegalArgumentException("UISelect component with full ID " + 
           getFullID() + " does not have optionnames set");
     }
-
-    selected = new StringSet();
-    if (selection instanceof UIBoundList) {
-      selected.addAll(((UIBoundList) selection).getValue());
-    }
-    else if (selection instanceof UIBoundString) {
-      selected.add(((UIBoundString) selection).getValue());
-    }
+    selected = computeSelectionSet(selection);
   }
 
+  public static StringSet computeSelectionSet(UIBound selection) {
+    StringSet togo = new StringSet();
+    if (selection instanceof UIBoundList) {
+      togo.addAll(((UIBoundList) selection).getValue());
+    }
+    else if (selection instanceof UIBoundString) {
+      togo.add(((UIBoundString) selection).getValue());
+    }
+    return togo;
+  }
+  
   protected static UISelect make(UIContainer tofill, String ID,
       String[] options, String valuebinding) {
     UISelect togo = new UISelect();

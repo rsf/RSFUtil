@@ -72,7 +72,7 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
       // that the processor is "not expecting" in repetitious cases.
       UIBound bound = (UIBound) child;
       String fullID = child.getFullID();
-      if (bound.willinput || getform) {
+      if (bound.willinput) {
         String formID = toprocess.getFullID();
 
         bound.submittingname = fullID.substring(RSFUtil.commonPath(fullID,
@@ -86,7 +86,8 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
       else {
         // case of a non-inputting control that needs to be nonetheless located
         // on the client side. This is actually the non-HTML default.
-        bound.submittingname = fullID;
+        //bound.submittingname = fullID;
+        // new interpretation - willinput = NO NAME
       }
     }
     // TODO: clarify UIForm/UICommand relationship for WAP-style forms.
