@@ -142,7 +142,7 @@ public class ViewRender {
       // continue scanning along this template section until we either each
       // the last lump, or the recursion level.
       renderindex = RenderUtil.dumpScan(tl.lumps, renderindex, basedepth, pos,
-          true);
+          true, false);
       if (renderindex == tl.lumps.length)
         break;
       XMLLump lump = tl.lumps[renderindex];
@@ -189,7 +189,7 @@ public class ViewRender {
                 // until we reach the next component with a matching id prefix.
                 // NB transition matching is not implemented and may never be.
                 RenderUtil.dumpScan(tl.lumps, renderend,
-                    targetlump.nestingdepth - 1, pos, false);
+                    targetlump.nestingdepth - 1, pos, false, true);
                 // we discard any index reached by this dump, continuing the
                 // controlled sequence as long as there are any children.
                 // given we are in the middle of a sequence here, we expect to
@@ -203,7 +203,7 @@ public class ViewRender {
               }
               else {
                 RenderUtil.dumpScan(tl.lumps, renderend,
-                    targetlump.nestingdepth, pos, true);
+                    targetlump.nestingdepth, pos, true, true);
               }
             }
 
