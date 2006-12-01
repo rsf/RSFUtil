@@ -18,6 +18,7 @@ import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.TargettedMessageList;
 import uk.org.ponder.mapping.BeanInvalidationModel;
 import uk.org.ponder.springutil.errors.SpringErrorConverter;
+import uk.org.ponder.util.CollectingRunnableInvoker;
 import uk.org.ponder.util.RunnableInvoker;
 
 /**
@@ -130,8 +131,8 @@ public class BeanGuardProcessor implements ApplicationContextAware {
                 }
                 else if (guard instanceof Validator) {
                   Validator guardv = (Validator) guard;
-                  springerrors = new BindException(guarded, guardedpath);
-                  // TODO: We could try to store this excess info somewhere.
+                  // We don't use target, and it may be null.
+                  springerrors = new BindException(guardedpath, guardedpath);
                   guardv.validate(guarded, springerrors);
                   SpringErrorConverter.appendErrors(errors, springerrors);
                 }
@@ -147,29 +148,10 @@ public class BeanGuardProcessor implements ApplicationContextAware {
       }
     }
     if (toinvoke != null) {
-      invokeWrappers(wrappers, toinvoke);
+      CollectingRunnableInvoker.invokeWrappers(wrappers, toinvoke);
     }
     // if (springerrors != null) {
     // throw UniversalRuntimeException.accumulate(springerrors);
     // }
-  }
-
-  private void invokeWrappers(final List wrappers, final Runnable toinvoke) {
-    if (wrappers == null) {
-      toinvoke.run();
-    }
-    else {
-      new Runnable() {
-        int i = 0;
-        public void run() {
-          if (i == wrappers.size()) toinvoke.run();
-          else {
-            RunnableInvoker invoker = (RunnableInvoker) wrappers.get(i);
-            ++i;
-            invoker.invokeRunnable(this);
-          }
-        }
-      }.run();
-    }
   }
 }

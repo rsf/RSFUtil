@@ -57,7 +57,7 @@ public class RSVCApplier {
   public void setTargettedMessageList(TargettedMessageList targettedMessageList) {
     this.targettedMessageList = targettedMessageList;
   }
-  
+
   // this will be used to locate request-scope beans.
 
   public void setRootBeanLocator(WriteableBeanLocator rbl) {
@@ -77,8 +77,10 @@ public class RSVCApplier {
 
       for (int i = 0; i < rsvc.entries.size(); ++i) {
         SubmittedValueEntry sve = rsvc.entryAt(i);
+        boolean unchangedValue = false;
         // check against "old" values
-        if (sve.componentid != null && !ignoreFossilizedValues && !sve.mustapply) {
+        if (sve.componentid != null && !ignoreFossilizedValues
+            && !sve.mustapply) {
           if (sve.oldvalue != null && sve.valuebinding != null) {
             versioncheckpolicy.checkOldVersion(sve); // will blow on error
 
@@ -90,7 +92,7 @@ public class RSVCApplier {
                   sve.oldvalue.getClass(), null);
               // cull the change from touching the model.
               if (type.valueUnchanged(sve.oldvalue, flattened))
-                continue;
+                unchangedValue = true;
             }
             catch (Exception e) {
               Logger.log.warn("Error flattening value" + sve.newvalue
@@ -99,7 +101,9 @@ public class RSVCApplier {
           }
         }
         DataAlterationRequest dar = null;
-        Object newvalue = sve.newvalue;
+        // NB unchanged CANNOT be EL or deletion SVE.
+        Object newvalue = unchangedValue ? DataAlterationRequest.INAPPLICABLE_VALUE
+            : sve.newvalue;
         if (sve.isEL) {
           newvalue = darapplier.getBeanValue((String) sve.newvalue, rbl);
         }
@@ -121,13 +125,14 @@ public class RSVCApplier {
           catch (Exception e) {
             Logger.log.info("Error reshaping value", e);
             // errors initially accumulated referring to paths
-            targettedMessageList
-                .addMessage(new TargettedMessage(e.getMessage(), e, dar.path));
+            targettedMessageList.addMessage(new TargettedMessage(
+                e.getMessage(), e, dar.path));
           }
         }
         toapply.add(dar);
         // Do this INSIDE the loop since fetched values may change
-        darapplier.applyAlteration(rbl, dar, targettedMessageList, getBracketer());
+        darapplier.applyAlteration(rbl, dar, targettedMessageList,
+            getBracketer());
       }
     }
     finally {
@@ -141,13 +146,13 @@ public class RSVCApplier {
         bim.invalidate(path);
         ListBeanInvalidationModel singlebim = new ListBeanInvalidationModel();
         singlebim.invalidate(path);
-        RunnableInvoker invoker = beanGuardProcessor.getGuardProcessor(singlebim, 
-            targettedMessageList, rbl);
+        RunnableInvoker invoker = beanGuardProcessor.getGuardProcessor(
+            singlebim, targettedMessageList, rbl);
         invoker.invokeRunnable(toinvoke);
       }
     };
   }
-  
+
   public Object invokeAction(String actionbinding, String knownvalue) {
     String totail = PathUtil.getToTailPath(actionbinding);
     String actionname = PathUtil.getTailPath(actionbinding);
