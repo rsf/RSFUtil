@@ -44,7 +44,8 @@
     <property name="reflectiveCache" ref="reflectiveCache" />
     <property name="defaultInferrer" ref="ELDefaultInferrer" />
     <property name="staticLeafParser" ref="staticLeafParser" />
-    <property name="indexedPropertyAccessor" ref="indexPropertyAccessor"/>
+    <property name="indexedPropertyAccessor"
+      ref="indexPropertyAccessor" />
   </bean>
 
   <bean id="streamResolver"
@@ -159,8 +160,26 @@
   </bean>
 
   <bean id="RSACLazarusListProxy" parent="RSACBridgeProxy">
-    <property name="targetBeanName" value="RSACLazarusList"/>
+    <property name="targetBeanName" value="RSACLazarusList" />
   </bean>
+
+  <bean id="alterationWrapperParent"
+    class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
+    <property name="targetPath"
+      value="collectedAlterationWrapper.wrappers" />
+  </bean>
+
+  <bean id="scopeAlterationWrapperProxy"
+    parent="alterationWrapperParent">
+    <property name="value">
+      <bean parent="RSACBridgeProxy">
+        <property name="targetBeanName" value="scopeAlterationWrapper" />
+      </bean>
+    </property>
+  </bean>
+
+  <bean id="collectedAlterationWrapper"
+    class="uk.org.ponder.util.CollectingRunnableInvoker" />
 
   <!-- ******    RSF-SPECIFIC DEFINITIONS BELOW HERE    *******    -->
 
@@ -324,7 +343,7 @@
     class="uk.org.ponder.rsf.content.ContentTypeInfoFactory">
     <property name="contentTypeInfoMap" ref="contentTypeInfoMap" />
     <property name="viewParameters" ref="viewParametersProxy" />
-    <property name="reflectiveCache" ref="reflectiveCache"/>
+    <property name="reflectiveCache" ref="reflectiveCache" />
   </bean>
 
   <bean id="contentTypeInfoProxy" parent="RSACBridgePeaProxy">
@@ -383,7 +402,7 @@
     </property>
   </bean>
 
-<!-- *** Definitions for ViewParameters and URL handling *** -->
+  <!-- *** Definitions for ViewParameters and URL handling *** -->
 
   <bean id="autoBaseURLProviderProxy" parent="RSACBridgeProxy">
     <property name="targetBeanName">
@@ -411,7 +430,8 @@
       <idref bean="viewParameters" />
     </property>
     <!-- Enough information to find the get() method -->
-    <property name="targetClass" value="uk.org.ponder.rsf.viewstate.ViewParameters"/>
+    <property name="targetClass"
+      value="uk.org.ponder.rsf.viewstate.ViewParameters" />
   </bean>
 
   <bean id="viewParamsMappingInfoManager"
@@ -427,9 +447,10 @@
       ref="viewParamsMappingInfoManager" />
   </bean>
 
-  <bean id="lazarusRedirector" class="uk.org.ponder.rsf.request.LazarusRedirector">
-    <property name="lazarusListReceiver" ref="RSACLazarusListProxy"/>
-    <property name="viewParamsMapper" ref="viewParamsMapper"/>
+  <bean id="lazarusRedirector"
+    class="uk.org.ponder.rsf.request.LazarusRedirector">
+    <property name="lazarusListReceiver" ref="RSACLazarusListProxy" />
+    <property name="viewParamsMapper" ref="viewParamsMapper" />
   </bean>
 
   <!--  Lazy loading needed to break dependence cycle - SiteMap via BasicViewParamsParser
@@ -465,18 +486,20 @@
     <property name="viewStateHandler" ref="viewStateHandler" />
   </bean>
 
-<!-- *** Standard framework SCR definitions *** -->
+  <!-- *** Standard framework SCR definitions *** -->
 
   <bean id="URLRewriteSCR"
     class="uk.org.ponder.rsf.renderer.html.URLRewriteSCR">
     <property name="URLRewriter" ref="URLRewriter" />
   </bean>
-  
-  <bean id="headCollectSCR" class="uk.org.ponder.rsf.renderer.html.HeadCollectingSCR">
-    <property name="URLRewriteSCR" ref="URLRewriteSCR"/>
+
+  <bean id="headCollectSCR"
+    class="uk.org.ponder.rsf.renderer.html.HeadCollectingSCR">
+    <property name="URLRewriteSCR" ref="URLRewriteSCR" />
   </bean>
 
-  <bean id="nullSCR" class="uk.org.ponder.rsf.renderer.scr.NullRewriteSCR"/>
+  <bean id="nullSCR"
+    class="uk.org.ponder.rsf.renderer.scr.NullRewriteSCR" />
 
   <bean id="listenerConnector"
     class="uk.org.ponder.iocevent.BeetleConnector" />
@@ -488,7 +511,7 @@
   </bean>
 
   <!--  The core parent definitions for the different kinds of RSAC proxies -->
-  
+
   <bean id="RSACBridgeProxy" class="uk.org.ponder.rsac.RSACBridgeProxy"
     abstract="true">
     <property name="RSACBeanLocator" ref="RSACBeanLocator" />
@@ -554,14 +577,14 @@
     class="uk.org.ponder.rsf.flow.jsfnav.NavigationCasePooler">
     <property name="reflectiveCache" ref="reflectiveCache" />
   </bean>
-    
+
 
   <!-- UVBBean forms a flow -->
   <bean parent="copyPreservingParent">
-     <property name="value" value="UVBBean"/>
+    <property name="value" value="UVBBean" />
   </bean>
-  
+
   <bean parent="requestAddressibleParent">
-    <property name="value" value="UVBBean"/>
+    <property name="value" value="UVBBean" />
   </bean>
 </beans>

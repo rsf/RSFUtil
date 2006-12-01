@@ -264,7 +264,7 @@
     <property name="ARIResolver" ref="ARIResolver" />
     <property name="viewParameters" ref="viewParameters" />
     <property name="requestRSVC" ref="requestRSVC" />
-    <property name="alterationWrapper" ref="alterationWrapper" />
+    <property name="alterationWrapper" ref="collectedAlterationWrapper" />
     <property name="RSVCApplier" ref="RSVCApplier" />
     <property name="normalizedRequestMap" ref="normalizedRequest" />
     <property name="statePreservationManager"
@@ -383,7 +383,7 @@
     <property name="errorStateManager" ref="errorStateManager" />
     <property name="viewParameters" ref="viewParameters" />
     <property name="viewGenerator" ref="viewGenerator" />
-    <property name="alterationWrapper" ref="alterationWrapper" />
+    <property name="alterationWrapper" ref="collectedAlterationWrapper" />
     <property name="statePreservationManager"
       ref="statePreservationManager" />
     <property name="viewProcessor" ref="viewProcessor" />

@@ -112,7 +112,7 @@
   <!-- The default alteration wrapper performs no ORM-specific bracketing
     of alteration operations, unless a flow or scope is active, in which case 
     it will block. -->
-  <bean id="alterationWrapper"
+  <bean id="scopeAlterationWrapper"
     class="uk.org.ponder.rsf.flow.BasicScopedAlterationWrapper" lazy-init="true">
     <property name="flowIDHolder" ref="flowLite-flowIDHolder" />
     <property name="lockGetter" ref="inMemoryLockGetter" />
