@@ -55,15 +55,23 @@ public class RenderUtil {
    * of repetitive components still to render.
    */
   public static int dumpScan(XMLLump[] lumps, int renderindex, int basedepth,
-      PrintOutputStream target, boolean closeparent) {
+      PrintOutputStream target, boolean closeparent, boolean insideleaf) {
     int start = lumps[renderindex].start;
     char[] buffer = lumps[renderindex].parent.buffer;
     while (true) {
       if (renderindex == lumps.length)
         break;
       XMLLump lump = lumps[renderindex];
-      if (lump.rsfID != null || lump.nestingdepth < basedepth)
+      if (lump.nestingdepth < basedepth)
         break;
+      if (lump.rsfID != null) {
+        if (!insideleaf) break;
+        if (insideleaf && lump.nestingdepth > basedepth) {
+          Logger.log.warn("Error in component tree - leaf component found to contain further components - at " +
+              lump.toString());
+        }
+        else break;
+      }
       // target.print(lump.text);
       ++renderindex;
     }
