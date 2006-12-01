@@ -109,12 +109,10 @@ public class BasicHTMLRenderSystem implements RenderSystem {
   private void dumpBoundFields(UIBound torender, XMLWriter xmlw) {
     if (torender != null) {
       if (torender.fossilizedbinding != null) {
-        RenderUtil.dumpHiddenField(torender.fossilizedbinding.name,
-            torender.fossilizedbinding.value, xmlw);
+        RenderUtil.dumpHiddenField(torender.fossilizedbinding, xmlw);
       }
       if (torender.fossilizedshaper != null) {
-        RenderUtil.dumpHiddenField(torender.fossilizedshaper.name,
-            torender.fossilizedshaper.value, xmlw);
+        RenderUtil.dumpHiddenField(torender.fossilizedshaper, xmlw);
       }
     }
   }
@@ -239,15 +237,17 @@ public class BasicHTMLRenderSystem implements RenderSystem {
           else { // Non-boolean must be String
             String value = ((UIBoundString) torender).getValue();
             if (uselump.textEquals("<textarea ")) {
-              if (UITypes.isPlaceholder(value)) {
+              if (UITypes.isPlaceholder(value) && torender.willinput) {
                 // FORCE a blank value for input components if nothing from
-                // model.
+                // model, if input was intended.
                 value = "";
               }
               rewriteLeaf(value, rendercontext);
             }
             else if (uselump.textEquals("<input ")) {
-              attrcopy.put("value", value);
+              if (torender.willinput || !UITypes.isPlaceholder(value)) {
+                attrcopy.put("value", value);
+              }
               rewriteLeaf(null, rendercontext);
             }
             else {
@@ -266,7 +266,9 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         UISelect select = (UISelect) torendero;
         // The HTML submitted value from a <select> actually corresponds
         // with the selection member, not the top-level component.
-        attrcopy.put("name", select.selection.submittingname);
+        if (select.selection.willinput) {
+          attrcopy.put("name", select.selection.submittingname);
+        }
         attrcopy.put("id", select.selection.getFullID());
         boolean ishtmlselect = uselump.textEquals("<select ");
         if (select.selection instanceof UIBoundList && ishtmlselect) {
@@ -387,7 +389,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         replaceAttributesOpen(rendercontext);
         for (int i = 0; i < torender.parameters.size(); ++i) {
           UIParameter param = torender.parameters.parameterAt(i);
-          RenderUtil.dumpHiddenField(param.name, param.value, xmlw);
+          RenderUtil.dumpHiddenField(param, xmlw);
         }
         // override "nextpos" - form is expected to contain numerous nested
         // Components.
