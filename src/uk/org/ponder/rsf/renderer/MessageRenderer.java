@@ -5,8 +5,8 @@ package uk.org.ponder.rsf.renderer;
 
 import uk.org.ponder.errorutil.MessageLocator;
 import uk.org.ponder.errorutil.TargettedMessageList;
-import uk.org.ponder.rsf.components.UIComponent;
-import uk.org.ponder.rsf.components.UIOutputMultiline;
+import uk.org.ponder.rsf.components.UIBranchContainer;
+import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.stringutil.StringList;
 
 public class MessageRenderer {
@@ -15,11 +15,13 @@ public class MessageRenderer {
     this.messagelocator = messagelocator;
   }
   
-  public UIComponent renderMessageList(TargettedMessageList messagelist) {
-    UIOutputMultiline togo = new UIOutputMultiline();
+  public UIBranchContainer renderMessageList(TargettedMessageList messagelist) {
+    UIBranchContainer togo = new UIBranchContainer();
     StringList renderered = messagelist == null? new StringList() : 
       messagelist.render(messagelocator);
-    togo.setValue(renderered);
+    for (int i = 0; i < renderered.size(); ++ i) {
+      UIOutput.make(togo, "message:", renderered.stringAt(i));
+    }
     return togo;
   }
 }

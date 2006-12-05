@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.rsf.state;
 
+import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.beanutil.WriteableBeanLocator;
@@ -28,11 +29,12 @@ import uk.org.ponder.util.RunnableInvoker;
 public class RSVCApplier {
   private VersionCheckPolicy versioncheckpolicy;
   private BeanModelAlterer darapplier;
-  private WriteableBeanLocator rbl;
+  private WriteableBeanLocator safebl;
   private BeanInvalidationModel bim;
   private BeanGuardProcessor beanGuardProcessor;
   private boolean ignoreFossilizedValues = true;
   private TargettedMessageList targettedMessageList;
+  private BeanLocator rbl;
 
   public void setIgnoreFossilizedValues(boolean ignoreFossilizedValues) {
     this.ignoreFossilizedValues = ignoreFossilizedValues;
@@ -60,10 +62,14 @@ public class RSVCApplier {
 
   // this will be used to locate request-scope beans.
 
-  public void setRootBeanLocator(WriteableBeanLocator rbl) {
-    this.rbl = rbl;
+  public void setSafeBeanLocator(WriteableBeanLocator safebl) {
+    this.safebl = safebl;
   }
 
+  public void setRootBeanLocator(BeanLocator rbl) {
+    this.rbl = rbl;
+  }
+  
   /**
    * Apply values from this RSVC to the model, and in addition process any
    * validations specified by BeanGuards.
@@ -105,7 +111,7 @@ public class RSVCApplier {
         Object newvalue = unchangedValue ? DataAlterationRequest.INAPPLICABLE_VALUE
             : sve.newvalue;
         if (sve.isEL) {
-          newvalue = darapplier.getBeanValue((String) sve.newvalue, rbl);
+          newvalue = darapplier.getBeanValue((String) sve.newvalue, safebl);
         }
         if (sve.isdeletion) {
           dar = new DataAlterationRequest(sve.valuebinding, newvalue,
@@ -115,7 +121,7 @@ public class RSVCApplier {
           dar = new DataAlterationRequest(sve.valuebinding, newvalue);
         }
         if (sve.reshaperbinding != null) {
-          Object reshaper = rbl.locateBean(sve.reshaperbinding);
+          Object reshaper = safebl.locateBean(sve.reshaperbinding);
           if (reshaper instanceof LeafObjectParser) {
             reshaper = new LeafObjectDARReshaper((LeafObjectParser) reshaper);
           }
@@ -131,7 +137,7 @@ public class RSVCApplier {
         }
         toapply.add(dar);
         // Do this INSIDE the loop since fetched values may change
-        darapplier.applyAlteration(rbl, dar, targettedMessageList,
+        darapplier.applyAlteration(safebl, dar, targettedMessageList,
             getBracketer());
       }
     }
@@ -156,14 +162,14 @@ public class RSVCApplier {
   public Object invokeAction(String actionbinding, String knownvalue) {
     String totail = PathUtil.getToTailPath(actionbinding);
     String actionname = PathUtil.getTailPath(actionbinding);
-    Object penultimatebean = darapplier.getBeanValue(totail, rbl);
+    Object penultimatebean = darapplier.getBeanValue(totail, safebl);
     if (penultimatebean instanceof ActionTarget) {
       Object returnvalue = ((ActionTarget) penultimatebean).invokeAction(
           actionname, knownvalue);
       return returnvalue;
     }
     else {
-      return darapplier.invokeBeanMethod(actionbinding, rbl);
+      return darapplier.invokeBeanMethod(actionbinding, safebl);
     }
   }
 }

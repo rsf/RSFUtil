@@ -22,7 +22,6 @@ import uk.org.ponder.rsf.content.ContentTypeReporter;
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
-import uk.org.ponder.rsf.state.scope.BeanDestroyer;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
@@ -96,7 +95,5 @@ public class UVBProducer implements ViewComponentProducer, ContentTypeReporter,
     togo.add(new NavigationCase(null, null, ARIResult.FLOW_ONESTEP));
     return togo;
   }
-
-  
   
 }

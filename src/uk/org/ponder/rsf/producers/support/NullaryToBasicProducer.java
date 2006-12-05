@@ -15,14 +15,18 @@ import uk.org.ponder.rsf.producers.NullaryProducer;
  * @author Antranig Basman (amb26@ponder.org.uk)
  *
  */
-public class PageProducer implements BasicProducer {
-  private NullaryProducer collectedProducer;
-  public void setCollectedProducer(NullaryProducer collectedProducer) {
-    this.collectedProducer = collectedProducer;
+public class NullaryToBasicProducer implements BasicProducer {
+  private NullaryProducer nullaryProducer;
+  private String jointID;
+  public void setJointID(String jointID) {
+    this.jointID = jointID;
   }
-  public void fillComponents(UIContainer parent, UIJointContainer clientname) {
-    clientname.jointID = "page:";
-    collectedProducer.fillComponents(parent);
+  public void setNullaryProducer(NullaryProducer nullaryProducer) {
+    this.nullaryProducer = nullaryProducer;
+  }
+  public void fillComponents(UIContainer parent, String clientID) {
+    UIJointContainer joint = new UIJointContainer(parent, clientID, jointID);
+    nullaryProducer.fillComponents(joint);
   }
 
 }

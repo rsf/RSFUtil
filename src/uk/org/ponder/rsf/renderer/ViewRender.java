@@ -13,7 +13,6 @@ import java.util.Set;
 import uk.org.ponder.errorutil.TargettedMessageList;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIComponent;
-import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.content.ContentTypeInfo;
 import uk.org.ponder.rsf.renderer.decorator.DecoratorManager;
 import uk.org.ponder.rsf.template.XMLCompositeViewTemplate;
@@ -50,6 +49,8 @@ public class ViewRender {
   //a map of UIBranchContainer to XMLLump
   private Map branchmap;
   private XMLLumpMMap collected;
+  
+  private XMLLump messagelump;
 
   private TargettedMessageList messagelist;
   // a map of HTMLLumps to StringList of messages due to be delivered to
@@ -117,8 +118,11 @@ public class ViewRender {
   }
   
   public void render(PrintOutputStream pos) {
+    UIBranchContainer messagecomponent = UIBranchContainer.make(view.viewroot, MessageTargetter.RSF_MESSAGES);
     branchmap = BranchResolver.resolveBranches(globalmap, view.viewroot,
         roott.rootlump);
+    view.viewroot.remove(messagecomponent);
+    messagelump = (XMLLump) branchmap.get(messagecomponent);
     collectContributions();
     messagetargets = MessageTargetter.targetMessages(branchmap, view,
         messagelist, globalmessagetarget);
@@ -131,6 +135,14 @@ public class ViewRender {
     renderRecurse(view.viewroot, roott.rootlump, roott.lumps[roott.roottagindex]);
   }
 
+  private void renderBranch(UIBranchContainer child, XMLLump targetlump) {
+    // may have jumped template file
+    XMLViewTemplate t2 = targetlump.parent;
+    XMLLump firstchild = t2.lumps[targetlump.open_end.lumpindex + 1];
+    dumpContainerHead(child, targetlump);
+    renderRecurse(child, targetlump, firstchild);
+  }
+  
   private void renderRecurse(UIBranchContainer basecontainer,
       XMLLump parentlump, XMLLump baselump) {
 
@@ -166,11 +178,7 @@ public class ViewRender {
             if (child instanceof UIBranchContainer) {
               XMLLump targetlump = (XMLLump) branchmap.get(child);
               if (targetlump != null) {
-                // may have jumped template file
-                XMLViewTemplate t2 = targetlump.parent;
-                XMLLump firstchild = t2.lumps[targetlump.open_end.lumpindex + 1];
-                dumpContainerHead((UIBranchContainer) child, targetlump);
-                renderRecurse((UIBranchContainer) child, targetlump, firstchild);
+                renderBranch((UIBranchContainer) child, targetlump);
               }
             }
             else { // repetitive non-branch
@@ -226,31 +234,37 @@ public class ViewRender {
         // Logger.log.info("to ");
         // debugLump(lumps[renderindex]);
       }
+      else if (ismessage) {
+        TargettedMessageList messages = messagetargets.getMessages(lump);
+        if (messages == null)
+          messages = new TargettedMessageList();
+        if (!rendereddeadletters) {
+          rendereddeadletters = true;
+          TargettedMessageList deadmessages = messagetargets
+              .getMessages(MessageTargetter.DEAD_LETTERS);
+          if (deadmessages != null) {
+            messages.addMessages(deadmessages);
+          }
+        }
+        if (messages.size() != 0) {
+          if (messagelump == null) {
+            Logger.log.warn("No message template is configured (containing branch with rsf id rsf-messages:)");
+          }
+          else {
+            UIBranchContainer messagebranch = messagerenderer.renderMessageList(messages);
+            renderBranch(messagebranch, messagelump);
+          }
+        }
+        XMLLump closelump = lump.close_tag;
+        renderindex = closelump.lumpindex + 1;
+      }
       else {
         // no colon - continue template-driven.
         // it is a single, irrepitable component - just render it, and skip
         // on, or skip completely if there is no peer in the component tree.
         UIComponent component = null;
         if (id != null) {
-          if (ismessage) {
-            TargettedMessageList messages = messagetargets.getMessages(lump);
-            if (messages == null)
-              messages = new TargettedMessageList();
-            if (!rendereddeadletters) {
-              rendereddeadletters = true;
-              TargettedMessageList deadmessages = messagetargets
-                  .getMessages(MessageTargetter.DEAD_LETTERS);
-              if (deadmessages != null) {
-                messages.addMessages(deadmessages);
-              }
-            }
-            component = messages.size() == 0 ? null : 
-              messagerenderer.renderMessageList(messages);
-          }
-          else {
-            component = fetchComponent(basecontainer, id);
-          
-          }
+          component = fetchComponent(basecontainer, id);
         }
         // if we find a leaf component, render it.
         renderindex = renderer.renderComponent(component, view, lump, 

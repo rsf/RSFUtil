@@ -22,6 +22,7 @@ public class MessageTargetter {
   // a dummy key to be used to signify a target for messages whose targets
   // cannot be found.
   public static final XMLLump DEAD_LETTERS = new XMLLump(); 
+  public static final String RSF_MESSAGES = "rsf-messages:";
   public static class BestTarget {
     public XMLLump container;
     public CharWrap rootpath = new CharWrap();

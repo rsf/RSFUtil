@@ -1,10 +1,11 @@
 /*
  * Created on 23 Sep 2006
  */
-package uk.org.ponder.rsf.evolvers;
+package uk.org.ponder.rsf.evolvers.support;
 
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIJointContainer;
+import uk.org.ponder.rsf.evolvers.TextInputEvolver;
 
 /** A plain implementation of a TextInputEvolver, that will simply upgrade
  * the supplied UIInput into a Joint named "plainTextEditor:", giving it 
