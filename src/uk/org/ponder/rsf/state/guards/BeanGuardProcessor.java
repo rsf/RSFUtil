@@ -11,9 +11,9 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Validator;
 
+import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.beanutil.PathUtil;
-import uk.org.ponder.beanutil.WriteableBeanLocator;
 import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.TargettedMessageList;
 import uk.org.ponder.mapping.BeanInvalidationModel;
@@ -49,7 +49,7 @@ public class BeanGuardProcessor implements ApplicationContextAware {
   }
 
   public RunnableInvoker getGuardProcessor(final BeanInvalidationModel bim,
-      final TargettedMessageList errors, final WriteableBeanLocator rbl) {
+      final TargettedMessageList errors, final BeanLocator rbl) {
     return new RunnableInvoker() {
       public void invokeRunnable(Runnable torun) {
         processGuards(bim, errors, rbl, torun);
@@ -58,7 +58,7 @@ public class BeanGuardProcessor implements ApplicationContextAware {
   }
 
   public void processPostGuards(BeanInvalidationModel bim,
-      TargettedMessageList errors, WriteableBeanLocator rbl) {
+      TargettedMessageList errors, BeanLocator rbl) {
     processGuards(bim, errors, rbl, null);
   }
 
@@ -71,7 +71,7 @@ public class BeanGuardProcessor implements ApplicationContextAware {
   }
   
   private void processGuards(BeanInvalidationModel bim,
-      TargettedMessageList errors, WriteableBeanLocator rbl, Runnable toinvoke) {
+      TargettedMessageList errors, BeanLocator rbl, Runnable toinvoke) {
     BindException springerrors = null;
     List wrappers = null;
     for (int i = 0; i < guards.length; ++i) {

@@ -2,470 +2,484 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
 	"http://www.springframework.org/dtd/spring-beans.dtd">
 <!-- The purpose of this file is to provide reasonable "default" completion of
-  the application scope portion of 
-  RSF's Spring API, so that the project will validate self-consistently in,
-  for example, Spring IDE.  Dependencies resolved here are ones that clients
-  might well want to override, as opposed to more 
-  core dependencies in the main RSF configuration file rsf-config.xml. -->
+	the application scope portion of 
+	RSF's Spring API, so that the project will validate self-consistently in,
+	for example, Spring IDE.  Dependencies resolved here are ones that clients
+	might well want to override, as opposed to more 
+	core dependencies in the main RSF configuration file rsf-config.xml. -->
 <beans>
-  <bean id="messageSource"
-    class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-    <property name="basename" value="WEB-INF/messages/messages" />
-    <property name="cacheSeconds" value="10" />
-  </bean>
-
-  <bean id="messageLocator"
-    class="uk.org.ponder.springutil.SpringMessageLocator">
-    <property name="messageSource" ref="messageSource" />
-  </bean>
-
-  <bean id="ignoreFossilizedValues"
-    class="uk.org.ponder.springutil.BooleanFactory">
-    <property name="value" value="false" />
-  </bean>
-
-  <bean id="fatalErrorHandler"
-    class="uk.org.ponder.rsf.processor.DefaultFatalErrorHandler" />
-
-  <bean id="multipartResolver"
-    class="uk.org.ponder.springutil.BlankMultipartResolver">
-  </bean>
-
-  <bean id="autoComponentProducerManager"
-    class="uk.org.ponder.rsf.view.AutoComponentProducerManager"
-    init-method="init">
-    <property name="reflectiveCache" ref="reflectiveCache" />
-    <property name="RSACBeanLocator" ref="RSACBeanLocator" />
-  </bean>
-
-  <bean id="consumerInfoProxy" parent="RSACBridgePeaProxy">
-    <property name="targetBeanName">
-      <idref bean="consumerInfo" />
-    </property>
-  </bean>
-
-  <!-- **** VIEWPARAMETERS and URL HANDLING **** -->
-
-  <bean id="viewParamsExemplar"
-    class="uk.org.ponder.rsf.viewstate.SimpleViewParameters">
-  </bean>
-
-  <bean id="viewIDInferrer"
-    class="uk.org.ponder.rsf.viewstate.DefaultViewIDInferrer" />
-
-  <bean id="viewParametersParser"
-    class="uk.org.ponder.rsf.viewstate.BasicViewParametersParser"
-    init-method="init">
-    <property name="viewParamsMapper" ref="viewParamsMapper" />
-    <property name="deepBeanCloner" ref="deepBeanCloner" />
-    <property name="reflectiveCache" ref="reflectiveCache" />
-    <property name="viewIDInferrer" ref="viewIDInferrer" />
-    <property name="defaultExemplar" ref="viewParamsExemplar" />
-  </bean>
-
-  <bean name="baseURLProvider" parent="autoBaseURLProviderProxy" />
-
-  <bean name="contextURLProvider"
-    class="uk.org.ponder.rsf.viewstate.CRIContextURLProvider">
-    <property name="consumerInfo" ref="consumerInfoProxy" />
-    <property name="baseURLProvider" ref="baseURLProvider" />
-  </bean>
-
-  <bean name="internalURLRewriter"
-    class="uk.org.ponder.rsf.viewstate.NullInternalURLRewriter" />
-
-  <!-- The two properties of sbup
-    are only relevant to users of the direct UI, where the URL that it appears
-    at is somehow "unexpected". In order to use these values, it is necessary
-    to copy these two definitions into the application's application context
-    file, together with definitions for the referenced URLs. Given these URLs
-    will generally represent configuration relevant to the end user, these should
-    be placed in yet a 3rd application context file, suggestion: a file called
-    userConfig.xml which breaks out all such configurable dependencies.
-    These will be overridden for consumers of the remote web service.  -->
-  <bean id="directUIBaseURL" class="java.lang.String">
-    <constructor-arg>
-      <value>
-        http://www.unexpected.hosting.environment/servletcontext/faces/
-      </value>
-    </constructor-arg>
-  </bean>
-  <bean id="directUIResourceBaseURL" class="java.lang.String">
-    <constructor-arg>
-      <value>
-        http://www.unexpected.hosting.environment/servletcontext/
-      </value>
-    </constructor-arg>
-  </bean>
-
-  <!-- The default viewstatehandler uses the baseURLProvider (defaulted to 
-    autoBaseURLProvider in blank-config to infer URLs. Clients may override it 
-    by referring to another of their choosing.  -->
-  <bean id="viewStateHandler"
-    class="uk.org.ponder.rsf.viewstate.RSFServletViewStateHandler">
-    <property name="baseURLProvider" ref="baseURLProvider" />
-    <property name="contextURLProvider" ref="contextURLProvider" />
-    <property name="consumerInfo" ref="consumerInfoProxy" />
-    <property name="viewParamsMapper" ref="viewParamsMapper" />
-    <property name="ultimateRenderers" ref="ultimateRenderers" />
-  </bean>
-
-
-  <!-- ***** NAVIGATION and ACTION RESULTS ***** -->
-
-  <bean id="siteMapDef"
-    class="uk.org.ponder.rsf.viewstate.XMLSiteMapLoader"
-    parent="XMLFactoryBean" abstract="true">
-    <property name="location" value="/WEB-INF/sitemap.xml" />
-    <property name="viewParametersReceiver" ref="viewParametersParser" />
-  </bean>
-
-  <bean id="JSFNavigationMap" parent="XMLFactoryBean"
-    lazy-init="true">
-    <!-- 
-      <property name="location" value="/WEB-INF/navigation-map.xml"/>
-    -->
-    <property name="objectType"
-      value="uk.org.ponder.rsf.flow.jsfnav.NavigationMap" />
-  </bean>
-
-  <!-- This standard bean name is given a default implementation to always
-    defer to the default ARI. However this will be overridden should the actual
-    action invokation ALREADY return an ARIResult, as with a FlowActionProxyBean. -->
-  <bean name="ARIResolver"
-    class="uk.org.ponder.rsf.flow.NullARIResolver">
-    <property name="actionResultInterpreter">
-      <ref bean="actionResultInterpreter" />
-    </property>
-  </bean>
-
-  <bean id="JSFNavigationARI"
-    class="uk.org.ponder.rsf.flow.jsfnav.JSFNavActionResultInterpreter">
-    <property name="navigationMap" ref="JSFNavigationMap" />
-    <property name="navigationCasePooler" ref="navigationCasePooler" />
-  </bean>
-
-  <!-- The default ActionResultInterpreter which directs to the incoming view-->
-  <bean id="nullActionResultInterpreter"
-    class="uk.org.ponder.rsf.flow.NullActionResultInterpreter">
-  </bean>
-
-  <bean name="actionResultInterpreter"
-    class="uk.org.ponder.rsf.flow.DelegatingARI">
-    <property name="ARIList">
-      <list>
-        <ref bean="JSFNavigationARI" />
-        <ref bean="nullActionResultInterpreter" />
-      </list>
-    </property>
-  </bean>
-
-  <bean id="actionErrorStrategyManager"
-    class="uk.org.ponder.rsf.flow.errors.ActionErrorStrategyManager">
-    <property name="mergeStrategies">
-      <ref bean="XMLActionErrorStrategies" />
-    </property>
-  </bean>
-
-  <bean id="XMLActionErrorStrategyDef" parent="XMLFactoryBean"
-    abstract="true">
-    <property name="objectType">
-      <value>
-        uk.org.ponder.rsf.flow.errors.ActionErrorStrategyManager
-      </value>
-    </property>
-  </bean>
-
-  <bean id="XMLActionErrorStrategies"
-    parent="XMLActionErrorStrategyDef" />
-
-  <bean id="defaultViewProxy" parent="RSACStringBridge">
-    <property name="targetBeanName">
-      <idref bean="defaultView" />
-    </property>
-  </bean>
-
-  <bean id="viewExceptionStrategy"
-    class="uk.org.ponder.rsf.flow.errors.SimpleViewExceptionStrategy">
-    <property name="viewParametersParser">
-      <ref bean="viewParametersParser" />
-    </property>
-    <property name="defaultView">
-      <ref bean="defaultViewProxy" />
-    </property>
-  </bean>
-
-
-  <!-- ***** CONTENT TYPES and RENDERING ***** -->
-
-  <bean id="viewTemplateResolver"
-    class="uk.org.ponder.rsf.templateresolver.BasicTemplateResolver">
-    <property name="templateExtensionInferrer"
-      ref="templateExtensionInferrer" />
-    <property name="baseURLProvider" ref="baseURLProvider" />
-    <property name="TPIAggregator" ref="TPIAggregator" />
-    <property name="resourceLoader" ref="resourceLoader"/>
-  </bean>
-
-  <bean id="contentTypeInfoMap"
-    class="uk.org.ponder.rsf.content.ContentTypeInfoRegistry"
-    factory-method="getContentTypeInfoMap" />
-
-  <!-- An example definition that will resolve every extension as ".html"
-    <bean id="templateExtensionInferrer"
-    class="uk.org.ponder.rsf.templateresolver.StaticTemplateExtensionInferrer">
-    <property name="extension" value="html" />
-    </bean>
-  -->
-
-  <bean id="templateExtensionInferrer"
-    class="uk.org.ponder.rsf.templateresolver.ContentTypeAwareTEI">
-    <property name="contentTypeInfo" ref="contentTypeInfoProxy" />
-  </bean>
-
-  <!--  RSF defaults to using the BasicHTMLRenderSystem for all requests. 
-    Override this bean with your own implementation to establish correspondance 
-    of content types with ViewParameters -->
-
-  <bean id="renderSystemMap" class="java.util.HashMap">
-    <constructor-arg>
-      <map>
-        <entry key="HTML" value-ref="BasicHTMLRenderSystem" />
-        <entry key="DEFAULT" value-ref="BasicHTMLRenderSystem" />
-      </map>
-    </constructor-arg>
-  </bean>
-
-  <!--  RSF defaults to HTML content type for all requests. Override this
-    bean with your own implementation to establish correspondance of content
-    types with ViewParameters -->
-
-  <bean id="contentTypeResolver"
-    class="uk.org.ponder.rsf.content.StaticContentTypeResolver">
-    <property name="contentType" value="HTML" />
-  </bean>
-
-  <bean id="templateResolverStrategy"
-    parent="CRITemplateResolverStrategy" />
-
-  <bean id="builtinResolverStrategy" parent="CRITemplateResolverStrategy">
-    <property name="templateResourceBase" value="classpath:uk/org/ponder/rsf/builtin/"/>
-    <property name="baseDirectory" value=""/>
-    <!-- NB CUP should never be accessed currently, since internal resources are not
-       mounted. -->
-  </bean>
-
-  <bean id="rootTemplateContributorParent"
-    class="uk.org.ponder.rsf.templateresolver.StaticTemplateResolverStrategy"
-    abstract="true">
-    <property name="contextURLProvider" ref="contextURLProvider" />
-    <property name="rootResolverPriority" value="2" />
-    <property name="baseDirectory" ref="defaultTemplatePath" />
-  </bean>
-
-  <!-- Default path, relative to the webapp base, to find template files.
-    Should end with a / and not begin with one. -->
-  <bean id="defaultTemplatePath" class="java.lang.String">
-    <constructor-arg value="content/templates/" />
-  </bean>
-
-  <bean id="CRITemplateResolverStrategy"
-    class="uk.org.ponder.rsf.templateresolver.CRITemplateResolverStrategy"
-    lazy-init="true" abstract="true">
-    <property name="baseDirectory" ref="defaultTemplatePath" />
-    <property name="consumerInfo" ref="consumerInfoProxy" />
-    <property name="contextURLProvider" ref="contextURLProvider" />
-  </bean>
-
-  <bean id="viewResolver"
-    class="uk.org.ponder.rsf.view.ConcreteViewResolver"
-    init-method="init">
-    <property name="views" ref="staticViews" />
-    <property name="autoComponentProducerManager"
-      ref="autoComponentProducerManager" />
-    <property name="viewResolvers">
-      <list>
-        <ref bean="XMLViewResolver" />
-      </list>
-    </property>
-    <property name="viewParametersReceiver" ref="viewParametersParser" />
-    <property name="navigationCaseReceiver" ref="navigationCasePooler" />
-    <property name="contentTypeReceiver" ref="contentTypeInfoFactory"/>
-  </bean>
-
-  <!-- Derive from this parent in order to enable automatic detection of
-    relative URLs -->
-  <bean id="relativeURLInferrerParent"
-    parent="templateParseInterceptorParent" abstract="true">
-    <property name="value">
-      <bean
-        class="uk.org.ponder.rsf.renderer.html.RelativeURLInferringTPI" />
-    </property>
-  </bean>
-
-  <!-- Automatically rewrite relative URLs in the template file -->
-  <bean id="relativeURLInferrer" parent="relativeURLInferrerParent" />
-
-  <!-- Automatically aggregate collected <head> matter from multi-template sets -->
-  <bean id="headCollectInferrer"
-    parent="templateParseInterceptorParent">
-    <property name="value">
-      <bean class="uk.org.ponder.rsf.renderer.html.HeadInferringTPI" />
-    </property>
-  </bean>
-
-  <!--  override this bean with a concrete bean derived from XmlViewResolverDef -->
-  <bean id="XMLViewResolver"
-    class="uk.org.ponder.rsf.view.NullViewResolver" />
-
-  <bean id="XMLViewResolverDef"
-    class="uk.org.ponder.rsf.view.XMLViewResolver" abstract="true">
-    <property name="XMLProvider" ref="XMLProvider" />
-    <property name="templateExpander" ref="templateExpander" />
-    <property name="viewParamsReceiver" ref="viewParametersParser" />
-  </bean>
-
-  <bean id="staticViews" class="java.util.ArrayList">
-    <constructor-arg>
-      <list></list>
-    </constructor-arg>
-  </bean>
-
-  <bean id="ultimateRenderers" class="java.util.ArrayList">
-    <constructor-arg>
-      <list></list>
-    </constructor-arg>
-  </bean>
-
-  <!-- ******** THE REQUEST CONTAINER AND ADDRESSIBILITY ******** -->
-
-  <bean id="frameworkRABeans" parent="requestAddressibleParent">
-    <property name="value" value="flowLite-flowIDHolder, destroyscope" />
-  </bean>
-
-  <bean id="frameworkCPBeans" parent="copyPreservingParent">
-    <property name="value" value="flowLite-flowIDHolder" />
-  </bean>
-
-  <bean id="messageSourceTLAB" parent="requestAddressibleParent"
-    class="uk.org.ponder.springutil.ByClassTLAB">
-    <property name="targetClass"
-      value="uk.org.ponder.errorutil.MessageLocator" />
-  </bean>
-
-  <!-- Backwards compatibility for old-fashioned users of RAB :P -->
-  <bean id="RABeanConformer" parent="requestAddressibleParent">
-    <property name="value" ref="requestAddressibleBeans" />
-  </bean>
-
-  <!-- Backwards compatibility for old-fashioned users of CPB -->
-  <bean id="CPBeanConformer" parent="copyPreservingParent">
-    <property name="value" ref="copyPreservingBeans" />
-  </bean>
-
-  <!-- An empty holder, since the framework's addressible beans are registered
-    via requestAddressibleParent -->
-  <bean id="requestAddressibleBeans"
-    class="uk.org.ponder.stringutil.StringList">
-  </bean>
-
-
-  <!--  ***** DECORATORS **** -->
-
-
-  <bean id="HTMLColourDecoratorRenderer"
-    class="uk.org.ponder.rsf.renderer.html.decorators.HTMLColourDecoratorRenderer" />
-
-  <bean id="HTMLStyleDecoratorRenderer"
-    class="uk.org.ponder.rsf.renderer.html.decorators.HTMLStyleDecoratorRenderer" />
-
-  <bean id="HTMLTooltipDecoratorRenderer"
-    class="uk.org.ponder.rsf.renderer.html.decorators.HTMLTooltipDecoratorRenderer" />
-
-  <bean id="FreeAttributeDecoratorRenderer"
-    class="uk.org.ponder.rsf.renderer.decorator.FreeAttributeDecoratorRenderer" />
-
-  <bean id="HTMLLabelTargetDecoratorRenderer"
-    class="uk.org.ponder.rsf.renderer.html.decorators.HTMLLabelTargetDecoratorRenderer" />
-
-  <bean id="CSSDecoratorRenderer"
-    class="uk.org.ponder.rsf.renderer.html.decorators.CSSDecoratorRenderer" />
-
-  <!--  ***** STATE MANAGEMENT and TOKENS ***** -->
-
-  <bean id="URLPreservingBeanSpecs"
-    class="uk.org.ponder.springutil.StringListFactory">
-    <property name="strings">
-      <value>
-        flowstateid|flowLite-flowIDHolder.requestFlowStateID
-      </value>
-    </property>
-  </bean>
-
-  <!-- Old-fashioned scheme for specifying beans which should be preserved
-    via reference copying -->
-  <bean id="copyPreservingBeans"
-    class="uk.org.ponder.stringutil.StringList" />
-
-  <bean id="scopedBeanCoordinator"
-    class="uk.org.ponder.rsf.state.scope.ScopedBeanCoordinator">
-    <property name="beanModelAlterer" ref="DARApplier" />
-    <property name="destroyedScopeMap" ref="destroyedScopeMapProxy" />
-    <property name="requestTypeProxy" ref="requestTypeProxy" />
-  </bean>
-
-  <bean id="scopePreservationStrategies"
-    class="uk.org.ponder.springutil.ListFactory">
-    <property name="list">
-      <list>
-        <ref bean="scopedBeanCoordinator" />
-      </list>
-    </property>
-  </bean>
-
-  <bean id="inMemoryLockGetter"
-    class="uk.org.ponder.rsf.state.InMemoryLockGetter">
-  </bean>
-
-  <bean id="flowTokenStateHolder"
-    class="uk.org.ponder.rsf.servlet.InSessionTSH">
-    <property name="httpRequest" ref="httpServletRequestProxy" />
-    <property name="expirySeconds">
-      <!-- deliberately short time for testing - all flows will expire after 
-        30 seconds of disuse -->
-      <value>30</value>
-    </property>
-  </bean>
-
-  <bean id="bandgapStateHolder"
-    class="uk.org.ponder.rsf.servlet.InSessionTSH">
-    <property name="httpRequest" ref="httpServletRequestProxy" />
-    <property name="expirySeconds">
-      <!-- deliberately short time for testing - all errors will expire after 
-        10 seconds of disuse -->
-      <value>10</value>
-    </property>
-  </bean>
-
-  <bean id="flowTokenStateHolder-memory"
-    class="uk.org.ponder.rsf.state.InMemoryTSH">
-    <property name="expirySeconds">
-      <!-- deliberately short time for testing - all flows will expire after 
-        30 seconds of disuse -->
-      <value>30</value>
-    </property>
-  </bean>
-
-  <!-- The state holder used for "ephemeral" state designed to only persist
-    through about 1 client request - error messages, end flow messages,
-    data in transit to client storage -->
-  <bean id="bandgapStateHolder-memory"
-    class="uk.org.ponder.rsf.state.InMemoryTSH">
-    <property name="expirySeconds">
-      <!-- deliberately short time for testing - all errors will expire after 
-        10 seconds of disuse -->
-      <value>10</value>
-    </property>
-  </bean>
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="WEB-INF/messages/messages" />
+		<property name="cacheSeconds" value="10" />
+	</bean>
+
+	<bean id="messageLocator"
+		class="uk.org.ponder.springutil.SpringMessageLocator">
+		<property name="messageSource" ref="messageSource" />
+	</bean>
+
+	<bean id="ignoreFossilizedValues"
+		class="uk.org.ponder.springutil.BooleanFactory">
+		<property name="value" value="false" />
+	</bean>
+
+	<bean id="fatalErrorHandler"
+		class="uk.org.ponder.rsf.processor.DefaultFatalErrorHandler" />
+
+	<bean id="multipartResolver"
+		class="uk.org.ponder.springutil.BlankMultipartResolver">
+	</bean>
+
+	<bean id="autoComponentProducerManager"
+		class="uk.org.ponder.rsf.view.AutoComponentProducerManager"
+		init-method="init">
+		<property name="reflectiveCache" ref="reflectiveCache" />
+		<property name="RSACBeanLocator" ref="RSACBeanLocator" />
+	</bean>
+
+	<bean id="consumerInfoProxy" parent="RSACBridgePeaProxy">
+		<property name="targetBeanName">
+			<idref bean="consumerInfo" />
+		</property>
+	</bean>
+
+	<!-- **** VIEWPARAMETERS and URL HANDLING **** -->
+
+	<bean id="viewParamsExemplar"
+		class="uk.org.ponder.rsf.viewstate.SimpleViewParameters">
+	</bean>
+
+	<bean id="viewIDInferrer"
+		class="uk.org.ponder.rsf.viewstate.DefaultViewIDInferrer" />
+
+	<bean id="viewParametersParser"
+		class="uk.org.ponder.rsf.viewstate.BasicViewParametersParser"
+		init-method="init">
+		<property name="viewParamsMapper" ref="viewParamsMapper" />
+		<property name="deepBeanCloner" ref="deepBeanCloner" />
+		<property name="reflectiveCache" ref="reflectiveCache" />
+		<property name="viewIDInferrer" ref="viewIDInferrer" />
+		<property name="defaultExemplar" ref="viewParamsExemplar" />
+	</bean>
+
+	<bean name="baseURLProvider" parent="autoBaseURLProviderProxy" />
+
+	<bean name="contextURLProvider"
+		class="uk.org.ponder.rsf.viewstate.CRIContextURLProvider">
+		<property name="consumerInfo" ref="consumerInfoProxy" />
+		<property name="baseURLProvider" ref="baseURLProvider" />
+	</bean>
+
+	<bean name="internalURLRewriter"
+		class="uk.org.ponder.rsf.viewstate.NullInternalURLRewriter" />
+
+	<!-- The two properties of sbup
+		are only relevant to users of the direct UI, where the URL that it appears
+		at is somehow "unexpected". In order to use these values, it is necessary
+		to copy these two definitions into the application's application context
+		file, together with definitions for the referenced URLs. Given these URLs
+		will generally represent configuration relevant to the end user, these should
+		be placed in yet a 3rd application context file, suggestion: a file called
+		userConfig.xml which breaks out all such configurable dependencies.
+		These will be overridden for consumers of the remote web service.  -->
+	<bean id="directUIBaseURL" class="java.lang.String">
+		<constructor-arg>
+			<value>
+				http://www.unexpected.hosting.environment/servletcontext/faces/
+			</value>
+		</constructor-arg>
+	</bean>
+	<bean id="directUIResourceBaseURL" class="java.lang.String">
+		<constructor-arg>
+			<value>
+				http://www.unexpected.hosting.environment/servletcontext/
+			</value>
+		</constructor-arg>
+	</bean>
+
+	<!-- The default viewstatehandler uses the baseURLProvider (defaulted to 
+		autoBaseURLProvider in blank-config to infer URLs. Clients may override it 
+		by referring to another of their choosing.  -->
+	<bean id="viewStateHandler"
+		class="uk.org.ponder.rsf.viewstate.RSFServletViewStateHandler">
+		<property name="baseURLProvider" ref="baseURLProvider" />
+		<property name="contextURLProvider" ref="contextURLProvider" />
+		<property name="consumerInfo" ref="consumerInfoProxy" />
+		<property name="viewParamsMapper" ref="viewParamsMapper" />
+		<property name="ultimateRenderers" ref="ultimateRenderers" />
+	</bean>
+
+
+	<!-- ***** NAVIGATION and ACTION RESULTS ***** -->
+
+	<bean id="siteMapDef"
+		class="uk.org.ponder.rsf.viewstate.XMLSiteMapLoader"
+		parent="XMLFactoryBean" abstract="true">
+		<property name="location" value="/WEB-INF/sitemap.xml" />
+		<property name="viewParametersReceiver"
+			ref="viewParametersParser" />
+	</bean>
+
+	<bean id="JSFNavigationMap" parent="XMLFactoryBean"
+		lazy-init="true">
+		<!-- 
+			<property name="location" value="/WEB-INF/navigation-map.xml"/>
+		-->
+		<property name="objectType"
+			value="uk.org.ponder.rsf.flow.jsfnav.NavigationMap" />
+	</bean>
+
+	<!-- This standard bean name is given a default implementation to always
+		defer to the default ARI. However this will be overridden should the actual
+		action invokation ALREADY return an ARIResult, as with a FlowActionProxyBean. -->
+	<bean name="ARIResolver"
+		class="uk.org.ponder.rsf.flow.NullARIResolver">
+		<property name="actionResultInterpreter">
+			<ref bean="actionResultInterpreter" />
+		</property>
+	</bean>
+
+	<bean id="JSFNavigationARI"
+		class="uk.org.ponder.rsf.flow.jsfnav.JSFNavActionResultInterpreter">
+		<property name="navigationMap" ref="JSFNavigationMap" />
+		<property name="navigationCasePooler"
+			ref="navigationCasePooler" />
+	</bean>
+
+	<!-- The default ActionResultInterpreter which directs to the incoming view-->
+	<bean id="nullActionResultInterpreter"
+		class="uk.org.ponder.rsf.flow.NullActionResultInterpreter">
+	</bean>
+
+	<bean name="actionResultInterpreter"
+		class="uk.org.ponder.rsf.flow.DelegatingARI">
+		<property name="ARIList">
+			<list>
+				<ref bean="JSFNavigationARI" />
+				<ref bean="nullActionResultInterpreter" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="actionErrorStrategyManager"
+		class="uk.org.ponder.rsf.flow.errors.ActionErrorStrategyManager">
+		<property name="mergeStrategies">
+			<ref bean="XMLActionErrorStrategies" />
+		</property>
+	</bean>
+
+	<bean id="XMLActionErrorStrategyDef" parent="XMLFactoryBean"
+		abstract="true">
+		<property name="objectType">
+			<value>
+				uk.org.ponder.rsf.flow.errors.ActionErrorStrategyManager
+			</value>
+		</property>
+	</bean>
+
+	<bean id="XMLActionErrorStrategies"
+		parent="XMLActionErrorStrategyDef" />
+
+	<bean id="defaultViewProxy" parent="RSACStringBridge">
+		<property name="targetBeanName">
+			<idref bean="defaultView" />
+		</property>
+	</bean>
+
+	<bean id="viewExceptionStrategy"
+		class="uk.org.ponder.rsf.flow.errors.SimpleViewExceptionStrategy">
+		<property name="viewParametersParser">
+			<ref bean="viewParametersParser" />
+		</property>
+		<property name="defaultView">
+			<ref bean="defaultViewProxy" />
+		</property>
+	</bean>
+
+
+	<!-- ***** CONTENT TYPES and RENDERING ***** -->
+
+	<bean id="viewTemplateResolver"
+		class="uk.org.ponder.rsf.templateresolver.BasicTemplateResolver">
+		<property name="templateExtensionInferrer"
+			ref="templateExtensionInferrer" />
+		<property name="baseURLProvider" ref="baseURLProvider" />
+		<property name="TPIAggregator" ref="TPIAggregator" />
+		<property name="resourceLoader" ref="resourceLoader" />
+	</bean>
+
+	<bean id="contentTypeInfoMap"
+		class="uk.org.ponder.rsf.content.ContentTypeInfoRegistry"
+		factory-method="getContentTypeInfoMap" />
+
+	<!-- An example definition that will resolve every extension as ".html"
+		<bean id="templateExtensionInferrer"
+		class="uk.org.ponder.rsf.templateresolver.StaticTemplateExtensionInferrer">
+		<property name="extension" value="html" />
+		</bean>
+	-->
+
+	<bean id="templateExtensionInferrer"
+		class="uk.org.ponder.rsf.templateresolver.ContentTypeAwareTEI">
+		<property name="contentTypeInfo" ref="contentTypeInfoProxy" />
+	</bean>
+
+	<!--  RSF defaults to using the BasicHTMLRenderSystem for all requests. 
+		Override this bean with your own implementation to establish correspondance 
+		of content types with ViewParameters -->
+
+	<bean id="renderSystemMap" class="java.util.HashMap">
+		<constructor-arg>
+			<map>
+				<entry key="HTML" value-ref="BasicHTMLRenderSystem" />
+				<entry key="DEFAULT" value-ref="BasicHTMLRenderSystem" />
+			</map>
+		</constructor-arg>
+	</bean>
+
+	<!--  RSF defaults to HTML content type for all requests. Override this
+		bean with your own implementation to establish correspondance of content
+		types with ViewParameters -->
+
+	<bean id="contentTypeResolver"
+		class="uk.org.ponder.rsf.content.StaticContentTypeResolver">
+		<property name="contentType" value="HTML" />
+	</bean>
+
+	<bean id="templateResolverStrategy"
+		parent="CRITemplateResolverStrategy" />
+
+	<bean id="builtinResolverStrategy"
+		parent="CRITemplateResolverStrategy">
+		<property name="templateResourceBase"
+			value="classpath:uk/org/ponder/rsf/builtin/templates/" />
+		<!-- NB CUP should never be accessed currently, since internal resources are not
+			mounted. -->
+	</bean>
+
+	<bean id="messageContributor" parent="templateContributorParent">
+		<property name="templateResourceBase"
+			value="classpath:uk/org/ponder/rsf/builtin/components/" />
+		<property name="templateNames" value="Messages.html" />
+	</bean>
+
+	<bean id="rootTemplateContributorParent"
+		class="uk.org.ponder.rsf.templateresolver.StaticTemplateResolverStrategy"
+		abstract="true">
+		<property name="contextURLProvider" ref="contextURLProvider" />
+		<property name="rootResolverPriority" value="2" />
+		<property name="baseDirectory" ref="defaultTemplatePath" />
+	</bean>
+
+	<!-- Default path, relative to the webapp base, to find template files.
+		Should end with a / and not begin with one. -->
+	<bean id="defaultTemplatePath" class="java.lang.String">
+		<constructor-arg value="content/templates/" />
+	</bean>
+
+	<bean id="CRITemplateResolverStrategy"
+		class="uk.org.ponder.rsf.templateresolver.CRITemplateResolverStrategy"
+		lazy-init="true" abstract="true">
+		<property name="baseDirectory" ref="defaultTemplatePath" />
+		<property name="consumerInfo" ref="consumerInfoProxy" />
+		<property name="contextURLProvider" ref="contextURLProvider" />
+	</bean>
+
+	<bean id="viewResolver"
+		class="uk.org.ponder.rsf.view.ConcreteViewResolver"
+		init-method="init">
+		<property name="views" ref="staticViews" />
+		<property name="autoComponentProducerManager"
+			ref="autoComponentProducerManager" />
+		<property name="viewResolvers">
+			<list>
+				<ref bean="XMLViewResolver" />
+			</list>
+		</property>
+		<property name="viewParametersReceiver"
+			ref="viewParametersParser" />
+		<property name="navigationCaseReceiver"
+			ref="navigationCasePooler" />
+		<property name="contentTypeReceiver"
+			ref="contentTypeInfoFactory" />
+	</bean>
+
+	<!-- Derive from this parent in order to enable automatic detection of
+		relative URLs -->
+	<bean id="relativeURLInferrerParent"
+		parent="templateParseInterceptorParent" abstract="true">
+		<property name="value">
+			<bean
+				class="uk.org.ponder.rsf.renderer.html.RelativeURLInferringTPI" />
+		</property>
+	</bean>
+
+	<!-- Automatically rewrite relative URLs in the template file -->
+	<bean id="relativeURLInferrer" parent="relativeURLInferrerParent" />
+
+	<!-- Automatically aggregate collected <head> matter from multi-template sets -->
+	<bean id="headCollectInferrer"
+		parent="templateParseInterceptorParent">
+		<property name="value">
+			<bean
+				class="uk.org.ponder.rsf.renderer.html.HeadInferringTPI" />
+		</property>
+	</bean>
+
+	<!--  override this bean with a concrete bean derived from XmlViewResolverDef -->
+	<bean id="XMLViewResolver"
+		class="uk.org.ponder.rsf.view.NullViewResolver" />
+
+	<bean id="XMLViewResolverDef"
+		class="uk.org.ponder.rsf.view.XMLViewResolver" abstract="true">
+		<property name="XMLProvider" ref="XMLProvider" />
+		<property name="templateExpander" ref="templateExpander" />
+		<property name="viewParamsReceiver" ref="viewParametersParser" />
+	</bean>
+
+	<bean id="staticViews" class="java.util.ArrayList">
+		<constructor-arg>
+			<list></list>
+		</constructor-arg>
+	</bean>
+
+	<bean id="ultimateRenderers" class="java.util.ArrayList">
+		<constructor-arg>
+			<list></list>
+		</constructor-arg>
+	</bean>
+
+	<!-- ******** THE REQUEST CONTAINER AND ADDRESSIBILITY ******** -->
+
+	<bean id="frameworkRABeans" parent="requestAddressibleParent">
+		<property name="value"
+			value="flowLite-flowIDHolder, destroyscope" />
+	</bean>
+
+	<bean id="frameworkCPBeans" parent="copyPreservingParent">
+		<property name="value" value="flowLite-flowIDHolder" />
+	</bean>
+
+	<bean id="messageSourceTLAB" parent="requestAddressibleParent"
+		class="uk.org.ponder.springutil.ByClassTLAB">
+		<property name="targetClass"
+			value="uk.org.ponder.errorutil.MessageLocator" />
+	</bean>
+
+	<!-- Backwards compatibility for old-fashioned users of RAB :P -->
+	<bean id="RABeanConformer" parent="requestAddressibleParent">
+		<property name="value" ref="requestAddressibleBeans" />
+	</bean>
+
+	<!-- Backwards compatibility for old-fashioned users of CPB -->
+	<bean id="CPBeanConformer" parent="copyPreservingParent">
+		<property name="value" ref="copyPreservingBeans" />
+	</bean>
+
+	<!-- An empty holder, since the framework's addressible beans are registered
+		via requestAddressibleParent -->
+	<bean id="requestAddressibleBeans"
+		class="uk.org.ponder.stringutil.StringList">
+	</bean>
+
+
+	<!--  ***** DECORATORS **** -->
+
+
+	<bean id="HTMLColourDecoratorRenderer"
+		class="uk.org.ponder.rsf.renderer.html.decorators.HTMLColourDecoratorRenderer" />
+
+	<bean id="HTMLStyleDecoratorRenderer"
+		class="uk.org.ponder.rsf.renderer.html.decorators.HTMLStyleDecoratorRenderer" />
+
+	<bean id="HTMLTooltipDecoratorRenderer"
+		class="uk.org.ponder.rsf.renderer.html.decorators.HTMLTooltipDecoratorRenderer" />
+
+	<bean id="FreeAttributeDecoratorRenderer"
+		class="uk.org.ponder.rsf.renderer.decorator.FreeAttributeDecoratorRenderer" />
+
+	<bean id="HTMLLabelTargetDecoratorRenderer"
+		class="uk.org.ponder.rsf.renderer.html.decorators.HTMLLabelTargetDecoratorRenderer" />
+
+	<bean id="CSSDecoratorRenderer"
+		class="uk.org.ponder.rsf.renderer.html.decorators.CSSDecoratorRenderer" />
+
+	<!--  ***** STATE MANAGEMENT and TOKENS ***** -->
+
+	<bean id="URLPreservingBeanSpecs"
+		class="uk.org.ponder.springutil.StringListFactory">
+		<property name="strings">
+			<value>
+				flowstateid|flowLite-flowIDHolder.requestFlowStateID
+			</value>
+		</property>
+	</bean>
+
+	<!-- Old-fashioned scheme for specifying beans which should be preserved
+		via reference copying -->
+	<bean id="copyPreservingBeans"
+		class="uk.org.ponder.stringutil.StringList" />
+
+	<bean id="scopedBeanCoordinator"
+		class="uk.org.ponder.rsf.state.scope.ScopedBeanCoordinator">
+		<property name="beanModelAlterer" ref="DARApplier" />
+		<property name="destroyedScopeMap" ref="destroyedScopeMapProxy" />
+		<property name="requestTypeProxy" ref="requestTypeProxy" />
+	</bean>
+
+	<bean id="scopePreservationStrategies"
+		class="uk.org.ponder.springutil.ListFactory">
+		<property name="list">
+			<list>
+				<ref bean="scopedBeanCoordinator" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="inMemoryLockGetter"
+		class="uk.org.ponder.rsf.state.InMemoryLockGetter">
+	</bean>
+
+	<bean id="flowTokenStateHolder"
+		class="uk.org.ponder.rsf.servlet.InSessionTSH">
+		<property name="httpRequest" ref="httpServletRequestProxy" />
+		<property name="expirySeconds">
+			<!-- deliberately short time for testing - all flows will expire after 
+				30 seconds of disuse -->
+			<value>30</value>
+		</property>
+	</bean>
+
+	<bean id="bandgapStateHolder"
+		class="uk.org.ponder.rsf.servlet.InSessionTSH">
+		<property name="httpRequest" ref="httpServletRequestProxy" />
+		<property name="expirySeconds">
+			<!-- deliberately short time for testing - all errors will expire after 
+				10 seconds of disuse -->
+			<value>10</value>
+		</property>
+	</bean>
+
+	<bean id="flowTokenStateHolder-memory"
+		class="uk.org.ponder.rsf.state.InMemoryTSH">
+		<property name="expirySeconds">
+			<!-- deliberately short time for testing - all flows will expire after 
+				30 seconds of disuse -->
+			<value>30</value>
+		</property>
+	</bean>
+
+	<!-- The state holder used for "ephemeral" state designed to only persist
+		through about 1 client request - error messages, end flow messages,
+		data in transit to client storage -->
+	<bean id="bandgapStateHolder-memory"
+		class="uk.org.ponder.rsf.state.InMemoryTSH">
+		<property name="expirySeconds">
+			<!-- deliberately short time for testing - all errors will expire after 
+				10 seconds of disuse -->
+			<value>10</value>
+		</property>
+	</bean>
 
 </beans>
