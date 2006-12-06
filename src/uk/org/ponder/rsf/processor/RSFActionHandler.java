@@ -221,9 +221,9 @@ public class RSFActionHandler implements ActionHandler, ErrorHandler {
     }
     finally {
       String errortoken = errorstatemanager.requestComplete();
-      
+
       if (ariresult.resultingview instanceof ViewParameters) {
-        ((ViewParameters)ariresult.resultingview).errortoken = errortoken;
+        ((ViewParameters) ariresult.resultingview).errortoken = errortoken;
       }
     }
     return ariresult.resultingview;

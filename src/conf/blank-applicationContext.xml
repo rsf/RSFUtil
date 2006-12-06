@@ -252,16 +252,20 @@
 
 	<bean id="builtinResolverStrategy"
 		parent="CRITemplateResolverStrategy">
+		<property name="baseDirectory" value=""/>
 		<property name="templateResourceBase"
 			value="classpath:uk/org/ponder/rsf/builtin/templates/" />
 		<!-- NB CUP should never be accessed currently, since internal resources are not
 			mounted. -->
 	</bean>
 
-	<bean id="messageContributor" parent="templateContributorParent">
+	<bean id="messageContributor" 
+	  class="uk.org.ponder.rsf.templateresolver.StaticTemplateResolverStrategy">
 		<property name="templateResourceBase"
 			value="classpath:uk/org/ponder/rsf/builtin/components/" />
-		<property name="templateNames" value="Messages.html" />
+		<property name="templateNames" value="Messages" />
+		<!--  Incorrect, but will never be used -->
+		<property name="contextURLProvider" ref="contextURLProvider" />
 	</bean>
 
 	<bean id="rootTemplateContributorParent"

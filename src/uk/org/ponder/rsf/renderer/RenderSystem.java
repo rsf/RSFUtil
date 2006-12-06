@@ -35,6 +35,7 @@ public interface RenderSystem extends RenderSystemDecoder {
    * @param IDstrategy One of the String constants from
    *  {@link uk.org.ponder.rsf.content.ContentTypeInfo} determining the strategy
    *  to be used for assigning ID attributes.
+   * @return The render index that the renderer has moved along to.
    */
   public int renderComponent(UIComponent torender, View view, XMLLump lump, 
       PrintOutputStream pos, String IDstrategy, XMLLumpMMap collected);

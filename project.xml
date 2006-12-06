@@ -147,6 +147,9 @@
           <include>**/*.xml</include>
         </includes>
         <includes>
+          <include>**/*.html</include>
+        </includes>
+        <includes>
           <include>**/*.dtd</include>
         </includes>
         <filtering>false</filtering>

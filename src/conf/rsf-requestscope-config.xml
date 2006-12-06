@@ -16,7 +16,7 @@
 		init-method="init" abstract="true">
 		<property name="beanModelAlterer" ref="DARApplier" />
 		<property name="staticLeafParser" ref="staticLeafParser" />
-		<property name="seed" ref="requestBeanLocator" />
+		<property name="seed" ref="ELTargetBeanLocator" />
 	</bean>
 
 	<bean id="RSACLazarusList"
