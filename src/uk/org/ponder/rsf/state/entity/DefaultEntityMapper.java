@@ -8,6 +8,7 @@ import java.io.Serializable;
 import uk.org.ponder.conversion.StaticLeafParser;
 import uk.org.ponder.reflect.ReflectiveCache;
 import uk.org.ponder.saxalizer.SAXalizerMappingContext;
+import uk.org.ponder.util.ObjectFactory;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 public class DefaultEntityMapper implements EntityMapper {
@@ -15,6 +16,7 @@ public class DefaultEntityMapper implements EntityMapper {
   private ReflectiveCache reflectivecache;
   private StaticLeafParser parser;
   private Class entityclazz;
+  private ObjectFactory objectFactory;
   
   public void setEntityClass(Class entityclazz) {
     this.entityclazz = entityclazz;
@@ -24,12 +26,21 @@ public class DefaultEntityMapper implements EntityMapper {
     this.idclazz = idclazz;
   }
   
+  public void setObjectFactory(ObjectFactory objectFactory) {
+    this.objectFactory = objectFactory;
+  }
+  
   public void setMappingContext(SAXalizerMappingContext mappingcontext) {
     this.reflectivecache = mappingcontext.getReflectiveCache();
     this.parser = mappingcontext.saxleafparser;
   }
   public Object instantiate() {
-    return reflectivecache.construct(entityclazz);
+    if (objectFactory == null) {
+      return reflectivecache.construct(entityclazz);
+    }
+    else {
+      return objectFactory.getObject();
+    }
   }
 
   public Object parseID(String IDString) {

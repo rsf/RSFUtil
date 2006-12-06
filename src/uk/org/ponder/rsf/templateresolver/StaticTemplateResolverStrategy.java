@@ -22,7 +22,7 @@ public class StaticTemplateResolverStrategy implements RootAwareTRS,
   private String names;
   private ContextURLProvider cup;
   private String externalURLbase;
-  private String basedir;
+  private String basedir = "";
   private boolean ismultiple = true;
   private boolean expected;
 

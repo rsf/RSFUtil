@@ -130,9 +130,13 @@ public class BeanGuardProcessor implements ApplicationContextAware {
                       .setBeanValue(guardproperty, guard, guarded, errors);
                 }
                 else if (guard instanceof Validator) {
+                  if (guarded == null) {
+                    throw new IllegalArgumentException(
+                        "Error: Spring Validator may not be used to validate a null object");
+                  }
                   Validator guardv = (Validator) guard;
-                  // We don't use target, and it may be null.
-                  springerrors = new BindException(guardedpath, guardedpath);
+                  // NB, a Spring validator may not be applied to a null object!
+                  springerrors = new BindException(guarded, guardedpath);
                   guardv.validate(guarded, springerrors);
                   SpringErrorConverter.appendErrors(errors, springerrors);
                 }

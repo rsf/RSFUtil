@@ -163,8 +163,10 @@ public class ErrorStateManager {
         errorstate.rsvc = requestrsvc;
       }
       errorstate.messages = messages;
-      Logger.log.info(errorstate.rsvc.entries.size()
+      if (errorstate.rsvc != null) {
+        Logger.log.info(errorstate.rsvc.entries.size()
           + " RSVC values stored under error token " + errorstate.tokenID);
+      }
       errortsholder.putTokenState(errorstate.tokenID, errorstate);
       return errorstate.tokenID;
     }

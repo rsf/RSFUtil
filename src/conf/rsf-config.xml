@@ -317,7 +317,7 @@
   </bean>
 
 
-  <!-- A basic "internal" template contributor -->
+  <!-- A basic "internal" (to this webapp) template contributor -->
   <bean id="templateContributorParent"
     class="uk.org.ponder.rsf.templateresolver.StaticTemplateResolverStrategy"
     abstract="true">
