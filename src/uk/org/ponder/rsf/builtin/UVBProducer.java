@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 import uk.org.ponder.conversion.StaticLeafParser;
-import uk.org.ponder.errorutil.MessageLocator;
-import uk.org.ponder.errorutil.TargettedMessage;
-import uk.org.ponder.errorutil.TargettedMessageList;
+import uk.org.ponder.messageutil.MessageLocator;
+import uk.org.ponder.messageutil.TargettedMessage;
+import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.decorators.DecoratorList;

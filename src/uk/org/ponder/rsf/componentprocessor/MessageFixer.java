@@ -3,7 +3,7 @@
  */
 package uk.org.ponder.rsf.componentprocessor;
 
-import uk.org.ponder.errorutil.MessageLocator;
+import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIMessage;
 

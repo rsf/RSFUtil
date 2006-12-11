@@ -3,7 +3,7 @@
  */
 package uk.org.ponder.rsf.processor;
 
-import uk.org.ponder.errorutil.TargettedMessageList;
+import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.componentprocessor.ViewProcessor;
 import uk.org.ponder.rsf.preservation.StatePreservationManager;
 import uk.org.ponder.rsf.renderer.ViewRender;

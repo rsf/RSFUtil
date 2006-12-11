@@ -195,6 +195,10 @@
 			ref="targettedMessageList" />
 	</bean>
 
+  <!-- A list of the targetted messages accumulated during this request cycle. -->
+  <bean name="targettedMessageList" factory-bean="errorStateManager"
+    factory-method="getTargettedMessageList"/>
+
 	<!--  requires input of requestRSVC in order to fix up errors at the
 		end of a cycle -->
 	<bean id="errorStateManager"

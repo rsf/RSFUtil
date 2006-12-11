@@ -3,8 +3,8 @@
  */
 package uk.org.ponder.rsf.renderer;
 
-import uk.org.ponder.errorutil.MessageLocator;
-import uk.org.ponder.errorutil.TargettedMessageList;
+import uk.org.ponder.messageutil.MessageLocator;
+import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.stringutil.StringList;

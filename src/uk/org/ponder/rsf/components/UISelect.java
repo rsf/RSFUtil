@@ -17,7 +17,6 @@ import uk.org.ponder.stringutil.StringSet;
  * not be empty in this case) and <code>idresolver</code>. If idresolver is
  * empty, the list is assumed to be a list of IDs already.
  * 
- * @return
  */
 
 public class UISelect extends UIComponent implements FixableComponent {

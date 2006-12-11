@@ -3,10 +3,10 @@
  */
 package uk.org.ponder.rsf.state;
 
-import uk.org.ponder.errorutil.TargettedMessage;
-import uk.org.ponder.errorutil.TargettedMessageList;
 import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.hashutil.EighteenIDGenerator;
+import uk.org.ponder.messageutil.TargettedMessage;
+import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.request.RequestSubmittedValueCache;
 import uk.org.ponder.rsf.request.SubmittedValueEntry;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
