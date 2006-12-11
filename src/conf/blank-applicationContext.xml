@@ -39,9 +39,7 @@
 	</bean>
 
 	<bean id="consumerInfoProxy" parent="RSACBridgePeaProxy">
-		<property name="targetBeanName">
-			<idref bean="consumerInfo" />
-		</property>
+		<property name="targetBeanName" value="consumerInfo" />
 	</bean>
 
 	<!-- **** VIEWPARAMETERS and URL HANDLING **** -->
@@ -182,9 +180,7 @@
 		parent="XMLActionErrorStrategyDef" />
 
 	<bean id="defaultViewProxy" parent="RSACStringBridge">
-		<property name="targetBeanName">
-			<idref bean="defaultView" />
-		</property>
+		<property name="targetBeanName" value="defaultView" />
 	</bean>
 
 	<bean id="viewExceptionStrategy"
@@ -264,6 +260,7 @@
 		<property name="templateResourceBase"
 			value="classpath:uk/org/ponder/rsf/builtin/components/" />
 		<property name="templateNames" value="Messages" />
+		<property name="rootResolverPriority" value="0"/>
 		<!--  Incorrect, but will never be used -->
 		<property name="contextURLProvider" ref="contextURLProvider" />
 	</bean>
@@ -358,7 +355,7 @@
 
 	<bean id="frameworkRABeans" parent="requestAddressibleParent">
 		<property name="value"
-			value="flowLite-flowIDHolder, destroyscope" />
+			value="flowLite-flowIDHolder, destroyscope, fieldGetter" />
 	</bean>
 
 	<bean id="frameworkCPBeans" parent="copyPreservingParent">
@@ -368,7 +365,7 @@
 	<bean id="messageSourceTLAB" parent="requestAddressibleParent"
 		class="uk.org.ponder.springutil.ByClassTLAB">
 		<property name="targetClass"
-			value="uk.org.ponder.errorutil.MessageLocator" />
+			value="uk.org.ponder.messageutil.MessageLocator" />
 	</bean>
 
 	<!-- Backwards compatibility for old-fashioned users of RAB :P -->

@@ -5,8 +5,8 @@ package uk.org.ponder.rsf.renderer;
 
 import java.util.HashMap;
 
-import uk.org.ponder.errorutil.TargettedMessage;
-import uk.org.ponder.errorutil.TargettedMessageList;
+import uk.org.ponder.messageutil.TargettedMessage;
+import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.template.XMLLump;
 
 public class MessageTargetMap {

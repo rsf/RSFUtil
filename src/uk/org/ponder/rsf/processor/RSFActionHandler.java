@@ -5,8 +5,8 @@ package uk.org.ponder.rsf.processor;
 
 import java.util.Map;
 
-import uk.org.ponder.errorutil.TargettedMessage;
-import uk.org.ponder.errorutil.TargettedMessageList;
+import uk.org.ponder.messageutil.TargettedMessage;
+import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.flow.ARIResolver;
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterpreter;

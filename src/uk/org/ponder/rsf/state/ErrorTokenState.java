@@ -5,7 +5,7 @@ package uk.org.ponder.rsf.state;
 
 import java.io.Serializable;
 
-import uk.org.ponder.errorutil.TargettedMessageList;
+import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.request.RequestSubmittedValueCache;
 
 public class ErrorTokenState implements Serializable {

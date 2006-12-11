@@ -3,7 +3,7 @@
  */
 package uk.org.ponder.rsf.flow.errors;
 
-import uk.org.ponder.errorutil.TargettedMessage;
+import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
 

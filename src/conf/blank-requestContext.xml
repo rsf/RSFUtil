@@ -22,10 +22,6 @@
     class="uk.org.ponder.webapputil.ConsumerInfo">
   </bean>
 
-  <!-- A list of the targetted messages accumulated during this request cycle. -->
-  <bean name="targettedMessageList" factory-bean="errorStateManager"
-    factory-method="getTargettedMessageList"/>
-
   <bean id="redirectOnLevel1Error"
     class="uk.org.ponder.springutil.BooleanFactory">
     <property name="value" value="true" />

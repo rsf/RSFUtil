@@ -3,7 +3,7 @@
  */
 package uk.org.ponder.rsf.flow.errors;
 
-import uk.org.ponder.errorutil.TargettedMessage;
+import uk.org.ponder.messageutil.TargettedMessage;
 
 /** Called after each application invocation to determine whether any error
  * strategy will be followed. The implementor may choose to swallow or propagate

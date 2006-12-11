@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.org.ponder.errorutil.CoreMessages;
-import uk.org.ponder.errorutil.TargettedMessage;
 import uk.org.ponder.errorutil.ThreadErrorState;
+import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 /**

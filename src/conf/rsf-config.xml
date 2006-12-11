@@ -146,7 +146,12 @@
     </property>
   </bean>
 
-  <!-- Broken out as a separate bean to avoid cycle with RBL -->
+	<bean id="targettedMessageListProxy" parent="RSACBridgeProxy">
+		<property name="targetBeanName" value="targettedMessageList"/>
+	</bean>
+
+  <!-- Broken out as a separate bean to avoid cycle with RBL 
+  (to RSACErrorBridgeBracketer) -->
   <bean id="ErrorBBTarget" class="uk.org.ponder.rsac.RSACErrorBridge"
     lazy-init="true">
     <property name="RSACBeanLocator" ref="RSACBeanLocator" />
@@ -158,7 +163,7 @@
     <property name="targetBeanName" value="rootHandlerBean" />
     <property name="wrappingBean" value="ErrorBBTarget" />
   </bean>
-
+  
   <bean id="RSACLazarusListProxy" parent="RSACBridgeProxy">
     <property name="targetBeanName" value="RSACLazarusList" />
   </bean>
@@ -334,9 +339,7 @@
   </bean>
 
   <bean id="staticRenderersProxy" parent="RSACBridgeProxy">
-    <property name="targetBeanName">
-      <idref bean="staticRenderers" />
-    </property>
+    <property name="targetBeanName" value="staticRenderers" />
   </bean>
 
   <bean id="contentTypeInfoFactory"
@@ -347,9 +350,7 @@
   </bean>
 
   <bean id="contentTypeInfoProxy" parent="RSACBridgePeaProxy">
-    <property name="targetBeanName">
-      <idref bean="contentTypeInfo" />
-    </property>
+    <property name="targetBeanName" value="contentTypeInfo" />
   </bean>
 
   <bean id="contentTypeResolverTLAB"
@@ -385,29 +386,21 @@
   </bean>
 
   <bean id="ELTargetBeanLocatorProxy" parent="RSACBridgeProxy">
-    <property name="targetBeanName">
-      <idref bean="ELTargetBeanLocator" />
-    </property>
+    <property name="targetBeanName" value="ELTargetBeanLocator" />
   </bean>
 
   <bean id="ELEvaluatorProxy" parent="RSACBridgeProxy">
-    <property name="targetBeanName">
-      <idref bean="ELEvaluator" />
-    </property>
+    <property name="targetBeanName" value="ELEvaluator" />
   </bean>
 
   <bean id="httpServletRequestProxy" parent="RSACBridgeProxy">
-    <property name="targetBeanName">
-      <idref bean="httpServletRequest" />
-    </property>
+    <property name="targetBeanName" value="httpServletRequest" />
   </bean>
 
   <!-- *** Definitions for ViewParameters and URL handling *** -->
 
   <bean id="autoBaseURLProviderProxy" parent="RSACBridgeProxy">
-    <property name="targetBeanName">
-      <idref bean="autoBaseURLProvider" />
-    </property>
+    <property name="targetBeanName" value="autoBaseURLProvider" />
   </bean>
   <!-- This is now a request-scope bean defined in core RSF to use the auto-provider.
     Override it with the following definition in your own requestScopeConfig and define
@@ -426,9 +419,7 @@
   </bean>
 
   <bean id="viewParametersProxy" parent="RSACBridgePeaProxy">
-    <property name="targetBeanName">
-      <idref bean="viewParameters" />
-    </property>
+    <property name="targetBeanName" value="viewParameters" />
     <!-- Enough information to find the get() method -->
     <property name="targetClass"
       value="uk.org.ponder.rsf.viewstate.ViewParameters" />
@@ -548,9 +539,7 @@
   </bean>
 
   <bean id="destroyedScopeMapProxy" parent="RSACBridgeProxy">
-    <property name="targetBeanName">
-      <idref bean="destroyedScopeMap" />
-    </property>
+    <property name="targetBeanName" value="destroyedScopeMap" />
   </bean>
 
   <bean id="flowOnlyPreservingBeans"
@@ -561,9 +550,7 @@
   </bean>
 
   <bean id="flowLite-flowIDHolderProxy" parent="RSACBridgeProxy">
-    <property name="targetBeanName">
-      <idref bean="flowLite-flowIDHolder" />
-    </property>
+    <property name="targetBeanName" value="flowLite-flowIDHolder" />
   </bean>
 
   <bean id="flowLite-flowDefinition" parent="XMLFactoryBean"
