@@ -45,7 +45,7 @@ public class UISelect extends UIComponent implements FixableComponent {
     togo.optionlist.setValue(values);
     togo.optionnames = new UIBoundList();
     togo.optionnames.setValue(labels);
-    togo.selection = new UIInput();
+    togo.selection = new UIOutput();
     if (value != null) {
       ((UIOutput) togo.selection).setValue(value);
     }

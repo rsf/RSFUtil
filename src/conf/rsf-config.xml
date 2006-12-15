@@ -146,12 +146,12 @@
     </property>
   </bean>
 
-	<bean id="targettedMessageListProxy" parent="RSACBridgeProxy">
-		<property name="targetBeanName" value="targettedMessageList"/>
-	</bean>
+  <bean id="targettedMessageListProxy" parent="RSACBridgeProxy">
+    <property name="targetBeanName" value="targettedMessageList" />
+  </bean>
 
   <!-- Broken out as a separate bean to avoid cycle with RBL 
-  (to RSACErrorBridgeBracketer) -->
+    (to RSACErrorBridgeBracketer) -->
   <bean id="ErrorBBTarget" class="uk.org.ponder.rsac.RSACErrorBridge"
     lazy-init="true">
     <property name="RSACBeanLocator" ref="RSACBeanLocator" />
@@ -163,7 +163,7 @@
     <property name="targetBeanName" value="rootHandlerBean" />
     <property name="wrappingBean" value="ErrorBBTarget" />
   </bean>
-  
+
   <bean id="RSACLazarusListProxy" parent="RSACBridgeProxy">
     <property name="targetBeanName" value="RSACLazarusList" />
   </bean>
@@ -284,7 +284,7 @@
   -->
 
   <bean id="TLABPostProcessorLoader"
-    class="uk.org.ponder.springutil.TLABLoaderListener" >
+    class="uk.org.ponder.springutil.TLABLoaderListener">
     <property name="mappingContext" ref="ELMappingContext" />
   </bean>
 
@@ -395,6 +395,18 @@
 
   <bean id="httpServletRequestProxy" parent="RSACBridgeProxy">
     <property name="targetBeanName" value="httpServletRequest" />
+  </bean>
+
+  <bean id="httpServletResponseProxy" parent="RSACBridgeProxy">
+    <property name="targetBeanName" value="httpServletResponse" />
+  </bean>
+
+  <bean id="handlerHookHandler"
+    class="uk.org.ponder.rsf.processor.HandlerHookHandler" />
+
+  <bean id="handlerHookParent"
+    class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
+    <property name="targetPath" value="handlerHookHandler.handlers" />
   </bean>
 
   <!-- *** Definitions for ViewParameters and URL handling *** -->

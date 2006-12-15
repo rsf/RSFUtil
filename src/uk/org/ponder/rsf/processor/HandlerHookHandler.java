@@ -1,0 +1,23 @@
+/*
+ * Created on 15 Dec 2006
+ */
+package uk.org.ponder.rsf.processor;
+
+import java.util.List;
+
+public class HandlerHookHandler implements HandlerHook {
+  private List handlers;
+
+  public void setHandlers(List handlers) {
+    this.handlers = handlers;
+  }
+
+  public boolean handle() {
+    for (int i = 0; i < handlers.size(); ++i) {
+      if (((HandlerHook) handlers.get(i)).handle())
+        return true;
+    }
+    return false;
+  }
+
+}
