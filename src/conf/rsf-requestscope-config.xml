@@ -90,11 +90,6 @@
 		</property>
 	</bean>
 
-	<!--  This bean can go away once we implement parent factories and bean references -->
-	<bean id="handlerHook"
-		class="uk.org.ponder.rsf.processor.NullHandlerHook">
-	</bean>
-
 	<bean id="rootHandlerBeanBase" abstract="true"
 		class="uk.org.ponder.rsf.servlet.RootHandlerBean"
 		init-method="handle">
@@ -104,7 +99,7 @@
 		<property name="renderHandlerBracketer"
 			ref="renderHandlerBracketer" />
 		<property name="actionHandler" ref="actionHandler" />
-		<property name="handlerHook" ref="handlerHook" />
+		<property name="handlerHook" ref="handlerHookHandler" />
 		<property name="contentTypeInfo" ref="contentTypeInfo" />
 		<property name="fatalErrorHandler" ref="fatalErrorHandler" />
 		<property name="lazarusRedirector" ref="lazarusRedirector" />
