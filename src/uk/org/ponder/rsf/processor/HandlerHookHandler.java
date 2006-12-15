@@ -13,9 +13,11 @@ public class HandlerHookHandler implements HandlerHook {
   }
 
   public boolean handle() {
-    for (int i = 0; i < handlers.size(); ++i) {
-      if (((HandlerHook) handlers.get(i)).handle())
-        return true;
+    if (handlers != null) {
+      for (int i = 0; i < handlers.size(); ++i) {
+        if (((HandlerHook) handlers.get(i)).handle())
+          return true;
+      }
     }
     return false;
   }
