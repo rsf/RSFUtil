@@ -64,6 +64,13 @@ public class XMLLumpMMap {
     }
   }
   
+  public void addSingle(String key, XMLLump lump) {
+    idtolumps.put(key, lump);
+  }
+  public XMLLump getSingle(String key) {
+    return (XMLLump) idtolumps.get(key);
+  }
+  
   public static final String FINAL_SUFFIX = "*final";
   
   public static final boolean isSpecial(String totest) {

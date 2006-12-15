@@ -8,12 +8,16 @@ import java.util.HashMap;
 import uk.org.ponder.arrayutil.ArrayUtil;
 
 /**
- * @author Antranig Basman (antranig@caret.cam.ac.uk)
+ * A primitive "lump" of an XML document, representing a "significant" 
+ * character span. The basic function is to hold indexes start, length into
+ * the character array for the document, as well as various housekeeping 
+ * information to aid navigation and debugging.
  * 
+ * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
 public class XMLLump {
-  // This string is used as separator between transition entries in forwardmap,
-  // of the form "old-id-suffix  new-id-suffix"
+  /** This string is used as separator between transition entries in forwardmap,
+  * of the form "old-id-suffix  new-id-suffix" */
   public static final String TRANSITION_SEPARATOR = "  ";
   public int lumpindex;
   public int line, column;
@@ -25,6 +29,7 @@ public class XMLLump {
   public String rsfID;
   public XMLLump open_end = null;        // lump containing " >"
   public XMLLump close_tag = null;       // lump containing "</close">
+  public XMLLump uplump = null;
   // open and close will be the same for empty tag case " />"
   // headlump has standard text of |<tagname | to allow easy identification.
   public XMLLumpMMap downmap = null;

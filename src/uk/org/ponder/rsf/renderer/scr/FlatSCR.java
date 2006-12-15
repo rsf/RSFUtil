@@ -16,7 +16,8 @@ import uk.org.ponder.xml.XMLUtil;
 import uk.org.ponder.xml.XMLWriter;
 
 /** Class encapsulating a "static" (i.e. independent of any producer
- * components) rewriting operation on a tag. 
+ * components) rewriting operation on a tag, which is "flat" - that is, 
+ * operates on a predetermined attribute based on static data.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  *
  */
