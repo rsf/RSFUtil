@@ -180,6 +180,7 @@ public class XMLViewTemplateParser implements ViewTemplateParser {
 
           XMLLump stacktop = findTopContainer();
           stacktop.downmap.addLump(ID, headlump);
+          headlump.uplump = stacktop;
           t.globalmap.addLump(ID, headlump);
 
           SplitID split = new SplitID(ID);

@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.rsf.renderer;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import uk.org.ponder.rsf.renderer.scr.CollectingSCR;
 import uk.org.ponder.rsf.renderer.scr.StaticComponentRenderer;
 import uk.org.ponder.rsf.request.FossilizedConverter;
 import uk.org.ponder.rsf.template.XMLLump;
+import uk.org.ponder.rsf.template.XMLLumpComparator;
 import uk.org.ponder.rsf.template.XMLLumpList;
 import uk.org.ponder.rsf.template.XMLLumpMMap;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
@@ -201,4 +203,16 @@ public class RenderUtil {
       return collector.render(lump, collected, xmlw);
     }
   }
+
+  public static boolean isFirstSCR(XMLLump lump, String scrname) {
+    XMLLump parent = lump.uplump;
+    String lookname = XMLLump.SCR_PREFIX + scrname;
+    XMLLumpList sames = new XMLLumpList();
+    sames.addAll(parent.downmap.headsForID(lookname));
+    Collections.sort(sames, XMLLumpComparator.instance());
+    return sames.get(0) == lump;
+  }
+  
+  
+  
 }
