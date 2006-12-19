@@ -306,7 +306,7 @@
   <bean id="XMLViewResolver"
     class="uk.org.ponder.rsf.view.NullViewResolver" />
 
-  <bean id="XMLViewResolverDef"
+  <bean id="XMLViewResolverParent"
     class="uk.org.ponder.rsf.view.XMLViewResolver" abstract="true">
     <property name="XMLProvider" ref="XMLProvider" />
     <property name="templateExpander" ref="templateExpander" />
