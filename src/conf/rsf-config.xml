@@ -393,6 +393,20 @@
     <property name="targetBeanName" value="ELEvaluator" />
   </bean>
 
+  <bean id="viewGenerator"
+    class="uk.org.ponder.rsf.view.ViewGenerator">
+    <!-- The default pageProducer is the ViewCollection -->
+    <property name="pageProducer" ref="pageProducerProxy" />
+    <property name="navigationCaseReceiver" ref="navigationCasePooler" />
+    <property name="XMLProvider" ref="XMLProvider" />
+    <property name="viewParamsProxy" ref="viewParametersProxy"/>
+  </bean>
+
+  <bean id="pageProducerProxy" parent="RSACBridgeProxy">
+    <property name="targetBeanName" value="pageProducer"/>
+    <property name="targetClass" value="uk.org.ponder.rsf.producers.NullaryProducer"/>
+  </bean>
+
   <bean id="httpServletRequestProxy" parent="RSACBridgeProxy">
     <property name="targetBeanName" value="httpServletRequest" />
   </bean>
