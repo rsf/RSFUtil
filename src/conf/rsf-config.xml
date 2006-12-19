@@ -601,7 +601,7 @@
     <property name="targetBeanName" value="flowLite-flowIDHolder" />
   </bean>
 
-  <bean id="flowLite-flowDefinition" parent="XMLFactoryBean"
+  <bean id="flowLite-flowDefinitionParent" parent="XMLFactoryBean"
     class="uk.org.ponder.rsf.flow.lite.XMLFlowFactoryBean"
     abstract="true">
     <property name="objectType"
