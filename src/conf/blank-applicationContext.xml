@@ -158,28 +158,8 @@
     </property>
   </bean>
 
-  <bean id="actionErrorStrategyManager"
-    class="uk.org.ponder.rsf.flow.errors.ActionErrorStrategyManager">
-    <property name="mergeStrategies">
-      <ref bean="XMLActionErrorStrategies" />
-    </property>
-  </bean>
-
-  <bean id="XMLActionErrorStrategyDef" parent="XMLFactoryBean"
-    abstract="true">
-    <property name="objectType">
-      <value>
-        uk.org.ponder.rsf.flow.errors.ActionErrorStrategyManager
-      </value>
-    </property>
-  </bean>
-
   <bean id="XMLActionErrorStrategies"
-    parent="XMLActionErrorStrategyDef" />
-
-  <bean id="defaultViewProxy" parent="RSACStringBridge">
-    <property name="targetBeanName" value="defaultView" />
-  </bean>
+    parent="XMLActionErrorStrategyParent" />
 
   <bean id="viewExceptionStrategy"
     class="uk.org.ponder.rsf.flow.errors.SimpleViewExceptionStrategy">
@@ -253,7 +233,7 @@
       mounted. -->
   </bean>
 
-  <bean id="messageContributor"
+  <bean id="messageTemplateContributor"
     class="uk.org.ponder.rsf.templateresolver.StaticTemplateResolverStrategy">
     <property name="templateResourceBase"
       value="classpath:uk/org/ponder/rsf/builtin/components/" />

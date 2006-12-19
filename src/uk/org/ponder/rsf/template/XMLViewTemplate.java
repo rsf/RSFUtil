@@ -20,13 +20,15 @@ public class XMLViewTemplate extends GenericViewTemplate
 implements BasedViewTemplate {
   // a hypothetical "root lump" whose downmap contains root RSF components.
   public XMLLump rootlump;
-//  public XMLLumpMMap globalmap;
+  // public XMLLumpMMap globalmap;
   // private HashMap foridtocomponent = new HashMap();
   public XMLLump[] lumps;
   // index of the first lump holding root document tag
   public int roottagindex;
   
   public char[] buffer;
+  // The template's full path, for debugging purposes
+  public String fullpath;
   
   private String resourcebase;
 

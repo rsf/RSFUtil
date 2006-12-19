@@ -191,6 +191,7 @@ public class BasicTemplateResolver implements TemplateResolver {
           extresourcebase = batrs.getExternalURLBase();
         }
         template.setResourceBase(extresourcebase + resourcebaseext);
+        template.fullpath = fullpath;
         templates.put(fullpath, template);
       }
       catch (Exception e) {
