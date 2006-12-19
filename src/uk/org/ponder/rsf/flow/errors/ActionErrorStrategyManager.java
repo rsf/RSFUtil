@@ -28,6 +28,10 @@ public class ActionErrorStrategyManager implements ActionErrorStrategy {
     this.strategies.addAll(strategies.getStrategies());
   }
 
+  public void setStrategyList(List newstrategies) {
+    this.strategies.addAll(newstrategies);
+  }
+  
   public void addStrategy(ActionErrorStrategy toadd) {
     strategies.add(toadd);
   }

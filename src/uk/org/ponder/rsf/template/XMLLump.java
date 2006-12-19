@@ -77,6 +77,6 @@ public class XMLLump {
     return "lump index " + lumpindex + " line " + line + " column " + column;
   }
   public String toString() {
-    return new String(parent.buffer, start, length) + " at " + toDebugString();
+    return new String(parent.buffer, start, length) + " at " + toDebugString() + " in file " + parent.fullpath;
   }
 }

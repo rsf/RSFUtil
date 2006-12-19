@@ -489,6 +489,10 @@
     <property name="viewStateHandler" ref="viewStateHandler" />
   </bean>
 
+  <bean id="defaultViewProxy" parent="RSACStringBridge">
+    <property name="targetBeanName" value="defaultView" />
+  </bean>
+
   <!-- *** Standard framework SCR definitions *** -->
 
   <bean id="URLRewriteSCR"
@@ -541,7 +545,25 @@
     <property name="guardMode" value="WRITE" />
   </bean>
 
-  <!-- Core flow definitions -->
+  <!-- Definitions for flows, scopes and errors -->
+
+  <bean id="actionErrorStrategyManager"
+    class="uk.org.ponder.rsf.flow.errors.ActionErrorStrategyManager">
+    <property name="mergeStrategies" ref="XMLActionErrorStrategies" />
+  </bean>
+  
+  <bean id="actionErrorStrategyParent" class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
+    <property name="targetPath" value="actionErrorStrategyManager.strategyList"/>
+  </bean>
+
+  <bean id="XMLActionErrorStrategyParent" parent="XMLFactoryBean"
+    abstract="true">
+    <property name="objectType">
+      <value>
+        uk.org.ponder.rsf.flow.errors.ActionErrorStrategyManager
+      </value>
+    </property>
+  </bean>
 
   <bean id="beanScopeParent"
     class="uk.org.ponder.rsf.state.scope.ScopedBeanManager"

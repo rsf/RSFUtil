@@ -68,7 +68,7 @@ public class RenderUtil {
         break;
       if (lump.rsfID != null) {
         if (!insideleaf) break;
-        if (insideleaf && lump.nestingdepth > basedepth) {
+        if (insideleaf && lump.nestingdepth > basedepth + (closeparent?0:1) ) {
           Logger.log.warn("Error in component tree - leaf component found to contain further components - at " +
               lump.toString());
         }
