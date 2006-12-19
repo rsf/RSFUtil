@@ -3,7 +3,7 @@
   <taghandler xmlname="from-outcome" xml-form="attribute">
     <fieldname>fromOutcome</fieldname>
   </taghandler>
-  <taghandler xmlname="to-view-id" xml-form="attribute">
-    <fieldname>toViewId</fieldname>
+  <taghandler xmlname="resulting-view" xml-form="attribute">
+    <fieldname>resultingView</fieldname>
   </taghandler>
 </mapperentry>

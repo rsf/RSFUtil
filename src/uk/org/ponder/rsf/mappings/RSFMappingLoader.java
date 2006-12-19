@@ -33,6 +33,7 @@ import uk.org.ponder.rsf.expander.IDRemapStrategy;
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.errors.StaticActionErrorStrategy;
 import uk.org.ponder.rsf.view.ViewRoot;
+import uk.org.ponder.rsf.viewstate.AnyViewParameters;
 import uk.org.ponder.rsf.viewstate.EntityCentredViewParameters;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
@@ -95,6 +96,7 @@ public class RSFMappingLoader implements MappingLoader {
     context.classnamemanager.registerClass("view", ViewRoot.class);
     
     context.saxleafparser.registerParser(ViewParameters.class, viewparamsleafparser);
+    context.saxleafparser.registerParser(AnyViewParameters.class, viewparamsleafparser);
     context.saxleafparser.registerParser(ELReference.class, new ELReferenceParser());
   }
 

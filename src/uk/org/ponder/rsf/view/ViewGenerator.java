@@ -25,38 +25,13 @@ import uk.org.ponder.util.UniversalRuntimeException;
  */
 
 public class ViewGenerator {
-  private View view;
-  private ViewParameters viewparams;
+  private ViewParameters viewParamsProxy;
   private NavigationCaseReceiver navreceiver;
   private XMLProvider xmlprovider;
   private NullaryProducer pageproducer;
 
-  // This method is called manually from GetHandler.
-  public View getView() {
-    if (view == null) {
-      view = new View();
-      pageproducer.fillComponents(view.viewroot);
-      if (view.viewroot.navigationCases != null) {
-        navreceiver.receiveNavigationCases(viewparams.viewID,
-            view.viewroot.navigationCases);
-      }
-      if (Logger.log.isDebugEnabled() || view.viewroot.debug) {
-        StringPOS dumppos = new StringPOS();
-        dumppos.println("View component dump:");
-        try {
-          ByteArrayOutputStream baos = new ByteArrayOutputStream();
-          xmlprovider.writeXML(view.viewroot, baos);
-          dumppos.println(new String(baos.toByteArray(), "UTF-8"));
-          Logger.log.log(view.viewroot.debug ? Level.ERROR
-              : Level.DEBUG, dumppos);
-        }
-        catch (Exception e) {
-          throw UniversalRuntimeException.accumulate(e,
-              "Error dumping component tree for debug: ");
-        }
-      }
-    }
-    return view;
+  public void setViewParamsProxy(ViewParameters viewParameters) {
+    this.viewParamsProxy = viewParameters;
   }
 
   public void setNavigationCaseReceiver(NavigationCaseReceiver navreceiver) {
@@ -69,6 +44,32 @@ public class ViewGenerator {
 
   public void setXMLProvider(XMLProvider xmlprovider) {
     this.xmlprovider = xmlprovider;
+  }
+
+  // This method is called manually from GetHandler.
+  public View generateView() {
+    View view = new View();
+    pageproducer.fillComponents(view.viewroot);
+    if (view.viewroot.navigationCases != null) {
+      navreceiver.receiveNavigationCases(viewParamsProxy.get().viewID,
+          view.viewroot.navigationCases);
+    }
+    if (Logger.log.isDebugEnabled() || view.viewroot.debug) {
+      StringPOS dumppos = new StringPOS();
+      dumppos.println("View component dump:");
+      try {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        xmlprovider.writeXML(view.viewroot, baos);
+        dumppos.println(new String(baos.toByteArray(), "UTF-8"));
+        Logger.log.log(view.viewroot.debug ? Level.ERROR
+            : Level.DEBUG, dumppos);
+      }
+      catch (Exception e) {
+        throw UniversalRuntimeException.accumulate(e,
+            "Error dumping component tree for debug: ");
+      }
+    }
+    return view;
   }
 
 }
