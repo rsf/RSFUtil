@@ -148,7 +148,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         if (scr == null) {
           Logger.log
               .info("Warning: unrecognised static component renderer reference with key "
-                  + scrname + " at lump " + lump.toDebugString());
+                  + scrname + " at lump " + lump.toString());
           scr = NullRewriteSCR.instance;
         }
         int tagtype = RenderUtil.renderSCR(scr, lump, xmlw, collecteds);
@@ -158,7 +158,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
 
       if (lump.textEquals("<form ")) {
         Logger.log.warn("Warning: skipping form tag with rsf:id " + lump.rsfID
-            + " and all children at " + lump.toDebugString()
+            + " and all children at " + lump.toString()
             + " since no peer component");
       }
     }
