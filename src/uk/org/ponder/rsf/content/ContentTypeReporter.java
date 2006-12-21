@@ -7,7 +7,8 @@ package uk.org.ponder.rsf.content;
 
 public interface ContentTypeReporter {
   /** Return a String key which can be used to index a {@link ContenTypeInfo} 
-   * entry as returned from the {@link ContentTypeInfoFactory}.
+   * entry as returned from the {@link ContentTypeInfoFactory}. Sample type 
+   * keys may be found in {@link ContentTypeInfoRegistry}.
    */
   public String getContentType();
 }
