@@ -71,7 +71,7 @@ public class ExactBeanCopyPreservationStrategy implements
       Object bean = holder.getTokenState(key);
       if (bean != null) {
         String path = beannames.stringAt(i);
-        alterer.setBeanValue(path, target, bean, messages);
+        alterer.setBeanValue(path, target, bean, messages, false);
         Logger.log.info("BeanCopy restored value " + bean + " from key " + key
             + " to path " + path);
         ++cbeans;

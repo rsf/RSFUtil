@@ -559,6 +559,9 @@
     <property name="guardMode" value="WRITE" />
   </bean>
 
+  <bean id="requiredValueGuard"
+    class="uk.org.ponder.rsf.state.guards.support.RequiredValueGuard"/>
+  
   <!-- Definitions for flows, scopes and errors -->
 
   <bean id="actionErrorStrategyManager"

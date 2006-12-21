@@ -114,7 +114,7 @@ public class InURLPreservationStrategy implements StatePreservationStrategy {
       IUPSMapping spec = (IUPSMapping) iupsspecs.get(key);
       if (spec != null) {
         String[] value = (String[]) requestmap.get(key);
-        bma.setBeanValue(spec.beanpath, target, value, null);
+        bma.setBeanValue(spec.beanpath, target, value, null, false);
         if (value != null) {
           outgoingparams.add(new UIParameter(key, value[0]));
           ++ restored;

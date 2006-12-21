@@ -41,7 +41,7 @@ public class ViewParamsMapper {
       String path = mapinfo.paths[i];
       Object valueo = params.get(mapinfo.attrnames[i]);
       if (valueo != null) {
-        bma.setBeanValue(path, target, valueo, null);
+        bma.setBeanValue(path, target, valueo, null, true);
       }
     }
   }
