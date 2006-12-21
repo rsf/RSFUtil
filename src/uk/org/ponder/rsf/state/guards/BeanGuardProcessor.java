@@ -127,7 +127,7 @@ public class BeanGuardProcessor implements ApplicationContextAware {
                 }
                 else if (guardproperty != null) {
                   darapplier
-                      .setBeanValue(guardproperty, guard, guarded, errors);
+                      .setBeanValue(guardproperty, guard, guarded, errors, false);
                 }
                 else if (guard instanceof Validator) {
                   if (guarded == null) {
