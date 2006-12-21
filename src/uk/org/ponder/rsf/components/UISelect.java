@@ -36,19 +36,21 @@ public class UISelect extends UIComponent implements FixableComponent {
    */
   public StringSet selected;
 
-  /** Creates a non-submitting (output-only) selection control */
+  /** Creates a selection control without a value binding, either 
+   * non-submitting, or suitable for use in a GET form */
   public static UISelect make(UIContainer tofill, String ID, String[] values,
-      String[] labels, String value) {
+      String[] labels, String value, boolean willinput) {
     UISelect togo = new UISelect();
     togo.optionlist = new UIOutputMany();
     togo.ID = ID;
     togo.optionlist.setValue(values);
     togo.optionnames = new UIBoundList();
     togo.optionnames.setValue(labels);
-    togo.selection = new UIOutput();
+    togo.selection = new UIBoundString();
     if (value != null) {
-      ((UIOutput) togo.selection).setValue(value);
+      ((UIBoundString) togo.selection).setValue(value);
     }
+    togo.selection.willinput = willinput;
     tofill.addComponent(togo);
     return togo;
   }
