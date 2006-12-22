@@ -36,7 +36,7 @@ public class UISimpleContainer extends UIContainer {
    * parent. This should only be called during fixup time. Note that this must
    * NOT alter the fullID of any component in the tree!
    * 
-   * @see uk.org.ponder.rsf.util.RSFFactory for implementation of computeFullID.
+   * @see uk.org.ponder.rsf.util.RSFUtil for implementation of computeFullID.
    */
   public void fold() {
 

@@ -122,7 +122,7 @@ public class StatePreservationManager {
   
   /** Request all registered strategies to restore state into the current
    * request-scope container.
-   * @param The flow token keying the state to be restored.
+   * @param tokenid The flow token keying the state to be restored.
    * @param flowend <code>true</code> if the specified flow has expired.
    */
   public void restore(String tokenid, boolean flowend) {

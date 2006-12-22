@@ -61,9 +61,9 @@ public class UIBranchContainer extends UIContainer {
  /** Constructs a "repeating" BranchContainer, uniquely identified by the 
   * "localID" passed as the 3rd argument. Suitable, for example, for creating a
   * table row.
-  * @param The parent container to which the returned branch should be added.
-  * @param The RSF ID for the branch (must contain a colon character)
-  * @param The local ID identifying this branch instance (must be unique for
+  * @param parent The parent container to which the returned branch should be added.
+  * @param ID The RSF ID for the branch (must contain a colon character)
+  * @param localID The local ID identifying this branch instance (must be unique for
   * each branch with the same ID in this branch)
   */
   public static UIBranchContainer make(UIContainer parent, String ID, String localID) {

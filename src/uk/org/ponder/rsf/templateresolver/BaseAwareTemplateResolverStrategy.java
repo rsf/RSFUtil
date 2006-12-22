@@ -16,7 +16,7 @@ public interface BaseAwareTemplateResolverStrategy {
    * by the templating engine is to be based. The default path is "/"
    * corresponding to the root of servlet context resources. Should begin
    * with a /.
-   * @see {@link ViewTemplate} for further comments.
+   * see {@link ViewTemplate} for further comments.
    * 
    */ 
   public String getTemplateResourceBase();

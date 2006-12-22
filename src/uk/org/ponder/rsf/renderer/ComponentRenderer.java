@@ -9,7 +9,7 @@ import uk.org.ponder.xml.XMLWriter;
 
 /** Does the work of rendering a component, given a UIComponent and a location
  * in the template stream. A ComponentRenderer is specific to a particular
- * @see RenderSystem, which also contains StaticComponentRenderers for rewriting
+ * @link RenderSystem, which also contains StaticComponentRenderers for rewriting
  * template data without a corresponding component.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
