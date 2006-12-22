@@ -29,7 +29,7 @@ public interface ActionErrorStrategy {
    * @param flowstate The ID of any flow state which the action cycle is 
    * currently a part of. <code>null</code> if no flow is active.
    * @param viewID The current viewID. Never <code>null</code>
-   * @param Either a TargettedMessage previously generated, that is now
+   * @param message Either a TargettedMessage previously generated, that is now
    * being processed, or an empty object to be filled in with any generated values.
    * @return An action return code representing the new return code for
    * this action cycle, if the error was successfully handled, or
