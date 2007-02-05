@@ -399,12 +399,13 @@
     <property name="pageProducer" ref="pageProducerProxy" />
     <property name="navigationCaseReceiver" ref="navigationCasePooler" />
     <property name="XMLProvider" ref="XMLProvider" />
-    <property name="viewParamsProxy" ref="viewParametersProxy"/>
+    <property name="viewParamsProxy" ref="viewParametersProxy" />
   </bean>
 
   <bean id="pageProducerProxy" parent="RSACBridgeProxy">
-    <property name="targetBeanName" value="pageProducer"/>
-    <property name="targetClass" value="uk.org.ponder.rsf.producers.NullaryProducer"/>
+    <property name="targetBeanName" value="pageProducer" />
+    <property name="targetClass"
+      value="uk.org.ponder.rsf.producers.NullaryProducer" />
   </bean>
 
   <bean id="httpServletRequestProxy" parent="RSACBridgeProxy">
@@ -560,17 +561,29 @@
   </bean>
 
   <bean id="requiredValueGuard"
-    class="uk.org.ponder.rsf.state.guards.support.RequiredValueGuard"/>
-  
+    class="uk.org.ponder.rsf.state.guards.support.RequiredValueGuard" />
+
   <!-- Definitions for flows, scopes and errors -->
+
+  <bean id="ARIResultProxy" parent="RSACBridgePeaProxy">
+    <property name="targetBeanName" value="ARIResultConcrete" />
+  </bean>
+
+  <bean id="ActionResultInterceptorParent"
+    class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
+    <property name="targetPath"
+      value="actionResultInterceptorProcessor.interceptors" />
+  </bean>
 
   <bean id="actionErrorStrategyManager"
     class="uk.org.ponder.rsf.flow.errors.ActionErrorStrategyManager">
     <property name="mergeStrategies" ref="XMLActionErrorStrategies" />
   </bean>
-  
-  <bean id="actionErrorStrategyParent" class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
-    <property name="targetPath" value="actionErrorStrategyManager.strategyList"/>
+
+  <bean id="actionErrorStrategyParent"
+    class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
+    <property name="targetPath"
+      value="actionErrorStrategyManager.strategyList" />
   </bean>
 
   <bean id="XMLActionErrorStrategyParent" parent="XMLFactoryBean"

@@ -28,15 +28,15 @@ public class FlowStateManager {
   
   public void inferFlowState(ViewParameters viewparams, ARIResult ariresult) {
     
-    String prop = ariresult.propagatebeans; // propagation code for this cycle
+    String prop = ariresult.propagateBeans; // propagation code for this cycle
     // An external URL must naturally end any flow
-    if (!(ariresult.resultingview instanceof ViewParameters)) {
+    if (!(ariresult.resultingView instanceof ViewParameters)) {
       if (viewparams.flowtoken != null) {
         presmanager.flowEnd(viewparams.flowtoken);
       }
       return;
     }
-    ViewParameters newview = (ViewParameters) ariresult.resultingview;
+    ViewParameters newview = (ViewParameters) ariresult.resultingView;
 
     if (!prop.equals(ARIResult.FLOW_END)
         && !prop.equals(ARIResult.FLOW_ONESTEP)) {

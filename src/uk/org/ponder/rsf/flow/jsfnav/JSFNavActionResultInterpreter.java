@@ -41,9 +41,9 @@ public class JSFNavActionResultInterpreter implements ActionResultInterpreter {
         // more with JSF semantics
         if (navcase.fromOutcome == null || navcase.fromOutcome.equals(result)) {
           if (navcase.resultingView != null) {
-            togo.resultingview = navcase.resultingView;
+            togo.resultingView = navcase.resultingView;
           }
-          togo.propagatebeans = navcase.flowCondition;
+          togo.propagateBeans = navcase.flowCondition;
         }
       }
     }
@@ -51,8 +51,8 @@ public class JSFNavActionResultInterpreter implements ActionResultInterpreter {
 
   public ARIResult interpretActionResult(ViewParameters incoming, Object result) {
     ARIResult togo = new ARIResult();
-    togo.resultingview = incoming;
-    togo.propagatebeans = ARIResult.FLOW_END;
+    togo.resultingView = incoming;
+    togo.propagateBeans = ARIResult.FLOW_END;
     boolean matchingrule = false;
     
     if (map.navigationRules != null) {

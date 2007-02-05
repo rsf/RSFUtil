@@ -33,7 +33,8 @@ import uk.org.ponder.rsac.RSACBeanLocator;
  * the users want to invoke the production method, they must first make a call
  * to wrapProducer - for an application scope producer, this simply returns the
  * original bean. <br>
- * This bean ALSO scours the application context similarly for
+ * This bean ALSO scours the application context similarly for application
+ * scope ViewProducers in the straightforward way.
  * 
  * @author Antranig Basman (amb26@ponder.org.uk)
  * 

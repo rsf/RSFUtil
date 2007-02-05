@@ -278,10 +278,18 @@
       ref="actionErrorStrategyManager" />
     <property name="flowStateManager" ref="flowStateManager" />
     <property name="targettedMessageList" ref="targettedMessageList" />
+    <property name="actionResultInterceptor" ref="actionResultInterceptorProcessor"/>
   </bean>
 
-  <bean id="ARIResult" factory-bean="actionHandler"
-    factory-method="getARIResult" lazy-init="true" />
+<!-- Always use this bean through the pea proxy, even in request scope - it
+   will not be available until the request is almost concluded. -->
+  <bean id="ARIResultConcrete" factory-bean="actionHandler"
+    factory-method="getARIResult" /> 
+    
+  <bean id="actionResultInterceptorProcessor" 
+    class="uk.org.ponder.rsf.flow.ARIProcessor">
+    <property name="mappingViewResolver" ref="viewResolver"/>
+  </bean>
   <!-- A useful "EL-target" bean to allow scopes to be destroyed via EL -->
   <bean id="destroyScope"
     class="uk.org.ponder.rsf.state.scope.ScopedBeanDestroyer" />

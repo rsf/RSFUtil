@@ -10,6 +10,7 @@ import uk.org.ponder.errorutil.CoreMessages;
 import uk.org.ponder.errorutil.PermissionException;
 import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.messageutil.TargettedMessage;
+import uk.org.ponder.rsf.flow.errors.SilentRedirectException;
 import uk.org.ponder.rsf.flow.errors.ViewExceptionStrategy;
 import uk.org.ponder.rsf.state.ErrorStateManager;
 import uk.org.ponder.rsf.viewstate.ErrorViewParameters;
@@ -85,16 +86,19 @@ public class RenderHandlerBracketer {
   // view, with errors intact.
   public ViewParameters handleLevel1Error(ViewParameters viewparams,
       Exception e, boolean iserrorredirect) {
-    Logger.log.warn("Exception rendering view: ", e);
     UniversalRuntimeException invest = UniversalRuntimeException.accumulate(e);
     Throwable target = invest.getTargetException();
+    boolean issilent = target != null && target instanceof SilentRedirectException; 
+    if (!issilent) {
+      Logger.log.warn("Exception rendering view: ", e);
+    }
+   
     if (target != null) {
       Logger.log.warn("Got target exception of " + target.getClass());
     }
 
     if (target instanceof ConfigurationException || target instanceof Error
-        || target instanceof PermissionException || iserrorredirect || 
-        !redirectlevel1) {
+        || iserrorredirect || !redirectlevel1) {
       throw invest;
     }
 
@@ -103,15 +107,16 @@ public class RenderHandlerBracketer {
     // make sure this method is prodded FIRST, because requestComplete 
     // (which would ordinarily allocate the token on seeing an error state) is
     // only called AFTER we visibly return from handle() above.
-    String tokenid = errorstatemanager.allocateOutgoingToken();
-    defaultparameters.errortoken = tokenid;
-    defaultparameters.errorredirect = "1";
-
-    Logger.log.warn("Error creating view tree - token " + tokenid);
+    if (!issilent) {
+      String tokenid = errorstatemanager.allocateOutgoingToken();
+      defaultparameters.errortoken = tokenid;
+      defaultparameters.errorredirect = "1";
+      Logger.log.warn("Error creating view tree - token " + tokenid);
+      TargettedMessage newerror = 
+        new TargettedMessage(CoreMessages.GENERAL_SHOW_ERROR,  new Object[] { tokenid });
+      ThreadErrorState.addMessage(newerror);
+    }
     
-    TargettedMessage newerror = 
-      new TargettedMessage(CoreMessages.GENERAL_SHOW_ERROR,  new Object[] { tokenid });
-    ThreadErrorState.addMessage(newerror);
     return defaultparameters;
   }
 

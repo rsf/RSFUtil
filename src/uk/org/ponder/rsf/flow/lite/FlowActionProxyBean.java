@@ -104,7 +104,7 @@ public class FlowActionProxyBean implements ActionTarget {
         flowidholder.setFlowStateID(newstate.id);
         flowidholder.setRequestFlowStateID(newstate.id);
 
-        togo.propagatebeans = ARIResult.FLOW_START;
+        togo.propagateBeans = ARIResult.FLOW_START;
 
       }
     }
@@ -173,11 +173,11 @@ public class FlowActionProxyBean implements ActionTarget {
     flowidholder.setFlowStateID(newstate.id);
     resultingview.viewID = viewstate.viewID;
     resultingview.flowtoken = flowidholder.getFlowToken();
-    togo.resultingview = resultingview;
+    togo.resultingView = resultingview;
 
-    if (togo.propagatebeans == null) { // if not filled in as FLOW_START
+    if (togo.propagateBeans == null) { // if not filled in as FLOW_START
 
-      togo.propagatebeans = newstate instanceof EndState ? ARIResult.FLOW_END
+      togo.propagateBeans = newstate instanceof EndState ? ARIResult.FLOW_END
           : ARIResult.PROPAGATE;
     }
     return togo;

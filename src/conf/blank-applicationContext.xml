@@ -144,8 +144,8 @@
   </bean>
 
   <!-- The default ActionResultInterpreter which directs to the incoming view-->
-  <bean id="nullActionResultInterpreter"
-    class="uk.org.ponder.rsf.flow.NullActionResultInterpreter">
+  <bean id="defaultActionResultInterpreter"
+    class="uk.org.ponder.rsf.flow.DefaultActionResultInterpreter">
   </bean>
 
   <bean name="actionResultInterpreter"
@@ -153,7 +153,7 @@
     <property name="ARIList">
       <list>
         <ref bean="JSFNavigationARI" />
-        <ref bean="nullActionResultInterpreter" />
+        <ref bean="defaultActionResultInterpreter" />
       </list>
     </property>
   </bean>
