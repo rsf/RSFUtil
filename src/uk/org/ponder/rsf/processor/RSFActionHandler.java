@@ -9,6 +9,7 @@ import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.flow.ARIResolver;
 import uk.org.ponder.rsf.flow.ARIResult;
+import uk.org.ponder.rsf.flow.ActionResultInterceptor;
 import uk.org.ponder.rsf.flow.ActionResultInterpreter;
 import uk.org.ponder.rsf.flow.FlowStateManager;
 import uk.org.ponder.rsf.flow.errors.ActionErrorStrategy;
@@ -44,6 +45,7 @@ public class RSFActionHandler implements ActionHandler, ErrorHandler {
   private ActionErrorStrategy actionerrorstrategy;
   private FlowStateManager flowstatemanager;
   private TargettedMessageList messages;
+  private ActionResultInterceptor arinterceptor;
 
   public void setFlowStateManager(FlowStateManager flowstatemanager) {
     this.flowstatemanager = flowstatemanager;
@@ -57,6 +59,10 @@ public class RSFActionHandler implements ActionHandler, ErrorHandler {
     this.ariresolver = ariresolver;
   }
 
+  public void setActionResultInterceptor(ActionResultInterceptor arinterceptor) {
+    this.arinterceptor = arinterceptor;
+  }
+  
   public void setViewParameters(ViewParameters viewparams) {
     this.viewparams = viewparams;
   }
@@ -195,6 +201,7 @@ public class RSFActionHandler implements ActionHandler, ErrorHandler {
                 .getActionResultInterpreter();
             ariresult = ari.interpretActionResult(viewparams, actionresult);
           }
+          arinterceptor.interceptActionResult(ariresult, viewparams, actionresult);
         }
       });
       presmanager.scopePreserve();
@@ -210,23 +217,23 @@ public class RSFActionHandler implements ActionHandler, ErrorHandler {
       // ThreadErrorState.addError(new TargettedMessage(
       // CoreMessages.GENERAL_ACTION_ERROR));
       // Detect failure to fill out arires properly.
-      if (ariresult == null || ariresult.resultingview == null
+      if (ariresult == null || ariresult.resultingView == null
           || e instanceof IllegalStateException) {
         ariresult = new ARIResult();
-        ariresult.propagatebeans = ARIResult.FLOW_END;
+        ariresult.propagateBeans = ARIResult.FLOW_END;
 
         ViewParameters defaultparameters = viewparams.copyBase();
-        ariresult.resultingview = defaultparameters;
+        ariresult.resultingView = defaultparameters;
       }
     }
     finally {
       String errortoken = errorstatemanager.requestComplete();
 
-      if (ariresult.resultingview instanceof ViewParameters) {
-        ((ViewParameters) ariresult.resultingview).errortoken = errortoken;
+      if (ariresult.resultingView instanceof ViewParameters) {
+        ((ViewParameters) ariresult.resultingView).errortoken = errortoken;
       }
     }
-    return ariresult.resultingview;
+    return ariresult.resultingView;
   }
 
 }

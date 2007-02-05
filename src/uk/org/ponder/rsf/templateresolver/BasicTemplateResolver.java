@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.springframework.core.io.ResourceLoader;
 
+import uk.org.ponder.rsf.flow.errors.SilentRedirectException;
 import uk.org.ponder.rsf.template.TPIAggregator;
 import uk.org.ponder.rsf.template.XMLCompositeViewTemplate;
 import uk.org.ponder.rsf.template.XMLViewTemplate;
@@ -133,7 +134,9 @@ public class BasicTemplateResolver implements TemplateResolver {
     }
     
     if (xcvt != null && xcvt.roottemplate == null) {
-      throw UniversalRuntimeException.accumulate(new IllegalArgumentException(),
+      Exception eclass = viewparams.viewID.trim().length() == 0? 
+          (Exception)new SilentRedirectException() : new IllegalArgumentException();
+      throw UniversalRuntimeException.accumulate(eclass,
           "No TemplateResolverStrategy which was marked as a root resolver (rootPriority > 0) " +
           "returned a template: tried paths (expected) " + tried.toString());
     }

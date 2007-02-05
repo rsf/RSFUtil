@@ -28,7 +28,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
-public class ConcreteViewResolver implements ViewResolver {
+public class ConcreteViewResolver implements MappingViewResolver {
   // This key is used to identify a producer that *might* produce components
   // in all views. Upgrade this architecture once we think a little more about
   // how we might actually want to locate view templates and component
@@ -43,7 +43,6 @@ public class ConcreteViewResolver implements ViewResolver {
   private NavigationCaseReceiver ncreceiver;
   private ContentTypeReceiver ctreceiver;
   private AutoComponentProducerManager automanager;
-  
 
   public void setUnknownViewIsError(boolean unknowniserror) {
     this.unknowniserror = unknowniserror;
@@ -80,7 +79,7 @@ public class ConcreteViewResolver implements ViewResolver {
   public void setViews(List viewlist) {
     pendingviews.addAll(viewlist);
   }
-
+  
   public void init() {
     for (int i = 0; i < pendingviews.size(); ++i) {
       ComponentProducer view = (ComponentProducer) pendingviews.get(i);
@@ -132,7 +131,11 @@ public class ConcreteViewResolver implements ViewResolver {
     return (List) views.get(key);
   }
 
-  public List getProducers(String viewid) {
+  public ComponentProducer mapProducer(Object tomap) {
+    return automanager.wrapProducer((ComponentProducer) tomap);
+  }
+  
+  public List getUnmappedProducers(String viewid) {
     List specific = get(viewid);
 
     if (specific == null && resolvers != null) {
@@ -154,7 +157,12 @@ public class ConcreteViewResolver implements ViewResolver {
     }
     if (specific != null) {
       togo.addAll(specific);
-    }
+    } 
+    return togo;
+  }
+  
+  public List getProducers(String viewid) {
+    List togo = getUnmappedProducers(viewid); 
     mapProducers(togo);
     return togo;
   }

@@ -4,7 +4,6 @@
 package uk.org.ponder.rsf.flow;
 
 import uk.org.ponder.rsf.viewstate.AnyViewParameters;
-import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /** An object summarising the return from the ActionResultInterpreter. This
  * embodies the flow of the application by determining the resulting view to
@@ -60,23 +59,17 @@ public class ARIResult {
    * will be overwritten by RSF with a unique token before it is dispensed
    * to the client via the client redirect.
    */
-  public AnyViewParameters resultingview;
+  public AnyViewParameters resultingView;
   
-  /** Use this access method if loading via a proxy **/
-  
-  public AnyViewParameters getResultingView() {
-    return resultingview;
-  }
   /** A result code indicating the propagation status of any multi-request state
    * required by the next view to be rendered. This code is chosen from one of the
    * FLOW_ String values above.
    */
-  public String propagatebeans;
-  /** Access method for the above field.
-   * @return
-   */
-  // TODO: convert this to a Pea Proxy
-  public String getPropagateBeans() {
-    return propagatebeans;
+  public String propagateBeans;
+  
+  /** Pea proxying method **/
+  public ARIResult get() {
+    return this;
   }
 }
+
