@@ -8,6 +8,11 @@ import java.util.ArrayList;
 /** A type-safe list of UIParameter objects */
 
 public class ParameterList extends ArrayList {
+  public ParameterList() {}
+  public ParameterList(UIParameter single) {
+    add(single);
+  }
+  
   public UIParameter parameterAt(int i) {
     return (UIParameter) get(i);
   }
