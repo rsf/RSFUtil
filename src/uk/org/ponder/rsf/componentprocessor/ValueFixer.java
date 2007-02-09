@@ -11,6 +11,7 @@ import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIParameter;
+import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.request.FossilizedConverter;
 import uk.org.ponder.rsf.request.RequestSubmittedValueCache;
 import uk.org.ponder.rsf.request.SubmittedValueEntry;
@@ -124,6 +125,13 @@ public class ValueFixer implements ComponentProcessor {
         throw new IllegalArgumentException(
             "Error following value fixup: null bound value found in component "
                 + toprocess + " with full ID " + toprocess.getFullID());
+      }
+    }
+    else if (toprocesso instanceof UIVerbatim) {
+      UIVerbatim toprocess = (UIVerbatim) toprocesso;
+      if (toprocess.markup instanceof ELReference) {
+        ELReference ref = (ELReference) toprocess.markup;
+        toprocess.markup = alterer.getBeanValue(ref.value, beanlocator);
       }
     }
   }
