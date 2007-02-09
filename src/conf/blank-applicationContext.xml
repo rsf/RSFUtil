@@ -365,6 +365,9 @@
   <bean id="HTMLColourDecoratorRenderer"
     class="uk.org.ponder.rsf.renderer.html.decorators.HTMLColourDecoratorRenderer" />
 
+  <bean id="HTMLDisabledDecoratorRenderer"
+    class="uk.org.ponder.rsf.renderer.html.decorators.HTMLDisabledDecoratorRenderer"/>
+
   <bean id="HTMLStyleDecoratorRenderer"
     class="uk.org.ponder.rsf.renderer.html.decorators.HTMLStyleDecoratorRenderer" />
 
