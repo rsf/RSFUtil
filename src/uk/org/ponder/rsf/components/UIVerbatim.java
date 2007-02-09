@@ -13,7 +13,8 @@ package uk.org.ponder.rsf.components;
 public class UIVerbatim extends UIComponent {
   /** An Object holding the raw markup to be rendered. Either a String,
    * InputStream (assumed UTF-8) or Reader, else toString() will be called 
-   * to get character data.
+   * to get character data. May also be an ELReference from which one of the
+   * previously mentioned types can be read.
    */
   public Object markup;
   
