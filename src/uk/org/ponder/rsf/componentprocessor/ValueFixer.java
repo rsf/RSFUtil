@@ -92,7 +92,8 @@ public class ValueFixer implements ComponentProcessor {
         catch (Exception e) {
           // don't let a bad bean model prevent the correct reference being
           // encoded
-          Logger.log.info("Error resolving EL reference " + stripbinding, e);
+          Logger.log.info("Error resolving EL reference " + stripbinding 
+              + " for component with full ID " + toprocess.getFullID(), e);
         }
         if (flatvalue != null) {
           modelvalue = flatvalue;
