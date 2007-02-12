@@ -89,7 +89,7 @@ public class UISelect extends UIComponent implements FixableComponent {
   }
   
   protected static UISelect make(UIContainer tofill, String ID,
-      String[] options, String valuebinding) {
+      String[] options) {
     UISelect togo = new UISelect();
     togo.ID = ID;
     togo.optionlist = togo.optionnames = UIOutputMany.make(options);
@@ -103,7 +103,7 @@ public class UISelect extends UIComponent implements FixableComponent {
    */
   public static UISelect make(UIContainer tofill, String ID, String[] options,
       String valuebinding, String initvalue) {
-    UISelect togo = make(tofill, ID, options, valuebinding);
+    UISelect togo = make(tofill, ID, options);
     UIInput selection = UIInput.make(valuebinding);
     if (initvalue != null) {
       selection.setValue(initvalue);
@@ -133,7 +133,7 @@ public class UISelect extends UIComponent implements FixableComponent {
    */
   public static UISelect makeMultiple(UIContainer tofill, String ID,
       String[] options, String valuebinding, String[] initvalue) {
-    UISelect togo = make(tofill, ID, options, valuebinding);
+    UISelect togo = make(tofill, ID, options);
     UIInputMany selection = UIInputMany.make(valuebinding);
     if (initvalue != null) {
       selection.setValue(initvalue);

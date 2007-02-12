@@ -52,7 +52,7 @@ public class UIInput extends UIBoundString {
    */
   public static UIInput make(String valuebinding) {
     UIInput togo = new UIInput();
-    togo.valuebinding = new ELReference(valuebinding);
+    togo.valuebinding = ELReference.make(valuebinding);
     return togo;
   }
 }
