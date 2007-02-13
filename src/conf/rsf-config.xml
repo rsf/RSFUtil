@@ -327,7 +327,6 @@
     class="uk.org.ponder.rsf.templateresolver.StaticTemplateResolverStrategy"
     abstract="true">
     <property name="rootResolverPriority" value="0" />
-    <property name="contextURLProvider" ref="contextURLProvider" />
     <property name="baseDirectory" ref="defaultTemplatePath" />
   </bean>
 
