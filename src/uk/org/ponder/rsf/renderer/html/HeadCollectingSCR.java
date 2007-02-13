@@ -3,6 +3,9 @@
  */
 package uk.org.ponder.rsf.renderer.html;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import uk.org.ponder.rsf.renderer.ComponentRenderer;
 import uk.org.ponder.rsf.renderer.RenderUtil;
 import uk.org.ponder.rsf.renderer.scr.BasicSCR;
@@ -30,6 +33,18 @@ public class HeadCollectingSCR implements CollectingSCR {
     return new String[] {"style", "script"};
   }
 
+  private static String[] uniquifyAttrs = new String[] {"href", "src"}; 
+  private static String getUniquingAttr(XMLLump lump) {
+    String val = null;
+    for (int i = 0; i < uniquifyAttrs.length; ++ i) {
+      String thisval = (String) lump.attributemap.get(uniquifyAttrs[i]);
+      if (thisval != null) {
+        val = thisval; break;
+        }
+      }
+    return val;
+  }
+  
   public void setURLRewriteSCR(BasicSCR urlRewriteSCR) {
     this.urlRewriteSCR = urlRewriteSCR;
   }
@@ -38,8 +53,14 @@ public class HeadCollectingSCR implements CollectingSCR {
     PrintOutputStream pos = xmlw.getInternalWriter();
     RenderUtil.dumpTillLump(lump.parent.lumps, lump.lumpindex, 
         lump.open_end.lumpindex + 1, pos);
+    Set used = new HashSet();
     for (int i = 0; i < collected.size(); ++ i) {
       XMLLump collump = collected.lumpAt(i);
+      String attr = getUniquingAttr(collump);
+      if (attr != null) {
+        if (used.contains(attr)) continue;
+        else used.add(attr);
+      }
       urlRewriteSCR.render(collump, xmlw);
       RenderUtil.dumpTillLump(collump.parent.lumps, collump.open_end.lumpindex + 1, 
           collump.close_tag.lumpindex + 1, pos);
