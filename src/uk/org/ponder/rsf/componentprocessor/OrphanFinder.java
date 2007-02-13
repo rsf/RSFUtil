@@ -24,7 +24,8 @@ public class OrphanFinder implements ComponentProcessor {
   public void processComponent(UIComponent toprocesso) {
     if (toprocesso instanceof UIBound) {
       UIBound toprocess = (UIBound) toprocesso;
-      if (toprocess.valuebinding != null && toprocess.fossilize) {
+      if (toprocess.valuebinding != null && toprocess.fossilize 
+          && toprocess.willinput) {
         expectsubmit.add(toprocess.getFullID());
       }
     }
