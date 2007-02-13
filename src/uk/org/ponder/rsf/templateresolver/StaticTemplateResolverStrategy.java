@@ -26,6 +26,7 @@ public class StaticTemplateResolverStrategy implements RootAwareTRS,
   private boolean ismultiple = true;
   private boolean expected;
 
+  // Should be null, if this is a local resolver
   public void setContextURLProvider(ContextURLProvider cup) {
     this.cup = cup;
   }
@@ -65,7 +66,7 @@ public class StaticTemplateResolverStrategy implements RootAwareTRS,
   }
 
   public String getExternalURLBase() {
-    return externalURLbase == null ? cup.getContextBaseURL()
+    return externalURLbase == null ? cup == null? "" : cup.getContextBaseURL()
         : externalURLbase;
   }
 

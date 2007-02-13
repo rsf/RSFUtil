@@ -21,8 +21,10 @@ public interface BaseAwareTemplateResolverStrategy {
    */ 
   public String getTemplateResourceBase();
   /** Returns the externally usable URL corresponding to the base path
-   * given from getTemplateResourceBase(). Defaults to the resourceBaseURL
-   * reported for the request context.
+   * given from getTemplateResourceBase(). Will return <code>""</code> in 
+   * the default case that this is a "local" resolver, that is, served from
+   * the current Servlet Container. This is to handle the case where 
+   * the resource base should be determined from the incoming request. 
    */
   public String getExternalURLBase();
 }
