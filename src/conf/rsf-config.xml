@@ -574,6 +574,11 @@
       value="actionResultInterceptorProcessor.interceptors" />
   </bean>
 
+  <bean id="actionResultInterceptorProcessor" 
+    class="uk.org.ponder.rsf.flow.ARIProcessor">
+    <property name="mappingViewResolver" ref="viewResolver"/>
+  </bean>
+
   <bean id="actionErrorStrategyManager"
     class="uk.org.ponder.rsf.flow.errors.ActionErrorStrategyManager">
     <property name="mergeStrategies" ref="XMLActionErrorStrategies" />
