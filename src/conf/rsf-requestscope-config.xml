@@ -286,10 +286,6 @@
   <bean id="ARIResultConcrete" factory-bean="actionHandler"
     factory-method="getARIResult" /> 
     
-  <bean id="actionResultInterceptorProcessor" 
-    class="uk.org.ponder.rsf.flow.ARIProcessor">
-    <property name="mappingViewResolver" ref="viewResolver"/>
-  </bean>
   <!-- A useful "EL-target" bean to allow scopes to be destroyed via EL -->
   <bean id="destroyScope"
     class="uk.org.ponder.rsf.state.scope.ScopedBeanDestroyer" />
