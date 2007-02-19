@@ -58,17 +58,22 @@ public class UIBranchContainer extends UIContainer {
   // in the 4 scopes.
   private transient UIComponent[] flatchildren;
 
- /** Constructs a "repeating" BranchContainer, uniquely identified by the 
-  * "localID" passed as the 3rd argument. Suitable, for example, for creating a
-  * table row.
-  * @param parent The parent container to which the returned branch should be added.
-  * @param ID The RSF ID for the branch (must contain a colon character)
-  * @param localID The local ID identifying this branch instance (must be unique for
-  * each branch with the same ID in this branch)
-  */
-  public static UIBranchContainer make(UIContainer parent, String ID, String localID) {
+  /**
+   * Constructs a "repeating" BranchContainer, uniquely identified by the
+   * "localID" passed as the 3rd argument. Suitable, for example, for creating a
+   * table row.
+   * 
+   * @param parent The parent container to which the returned branch should be
+   *          added.
+   * @param ID The RSF ID for the branch (must contain a colon character)
+   * @param localID The local ID identifying this branch instance (must be
+   *          unique for each branch with the same ID in this branch)
+   */
+  public static UIBranchContainer make(UIContainer parent, String ID,
+      String localID) {
     if (ID.indexOf(':') == -1) {
-      throw new IllegalArgumentException("Branch container ID must contain a colon character :");
+      throw new IllegalArgumentException(
+          "Branch container ID must contain a colon character :");
     }
     UIBranchContainer togo = new UIBranchContainer();
     togo.ID = ID;
@@ -77,29 +82,34 @@ public class UIBranchContainer extends UIContainer {
     return togo;
   }
 
-  /** Constructs a simple BranchContainer, used to group components or to
-   * cause a rendering switch. Suitable where there will be just one
-   * branch with this ID within its container.
+  /**
+   * Constructs a simple BranchContainer, used to group components or to cause a
+   * rendering switch. Suitable where there will be just one branch with this ID
+   * within its container. Where BranchContainers are created in a loop, supply
+   * a localID by using the {@link #make(UIContainer, String, String)}
+   * constructor.
+   * 
    * @see #make(UIContainer, String, String)
    */
   public static UIBranchContainer make(UIContainer parent, String ID) {
     return make(parent, ID, "");
   }
-  
+
   /**
    * Return the single component with the given ID. This should be an ID without
    * colon designating a leaf child.
    */
   public UIComponent getComponent(String id) {
-    if (childmap == null) return null;
+    if (childmap == null)
+      return null;
     Object togo = childmap.get(id);
     if (togo != null && !(togo instanceof UIComponent)) {
-      throw new IllegalArgumentException( 
-          "Error in view tree: component with id " + 
-          id + " was expected to be a leaf component but was a branch."
-          + "\n (did you forget to use a colon in the view template?)");
+      throw new IllegalArgumentException(
+          "Error in view tree: component with id " + id
+              + " was expected to be a leaf component but was a branch."
+              + "\n (did you forget to use a colon in the view template?)");
     }
-    return  (UIComponent) togo;
+    return (UIComponent) togo;
   }
 
   /**
@@ -109,12 +119,12 @@ public class UIBranchContainer extends UIContainer {
   public List getComponents(String id) {
     Object togo = childmap.get(id);
     if (togo != null && !(togo instanceof List)) {
-      throw new IllegalArgumentException( 
-          "Error in view tree: component with id " + 
-          id + " was expected to be a branch container but was a leaf."
-          + "\n (did you forget to use a colon in the component ID?)");
+      throw new IllegalArgumentException(
+          "Error in view tree: component with id " + id
+              + " was expected to be a branch container but was a leaf."
+              + "\n (did you forget to use a colon in the component ID?)");
     }
-    return (List)togo; 
+    return (List) togo;
   }
 
   public String debugChildren() {
@@ -205,7 +215,8 @@ public class UIBranchContainer extends UIContainer {
         RSFUtil.failRemove(tomove);
       }
       boolean removed = children.remove(tomove);
-      if (!removed) RSFUtil.failRemove(tomove);
+      if (!removed)
+        RSFUtil.failRemove(tomove);
     }
     tomove.updateFullID(null); // remove cached ID
   }
