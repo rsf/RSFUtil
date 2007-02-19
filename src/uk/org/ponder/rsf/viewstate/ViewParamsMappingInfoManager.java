@@ -55,26 +55,35 @@ public class ViewParamsMappingInfoManager {
     return togo;
   }
 
-  /**
-   * Create a parsespec string for classes which extend a VP but do not override
-   * the getParseSpec method from SVP
-   * @param viewparams the viewparams object to make the parse spec string from
-   * @return the complete parse spec string
-   * @author aaronz
-   */
-  private String inferDefaultParseSpec(ViewParameters viewparams) {
-    MethodAnalyser methodAnalyser = mappingcontext.getAnalyser(viewparams.getClass());
-    // using CharWrap instead of StringBuffer for speed
-    CharWrap cw = new CharWrap(viewparams.getParseSpec());
+  private void appendDeclaredFields(CharWrap cw, Class clazz) {
+    MethodAnalyser methodAnalyser = mappingcontext.getAnalyser(clazz);
+    // Append all "legitimate" public read/write fields declared in this class
+    // to the parseSpec.
     for (int i = 0; i < methodAnalyser.allgetters.length; ++i) {
       SAXAccessMethod method = methodAnalyser.allgetters[i];
-      // filter out anchorfield because it could cause big problems if we added it to the parsespec
       if (method.canGet() && method.canSet()
           && mappingcontext.saxleafparser.isLeafType(method.getAccessedType())
           && method.getDeclaringClass() == methodAnalyser.targetclass
           && !method.tagname.equals("anchorField")) {
         cw.append("," + method.tagname);
       }
+    } 
+  }
+  
+  /**
+   * Create a parsespec string for classes which extend a VP but do not override
+   * the getParseSpec method from SVP. This must only be called for descendents
+   * of SimpleViewParams.
+   * @param viewparams the viewparams object to make the parse spec string from
+   * @return the complete parse spec string
+   * @author aaronz
+   */
+  private String inferDefaultParseSpec(ViewParameters viewparams) {
+    CharWrap cw = new CharWrap(viewparams.getParseSpec());
+    Class clazz = viewparams.getClass();
+    while (clazz != SimpleViewParameters.class) {
+      appendDeclaredFields(cw, clazz);
+      clazz = clazz.getSuperclass();
     }
     return cw.toString();
   }
