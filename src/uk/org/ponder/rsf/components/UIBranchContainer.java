@@ -12,6 +12,7 @@ import java.util.Map;
 import uk.org.ponder.rsf.util.RSFUtil;
 import uk.org.ponder.rsf.util.SplitID;
 import uk.org.ponder.stringutil.CharWrap;
+import uk.org.ponder.util.Logger;
 
 /**
  * UIBranchContainer represents a "branch point" in the IKAT rendering process,
@@ -195,6 +196,12 @@ public class UIBranchContainer extends UIContainer {
       if (children == null) {
         children = new ArrayList();
         childmap.put(childkey, children);
+      }
+      else if (toadd instanceof UIBranchContainer) {
+        UIBranchContainer addbranch = (UIBranchContainer) toadd;
+        if (addbranch.localID == "") {
+          addbranch.localID = Integer.toString(children.size());
+        }
       }
       children.add(toadd);
     }
