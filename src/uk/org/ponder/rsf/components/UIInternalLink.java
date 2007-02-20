@@ -22,26 +22,30 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  */
 
 public class UIInternalLink extends UILink {
-  public static UIInternalLink make(UIContainer parent, String ID, String text,
-      ViewParameters viewparams) {
+  
+  public static UIInternalLink make(UIContainer parent, String ID, 
+      UIBoundString linktext, ViewParameters viewparams) {
     UIInternalLink togo = new UIInternalLink();
     togo.ID = ID;
-    if (text != null) {
-      togo.linktext = new UIOutput();
-      togo.linktext.setValue(text);
-    }
+    togo.linktext = linktext;
     togo.viewparams = viewparams.copyBase();
     parent.addComponent(togo);
-    return togo;
+    return togo;  
+  }
+  
+  public static UIInternalLink make(UIContainer parent, String ID, String text,
+      ViewParameters viewparams) {
+    UIBoundString linktext = null;
+    if (text != null) {
+      linktext = new UIOutput();
+      linktext.setValue(text);
+    }
+    return make(parent, ID, linktext, viewparams);
   }
 
   public static UIInternalLink make(UIContainer parent, String ID,
       ViewParameters viewparams) {
-    UIInternalLink togo = new UIInternalLink();
-    togo.ID = ID;
-    togo.viewparams = viewparams.copyBase();
-    parent.addComponent(togo);
-    return togo;
+    return make(parent, ID, (UIBoundString)null, viewparams);
   }
 
   /** Create a link which, while internal, does not participate in the
@@ -60,6 +64,6 @@ public class UIInternalLink extends UILink {
     parent.addComponent(togo);
     return togo;
   }
-  
+  /** ViewParameters representing the navigation target of this link control */
   public ViewParameters viewparams;
 }

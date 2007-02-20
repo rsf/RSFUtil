@@ -12,7 +12,6 @@ import java.util.Map;
 import uk.org.ponder.rsf.util.RSFUtil;
 import uk.org.ponder.rsf.util.SplitID;
 import uk.org.ponder.stringutil.CharWrap;
-import uk.org.ponder.util.Logger;
 
 /**
  * UIBranchContainer represents a "branch point" in the IKAT rendering process,
