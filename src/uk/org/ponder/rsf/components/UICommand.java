@@ -16,9 +16,12 @@ package uk.org.ponder.rsf.components;
  * 
  */
 public class UICommand extends UISimpleContainer {
+  /** The EL reference of the action/method binding to be invoked when this
+   * control is oeprated.
+   */
   public ELReference methodbinding;
-  // TODO: This should really be a UIOutput
-  public String commandtext;
+  /** The text labelling this command control */
+  public UIBoundString commandtext;
   /**
    * Creates a command link initiating the specified method binding on trigger,
    * but also backed by infrastructure to produce a GET redirect to the original
@@ -31,13 +34,24 @@ public class UICommand extends UISimpleContainer {
    * @param text
    *          The text that will be rendered to the user on this component.
    * @param methodbinding
-   *          A JSF EL expression representing the action to be triggered when
+   *          An RSF EL expression representing the action to be triggered when
    *          the user activates this link.
    */
   public static UICommand make(UIContainer parent, String ID, String text,
       String methodbinding) {
+    UIBoundString commandtext = null;
+    if (text != null) {
+      commandtext = new UIOutput();
+      commandtext.setValue(text);
+    }
+    return make(parent, ID, commandtext, methodbinding);
+  }
+
+  public static UICommand make(UIContainer parent, String ID, 
+      UIBoundString commandtext, String methodbinding) {
     UICommand togo = new UICommand();
-    togo.commandtext = text;
+    togo.commandtext = new UIOutput();
+    togo.commandtext = commandtext;
     togo.ID = ID;
     togo.methodbinding = ELReference.make(methodbinding);
     // TODO: do this at fixup
@@ -49,16 +63,21 @@ public class UICommand extends UISimpleContainer {
     parent.addComponent(togo);
     return togo;
   }
-
+  
+  public static UICommand make(UIContainer parent, String ID, 
+      UIBoundString commandtext) {
+    return make(parent, ID, commandtext, null);
+  }
+  
   public static UICommand make(UIContainer parent, String ID,
       String methodbinding) {
-    return make(parent, ID, null, methodbinding);
+    return make(parent, ID, (UIBoundString)null, methodbinding);
   }
 /** Construct an "actionless" command link, suitable for a CRUD-type application
  * where the data alteration constitutes the entire action.
  */
   public static UICommand make(UIContainer parent, String ID) {
-    return make(parent, ID, null, null);
+    return make(parent, ID, (UIBoundString)null, null);
   }
   // a map of param/values to be surreptitiously added to the parameter
   // map during submission. We maintain these as single-valued here for

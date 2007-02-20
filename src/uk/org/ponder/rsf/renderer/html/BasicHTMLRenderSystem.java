@@ -332,8 +332,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
           String target = torender.target.getValue();
           if (target == null || target.length() == 0) {
             // some people may perversely want empty links - but they would
-            // always
-            // refer to *real* self and hence not be rewritten.
+            // always refer to *real* self and hence not be rewritten.
             target = "";
           }
           else if (!(torendero instanceof UIInternalLink)) {
@@ -365,10 +364,11 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         // bundled as this special attribute.
         attrcopy.put("name", FossilizedConverter.COMMAND_LINK_PARAMETERS
             + value);
-        String text = torender.commandtext;
+        String text = torender.commandtext == null? null : 
+          torender.commandtext.getValue();
         boolean isbutton = lump.textEquals("<button ");
         if (text != null && !isbutton) {
-          attrcopy.put("value", torender.commandtext);
+          attrcopy.put("value", torender.commandtext.getValue());
           text = null;
         }
         rewriteLeaf(text, rendercontext);

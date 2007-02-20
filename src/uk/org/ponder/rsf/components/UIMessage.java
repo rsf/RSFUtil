@@ -13,11 +13,26 @@ public class UIMessage extends UIBoundString {
   public String messagekey;
   public Object[] arguments;
   
-  public static UIMessage make(UIContainer parent, String ID, String messagekey) {
+  /** Construct a "clustered" message component, suitable for being the label
+   * of a UILink or UICommand, etc.
+   */
+  public static UIMessage make(String messagekey) {
+    return make(messagekey, null);
+  }
+  
+  public static UIMessage make(String messagekey, Object[] arguments) {
     UIMessage togo = new UIMessage();
     togo.messagekey = messagekey;
-    parent.addComponent(togo);
+    togo.arguments = arguments;
     return togo;
+  }
+  
+  /** Construct a "standalone" message component suitable for appearing as
+   * a top-level label component in the component tree.
+   */ 
+  
+  public static UIMessage make(UIContainer parent, String ID, String messagekey) {
+    return make(parent, ID, messagekey, null);
   }
   
   public static UIMessage make(UIContainer parent, String ID, String messagekey,
@@ -25,6 +40,7 @@ public class UIMessage extends UIBoundString {
     UIMessage togo = new UIMessage();
     togo.messagekey = messagekey;
     togo.arguments = arguments;
+    togo.ID = ID;
     parent.addComponent(togo);
     return togo;
   }

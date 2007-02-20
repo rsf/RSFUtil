@@ -102,6 +102,13 @@ public class ValueFixer implements ComponentProcessor {
           }
         }
       }
+      else if (toprocess.resolver != null) {
+        Object oldvalue = toprocess.acquireValue();
+        BeanResolver resolver = computeResolver(toprocess);
+        Object flatvalue = alterer.getFlattenedValue(null, oldvalue,
+            oldvalue.getClass(), resolver);
+        toprocess.updateValue(flatvalue);
+      }
       if (toprocess.submittingname == null) {
         toprocess.submittingname = toprocess.getFullID();
       }

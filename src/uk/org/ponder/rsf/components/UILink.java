@@ -4,44 +4,54 @@
 package uk.org.ponder.rsf.components;
 
 /**
- * This component peers with a simple navigational link. Operating this link
- * is expected to give rise to an idempotent request.
- * The basic case where the command is rendered using a piece of
- * non-bound text is handled by filling in the "linktext" field. For more
- * complex command contents including bound ones, leave this field as null 
- * and add rendering components as childen of the link.
+ * This component peers with a simple navigational link. Operating this link is
+ * expected to give rise to an idempotent request. The basic case where the
+ * command is rendered using a piece of non-bound text is handled by filling in
+ * the "linktext" field. For more complex command contents including bound ones,
+ * leave this field as null and add rendering components as childen of the link.
+ * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
 public class UILink extends UIComponent {
-  /** A string representing the target of this link - e.g. in an HTML system,
-   * a URL. In HTML in particular, the special prefix $context/ will be 
-   * resolved onto the context for the current webapp - that is, the directory
+  /**
+   * A string representing the target of this link - e.g. in an HTML system, a
+   * URL. In HTML in particular, the special prefix $context/ will be resolved
+   * onto the context for the current webapp - that is, the directory
    * immediately above WEB-INF.
    * 
-   * <p>For an InternalLink this will be filled in by a fixup from the
+   * <p>
+   * For an InternalLink this will be filled in by a fixup from the
    * ViewParameters member.
    */
-  public UIOutput target;
-  
-  public UIOutput linktext;
-  
-  public static UILink make(UIContainer parent, String ID, String text, String target) {
+  public UIBoundString target;
+
+  public UIBoundString linktext;
+
+  public static UILink make(UIContainer parent, String ID, String text,
+      String target) {
+    UIBoundString linktext = null;
+    if (text != null) {
+      linktext = new UIOutput();
+      linktext.setValue(text);
+    }
+    return make(parent, ID, linktext, target);
+  }
+
+  public static UILink make(UIContainer parent, String ID,
+      UIBoundString linktext, String target) {
     UILink togo = new UILink();
     togo.ID = ID;
     togo.target = new UIOutput();
     if (target != null) {
       togo.target.setValue(target);
     }
-    if (text != null) {
-      togo.linktext = new UIOutput();
-      togo.linktext.setValue(text);
-    }
-    parent.addComponent(togo);    
+    togo.linktext = linktext;
+    parent.addComponent(togo);
     return togo;
   }
-  
-   public static UILink make(UIContainer parent, String ID, String target) {
-    return make(parent, ID, null, target);
+
+  public static UILink make(UIContainer parent, String ID, String target) {
+    return make(parent, ID, (UIBoundString)null, target);
   }
 
 }

@@ -29,7 +29,6 @@ public class UISelect extends UIComponent implements FixableComponent {
    * either UIInput or UIInputMany.
    */
   public UIBound selection;
-
   /**
    * This field is set during fixup for reference of the renderer. Do not set
    * this manually.
@@ -141,5 +140,13 @@ public class UISelect extends UIComponent implements FixableComponent {
     togo.selection = selection;
     return togo;
   }
-
+  
+  /** Sets the option labels for this selection control to be interpreted
+   * as message keys, rather than as raw Strings.
+   */ 
+  public UISelect setMessageKeys() {
+    optionnames.resolver = new ELReference("#{messageLocator}");
+    return this;
+  }
+  
 }
