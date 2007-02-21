@@ -20,7 +20,7 @@ public class PlainTextInputEvolver implements TextInputEvolver {
     UIJointContainer joint = new UIJointContainer(toevolve.parent,
         toevolve.ID, COMPONENT_ID);
     toevolve.parent.remove(toevolve);
-    toevolve.ID = "input";
+    toevolve.ID = SEED_ID;
     joint.addComponent(toevolve);
     return joint;
   }
