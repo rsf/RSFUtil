@@ -21,7 +21,7 @@ import java.util.Map;
  *
  */
 
-public class UIFreeAttributeDecorator extends UIDecorator {
+public class UIFreeAttributeDecorator implements UIDecorator {
   public Map attributes;
 
   public UIFreeAttributeDecorator() {

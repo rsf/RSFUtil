@@ -9,7 +9,7 @@ package uk.org.ponder.rsf.components.decorators;
  *
  */
 
-public class UIStyleDecorator extends UIDecorator {
+public class UIStyleDecorator implements UIDecorator {
   public String styleclass;
 
   public UIStyleDecorator(String styleclass) {

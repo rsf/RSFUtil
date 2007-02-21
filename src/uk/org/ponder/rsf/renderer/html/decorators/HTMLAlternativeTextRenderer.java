@@ -1,18 +1,17 @@
 /*
- * Created on 26-May-2006
+ * Created on 20 Feb 2007
  */
 package uk.org.ponder.rsf.renderer.html.decorators;
 
 import java.util.Map;
 
+import uk.org.ponder.rsf.components.decorators.UIAlternativeTextDecorator;
 import uk.org.ponder.rsf.components.decorators.UIDecorator;
-import uk.org.ponder.rsf.components.decorators.UITooltipDecorator;
 import uk.org.ponder.rsf.renderer.decorator.DecoratorRenderer;
 
-public class HTMLTooltipDecoratorRenderer implements DecoratorRenderer {
-
+public class HTMLAlternativeTextRenderer implements DecoratorRenderer {
   public Class getRenderedType() {
-    return UITooltipDecorator.class;
+    return UIAlternativeTextDecorator.class;
   }
 
   public String getContentTypes() {
@@ -20,8 +19,8 @@ public class HTMLTooltipDecoratorRenderer implements DecoratorRenderer {
   }
 
   public void modifyAttributes(UIDecorator decoratoro, String tagname, Map tomodify) {
-    UITooltipDecorator decorator = (UITooltipDecorator) decoratoro;
-    tomodify.put("title", decorator.text.getValue());
+    UIAlternativeTextDecorator decorator = (UIAlternativeTextDecorator) decoratoro;
+    tomodify.put("alt", decorator.text.getValue());
   }
 
 }

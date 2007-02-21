@@ -10,7 +10,7 @@ import uk.org.ponder.rsf.components.UIComponent;
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
 
-public class UILabelTargetDecorator extends UIDecorator {
+public class UILabelTargetDecorator implements UIDecorator {
   public String targetFullID;
   public UILabelTargetDecorator(UIComponent target) {
     targetFullID = target.getFullID();

@@ -46,10 +46,9 @@ public class DecoratorManager implements ApplicationContextAware {
   }
   
   private DecoratorRenderer lookupRenderer(UIDecorator dec, String requestcontent) {
-    Map typemap = (Map) byClass.get(dec.getClass());
-    if (typemap == null || typemap.isEmpty()) {
-      return null;
-    }
+    Map typemap = getTypeMap(dec);
+    if (typemap == null) return null;
+  
     DecoratorRenderer togo = (DecoratorRenderer) typemap.get(requestcontent);
     if (togo == null) {
       togo = (DecoratorRenderer) typemap.get("");
@@ -61,6 +60,18 @@ public class DecoratorManager implements ApplicationContextAware {
   }
 
   
+  private Map getTypeMap(UIDecorator dec) {
+    Class clazz = dec.getClass();
+    while (clazz != null && clazz != UIDecorator.class) { 
+      Map typemap = (Map) byClass.get(dec.getClass());
+      if (typemap != null && !typemap.isEmpty()) {
+        return typemap;
+      }
+      clazz = clazz.getSuperclass();
+    }
+    return null;
+  }
+
   public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
     String decorators[] = applicationContext.getBeanNamesForType(DecoratorRenderer.class, false, false);
     for (int i = 0; i < decorators.length; ++ i) {
