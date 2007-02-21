@@ -16,7 +16,12 @@ public class HTMLDisabledDecoratorRenderer implements DecoratorRenderer {
 
   public void modifyAttributes(UIDecorator decoratoro, String tagname, Map tomodify) {
     UIDisabledDecorator decorator = (UIDisabledDecorator) decoratoro;
-    tomodify.put("disabled", decorator.disabled? Boolean.TRUE: Boolean.FALSE);
+    if (decorator.disabled) {
+      tomodify.put("disabled", "disabled");
+    }
+    else {
+      tomodify.remove("disabled");
+    }
   }
 
   public String getContentTypes() {

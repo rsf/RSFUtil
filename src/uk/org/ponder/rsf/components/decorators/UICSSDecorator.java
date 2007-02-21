@@ -12,7 +12,7 @@ import java.util.Map;
  *
  */
 
-public class UICSSDecorator extends UIDecorator {
+public class UICSSDecorator implements UIDecorator {
   public Map stylemap;
  
   public UICSSDecorator() {}

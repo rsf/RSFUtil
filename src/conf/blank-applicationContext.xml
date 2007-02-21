@@ -379,6 +379,12 @@
 
   <bean id="HTMLLabelTargetDecoratorRenderer"
     class="uk.org.ponder.rsf.renderer.html.decorators.HTMLLabelTargetDecoratorRenderer" />
+   
+  <bean id="HTMLAlternativeTextRenderer"
+    class="uk.org.ponder.rsf.renderer.html.decorators.HTMLAlternativeTextRenderer"/>
+    
+  <bean id="HTMLTextDimensionsRenderer"
+    class="uk.org.ponder.rsf.renderer.html.decorators.HTMLTextDimensionsDecoratorRenderer"/>
 
   <bean id="CSSDecoratorRenderer"
     class="uk.org.ponder.rsf.renderer.html.decorators.CSSDecoratorRenderer" />

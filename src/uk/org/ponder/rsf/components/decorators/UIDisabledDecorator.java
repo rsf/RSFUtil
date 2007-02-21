@@ -11,7 +11,7 @@ package uk.org.ponder.rsf.components.decorators;
  *
  */
 
-public class UIDisabledDecorator extends UIDecorator {
+public class UIDisabledDecorator implements UIDecorator {
   public boolean disabled = true;
   public UIDisabledDecorator() {}
   public UIDisabledDecorator(boolean disabled) {

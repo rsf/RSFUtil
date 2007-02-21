@@ -18,6 +18,6 @@ package uk.org.ponder.rsf.components.decorators;
  *
  */
 
-public class UIDecorator {
+public interface UIDecorator {
 
 }

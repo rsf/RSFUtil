@@ -22,4 +22,7 @@ public class UIBoundString extends UIBound {
     value = StringUIType.instance.getPlaceholder();
   }
 
+  public UIBoundString(String value) {
+    this.value = value;
+  }
 }
