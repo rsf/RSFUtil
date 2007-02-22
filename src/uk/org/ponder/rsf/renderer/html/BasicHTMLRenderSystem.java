@@ -471,13 +471,13 @@ public class BasicHTMLRenderSystem implements RenderSystem {
 
   private void replaceAttributesOpen(TagRenderContext c) {
     XMLUtil.dumpAttributes(c.attrcopy, c.xmlw);
-    c.pos.print(">");
+    c.pos.print(c.isEmpty()? "/>": ">");
 
     c.nextpos = c.endopen.lumpindex + 1;
   }
 
   private void dumpTemplateBody(TagRenderContext c) {
-    if (c.endopen.lumpindex == c.close.lumpindex) {
+    if (c.isEmpty()) {
       c.pos.print("/>");
     }
     else {

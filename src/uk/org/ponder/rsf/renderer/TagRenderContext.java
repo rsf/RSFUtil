@@ -12,6 +12,9 @@ import uk.org.ponder.xml.XMLWriter;
 /** The context necessary for a ComponentRenderer to do its work */
 
 public class TagRenderContext {
+  public boolean isEmpty() {
+    return endopen.lumpindex == close.lumpindex;
+  }
   public Map attrcopy;
   public XMLLump uselump;
   public XMLLump endopen;
