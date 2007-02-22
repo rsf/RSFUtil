@@ -22,6 +22,9 @@ import java.util.Map;
  */
 
 public class UIFreeAttributeDecorator implements UIDecorator {
+  /** A map of String attribute names to String attribute values which will
+   * be used to override any attributes taken from the template.
+   */
   public Map attributes;
 
   public UIFreeAttributeDecorator() {
