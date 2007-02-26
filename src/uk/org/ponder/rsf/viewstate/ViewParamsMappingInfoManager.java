@@ -38,7 +38,6 @@ public class ViewParamsMappingInfoManager {
     this.mappingcontext = mappingcontext;
   }
 
-
   /**
    * This fetches a cached copy of a VPMI (or creates a new one and caches it if
    * none exists already) for a given VP
@@ -135,6 +134,9 @@ public class ViewParamsMappingInfoManager {
     ViewParamsMapInfo togo = new ViewParamsMapInfo();
     togo.attrnames = attnames.toStringArray();
     togo.paths = paths.toStringArray();
+    for (int i = 0; i < togo.attrnames.length; ++ i) {
+      togo.pathToAttr.put(togo.paths[i], togo.attrnames[i]);
+    }
     return togo;
   }
 

@@ -256,14 +256,6 @@
     <property name="internalURLRewriter" ref="internalURLRewriter" />
   </bean>
 
-  <!-- Used when operating an HTML-like form system whereby submitting controls
-    are defined by nesting within an element -->
-  <bean id="containmentFormFixer"
-    class="uk.org.ponder.rsf.componentprocessor.ContainmentFormChildFixer">
-    <property name="mappingContext" ref="ELMappingContext" />
-  </bean>
-
-
   <bean id="requestAddressibleParent"
     class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
     <property name="targetPath"

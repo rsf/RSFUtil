@@ -3,25 +3,23 @@
  */
 package uk.org.ponder.rsf.componentprocessor;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIForm;
 
 public class BasicFormModel implements FormModel {
   // this is a map of component IDs in this container, to their parent
   // form.
-  private Map componentToForm;
+  private Map componentToForm = new HashMap();
   
-  public void registerChild(UIForm parent, UIBound submitting) {
+  public void registerChild(UIForm parent, UIComponent submitting) {
     componentToForm.put(submitting, parent);
   }
     
-  // this is called during RENDERING to find the relevant form.
-  // currently disused - will be used by fossilized code somehow.
   public UIForm formForComponent(UIComponent component) {
-    return (UIForm) componentToForm.get(component.getFullID());
+    return (UIForm) componentToForm.get(component);
   }
   
   // For CONTAINMENT forms, we can render fossilized fields alongside their

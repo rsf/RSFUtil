@@ -10,13 +10,17 @@ import uk.org.ponder.conversion.LeafObjectParser;
 import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIComponent;
+import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.components.UIVerbatim;
+import uk.org.ponder.rsf.request.EarlyRequestParser;
 import uk.org.ponder.rsf.request.FossilizedConverter;
 import uk.org.ponder.rsf.request.RequestSubmittedValueCache;
 import uk.org.ponder.rsf.request.SubmittedValueEntry;
 import uk.org.ponder.rsf.state.ErrorStateManager;
 import uk.org.ponder.rsf.uitype.UITypes;
+import uk.org.ponder.rsf.util.RSFUtil;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
 
@@ -48,6 +52,12 @@ public class ValueFixer implements ComponentProcessor {
     this.renderfossilized = renderfossilized;
   }
 
+  private FormModel formModel;
+
+  public void setFormModel(FormModel formModel) {
+    this.formModel = formModel;
+  }
+  
   public void setErrorStateManager(ErrorStateManager errorStateManager) {
     // this.errorStateManager = errorStateManager;
     if (errorStateManager.errorstate.rsvc != null) {
@@ -77,6 +87,9 @@ public class ValueFixer implements ComponentProcessor {
         toprocess.updateValue(sve.newvalue);
         hadcached = true;
       }
+      UIForm form = formModel.formForComponent(toprocess);
+      boolean getform = form == null? false : 
+        form.type.equals(EarlyRequestParser.RENDER_REQUEST);
       if (toprocess.valuebinding != null
           && (toprocess.acquireValue() == null
               || UITypes.isPlaceholder(toprocess.acquireValue()) || hadcached)) {
@@ -85,8 +98,9 @@ public class ValueFixer implements ComponentProcessor {
         String stripbinding = toprocess.valuebinding.value;
         BeanResolver resolver = computeResolver(toprocess);
         Object flatvalue = null;
+        Object root = getform? (Object)form.viewparams : beanlocator;
         try {
-          flatvalue = alterer.getFlattenedValue(stripbinding, beanlocator,
+          flatvalue = alterer.getFlattenedValue(stripbinding, root,
               oldvalue.getClass(), resolver);
         }
         catch (Exception e) {
@@ -112,7 +126,7 @@ public class ValueFixer implements ComponentProcessor {
       if (toprocess.submittingname == null) {
         toprocess.submittingname = toprocess.getFullID();
       }
-      if (toprocess.valuebinding != null) {
+      if (toprocess.valuebinding != null && !getform) {
         // TODO: Think carefully whether we want these "encoded" bindings to
         // EVER appear in the component tree. Tradeoffs - we would need to
         // create
@@ -186,5 +200,6 @@ public class ValueFixer implements ComponentProcessor {
               + renderer.getClass()
               + " (expected BeanResolver or LeafObjectParser)");
   }
+
 
 }
