@@ -25,6 +25,7 @@ import uk.org.ponder.rsf.components.UISelectChoice;
 import uk.org.ponder.rsf.components.UISelectLabel;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.renderer.ComponentRenderer;
+import uk.org.ponder.rsf.renderer.IDAssigner;
 import uk.org.ponder.rsf.renderer.RenderSystem;
 import uk.org.ponder.rsf.renderer.RenderUtil;
 import uk.org.ponder.rsf.renderer.TagRenderContext;
@@ -122,7 +123,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
   // Although a lot of the parameterisation now lies in the allowable tag
   // set at target.
   public int renderComponent(UIComponent torendero, View view, XMLLump lump,
-      PrintOutputStream pos, String IDStrategy, XMLLumpMMap collecteds) {
+      PrintOutputStream pos, IDAssigner IDassigner, XMLLumpMMap collecteds) {
     XMLWriter xmlw = new XMLWriter(pos);
     int lumpindex = lump.lumpindex;
     XMLLump[] lumps = lump.parent.lumps;
@@ -178,7 +179,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
 
       HashMap attrcopy = new HashMap();
       attrcopy.putAll(uselump.attributemap);
-      RenderUtil.adjustForID(attrcopy, IDStrategy, torendero);
+      IDassigner.adjustForID(attrcopy, torendero);
       decoratormanager.decorate(torendero.decorators, uselump.getTag(),
           attrcopy);
 

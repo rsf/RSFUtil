@@ -14,7 +14,7 @@ import uk.org.ponder.rsf.content.ContentTypeInfo;
  */
 
 public class UIIDStrategyDecorator implements UIDecorator {
-  /** A special constant in addition to those in ContentTypeInfo, specifying
+  /** A special constant in addition to those in {@link ContentTypeInfo}, specifying
    * that the ID of this element will be allocated to the value held in 
    * <code>ID</code>.
    */
