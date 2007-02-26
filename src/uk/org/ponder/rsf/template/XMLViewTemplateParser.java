@@ -178,7 +178,10 @@ public class XMLViewTemplateParser implements ViewTemplateParser {
           checkContribute(ID, headlump);
           headlump.rsfID = ID;
 
-          XMLLump stacktop = findTopContainer();
+          XMLLump stacktop = findTopContainer(ID);
+          if (stacktop.downmap == null) {
+            stacktop.downmap = new XMLLumpMMap(); // to handle payload-component case
+          }
           stacktop.downmap.addLump(ID, headlump);
           headlump.uplump = stacktop;
           t.globalmap.addLump(ID, headlump);
@@ -257,10 +260,11 @@ public class XMLViewTemplateParser implements ViewTemplateParser {
     justended = true;
   }
 
-  private XMLLump findTopContainer() {
+  private XMLLump findTopContainer(String id) {
     for (int i = tagstack.size() - 1; i >= 0; --i) {
       XMLLump lump = tagstack.lumpAt(i);
-      if (lump.rsfID != null && lump.rsfID.indexOf(SplitID.SEPARATOR) != -1)
+      if (lump.rsfID != null && (id.equals(XMLLump.PAYLOAD_COMPONENT) || 
+          lump.rsfID.indexOf(SplitID.SEPARATOR) != -1))
         return lump;
     }
     return t.rootlump;
