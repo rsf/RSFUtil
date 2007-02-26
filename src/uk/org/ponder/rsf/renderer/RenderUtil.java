@@ -106,7 +106,7 @@ public class RenderUtil {
       }
     }
     if (ID == null) {
-      if (IDstrategy.equals(ContentTypeInfo.ID_FULL)) {
+      if (IDstrategy.equals(ContentTypeInfo.ID_FULL) && attrcopy.get("id") != null) {
         ID = component.getFullID();
       }
     }
