@@ -26,6 +26,10 @@ public class SimpleViewParameters extends ViewParameters {
   }
 
   public String toPathInfo() {
+    if (viewID == null) {
+      throw new IllegalArgumentException("ViewParameters of " + getClass() 
+          + " does not have a viewID set");
+    }
     return "/" + viewID;
   }
 

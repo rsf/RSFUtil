@@ -16,8 +16,11 @@ import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.request.EarlyRequestParser;
 import uk.org.ponder.rsf.request.SubmittedValueEntry;
 import uk.org.ponder.rsf.util.RSFUtil;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParamsMappingInfoManager;
 import uk.org.ponder.saxalizer.SAXalizerMappingContext;
 import uk.org.ponder.stringutil.StringList;
+import uk.org.ponder.util.Logger;
 
 /**
  * A fixer to be run BEFORE the main form fixer, which implements the HTML/HTTP
@@ -26,8 +29,8 @@ import uk.org.ponder.stringutil.StringList;
  * fields of {@link uk.org.ponder.rsf.components.UIForm} has already been filled
  * in.
  * <p>
- * This fixer is HTML/HTTP SPECIFIC, and should not execute for other idioms.
- * It typically executes as the very first in the pipeline if it executes at all.
+ * This fixer is HTML/HTTP SPECIFIC, and should not execute for other idioms. It
+ * typically executes as the very first in the pipeline if it executes at all.
  * <p>
  * Note that it also is responsible for setting the "Submitting Control" packed
  * attribute for UICommand objects.
@@ -38,10 +41,19 @@ import uk.org.ponder.stringutil.StringList;
 public class ContainmentFormChildFixer implements ComponentProcessor {
 
   private SAXalizerMappingContext mappingcontext;
-  private boolean renderfossilized;
+  private ViewParamsMappingInfoManager vpmim;
+  private FormModel formModel;
+
+  public void setFormModel(FormModel formModel) {
+    this.formModel = formModel;
+  }
 
   public void setMappingContext(SAXalizerMappingContext mappingcontext) {
     this.mappingcontext = mappingcontext;
+  }
+
+  public void setViewParamsMappingInfoManager(ViewParamsMappingInfoManager vpmim) {
+    this.vpmim = vpmim;
   }
 
   public void processComponent(UIComponent toprocesso) {
@@ -52,10 +64,6 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
         registerContainer(toprocess, toprocess);
       }
     }
-  }
-
-  public void setRenderFossilizedForms(boolean renderfossilized) {
-    this.renderfossilized = renderfossilized;
   }
 
   private void registerComponent(UIForm toprocess, UIComponent child) {
@@ -75,18 +83,35 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
       if (bound.willinput) {
         String formID = toprocess.getFullID();
 
-        bound.submittingname = fullID.substring(RSFUtil.commonPath(fullID,
-            formID));
-
         if (getform) {
-          bound.submittingname = reduceGETSubmittingName(bound.submittingname);
+          if (bound.valuebinding != null) {
+            ViewParameters viewparams = toprocess.viewparams;
+            String attrname = vpmim.getMappingInfo(toprocess.viewparams)
+                .pathToAttribute(bound.valuebinding.value);
+            if (attrname == null) {
+              Logger.log.warn("Warning: Unable to look up path "
+                  + bound.valuebinding.value + " in ViewParameters "
+                  + viewparams.getClass() + " with parseSpec "
+                  + viewparams.getParseSpec()
+                  + ": falling back to ID-based strategy");
+            }
+            bound.submittingname = attrname;
+          }
+          if (bound.submittingname == null) {
+            bound.submittingname = reduceGETSubmittingName(inferBaseSubmittingName(
+                fullID, formID));
+          }
+        }
+        else {
+          bound.submittingname = inferBaseSubmittingName(fullID, formID);
         }
         toprocess.submittingcontrols.add(fullID);
+        formModel.registerChild(toprocess, bound);
       }
       else {
         // case of a non-inputting control that needs to be nonetheless located
         // on the client side. This is actually the non-HTML default.
-        //bound.submittingname = fullID;
+        // bound.submittingname = fullID;
         // new interpretation - willinput = NO NAME
       }
     }
@@ -96,6 +121,7 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
     // http://www.codehelp.co.uk/html/wap1.html
     else if (child instanceof UICommand) {
       toprocess.submittingcontrols.add(child.getFullID());
+      formModel.registerChild(toprocess, child);
       // add the notation explaining which control is submitting, when it does
       UICommand command = (UICommand) child;
       command.parameters.add(new UIParameter(
@@ -116,6 +142,10 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
           .next());
       registerComponent(toprocess, nested);
     }
+  }
+
+  private static String inferBaseSubmittingName(String fullID, String formID) {
+    return fullID.substring(RSFUtil.commonPath(fullID, formID));
   }
 
   private static String reduceGETSubmittingName(String submittingname) {

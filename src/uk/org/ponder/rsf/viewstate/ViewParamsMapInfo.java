@@ -3,6 +3,9 @@
  */
 package uk.org.ponder.rsf.viewstate;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /** (Cached) mapping information describing the mapping from URL attributes
  * onto bean paths for ViewParameters objects.
  * @author Antranig Basman (amb26@ponder.org.uk)
@@ -13,4 +16,9 @@ public class ViewParamsMapInfo {
   public String[] attrnames;
   /** corresponding EL paths using the ViewParameters object as a base */
   public String[] paths;
+  /** A lookup from the <code>paths</code> entry to <code>attrname</code> **/
+  Map pathToAttr = new HashMap();
+  public String pathToAttribute(String path) {
+    return (String) pathToAttr.get(path);
+  }
 }

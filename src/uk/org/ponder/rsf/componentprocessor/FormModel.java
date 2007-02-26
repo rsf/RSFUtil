@@ -3,7 +3,7 @@
  */
 package uk.org.ponder.rsf.componentprocessor;
 
-import uk.org.ponder.rsf.components.UIBound;
+import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIForm;
 /** An interface recording the relationship between a "Form" (scope for a 
  * set of submitting controls) and its children. This interface will probably
@@ -15,5 +15,6 @@ public interface FormModel {
   /** Registers a component as one that will be submitted
    * by the specified form control. 
    */
-  public void registerChild(UIForm parent, UIBound submittingchild);
+  public void registerChild(UIForm parent, UIComponent submittingchild);
+  public UIForm formForComponent(UIComponent component);
 }
