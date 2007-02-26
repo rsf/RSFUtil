@@ -34,7 +34,11 @@ public class UIMessage extends UIBoundString {
   public static UIMessage make(UIContainer parent, String ID, String messagekey) {
     return make(parent, ID, messagekey, null);
   }
-  
+  /** Constructs a standalone message component, making use of more complex
+   * formatting. The arguments array is supplied as if to a standard 
+   * Java 
+   * <a href="http://java.sun.com/j2se/1.4.2/docs/api/java/text/MessageFormat.html">MessageFormat</a>.
+   */
   public static UIMessage make(UIContainer parent, String ID, String messagekey,
       Object[] arguments) {
     UIMessage togo = new UIMessage();
