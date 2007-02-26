@@ -62,6 +62,7 @@ public class ViewRender {
   private String globalmessagetarget;
   private boolean rendereddeadletters;
   private ContentTypeInfo contenttypeinfo;
+  private IDAssigner IDassigner;
   private DecoratorManager decoratormanager;
 
   public void setViewTemplate(ViewTemplate viewtemplateo) {
@@ -118,6 +119,7 @@ public class ViewRender {
   }
   
   public void render(PrintOutputStream pos) {
+    IDassigner = new IDAssigner(contenttypeinfo.IDStrategy);
     UIBranchContainer messagecomponent = UIBranchContainer.make(view.viewroot, MessageTargetter.RSF_MESSAGES);
     branchmap = BranchResolver.resolveBranches(globalmap, view.viewroot,
         roott.rootlump);
@@ -188,7 +190,7 @@ public class ViewRender {
               if (targetlump == null)
                 continue;
               int renderend = renderer.renderComponent(child, view, targetlump, 
-                  pos, contenttypeinfo.IDStrategy, collected);
+                  pos, IDassigner, collected);
               boolean wasopentag = tl.lumps[renderend].nestingdepth >= targetlump.nestingdepth;
               if (i != children.size() - 1) {
                 // at this point, magically locate any "glue" that matches the
@@ -269,7 +271,7 @@ public class ViewRender {
         }
         // if we find a leaf component, render it.
         renderindex = renderer.renderComponent(component, view, lump, 
-            pos, contenttypeinfo.IDStrategy, collected);
+            pos, IDassigner, collected);
       } // end if unrepeatable component.
       if (renderindex == tl.lumps.length) {
         // deal with the case where component was root element - Ryan of 11/10/06
@@ -320,7 +322,7 @@ public class ViewRender {
   private void dumpContainerHead(UIBranchContainer branch, XMLLump targetlump) {
     HashMap attrcopy = new HashMap();
     attrcopy.putAll(targetlump.attributemap);
-    RenderUtil.adjustForID(attrcopy, contenttypeinfo.IDStrategy, branch);
+    IDassigner.adjustForID(attrcopy, branch);
     decoratormanager.decorate(branch.decorators, targetlump.getTag(), attrcopy);
     // TODO: normalise this silly space business
     pos.write(targetlump.parent.buffer, targetlump.start, targetlump.length - 1);

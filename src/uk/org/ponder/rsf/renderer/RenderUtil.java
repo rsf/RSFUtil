@@ -9,11 +9,7 @@ import java.util.Map;
 
 import uk.org.ponder.arrayutil.ArrayUtil;
 import uk.org.ponder.rsf.components.ParameterList;
-import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIParameter;
-import uk.org.ponder.rsf.components.decorators.UIDecorator;
-import uk.org.ponder.rsf.components.decorators.UIIDStrategyDecorator;
-import uk.org.ponder.rsf.content.ContentTypeInfo;
 import uk.org.ponder.rsf.renderer.scr.BasicSCR;
 import uk.org.ponder.rsf.renderer.scr.CollectingSCR;
 import uk.org.ponder.rsf.renderer.scr.StaticComponentRenderer;
@@ -85,37 +81,6 @@ public class RenderUtil {
 
     target.write(buffer, start, limit - start);
     return renderindex;
-  }
-
-  public static void adjustForID(Map attrcopy, String defaultstrategy,
-      UIComponent component) {
-    String ID = null;
-    String IDstrategy = defaultstrategy;
-
-    if (component.decorators != null) {
-      for (int i = 0; i < component.decorators.size(); ++i) {
-        UIDecorator dec = component.decorators.decoratorAt(i);
-        if (dec instanceof UIIDStrategyDecorator) {
-          UIIDStrategyDecorator ids = (UIIDStrategyDecorator) dec;
-          IDstrategy = ids.IDStrategy;
-          if (ids.IDStrategy.equals(UIIDStrategyDecorator.ID_MANUAL)) {
-            ID = ids.ID;
-          }
-          break;
-        }
-      }
-    }
-    if (ID == null) {
-      if (IDstrategy.equals(ContentTypeInfo.ID_FULL) && attrcopy.get("id") != null) {
-        ID = component.getFullID();
-      }
-    }
-    if (ID != null) {
-      attrcopy.put("id", ID);
-    }
-    if (!IDstrategy.equals(ContentTypeInfo.ID_RSF)) {
-      attrcopy.remove(XMLLump.ID_ATTRIBUTE);
-    }
   }
 
   public static void dumpHiddenField(UIParameter todump, XMLWriter xmlw) {
