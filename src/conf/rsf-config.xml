@@ -27,7 +27,7 @@
   <bean id="containerTypeRegistry"
     class="uk.org.ponder.saxalizer.mapping.ContainerTypeRegistry" />
 
-  <bean id="indexPropertyAccessor"
+  <bean id="indexedPropertyAccessor"
     class="uk.org.ponder.beanutil.IndexedPropertyAccessor">
     <property name="containerTypeRegistry" ref="containerTypeRegistry" />
   </bean>
@@ -45,7 +45,7 @@
     <property name="defaultInferrer" ref="ELDefaultInferrer" />
     <property name="staticLeafParser" ref="staticLeafParser" />
     <property name="indexedPropertyAccessor"
-      ref="indexPropertyAccessor" />
+      ref="indexedPropertyAccessor" />
   </bean>
 
   <bean id="streamResolver"
