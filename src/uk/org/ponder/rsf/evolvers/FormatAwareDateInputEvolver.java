@@ -6,7 +6,6 @@ package uk.org.ponder.rsf.evolvers;
 /** A date input evolved that is capable of being adjusted for various styles
  * of input.
  * @author Antranig Basman (amb26@ponder.org.uk)
- *
  */
 
 public interface FormatAwareDateInputEvolver extends DateInputEvolver {
