@@ -7,14 +7,9 @@ package uk.org.ponder.rsf.components;
  * Represents the site of rendering of a choice from a UISelect component.
  * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
- * 
  */
 
-public class UISelectChoice extends UIComponent {
-  public String parentFullID;
-
-  public int choiceindex;
-
+public class UISelectChoice extends UIListMember {
   public static UISelectChoice make(UIContainer tofill, String ID,
       String parentFullID, int choiceindex) {
     UISelectChoice togo = new UISelectChoice();

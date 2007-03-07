@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import uk.org.ponder.rsf.components.UIAnchor;
+import uk.org.ponder.rsf.components.UIBasicListMember;
 import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UIBoundList;
@@ -22,7 +23,6 @@ import uk.org.ponder.rsf.components.UIOutputMultiline;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UISelectChoice;
-import uk.org.ponder.rsf.components.UISelectLabel;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.renderer.ComponentRenderer;
 import uk.org.ponder.rsf.renderer.IDAssigner;
@@ -118,6 +118,18 @@ public class BasicHTMLRenderSystem implements RenderSystem {
     }
   }
 
+  private static UIComponent resolveListMember(View view, UIBasicListMember torendero) {
+    UIComponent parent = view.getComponent(torendero.parentFullID);
+    UIBoundList boundlist = parent instanceof UISelect? ((UISelect) parent).optionnames : (UIBoundList)parent;
+    String value = boundlist.getValue()[torendero.choiceindex];
+    String submittingname = boundlist.submittingname;
+    UIBoundString togo = new UIBoundString();
+    togo.setValue(value);
+    togo.submittingname = submittingname;
+    togo.willinput = true;
+    return togo;
+  }
+  
   // No, this method will not stay like this forever! We plan on an architecture
   // with renderer-per-component "class" as before, plus interceptors.
   // Although a lot of the parameterisation now lies in the allowable tag
@@ -187,8 +199,11 @@ public class BasicHTMLRenderSystem implements RenderSystem {
           endopen, close, pos, xmlw, nextpos);
       // ALWAYS dump the tag name, this can never be rewritten. (probably?!)
       pos.write(uselump.parent.buffer, uselump.start, uselump.length);
-      // TODO: Note that these are actually BOUND now. Create some kind of
-      // defaultBoundRenderer.
+      
+      if (torendero instanceof UIBasicListMember) {
+        torendero = resolveListMember(view, (UIBasicListMember) torendero);
+      }
+
       if (torendero instanceof UIBound) {
         UIBound torender = (UIBound) torendero;
 
@@ -235,7 +250,11 @@ public class BasicHTMLRenderSystem implements RenderSystem {
             attrcopy.put("value", "true");
             rewriteLeaf(null, rendercontext);
           }
-          else { // Non-boolean must be String
+          else if (torendero instanceof UIBoundList) {
+            // Cannot be rendered directly, must be fake 
+            renderUnchanged(rendercontext);
+          }
+          else {
             String value = ((UIBoundString) torender).getValue();
             if (uselump.textEquals("<textarea ")) {
               if (UITypes.isPlaceholder(value) && torender.willinput) {
@@ -255,7 +274,6 @@ public class BasicHTMLRenderSystem implements RenderSystem {
               rewriteLeafOpen(value, rendercontext);
             }
           }
-
           // unify hidden field processing? ANY parameter children found must
           // be dumped as hidden fields.
         }
@@ -316,12 +334,6 @@ public class BasicHTMLRenderSystem implements RenderSystem {
           attrcopy.put("checked", "true");
         }
         replaceAttributes(rendercontext);
-      }
-      else if (torendero instanceof UISelectLabel) {
-        UISelectLabel torender = (UISelectLabel) torendero;
-        UISelect parent = (UISelect) view.getComponent(torender.parentFullID);
-        String value = parent.optionnames.getValue()[torender.choiceindex];
-        replaceBody(value, rendercontext);
       }
       else if (torendero instanceof UILink) {
         UILink torender = (UILink) torendero;

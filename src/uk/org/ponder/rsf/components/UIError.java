@@ -7,7 +7,8 @@ import uk.org.ponder.stringutil.StringList;
 
 /** A UIError component has no visual function, but is used to bind a 
  * particular visual component to a set of bean paths from which exceptions
- * will be collected to populate an error list.  
+ * will be collected to populate an error list. This component currently 
+ * disused.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  *
  */

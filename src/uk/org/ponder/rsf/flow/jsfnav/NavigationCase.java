@@ -23,7 +23,16 @@ import uk.org.ponder.rsf.viewstate.AnyViewParameters;
 public class NavigationCase {
   public NavigationCase() {
   }
+  /** A default NavigationCase which operates for any action return **/
+  public NavigationCase(AnyViewParameters resultingView) {
+    this.resultingView = resultingView;
+  }
 
+  public NavigationCase(AnyViewParameters resultingView, String flowCondition) {
+    this.resultingView = resultingView;
+    this.flowCondition = flowCondition;
+  }
+  
   public NavigationCase(String fromOutcome, AnyViewParameters resultingView) {
     this.fromOutcome = fromOutcome;
     this.resultingView = resultingView;
