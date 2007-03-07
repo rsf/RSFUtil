@@ -49,4 +49,14 @@ public class UIOutput extends UIBoundString {
     return make(parent, ID, null, null);
   }
 
+  /** Constructor for a standalone UIOutput that will be added to the tree
+   * later.
+   */
+  public static UIOutput make(String initvalue) {
+    UIOutput togo = new UIOutput();
+    if (initvalue != null) {
+      togo.setValue(initvalue);
+    }
+    return togo;
+  }
 }

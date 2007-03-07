@@ -10,11 +10,7 @@ package uk.org.ponder.rsf.components;
  * 
  */
 
-public class UISelectLabel extends UIComponent {
-  public String parentFullID;
-
-  public int choiceindex;
-
+public class UISelectLabel extends UIBasicListMember {
   public static UISelectLabel make(UIContainer tofill, String ID,
       String parentFullID, int choiceindex) {
     UISelectLabel togo = new UISelectLabel();
