@@ -369,8 +369,13 @@
     class="uk.org.ponder.rsf.renderer.html.BasicHTMLRenderSystem">
     <property name="staticRenderers" ref="staticRenderersProxy" />
     <property name="decoratorManager" ref="decoratorManager" />
+    <property name="componentRenderer">
+      <bean class="uk.org.ponder.rsf.renderer.html.BasicHTMLComponentRenderer">
+        <property name="staticRenderers" ref="staticRenderersProxy" />
+      </bean>
+    </property>
   </bean>
-
+  
   <bean id="decoratorManager"
     class="uk.org.ponder.rsf.renderer.decorator.DecoratorManager">
     <property name="contentTypeInfo" ref="contentTypeInfoProxy" />
