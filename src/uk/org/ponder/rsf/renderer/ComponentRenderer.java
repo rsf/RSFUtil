@@ -4,8 +4,7 @@
 package uk.org.ponder.rsf.renderer;
 
 import uk.org.ponder.rsf.components.UIComponent;
-import uk.org.ponder.rsf.template.XMLLump;
-import uk.org.ponder.xml.XMLWriter;
+import uk.org.ponder.rsf.view.View;
 
 /** Does the work of rendering a component, given a UIComponent and a location
  * in the template stream. A ComponentRenderer is specific to a particular
@@ -25,14 +24,15 @@ public interface ComponentRenderer {
    * end_open + 1.
    */
   public static final int NESTING_TAG = 2;
-  /** @param component The component to be rendered (possibly null)
-   * @param lumps The array of XML lumps constituting the condensed template
-   * representation.
-   * @return An index chosen from one of the two values above, indicating the
-   * new value of the instruction pointer in the template, after this render
-   * is concluded.
+  /** Renders the supplied component. 
+   * @param component The component to be rendered (possibly null)
+   * @param view The view in which this component is held
+   * @param trc A {@link TagRenderContext} object encapulating the template
+   * location this component is to be rendered with. The <code>nextpos</code>
+   * field in this object will become suitably updated by means of one of the
+   * output methods.
    */
   
-  public int render(UIComponent component, XMLLump[] lumps, int lumpindex, 
-      XMLWriter xmlw);    
+  public void renderComponent(UIComponent component, View view, 
+      TagRenderContext renderContext);    
 }

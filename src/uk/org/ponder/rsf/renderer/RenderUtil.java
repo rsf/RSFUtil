@@ -9,7 +9,12 @@ import java.util.Map;
 
 import uk.org.ponder.arrayutil.ArrayUtil;
 import uk.org.ponder.rsf.components.ParameterList;
+import uk.org.ponder.rsf.components.UIBasicListMember;
+import uk.org.ponder.rsf.components.UIBoundList;
+import uk.org.ponder.rsf.components.UIBoundString;
+import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIParameter;
+import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.renderer.scr.BasicSCR;
 import uk.org.ponder.rsf.renderer.scr.CollectingSCR;
 import uk.org.ponder.rsf.renderer.scr.StaticComponentRenderer;
@@ -18,6 +23,7 @@ import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.template.XMLLumpComparator;
 import uk.org.ponder.rsf.template.XMLLumpList;
 import uk.org.ponder.rsf.template.XMLLumpMMap;
+import uk.org.ponder.rsf.view.View;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.stringutil.URLEncoder;
@@ -141,6 +147,18 @@ public class RenderUtil {
 
   }
 
+  public static UIComponent resolveListMember(View view, UIBasicListMember torendero) {
+    UIComponent parent = view.getComponent(torendero.parentFullID);
+    UIBoundList boundlist = parent instanceof UISelect? ((UISelect) parent).optionnames : (UIBoundList)parent;
+    String value = boundlist.getValue()[torendero.choiceindex];
+    String submittingname = boundlist.submittingname;
+    UIBoundString togo = new UIBoundString();
+    togo.setValue(value);
+    togo.submittingname = submittingname;
+    togo.willinput = true;
+    return togo;
+  }
+  
   public static String findCommandParams(Map requestparams) {
     for (Iterator parit = requestparams.keySet().iterator(); parit.hasNext();) {
       String key = (String) parit.next();

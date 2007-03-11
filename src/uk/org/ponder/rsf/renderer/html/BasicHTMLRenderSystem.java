@@ -3,27 +3,11 @@
  */
 package uk.org.ponder.rsf.renderer.html;
 
-import java.io.InputStream;
-import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
-import uk.org.ponder.rsf.components.UIAnchor;
 import uk.org.ponder.rsf.components.UIBasicListMember;
-import uk.org.ponder.rsf.components.UIBound;
-import uk.org.ponder.rsf.components.UIBoundBoolean;
-import uk.org.ponder.rsf.components.UIBoundList;
-import uk.org.ponder.rsf.components.UIBoundString;
-import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIComponent;
-import uk.org.ponder.rsf.components.UIForm;
-import uk.org.ponder.rsf.components.UIInternalLink;
-import uk.org.ponder.rsf.components.UILink;
-import uk.org.ponder.rsf.components.UIOutputMultiline;
-import uk.org.ponder.rsf.components.UIParameter;
-import uk.org.ponder.rsf.components.UISelect;
-import uk.org.ponder.rsf.components.UISelectChoice;
-import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.renderer.ComponentRenderer;
 import uk.org.ponder.rsf.renderer.IDAssigner;
 import uk.org.ponder.rsf.renderer.RenderSystem;
@@ -38,15 +22,11 @@ import uk.org.ponder.rsf.request.SubmittedValueEntry;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.template.XMLLumpList;
 import uk.org.ponder.rsf.template.XMLLumpMMap;
-import uk.org.ponder.rsf.uitype.UITypes;
 import uk.org.ponder.rsf.view.View;
-import uk.org.ponder.streamutil.StreamCopyUtil;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
-import uk.org.ponder.stringutil.StringList;
-import uk.org.ponder.stringutil.URLUtil;
 import uk.org.ponder.util.Constants;
 import uk.org.ponder.util.Logger;
-import uk.org.ponder.xml.XMLUtil;
+import uk.org.ponder.util.UniversalRuntimeException;
 import uk.org.ponder.xml.XMLWriter;
 
 /**
@@ -62,6 +42,11 @@ import uk.org.ponder.xml.XMLWriter;
 public class BasicHTMLRenderSystem implements RenderSystem {
   private StaticRendererCollection scrc;
   private DecoratorManager decoratormanager;
+  private ComponentRenderer componentRenderer;
+
+  public void setComponentRenderer(ComponentRenderer componentRenderer) {
+    this.componentRenderer = componentRenderer;
+  }
 
   public void setStaticRenderers(StaticRendererCollection scrc) {
     this.scrc = scrc;
@@ -101,39 +86,8 @@ public class BasicHTMLRenderSystem implements RenderSystem {
     }
   }
 
-  private void closeTag(PrintOutputStream pos, XMLLump uselump) {
-    pos.print("</");
-    pos.write(uselump.parent.buffer, uselump.start + 1, uselump.length - 2);
-    pos.print(">");
-  }
-
-  private void dumpBoundFields(UIBound torender, XMLWriter xmlw) {
-    if (torender != null) {
-      if (torender.fossilizedbinding != null) {
-        RenderUtil.dumpHiddenField(torender.fossilizedbinding, xmlw);
-      }
-      if (torender.fossilizedshaper != null) {
-        RenderUtil.dumpHiddenField(torender.fossilizedshaper, xmlw);
-      }
-    }
-  }
-
-  private static UIComponent resolveListMember(View view, UIBasicListMember torendero) {
-    UIComponent parent = view.getComponent(torendero.parentFullID);
-    UIBoundList boundlist = parent instanceof UISelect? ((UISelect) parent).optionnames : (UIBoundList)parent;
-    String value = boundlist.getValue()[torendero.choiceindex];
-    String submittingname = boundlist.submittingname;
-    UIBoundString togo = new UIBoundString();
-    togo.setValue(value);
-    togo.submittingname = submittingname;
-    togo.willinput = true;
-    return togo;
-  }
-  
-  // No, this method will not stay like this forever! We plan on an architecture
-  // with renderer-per-component "class" as before, plus interceptors.
-  // Although a lot of the parameterisation now lies in the allowable tag
-  // set at target.
+  // This method is almost entirely dialect-invariant - awaiting final
+  // factorisation of RenderSystem
   public int renderComponent(UIComponent torendero, View view, XMLLump lump,
       PrintOutputStream pos, IDAssigner IDassigner, XMLLumpMMap collecteds) {
     XMLWriter xmlw = new XMLWriter(pos);
@@ -169,7 +123,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
             : outerendopen.lumpindex + 1;
       }
 
-      if (lump.textEquals("<form ")) {
+      if (lump.textEquals("<form ")) { // SINGLE non-portable line
         Logger.log.warn("Warning: skipping form tag with rsf:id " + lump.rsfID
             + " and all children at " + lump.toString()
             + " since no peer component");
@@ -199,245 +153,19 @@ public class BasicHTMLRenderSystem implements RenderSystem {
           endopen, close, pos, xmlw, nextpos);
       // ALWAYS dump the tag name, this can never be rewritten. (probably?!)
       pos.write(uselump.parent.buffer, uselump.start, uselump.length);
-      
+
       if (torendero instanceof UIBasicListMember) {
-        torendero = resolveListMember(view, (UIBasicListMember) torendero);
+        torendero = RenderUtil.resolveListMember(view,
+            (UIBasicListMember) torendero);
       }
-
-      if (torendero instanceof UIBound) {
-        UIBound torender = (UIBound) torendero;
-
-        if (torendero.getClass() == UIOutputMultiline.class) {
-          StringList value = ((UIOutputMultiline) torendero).getValue();
-          if (value == null) {
-            RenderUtil.dumpTillLump(lumps, lumpindex + 1, close.lumpindex + 1,
-                pos);
-          }
-          else {
-            XMLUtil.dumpAttributes(attrcopy, xmlw);
-            pos.print(">");
-            for (int i = 0; i < value.size(); ++i) {
-              if (i != 0) {
-                pos.print("<br/>");
-              }
-              xmlw.write(value.stringAt(i));
-            }
-            closeTag(pos, uselump);
-          }
-        }
-        else if (torender.getClass() == UIAnchor.class) {
-          String value = ((UIAnchor) torendero).getValue();
-          if (UITypes.isPlaceholder(value)) {
-            renderUnchanged(rendercontext);
-          }
-          else {
-            attrcopy.put("name", value);
-            replaceAttributes(rendercontext);
-          }
-        }
-        // factor out component-invariant processing of UIBound.
-        else { // non-Anchor, non-Multiline
-          if (torender.willinput) {
-            attrcopy.put("name", torender.submittingname);
-          }
-          if (torendero instanceof UIBoundBoolean) {
-            if (((UIBoundBoolean) torender).getValue()) {
-              attrcopy.put("checked", "yes");
-            }
-            else {
-              attrcopy.remove("checked");
-            }
-            attrcopy.put("value", "true");
-            rewriteLeaf(null, rendercontext);
-          }
-          else if (torendero instanceof UIBoundList) {
-            // Cannot be rendered directly, must be fake 
-            renderUnchanged(rendercontext);
-          }
-          else {
-            String value = ((UIBoundString) torender).getValue();
-            if (uselump.textEquals("<textarea ")) {
-              if (UITypes.isPlaceholder(value) && torender.willinput) {
-                // FORCE a blank value for input components if nothing from
-                // model, if input was intended.
-                value = "";
-              }
-              rewriteLeaf(value, rendercontext);
-            }
-            else if (uselump.textEquals("<input ")) {
-              if (torender.willinput || !UITypes.isPlaceholder(value)) {
-                attrcopy.put("value", value);
-              }
-              rewriteLeaf(null, rendercontext);
-            }
-            else {
-              rewriteLeafOpen(value, rendercontext);
-            }
-          }
-          // unify hidden field processing? ANY parameter children found must
-          // be dumped as hidden fields.
-        }
-        // dump any fossilized binding for this component.
-        dumpBoundFields(torender, xmlw);
-      } // end if UIBound
-
-      else if (torendero instanceof UISelect) {
-        UISelect select = (UISelect) torendero;
-        // The HTML submitted value from a <select> actually corresponds
-        // with the selection member, not the top-level component.
-        if (select.selection.willinput) {
-          attrcopy.put("name", select.selection.submittingname);
-        }
-        attrcopy.put("id", select.selection.getFullID());
-        boolean ishtmlselect = uselump.textEquals("<select ");
-        if (select.selection instanceof UIBoundList && ishtmlselect) {
-          attrcopy.put("multiple", "true");
-        }
-        XMLUtil.dumpAttributes(attrcopy, xmlw);
-        if (ishtmlselect) {
-          pos.print(">");
-          String[] values = select.optionlist.getValue();
-          String[] names = select.optionnames == null ? values
-              : select.optionnames.getValue();
-          for (int i = 0; i < names.length; ++i) {
-            pos.print("<option value=\"");
-            String value = values[i];
-            if (value == null)
-              value = Constants.NULL_STRING;
-            xmlw.write(value);
-            if (select.selected.contains(value)) {
-              pos.print("\" selected=\"selected");
-            }
-            pos.print("\">");
-            xmlw.write(names[i]);
-            pos.print("</option>\n");
-          }
-          closeTag(pos, uselump);
-        }
-        else {
-          dumpTemplateBody(rendercontext);
-        }
-
-        dumpBoundFields(select.selection, xmlw);
-        dumpBoundFields(select.optionlist, xmlw);
-        dumpBoundFields(select.optionnames, xmlw);
+      try {
+        componentRenderer.renderComponent(torendero, view, rendercontext);
       }
-      else if (torendero instanceof UISelectChoice) {
-        UISelectChoice torender = (UISelectChoice) torendero;
-        UISelect parent = (UISelect) view.getComponent(torender.parentFullID);
-        String value = parent.optionlist.getValue()[torender.choiceindex];
-        // currently only peers with "input type="radio"".
-        attrcopy.put("name", parent.selection.submittingname);
-        attrcopy.put("value", value);
-        attrcopy.remove("checked");
-        if (parent.selected.contains(value)) {
-          attrcopy.put("checked", "true");
-        }
-        replaceAttributes(rendercontext);
-      }
-      else if (torendero instanceof UILink) {
-        UILink torender = (UILink) torendero;
-        // TODO - imagine that an image link has been provided. this
-        // both needs URL rewritten inside, and also NOT BEING REPLACED with
-        // the supplied body text.
-        String attrname = URLRewriteSCR.getLinkAttribute(uselump);
-        if (attrname != null) {
-          String target = torender.target.getValue();
-          if (target == null || target.length() == 0) {
-            // some people may perversely want empty links - but they would
-            // always refer to *real* self and hence not be rewritten.
-            target = "";
-          }
-          else if (!(torendero instanceof UIInternalLink)) {
-            URLRewriteSCR urlrewriter = (URLRewriteSCR) scrc
-                .getSCR(URLRewriteSCR.NAME);
-            if (!URLUtil.isAbsolute(target)) {
-              String rewritten = urlrewriter.resolveURL(uselump.parent, target);
-              if (rewritten != null)
-                target = rewritten;
-            }
-          }
-          attrcopy.put(attrname, target);
-        }
-        String value = torender.linktext == null ? null
-            : torender.linktext.getValue();
-        if (value == null) {
-          replaceAttributesOpen(rendercontext);
-        }
-        else {
-          rewriteLeaf(value, rendercontext);
-        }
-      }
-
-      else if (torendero instanceof UICommand) {
-        UICommand torender = (UICommand) torendero;
-        String value = RenderUtil.makeURLAttributes(torender.parameters);
-        // any desired "attributes" decoded for JUST THIS ACTION must be
-        // secretly
-        // bundled as this special attribute.
-        attrcopy.put("name", FossilizedConverter.COMMAND_LINK_PARAMETERS
-            + value);
-        String text = torender.commandtext == null? null : 
-          torender.commandtext.getValue();
-        boolean isbutton = lump.textEquals("<button ");
-        if (text != null && !isbutton) {
-          attrcopy.put("value", torender.commandtext.getValue());
-          text = null;
-        }
-        rewriteLeaf(text, rendercontext);
-        // RenderUtil.dumpHiddenField(SubmittedValueEntry.ACTION_METHOD,
-        // torender.actionhandler, pos);
-      }
-      // Forms behave slightly oddly in the hierarchy - by the time they reach
-      // the renderer, they have been "shunted out" of line with their children,
-      // i.e. any "submitting" controls, if indeed they ever were there.
-      else if (torendero instanceof UIForm) {
-        UIForm torender = (UIForm) torendero;
-        if (attrcopy.get("method") == null) { // forms DEFAULT to be post
-          attrcopy.put("method", "post");
-        }
-        // form fixer guarantees that this URL is attribute free.
-        attrcopy.put("action", torender.targetURL);
-
-        replaceAttributesOpen(rendercontext);
-        for (int i = 0; i < torender.parameters.size(); ++i) {
-          UIParameter param = torender.parameters.parameterAt(i);
-          RenderUtil.dumpHiddenField(param, xmlw);
-        }
-        // override "nextpos" - form is expected to contain numerous nested
-        // Components.
-        // this is the only ANOMALY!! Forms together with payload cannot work.
-        // the fact we are at the wrong recursion level will "come out in the
-        // wash"
-        // since we must return to the base recursion level before we exit this
-        // domain.
-        // Assuming there are no paths *IN* through forms that do not also lead
-        // *OUT* there will be no problem. Check what this *MEANS* tomorrow.
-      }
-      else if (torendero instanceof UIVerbatim) {
-        UIVerbatim torender = (UIVerbatim) torendero;
-        String rendered = null;
-        // inefficient implementation for now, upgrade when we write bulk POS
-        // utils.
-        if (torender.markup instanceof InputStream) {
-          rendered = StreamCopyUtil
-              .streamToString((InputStream) torender.markup);
-        }
-        else if (torender.markup instanceof Reader) {
-          rendered = StreamCopyUtil.readerToString((Reader) torender.markup);
-        }
-        else if (torender.markup != null) {
-          rendered = torender.markup.toString();
-        }
-        if (rendered == null) {
-          renderUnchanged(rendercontext);
-        }
-        else {
-          XMLUtil.dumpAttributes(attrcopy, xmlw);
-          pos.print(">");
-          pos.print(rendered);
-          closeTag(pos, uselump);
-        }
+      catch (Exception e) {
+        throw UniversalRuntimeException.accumulate(e,
+            "Error rendering component " + torendero.getClass()
+                + " with full ID " + torendero.getFullID()
+                + " at template location " + rendercontext.uselump);
       }
       // if there is a payload, dump the postamble.
       if (payload != null) {
@@ -448,56 +176,6 @@ public class BasicHTMLRenderSystem implements RenderSystem {
     }
 
     return nextpos;
-  }
-
-  private void renderUnchanged(TagRenderContext c) {
-    RenderUtil.dumpTillLump(c.uselump.parent.lumps, c.uselump.lumpindex + 1,
-        c.close.lumpindex + 1, c.pos);
-  }
-
-  private void rewriteLeaf(String value, TagRenderContext c) {
-    if (value != null && !UITypes.isPlaceholder(value))
-      replaceBody(value, c);
-    else
-      replaceAttributes(c);
-  }
-
-  private void rewriteLeafOpen(String value, TagRenderContext c) {
-    if (value != null && !UITypes.isPlaceholder(value))
-      replaceBody(value, c);
-    else
-      replaceAttributesOpen(c);
-  }
-
-  private void replaceBody(String value, TagRenderContext c) {
-    XMLUtil.dumpAttributes(c.attrcopy, c.xmlw);
-    c.pos.print(">");
-    c.xmlw.write(value);
-    closeTag(c.pos, c.uselump);
-  }
-
-  private void replaceAttributes(TagRenderContext c) {
-    XMLUtil.dumpAttributes(c.attrcopy, c.xmlw);
-
-    dumpTemplateBody(c);
-  }
-
-  private void replaceAttributesOpen(TagRenderContext c) {
-    XMLUtil.dumpAttributes(c.attrcopy, c.xmlw);
-    c.pos.print(c.isEmpty()? "/>": ">");
-
-    c.nextpos = c.endopen.lumpindex + 1;
-  }
-
-  private void dumpTemplateBody(TagRenderContext c) {
-    if (c.isEmpty()) {
-      c.pos.print("/>");
-    }
-    else {
-      c.pos.print(">");
-      RenderUtil.dumpTillLump(c.uselump.parent.lumps, c.endopen.lumpindex + 1,
-          c.close.lumpindex + 1, c.pos);
-    }
   }
 
 }
