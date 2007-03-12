@@ -8,6 +8,7 @@ import java.util.Map;
 
 import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.stringutil.CharWrap;
+import uk.org.ponder.stringutil.StringUtil;
 
 public class ViewParamsMapper {
 
@@ -35,7 +36,18 @@ public class ViewParamsMapper {
     return vpmim.getMappingInfo(target);
   }
 
-  public void parseViewParamAttributes(ViewParameters target, Map params) {
+  /**
+   * Parse the supplied raw URL information into a ViewParameters object, whose
+   * type has already been deduced.
+   * 
+   * @param target The ViewParameters object onto which URL information is to be
+   *          parsed.
+   * @param params The raw URL parameter map, a map of String onto String[].
+   * @param The "pathinfo" segment of the URL, which starts with a leading slash
+   *          (/).
+   */
+  public void parseViewParameters(ViewParameters target, Map params,
+      String pathinfo) {
     ViewParamsMapInfo mapinfo = vpmim.getMappingInfo(target);
     for (int i = 0; i < mapinfo.attrnames.length; ++i) {
       String path = mapinfo.paths[i];
@@ -44,6 +56,28 @@ public class ViewParamsMapper {
         bma.setBeanValue(path, target, valueo, null, true);
       }
     }
+    String[] segments = StringUtil.split(pathinfo, '/');
+    for (int i = 0; i < mapinfo.trunkpaths.length; ++i) {
+      // An extra segment will be produced for the initial /
+      int reqindex = i + 1;
+      if (reqindex < segments.length) {
+        String segment = segments[reqindex];
+        bma.setBeanValue(mapinfo.trunkpaths[i], target, segment, null, true);
+      }
+    }
+  }
+
+  public String toPathInfo(ViewParameters toconvert) {
+    CharWrap togo = new CharWrap();
+    ViewParamsMapInfo mapinfo = vpmim.getMappingInfo(toconvert);
+    for (int i = 0; i < mapinfo.trunkpaths.length; ++i) {
+      String trunkpath = mapinfo.trunkpaths[i];
+      // errors would be checked at parse assembly time
+      String attrval = (String) bma.getFlattenedValue(trunkpath, toconvert,
+          null, null);
+      togo.append('/').append(attrval);
+    }
+    return togo.toString();
   }
 
   /**
@@ -74,7 +108,7 @@ public class ViewParamsMapper {
    */
   public String toHTTPRequest(ViewParameters toconvert) {
     CharWrap togo = new CharWrap();
-    togo.append(toconvert.toPathInfo());
+    togo.append(toPathInfo(toconvert));
     ViewParamsMapInfo mapinfo = vpmim.getMappingInfo(toconvert);
     boolean isfirst = true;
     for (int i = 0; i < mapinfo.attrnames.length; ++i) {
@@ -82,7 +116,8 @@ public class ViewParamsMapper {
       String path = mapinfo.paths[i];
       Object attrval = bma.getFlattenedValue(path, toconvert, null, null);
       if (attrval instanceof String) {
-        togo.append(isfirst ? '?' : '&');
+        togo.append(isfirst ? '?'
+            : '&');
         togo.append(attrname);
         togo.append("=");
         togo.append(attrval);
@@ -91,7 +126,8 @@ public class ViewParamsMapper {
       else if (attrval instanceof String[]) {
         String[] vals = (String[]) attrval;
         for (int j = 0; j < vals.length; ++j) {
-          togo.append(isfirst ? '?' : '&');
+          togo.append(isfirst ? '?'
+              : '&');
           togo.append(attrname);
           togo.append("=");
           togo.append(vals[j]);

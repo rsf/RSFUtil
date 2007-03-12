@@ -31,7 +31,7 @@ public class LazarusRedirector {
 
   public void lazarusRedirect(final ViewParameters target) {
     Map params = viewParamsMapper.renderViewParamAttributes(target);
-    String pathinfo = target.toPathInfo();
+    String pathinfo = viewParamsMapper.toPathInfo(target);
     StaticEarlyRequestParser serp = new StaticEarlyRequestParser(null,
         pathinfo, params, EarlyRequestParser.RENDER_REQUEST);
     Map newmap = new HashMap();

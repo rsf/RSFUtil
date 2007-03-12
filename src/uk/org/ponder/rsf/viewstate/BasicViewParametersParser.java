@@ -108,9 +108,8 @@ public class BasicViewParametersParser implements ViewParametersParser,
       vpexemplar = defaultexemplar;
     }
     ViewParameters origrequest = vpexemplar.copyBase(beancloner);
-    vpmapper.parseViewParamAttributes(origrequest, requestmap);
+    vpmapper.parseViewParameters(origrequest, requestmap, pathinfo);
 
-    origrequest.parsePathInfo(pathinfo);
     // this may *disagree* with value forced in by parsePathInfo due to VII
     origrequest.viewID = viewID;
 

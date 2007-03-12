@@ -16,6 +16,8 @@ public class ViewParamsMapInfo {
   public String[] attrnames;
   /** corresponding EL paths using the ViewParameters object as a base */
   public String[] paths;
+  /** The EL paths (if any) to be parsed onto the URL pathinfo trunk */
+  public String[] trunkpaths;
   /** A lookup from the <code>paths</code> entry to <code>attrname</code> **/
   Map pathToAttr = new HashMap();
   public String pathToAttribute(String path) {
