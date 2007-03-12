@@ -10,7 +10,8 @@ import java.util.Map;
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  *
  */
-
+// TODO: this should ultimately connect up with ViewParamsMapInfo for some kind
+// of global inference strategy.
 public class DefaultViewIDInferrer implements ViewIDInferrer {
 
   public String inferViewID(String pathinfo, Map requestmap) {
