@@ -141,6 +141,24 @@ public class UISelect extends UIComponent implements FixableComponent {
     return togo;
   }
   
+  /**
+   * Constructs a multiple selection control, with distinct submitted values and
+   * rendered labels.
+   */
+  public static UISelect makeMultiple(UIContainer tofill, String ID, String[] options,
+      String[] labels, String valuebinding, String[] initvalue) {
+    UISelect togo = make(tofill, ID, options);
+    UIInputMany selection = UIInputMany.make(valuebinding);
+    if (initvalue != null) {
+      selection.setValue(initvalue);
+    }
+    if (labels != null) {
+      togo.optionnames = UIOutputMany.make(labels);
+    }
+    togo.selection = selection;
+    return togo;
+  }
+  
   /** Sets the option labels for this selection control to be interpreted
    * as message keys, rather than as raw Strings.
    */ 
