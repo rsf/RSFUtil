@@ -10,8 +10,9 @@ import uk.org.ponder.reflect.DeepBeanCloner;
  * (or similar spec) that specify the content of a view and representing them in
  * a typesafe way as an object. Users will more frequently extend the more
  * convenient class {@link SimpleViewParameters}. The actual work of parsing is
- * done by the more stateful bean ViewParametersParser.
- * <p>
+ * done by the more stateful bean ViewParametersParser. 
+ * <p/>Every ViewParameters class must be default-constructible.
+ * <p/>
  * The base class abstracting common functionality for specifying a view state
  * of a web application, independent of any particular application or url
  * mapping technology. In order to get generate a complete external URL, you
