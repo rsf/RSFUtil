@@ -70,12 +70,23 @@ public class ViewParamsMapper {
   public String toPathInfo(ViewParameters toconvert) {
     CharWrap togo = new CharWrap();
     ViewParamsMapInfo mapinfo = vpmim.getMappingInfo(toconvert);
+    boolean nullstarted = false;
     for (int i = 0; i < mapinfo.trunkpaths.length; ++i) {
       String trunkpath = mapinfo.trunkpaths[i];
       // errors would be checked at parse assembly time
       String attrval = (String) bma.getFlattenedValue(trunkpath, toconvert,
           null, null);
-      togo.append('/').append(attrval);
+      if (attrval != null) {
+        if (nullstarted) {
+          throw new IllegalArgumentException(
+              "Illegal outgoing URL state - value " + attrval
+                  + " at trunk position " + i + " follows previous missing value");
+        }
+        togo.append('/').append(attrval);
+      }
+      else {
+        nullstarted = true;
+      }
     }
     return togo.toString();
   }
