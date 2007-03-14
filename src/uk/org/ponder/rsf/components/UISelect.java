@@ -111,6 +111,12 @@ public class UISelect extends UIComponent implements FixableComponent {
     return togo;
   }
 
+  /** @see #make(UIContainer, String, String[], String[], String, String)
+   */
+  public static UISelect make(UIContainer tofill, String ID, String[] options,
+      String[] labels, String valuebinding) {
+    return UISelect.make(tofill, ID, options, labels, valuebinding, null);
+  }
   /**
    * Constructs a single selection control, with labels distinct from the 
    * submitting values.
