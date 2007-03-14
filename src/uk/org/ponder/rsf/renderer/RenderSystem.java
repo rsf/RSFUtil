@@ -39,7 +39,8 @@ public interface RenderSystem extends RenderSystemDecoder {
   public int renderComponent(UIComponent torender, View view, XMLLump lump, 
       PrintOutputStream pos, IDAssigner idassigner, XMLLumpMMap collected);
 
- 
+  public void setComponentRenderer(ComponentRenderer componentRenderer);
+  
   public void setStaticRenderers(StaticRendererCollection scrc);
 
   public void setDecoratorManager(DecoratorManager decoratormanager);
