@@ -19,7 +19,6 @@
     <url>http://www.caret.cam.ac.uk/</url>
   </organization>
   <inceptionYear>2005</inceptionYear>
-  <packaging>jar</packaging>
   <description>RSFUtil implements the RSF web framework.</description>
   <developers>
     <developer>
