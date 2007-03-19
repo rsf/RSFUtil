@@ -8,15 +8,18 @@
   <packaging>jar</packaging>
   <name>J-RSFUtil</name>
   <groupId>uk.org.ponder</groupId>
-  <version>0.6.4</version>
+  <properties>
+    <rsfutil.version>0.7.1RC2</rsfutil.version>
+    <ponderutilcore.version>1.2.1RC2</ponderutilcore.version>
+    <jservletutil.version>1.2.1RC2</jservletutil.version>
+  </properties>
+  <version>${jservletutil.version}</version>
   <organization>
     <name>CARET, University of Cambridge</name>
     <url>http://www.caret.cam.ac.uk/</url>
   </organization>
   <inceptionYear>2005</inceptionYear>
-  <properties>
-    <deploy.type>jar</deploy.type>
-  </properties>
+  <packaging>jar</packaging>
   <description>RSFUtil implements the RSF web framework.</description>
   <developers>
     <developer>
@@ -103,13 +106,13 @@
     <dependency>
       <groupId>uk.org.ponder</groupId>
       <artifactId>ponderutilcore</artifactId>
-      <version>1.1.4</version>
+      <version>${ponderutilcore.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>uk.org.ponder</groupId>
       <artifactId>j-servletutil</artifactId>
-      <version>1.1.4</version>
+      <version>${jservletutil.version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
