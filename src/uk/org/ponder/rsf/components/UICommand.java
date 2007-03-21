@@ -25,12 +25,13 @@ public class UICommand extends UISimpleContainer {
   /** The text labelling this command control */
   public UIBoundString commandtext;
 
-  /**
-   * Creates a command link initiating the specified method binding on trigger,
-   * but also backed by infrastructure to produce a GET redirect to the original
-   * view requested in this cycle once the action has been handled. This depends
-   * on the use of the custom ViewHandler "ClassViewHandler". (Memorial comment)
-   * 
+  //Creates a command link initiating the specified method binding on trigger,
+  //but also backed by infrastructure to produce a GET redirect to the original
+  //view requested in this cycle once the action has been handled. This depends
+  //on the use of the custom ViewHandler "ClassViewHandler". (Memorial comment)
+  
+  /** Creates a command link which will initiate a non-idempotent request 
+   * (action cycle) to handle the command.
    * @param parent The parent component to which this action link will be added
    *          as a child.
    * @param text The text that will be rendered to the user on this component.
