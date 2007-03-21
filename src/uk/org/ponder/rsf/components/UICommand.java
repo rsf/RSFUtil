@@ -7,35 +7,35 @@ package uk.org.ponder.rsf.components;
  * Represents a control that will cause a non-idempotent (POST) request to the
  * server. The basic case where the command is rendered using a piece of
  * non-bound text is handled by filling in the "commandtext" field. For more
- * complex command contents including bound ones, leave this field as null 
- * and add rendering components as childen of the command. You may NOT set the
- * (navigation) target of a UICommand, by RSF design it will ALWAYS (in the
- * case of an HTTP/HTML render system) post to the same URL as the page on
- * which it is contained.
+ * complex command contents including bound ones, leave this field as null and
+ * add rendering components as childen of the command. You may NOT set the
+ * (navigation) target of a UICommand, by RSF design it will ALWAYS (in the case
+ * of an HTTP/HTML render system) post to the same URL as the page on which it
+ * is contained.
+ * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
 public class UICommand extends UISimpleContainer {
-  /** The EL reference of the action/method binding to be invoked when this
-   * control is oeprated.
+  /**
+   * The EL reference of the action/method binding to be invoked when this
+   * control is operated.
    */
   public ELReference methodbinding;
   /** The text labelling this command control */
   public UIBoundString commandtext;
+
   /**
    * Creates a command link initiating the specified method binding on trigger,
    * but also backed by infrastructure to produce a GET redirect to the original
    * view requested in this cycle once the action has been handled. This depends
    * on the use of the custom ViewHandler "ClassViewHandler". (Memorial comment)
    * 
-   * @param parent
-   *          The parent component to which this action link will be added as a
-   *          child.
-   * @param text
-   *          The text that will be rendered to the user on this component.
-   * @param methodbinding
-   *          An RSF EL expression representing the action to be triggered when
-   *          the user activates this link.
+   * @param parent The parent component to which this action link will be added
+   *          as a child.
+   * @param text The text that will be rendered to the user on this component.
+   * @param methodbinding An RSF EL expression representing the action to be
+   *          triggered when the user activates this link.
    */
   public static UICommand make(UIContainer parent, String ID, String text,
       String methodbinding) {
@@ -47,7 +47,13 @@ public class UICommand extends UISimpleContainer {
     return make(parent, ID, commandtext, methodbinding);
   }
 
-  public static UICommand make(UIContainer parent, String ID, 
+  /**
+   * Creates a command control which accepts a bound string (for example a
+   * UIMessage) as the textual label.
+   * 
+   * @see #make(UIContainer, String, String, String)
+   */
+  public static UICommand make(UIContainer parent, String ID,
       UIBoundString commandtext, String methodbinding) {
     UICommand togo = new UICommand();
     togo.commandtext = new UIOutput();
@@ -55,34 +61,40 @@ public class UICommand extends UISimpleContainer {
     togo.ID = ID;
     togo.methodbinding = ELReference.make(methodbinding);
     // TODO: do this at fixup
-  
-//    if (parent.getActiveForm() == null) {
-//      throw new UniversalRuntimeException("Component " + parent
-//          + " does not have a form parent");
-//    }
+
+    // if (parent.getActiveForm() == null) {
+    // throw new UniversalRuntimeException("Component " + parent
+    // + " does not have a form parent");
+    // }
     parent.addComponent(togo);
     return togo;
   }
-  
-  public static UICommand make(UIContainer parent, String ID, 
+
+  /**
+   * Construct a command control with a command text but no method binding.
+   * @see #make(UIContainer, String, UIBoundString, String)
+   */
+  public static UICommand make(UIContainer parent, String ID,
       UIBoundString commandtext) {
     return make(parent, ID, commandtext, null);
   }
-  
+
+  /**
+   * Construct a command control with a method binding, but the nested markup
+   * unchanged from the template.
+   * @see #make(UIContainer, String, String, String)
+   */
   public static UICommand make(UIContainer parent, String ID,
       String methodbinding) {
-    return make(parent, ID, (UIBoundString)null, methodbinding);
+    return make(parent, ID, (UIBoundString) null, methodbinding);
   }
-/** Construct an "actionless" command link, suitable for a CRUD-type application
- * where the data alteration constitutes the entire action.
- */
+
+  /**
+   * Construct an "actionless" command link, suitable for a CRUD-type
+   * application where the data alteration constitutes the entire action.
+   */
   public static UICommand make(UIContainer parent, String ID) {
-    return make(parent, ID, (UIBoundString)null, null);
+    return make(parent, ID, (UIBoundString) null, null);
   }
-  // a map of param/values to be surreptitiously added to the parameter
-  // map during submission. We maintain these as single-valued here for
-  // simplicity, but they will be upgraded to the standard String[] values
-  // on delivery.
-  // NOW GONE to superclass UIContainer!!!!
-  
+
 }
