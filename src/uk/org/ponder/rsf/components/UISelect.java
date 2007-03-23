@@ -20,6 +20,7 @@ import uk.org.ponder.stringutil.StringSet;
  */
 
 public class UISelect extends UIComponent implements FixableComponent {
+  /** A component representing the options which the user has to choose from **/
   public UIBoundList optionlist;
 
   /** A component representing the rendered labels for the list control */

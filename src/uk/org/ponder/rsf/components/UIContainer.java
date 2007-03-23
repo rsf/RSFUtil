@@ -14,5 +14,8 @@ public abstract class UIContainer extends UIComponent {
    * UICommand's list will ONLY be submitted if the command is the submitting
    * control.
    */
+  // TODO: Investigate why this may not be moved to UISimpleContainer.
+  // TemplateExpander appears to attach parameters to BranchContainers, but
+  // what is there that reads them?
   public ParameterList parameters = new ParameterList();
 }
