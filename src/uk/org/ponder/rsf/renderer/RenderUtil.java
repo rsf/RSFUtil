@@ -150,7 +150,9 @@ public class RenderUtil {
   public static UIComponent resolveListMember(View view, UIBasicListMember torendero) {
     UIComponent parent = view.getComponent(torendero.parentFullID);
     UIBoundList boundlist = parent instanceof UISelect? ((UISelect) parent).optionnames : (UIBoundList)parent;
-    String value = boundlist.getValue()[torendero.choiceindex];
+    String[] valuelist = boundlist.getValue();
+    // Reference off the end of an array is not an error - it may be being dynamically expanded
+    String value = torendero.choiceindex < valuelist.length ? valuelist[torendero.choiceindex] : "";
     String submittingname = boundlist.submittingname;
     UIBoundString togo = new UIBoundString();
     togo.setValue(value);
