@@ -565,7 +565,7 @@
     <property name="targetBeanName" value="ARIResultConcrete" />
   </bean>
 
-  <bean id="ActionResultInterceptorParent"
+  <bean id="actionResultInterceptorParent"
     class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
     <property name="targetPath"
       value="actionResultInterceptorProcessor.interceptors" />
