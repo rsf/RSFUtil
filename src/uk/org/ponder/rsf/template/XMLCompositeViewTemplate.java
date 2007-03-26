@@ -7,4 +7,8 @@ import uk.org.ponder.rsf.view.GenericViewTemplate;
 
 public class XMLCompositeViewTemplate extends GenericViewTemplate {
   public XMLViewTemplate roottemplate;
+  
+  public XMLCompositeViewTemplate() {
+    mustcollectmap = new XMLLumpMMap();
+  }
 }

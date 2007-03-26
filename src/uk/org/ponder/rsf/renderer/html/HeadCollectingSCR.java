@@ -8,7 +8,6 @@ import java.util.Set;
 
 import uk.org.ponder.rsf.renderer.ComponentRenderer;
 import uk.org.ponder.rsf.renderer.RenderUtil;
-import uk.org.ponder.rsf.renderer.scr.BasicSCR;
 import uk.org.ponder.rsf.renderer.scr.CollectingSCR;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.template.XMLLumpList;
@@ -24,7 +23,7 @@ import uk.org.ponder.xml.XMLWriter;
 
 public class HeadCollectingSCR implements CollectingSCR {
   public static final String NAME = "head-collect";
-  private BasicSCR urlRewriteSCR;
+  private URLRewriteSCR urlRewriteSCR;
   public String getName() {
     return NAME;
   }
@@ -33,19 +32,7 @@ public class HeadCollectingSCR implements CollectingSCR {
     return new String[] {"style", "script"};
   }
 
-  private static String[] uniquifyAttrs = new String[] {"href", "src"}; 
-  private static String getUniquingAttr(XMLLump lump) {
-    String val = null;
-    for (int i = 0; i < uniquifyAttrs.length; ++ i) {
-      String thisval = (String) lump.attributemap.get(uniquifyAttrs[i]);
-      if (thisval != null) {
-        val = thisval; break;
-        }
-      }
-    return val;
-  }
-  
-  public void setURLRewriteSCR(BasicSCR urlRewriteSCR) {
+  public void setURLRewriteSCR(URLRewriteSCR urlRewriteSCR) {
     this.urlRewriteSCR = urlRewriteSCR;
   }
 
@@ -56,11 +43,14 @@ public class HeadCollectingSCR implements CollectingSCR {
     Set used = new HashSet();
     for (int i = 0; i < collected.size(); ++ i) {
       XMLLump collump = collected.lumpAt(i);
-      String attr = getUniquingAttr(collump);
+      String attr = URLRewriteSCR.getLinkAttribute(collump);
       if (attr != null) {
-        if (used.contains(attr)) continue;
-        else used.add(attr);
+        String attrval = (String) collump.attributemap.get(attr);
+        String rewritten = urlRewriteSCR.resolveURL(collump.parent, attrval);
+        if (used.contains(rewritten)) continue;
+        else used.add(rewritten);
       }
+      // TODO: equivalent of TagRenderContext for SCRs
       urlRewriteSCR.render(collump, xmlw);
       RenderUtil.dumpTillLump(collump.parent.lumps, collump.open_end.lumpindex + 1, 
           collump.close_tag.lumpindex + 1, pos);
