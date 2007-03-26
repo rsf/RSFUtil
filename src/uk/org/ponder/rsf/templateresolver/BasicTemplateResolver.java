@@ -113,6 +113,9 @@ public class BasicTemplateResolver implements TemplateResolver {
         if (template != null) {
           if (xcvt != null) {
             xcvt.globalmap.aggregate(template.globalmap);
+            if (template.mustcollectmap != null) {
+              xcvt.mustcollectmap.aggregate(template.mustcollectmap);
+            }
             
             if (thispri == highestpriority && thispri != 0) {
               if (xcvt.roottemplate != null) {
@@ -192,6 +195,12 @@ public class BasicTemplateResolver implements TemplateResolver {
         if (strs instanceof BaseAwareTemplateResolverStrategy) {
           BaseAwareTemplateResolverStrategy batrs = (BaseAwareTemplateResolverStrategy) strs;
           extresourcebase = batrs.getExternalURLBase();
+        }
+        if (strs instanceof ForceContributingTRS) {
+          ForceContributingTRS fctrs = (ForceContributingTRS) strs;
+          if (fctrs.getMustContribute()) {
+            template.mustcollectmap = template.collectmap;
+          }
         }
         template.setResourceBase(extresourcebase + resourcebaseext);
         template.fullpath = fullpath;

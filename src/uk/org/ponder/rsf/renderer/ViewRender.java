@@ -48,7 +48,7 @@ public class ViewRender {
 
   //a map of UIBranchContainer to XMLLump
   private Map branchmap;
-  private XMLLumpMMap collected;
+  private XMLLumpMMap collected = new XMLLumpMMap();
   
   private XMLLump messagelump;
 
@@ -70,6 +70,7 @@ public class ViewRender {
       XMLCompositeViewTemplate viewtemplate = (XMLCompositeViewTemplate) viewtemplateo;
       roott = viewtemplate.roottemplate;
       globalmap = viewtemplate.globalmap;
+      collected.aggregate(viewtemplate.mustcollectmap);
     }
     else {
       roott = (XMLViewTemplate) viewtemplateo;
@@ -107,7 +108,6 @@ public class ViewRender {
   }
 
   private void collectContributions() {
-    collected = new XMLLumpMMap();
     Set seenset = new HashSet();
     for (Iterator lumpit = branchmap.values().iterator(); lumpit.hasNext();) {
       XMLLump headlump = (XMLLump) lumpit.next();
