@@ -10,6 +10,7 @@ import java.util.Map;
 
 import uk.org.ponder.rsf.content.ContentTypeReceiver;
 import uk.org.ponder.rsf.content.ContentTypeReporter;
+import uk.org.ponder.rsf.flow.errors.SilentRedirectException;
 import uk.org.ponder.rsf.flow.jsfnav.DynamicNavigationCaseReporter;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReceiver;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
@@ -147,7 +148,7 @@ public class ConcreteViewResolver implements MappingViewResolver {
       }
     }
     if (specific == null && unknowniserror) {
-      throw UniversalRuntimeException.accumulate(new ViewNotFoundException(),
+      throw UniversalRuntimeException.accumulate(new SilentRedirectException(),
           "Unable to resolve request for component tree for view " + viewid);
     }
     ArrayList togo = new ArrayList();
