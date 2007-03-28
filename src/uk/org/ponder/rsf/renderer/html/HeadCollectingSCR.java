@@ -51,6 +51,7 @@ public class HeadCollectingSCR implements CollectingSCR {
         String attrval = (String) collump.attributemap.get(attr);
         if (attrval != null) {
           String rewritten = urlRewriteSCR.resolveURL(collump.parent, attrval);
+          if (rewritten == null) rewritten = attrval;
           int qpos = rewritten.indexOf('?');
           if (qpos != -1)
             rewritten = rewritten.substring(0, qpos);
