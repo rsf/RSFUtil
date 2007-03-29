@@ -9,24 +9,22 @@
   <name>J-RSFUtil</name>
   <groupId>uk.org.ponder</groupId>
   <properties>
-    <rsfutil.version>0.7.1RC2</rsfutil.version>
-    <ponderutilcore.version>1.2.1RC2</ponderutilcore.version>
-    <jservletutil.version>1.2.1RC2</jservletutil.version>
+    <rsfutil.version>0.7.1RC4</rsfutil.version>
+    <jservletutil.version>1.2.1RC4</jservletutil.version>
   </properties>
-  <version>${jservletutil.version}</version>
+  <version>${rsfutil.version}</version>
   <organization>
     <name>CARET, University of Cambridge</name>
     <url>http://www.caret.cam.ac.uk/</url>
   </organization>
   <inceptionYear>2005</inceptionYear>
-  <packaging>jar</packaging>
   <description>RSFUtil implements the RSF web framework.</description>
   <developers>
     <developer>
       <id>amb26</id>
       <name>Antranig Basman</name>
       <email>antranig@caret.cam.ac.uk</email>
-      <url>http://www.caret.cam.ac.uk/contact/people/index.html</url>
+      <url>http://ponder.org.uk</url>
       <organization>CARET</organization>
       <organizationUrl>http://www.caret.cam.ac.uk/</organizationUrl>
       <roles>
@@ -105,32 +103,14 @@
   <dependencies>
     <dependency>
       <groupId>uk.org.ponder</groupId>
-      <artifactId>ponderutilcore</artifactId>
-      <version>${ponderutilcore.version}</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>uk.org.ponder</groupId>
       <artifactId>j-servletutil</artifactId>
       <version>${jservletutil.version}</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>servletapi</groupId>
-      <artifactId>servletapi</artifactId>
-      <version>2.3</version>
       <type>jar</type>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <version>1.2.9</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring</artifactId>
-      <version>1.2.8</version>
       <type>jar</type>
     </dependency>
     <dependency>
@@ -167,4 +147,3 @@
     </resources>
   </build>
 </project>
-
