@@ -50,7 +50,7 @@ public class ActionErrorStrategyManager implements ActionErrorStrategy {
     Throwable tohandlet = exception instanceof UniversalRuntimeException ? 
         ((UniversalRuntimeException) exception).getTargetException()
         : exception;
-    if (!(tohandlet instanceof Exception)) {
+    if (tohandlet != null && !(tohandlet instanceof Exception)) {
       // If it is an Error, throw it out immediately
       throw UniversalRuntimeException.accumulate(tohandlet);
     }
