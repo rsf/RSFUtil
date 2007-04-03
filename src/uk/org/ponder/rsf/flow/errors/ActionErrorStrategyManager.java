@@ -31,7 +31,7 @@ public class ActionErrorStrategyManager implements ActionErrorStrategy {
   public void setStrategyList(List newstrategies) {
     this.strategies.addAll(newstrategies);
   }
-  
+
   public void addStrategy(ActionErrorStrategy toadd) {
     strategies.add(toadd);
   }
@@ -47,9 +47,14 @@ public class ActionErrorStrategyManager implements ActionErrorStrategy {
   public Object handleError(String returncode, Exception exception,
       String flowstate, String viewID, TargettedMessage message) {
     Object code = null;
-    Exception tohandle = (Exception) (exception instanceof UniversalRuntimeException ? ((UniversalRuntimeException) exception)
-        .getTargetException()
-        : exception);
+    Throwable tohandlet = exception instanceof UniversalRuntimeException ? 
+        ((UniversalRuntimeException) exception).getTargetException()
+        : exception;
+    if (!(tohandlet instanceof Exception)) {
+      // If it is an Error, throw it out immediately
+      throw UniversalRuntimeException.accumulate(tohandlet);
+    }
+    Exception tohandle = (Exception) tohandlet;
     for (int i = 0; i < strategies.size(); ++i) {
       code = strategyAt(i).handleError(returncode, tohandle, flowstate, viewID,
           message);
