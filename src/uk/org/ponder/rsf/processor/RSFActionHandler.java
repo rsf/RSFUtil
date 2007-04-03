@@ -126,12 +126,9 @@ public class RSFActionHandler implements ActionHandler, ErrorHandler {
     for (int i = 0; i < messages.size(); ++i) {
       TargettedMessage message = messages.messageAt(i);
       if (message.exception != null) {
-        Throwable target = message.exception instanceof UniversalRuntimeException ? ((UniversalRuntimeException) message.exception)
-            .getTargetException()
-            : message.exception;
         try {
           Object testcode = actionerrorstrategy.handleError((String) newcode,
-              (Exception) target, null, viewparams.viewID, message);
+              message.exception, null, viewparams.viewID, message);
           if (testcode != null)
             newcode = testcode;
         }
