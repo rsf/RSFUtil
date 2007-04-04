@@ -37,8 +37,8 @@ public abstract class ViewParameters implements AnyViewParameters {
    */ 
   public static final String TRUNK_PARSE_PREFIX = "@";
   /**
-   * Returns a "parse specification" suitable for mapping (currently just the
-   * attribute fields of) this ViewParameters into a URL. 
+   * Returns a "parse specification" suitable for mapping this ViewParameters 
+   * onto a URL.</p> 
    * This is a comma-separated list of field specifications. Each field specification
    * takes the form of the name of an URL attribute, optionally followed by the
    * colon character : and an EL path into this ViewParameters object onto which
@@ -47,7 +47,8 @@ public abstract class ViewParameters implements AnyViewParameters {
    * <code>@1</code>, etc.
    * </p>If users derive from 
    * {@link SimpleViewParameters} and do not override this method, a default
-   * parse specification will be inferred.
+   * parse specification will be inferred which maps all defined properties 
+   * onto similarly-named URL attributes.
    * 
    * @return A string representing a URL parse specification
    */
