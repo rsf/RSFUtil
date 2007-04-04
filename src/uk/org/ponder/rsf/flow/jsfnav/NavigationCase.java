@@ -23,7 +23,8 @@ import uk.org.ponder.rsf.viewstate.AnyViewParameters;
 public class NavigationCase {
   public NavigationCase() {
   }
-  /** A default NavigationCase which operates for any action return **/
+  /** A default NavigationCase which operates for any action return. This rule
+   * will navigate to the state specified by <code>resultingView</code> **/
   public NavigationCase(AnyViewParameters resultingView) {
     this.resultingView = resultingView;
   }
@@ -32,7 +33,7 @@ public class NavigationCase {
     this.resultingView = resultingView;
     this.flowCondition = flowCondition;
   }
-  
+  /** A NavigationCase which triggers only on a particular outcome (action return) */
   public NavigationCase(String fromOutcome, AnyViewParameters resultingView) {
     this.fromOutcome = fromOutcome;
     this.resultingView = resultingView;
@@ -44,11 +45,19 @@ public class NavigationCase {
     this.flowCondition = flowCondition;
   }
 
+  /** The return value from the method binding executed for this action
+   * which matches this rule. If <code>fromOutcome</code> is left blank, this
+   * rule will operate for all actions handled for this view.
+   */
   public String fromOutcome;
+  /** Final navigation state that this rule will cause navigation to if it is
+   * selected.
+   */
   public AnyViewParameters resultingView;
-  /**
-   * "Flow condition marker", defaulting to
-   * {@link uk.org.ponder.rsf.flow.ARIResult}.FLOW_END. Set to FLOW_START,
+  /** A "Flow condition marker" for this navigation rule. This is set if this
+   * navigation rule is considered to be part of an "informal flow".
+   * Defaults to {@link uk.org.ponder.rsf.flow.ARIResult}.FLOW_END representing
+   * no flow state or termination of any existing flow. Set to FLOW_START,
    * PROPAGATE or FLOW_ONESTEP for other flow behaviour.
    */
   public String flowCondition = ARIResult.FLOW_END;
