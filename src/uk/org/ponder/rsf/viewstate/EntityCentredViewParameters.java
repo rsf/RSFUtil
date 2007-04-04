@@ -9,7 +9,9 @@ import uk.org.ponder.beanutil.entity.EntityID;
 
 /**
  * View parameters, which as well as defining the core viewID, are centred 
- * upon a particular entity, defined by Java class and entity ID.
+ * upon a particular entity, defined by Java class and entity ID. The parseSpec
+ * supplied here will create URLs of the form 
+ * /servlet-path/view-id/entity-id?mode=edit
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
@@ -36,6 +38,7 @@ public class EntityCentredViewParameters extends ViewParameters {
   public EntityID entity;
   public String mode;
   
+  /** Build an EL path which locates the referred-to entity **/
   public String getELPath() {
     return PathUtil.buildPath(entity.entityname, entity.ID);
   }
