@@ -146,15 +146,20 @@ public class BasicHTMLComponentRenderer implements ComponentRenderer {
 
     else if (torendero instanceof UISelect) {
       UISelect select = (UISelect) torendero;
-      // The HTML submitted value from a <select> actually corresponds
-      // with the selection member, not the top-level component.
-      if (select.selection.willinput) {
-        attrcopy.put("name", select.selection.submittingname);
+      if (attrcopy.get("id") != null) {
+        // TODO: This is an irregularity, should probably remove for 0.8
+        attrcopy.put("id", select.selection.getFullID());
       }
-      attrcopy.put("id", select.selection.getFullID());
       boolean ishtmlselect = trc.uselump.textEquals("<select ");
       if (select.selection instanceof UIBoundList && ishtmlselect) {
         attrcopy.put("multiple", "true");
+      }
+      if (ishtmlselect) {
+        // The HTML submitted value from a <select> actually corresponds
+        // with the selection member, not the top-level component.
+        if (select.selection.willinput) {
+          attrcopy.put("name", select.selection.submittingname);
+        }
       }
       XMLUtil.dumpAttributes(attrcopy, xmlw);
       if (ishtmlselect) {
