@@ -199,7 +199,12 @@ public class UIBranchContainer extends UIContainer {
       else if (toadd instanceof UIBranchContainer) {
         UIBranchContainer addbranch = (UIBranchContainer) toadd;
         if (addbranch.localID == "") {
-          addbranch.localID = Integer.toString(children.size());
+          throw new IllegalArgumentException(
+              "Error in component tree: duplicate branch added with full ID " + addbranch.getFullID() 
+              +": make sure to use the 3-argument UIBranchContainer.make() method when creating branch containers in a loop");
+ // We can't adjust this here in general since when UIBranchContainers are added to a form,
+ // their IDs will 
+ //         addbranch.localID = Integer.toString(children.size());
         }
       }
       children.add(toadd);

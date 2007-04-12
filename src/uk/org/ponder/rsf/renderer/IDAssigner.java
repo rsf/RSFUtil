@@ -45,7 +45,7 @@ public class IDAssigner {
     if (ID != null) {
       int[] assnum = (int[]) assigned.get(ID); 
       if (assnum != null) {
-        ID = ID + ":" + Integer.toString(assnum[0]);
+        ID = ID + "!" + Integer.toString(assnum[0]);
         if (assnum == USED_ONCE) {
           assnum = new int[] {1};
           assigned.put(ID, assnum);
