@@ -137,6 +137,7 @@ public class BeanCopyPreservationStrategy implements TSHPreservationStrategy,
         }
         else {
           TargettedMessageList messages = ThreadErrorState.getErrorState().messages;
+//          Logger.log.info("Restoring bean " + bean + " to path " + beanname);
           alterer.setBeanValue(beanname, target, bean, messages, false);
         }
       }
