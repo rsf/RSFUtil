@@ -61,7 +61,7 @@ public class UVBProducer implements ViewComponentProducer, ContentTypeReporter,
 
   public void fillComponents(UIContainer tofill, ViewParameters viewparamso,
       ComponentChecker checker) {
-    if (uvbbean.paths != null) {
+    if (uvbbean.paths != null && uvbbean.values != null) {
       for (int i = 0; i < uvbbean.paths.length; ++i) {
         String path = uvbbean.paths[i];
         Object bean = uvbbean.values[i];
