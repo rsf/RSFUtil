@@ -196,7 +196,7 @@ public class UIBranchContainer extends UIContainer {
         children = new ArrayList();
         childmap.put(childkey, children);
       }
-      else if (toadd instanceof UIBranchContainer) {
+      else if (!children.isEmpty() && toadd instanceof UIBranchContainer) {
         UIBranchContainer addbranch = (UIBranchContainer) toadd;
         if (addbranch.localID == "") {
           throw new IllegalArgumentException(
