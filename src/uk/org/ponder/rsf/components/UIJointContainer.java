@@ -33,6 +33,13 @@ public class UIJointContainer extends UIBranchContainer {
     this.jointID = jointID;
     parent.addComponent(this);
   }
+  
+  public UIJointContainer(UIContainer parent, String ID, String jointID, String localID) {
+    this.ID = ID;
+    this.jointID = jointID;
+    this.localID = localID;
+    parent.addComponent(this);
+  }
 
   public UIJointContainer(UIContainer parent, String ID) {
     this(parent, ID, null);
