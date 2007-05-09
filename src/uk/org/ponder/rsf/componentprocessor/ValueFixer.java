@@ -81,7 +81,7 @@ public class ValueFixer implements ComponentProcessor {
       SubmittedValueEntry sve = rsvc.byID(toprocess.getFullID());
       boolean hadcached = false;
       Object modelvalue = null;
-      if (sve != null) {
+      if (sve != null && sve.newvalue != null) {
         toprocess.updateValue(sve.newvalue);
         hadcached = true;
       }
@@ -119,7 +119,9 @@ public class ValueFixer implements ComponentProcessor {
         BeanResolver resolver = computeResolver(toprocess);
         Object flatvalue = alterer.getFlattenedValue(null, oldvalue,
             oldvalue.getClass(), resolver);
-        toprocess.updateValue(flatvalue);
+        if (flatvalue != null) {
+          toprocess.updateValue(flatvalue);
+        }
       }
       if (toprocess.submittingname == null) {
         toprocess.submittingname = toprocess.getFullID();
