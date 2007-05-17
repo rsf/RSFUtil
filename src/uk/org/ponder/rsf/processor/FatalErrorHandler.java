@@ -22,7 +22,7 @@ public interface FatalErrorHandler {
    * be printed instead.
    * @param t The exception causing the double fault.
    * @param pos A PrintOutputStream where an error message may be rendered.
-   * @return 
+   * @return <code>true</code> if the error has been successfully handled.
    */
   public boolean handleFatalError(Throwable t, PrintOutputStream pos);
 }

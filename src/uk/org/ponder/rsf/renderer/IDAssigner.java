@@ -12,6 +12,14 @@ import uk.org.ponder.rsf.components.decorators.UIIDStrategyDecorator;
 import uk.org.ponder.rsf.content.ContentTypeInfo;
 import uk.org.ponder.rsf.template.XMLLump;
 
+/** Implements the strategy as represented by any {@link UIIDStrategyDecorator}
+ * registered either on a tag, or content type, for assigning an XML id to the
+ * tag in the output markup.
+ * 
+ * @author Antranig Basman (antranig@caret.cam.ac.uk)
+ *
+ */
+
 public class IDAssigner {
   private static final int[] USED_ONCE = new int[] {1};
   private Map assigned = new HashMap();

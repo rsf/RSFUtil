@@ -107,7 +107,7 @@ public class RSFActionHandler implements ActionHandler, ErrorHandler {
    * propagated lazily since it is only constructed partway through this
    * handler, if indeed it is a POST cycle at all.
    * 
-   * @return
+   * @return The ARIResult resulting from this action cycle.
    */
   public ARIResult getARIResult() {
     return ariresult;

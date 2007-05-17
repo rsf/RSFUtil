@@ -109,7 +109,7 @@ public class AutoComponentProducerManager implements ComponentProducerWrapper,
    * differs from the set which can be "translated" by wrapProducer, which is
    * the set of ALL producers found at request scope.
    * 
-   * @return
+   * @return The producers available for this request cycle.
    */
   public Collection getProducers() {
     return advertised;

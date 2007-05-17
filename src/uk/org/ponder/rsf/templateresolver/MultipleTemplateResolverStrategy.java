@@ -11,10 +11,9 @@ package uk.org.ponder.rsf.templateresolver;
  */
 
 public interface MultipleTemplateResolverStrategy extends TemplateResolverStrategy {
-  /** Returns <code>true</code> if ALL the strings returns from this resolver
+  /** @return <code>true</code> if ALL the strings returns from this resolver
    * should be used to aggregate templates for this request. If <code>false</code>,
    * aggregating will stop at the first template which resolves successfully.
-   * @return
    */
   boolean isMultiple();
 }

@@ -5,6 +5,14 @@ package uk.org.ponder.rsf.components;
 
 import uk.org.ponder.stringutil.StringList;
 
+/** A multi-line output control. In HTML will render a list of Strings
+ * separated by </br> tags - consider use of repetitive leaves or a
+ * BranchContainer for general use.
+ * 
+ * @author Antranig Basman (antranig@caret.cam.ac.uk)
+ *
+ */
+
 public class UIOutputMultiline extends UIBound {
   public static UIOutputMultiline make(UIContainer parent, String ID,
       String binding, StringList value) {
