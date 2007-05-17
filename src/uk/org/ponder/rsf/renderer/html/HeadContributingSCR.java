@@ -12,7 +12,7 @@ import uk.org.ponder.xml.XMLWriter;
  * needs to be "collected" into the HTML &lt;head&gt; of the final
  * rendered product. This renderer is never used concretely, it is simply
  * a tag recognised by the template parser, which collects scr names beginning
- * with the prefix {@link XMLLump.SCR_CONTRIBUTE_PREFIX}.
+ * with the prefix {@link XMLLump#SCR_CONTRIBUTE_PREFIX}.
  * @author Antranig Basman (amb26@ponder.org.uk)
  *
  */

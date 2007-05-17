@@ -4,10 +4,11 @@
 package uk.org.ponder.rsf.components;
 
 /**
- * Input of a single String-typed value. Not UIInputOne for familiarity. May
+ * Input of a single String-typed value. May
  * peer, in HTML, for example, with &lt;input type="text" or with
  * &lt;textarea&gt;.
  * 
+ * @since RSF-0.5
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
@@ -28,7 +29,7 @@ public class UIInput extends UIBoundString {
    *          <code>null</code>. If neither this field nor
    *          <code>binding</code> is set. the value present in the template
    *          will be used.
-   * @return
+   * @return The constructed UIInput component.
    */
   public static UIInput make(UIContainer parent, String ID, String binding,
       String initvalue) {

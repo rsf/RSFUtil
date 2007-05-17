@@ -10,6 +10,13 @@ import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.stringutil.StringUtil;
 
+/** Framework class performing the function of parsing and rendering 
+ * ViewParameters objects to and from their raw representations.
+ * 
+ * @author Antranig Basman (antranig@caret.cam.ac.uk)
+ *
+ */
+
 public class ViewParamsMapper {
 
   private BeanModelAlterer bma;
@@ -43,7 +50,7 @@ public class ViewParamsMapper {
    * @param target The ViewParameters object onto which URL information is to be
    *          parsed.
    * @param params The raw URL parameter map, a map of String onto String[].
-   * @param The "pathinfo" segment of the URL, which starts with a leading slash
+   * @param pathinfo The "pathinfo" segment of the URL, which starts with a leading slash
    *          (/).
    */
   public void parseViewParameters(ViewParameters target, Map params,

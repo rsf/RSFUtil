@@ -6,7 +6,7 @@ package uk.org.ponder.rsf.components;
 import uk.org.ponder.beanutil.BeanUtil;
 
 /** A special class to hold EL references so they may be detected in the
- * object tree. When held in this member, it is devoid of the packaging #{..}
+ * component tree. When held in this member, it is devoid of the packaging #{..}
  * characters - they are removed and replaced by the parser in transit from
  * XML form.
  * @author Antranig Basman (amb26@ponder.org.uk)

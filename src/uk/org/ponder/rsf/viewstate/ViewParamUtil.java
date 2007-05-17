@@ -24,7 +24,6 @@ public class ViewParamUtil {
    * It is always undesirable to name beans in Java code, but this access is
    * necessary to permit ViewParameters objects to clone themselves in contexts
    * too small to inject this dependency.
-   * @return
    */
   
   public static DeepBeanCloner getCloner() {
@@ -33,9 +32,9 @@ public class ViewParamUtil {
   
   /** Converts the portion of ViewParameters that will be rendered into URL
    * attributes into name/value pairs as a Map.
-   * @param vsh
-   * @param viewparams
-   * @return
+   * @param vsh The ViewStateHandler encoding URL information
+   * @param viewparams The ViewParameters object to be encoded
+   * @return A map of String to String holding the key/value pairs.
    */
   
   public static Map viewParamsToMap(ViewStateHandler vsh, ViewParameters viewparams) {
@@ -65,9 +64,6 @@ public class ViewParamUtil {
 
   /** Parse a "reduced URL" (as often seen in serialized component trees and
    * the like) into a full ViewParameters object.
-   * @param parser
-   * @param reducedURL
-   * @return
    */
   
   public static ViewParameters parse(ViewParametersParser parser, String reducedURL) {

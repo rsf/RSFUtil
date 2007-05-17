@@ -11,8 +11,8 @@ import java.io.Serializable;
  * <br>- the (full) ID of the component producing the submission
  * <br>- the value binding for the submitted value
  * <br>- the initial value presented to the UI when the view was rendered.
- * These values, once accumulated, are stored inside the 
- * {@see uk.org.ponder.rsf.state.RequestSubmittedValueCache}
+ * These values, once accumulated, are stored inside the
+ * {@link RequestSubmittedValueCache} 
  * In addition to encoding a component submission, an SVE may either 
  * represent a deletion binding or a pure EL binding.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)

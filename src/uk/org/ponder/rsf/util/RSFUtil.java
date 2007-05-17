@@ -81,9 +81,7 @@ public class RSFUtil {
   /**
    * Determines whether the supplied component has a bound value, and hence will
    * be visible to fossilized bindings/RSVC processing. It must not only be an
-   * instance of
-   * 
-   * @see UIBound, but also have a non-null binding.
+   * instance of {@link UIBound}, but also have a non-null binding.
    */
   public static boolean isBound(UIComponent tocheck) {
     return tocheck instanceof UIBound ? ((UIBound) tocheck).valuebinding != null
@@ -96,7 +94,7 @@ public class RSFUtil {
   }
 
   /**
-   * @see UIComponent for the operation of this algorithm.
+   * See {@link UIComponent} for the operation of this algorithm.
    */
   // PROFILER hotspot: 2.4% render request time
   public static String computeFullID(UIComponent tocompute) {

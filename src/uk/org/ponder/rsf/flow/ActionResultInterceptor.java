@@ -12,6 +12,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * are polled during the cycle. Also, a ViewProducer may directly implement
  * ActionResultInterceptor to indicate it is happy to be constructed during
  * an action cycle to serve this role.
+ * @since 0.7.1
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  *
  */

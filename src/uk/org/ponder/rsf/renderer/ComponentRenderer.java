@@ -8,7 +8,7 @@ import uk.org.ponder.rsf.view.View;
 
 /** Does the work of rendering a component, given a UIComponent and a location
  * in the template stream. A ComponentRenderer is specific to a particular
- * @link RenderSystem, which also contains StaticComponentRenderers for rewriting
+ * {@link RenderSystem}, which also contains StaticComponentRenderers for rewriting
  * template data without a corresponding component.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
@@ -27,7 +27,7 @@ public interface ComponentRenderer {
   /** Renders the supplied component. 
    * @param component The component to be rendered (possibly null)
    * @param view The view in which this component is held
-   * @param trc A {@link TagRenderContext} object encapulating the template
+   * @param renderContext A {@link TagRenderContext} object encapulating the template
    * location this component is to be rendered with. The <code>nextpos</code>
    * field in this object will become suitably updated by means of one of the
    * output methods.
