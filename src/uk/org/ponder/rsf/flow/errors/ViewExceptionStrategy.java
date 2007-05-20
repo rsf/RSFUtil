@@ -11,6 +11,9 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * client is to be redirected to in the event of this level-1 error. If an
  * error occurs whilst rendering this page, a fatal error will be declared
  * (customisable by {@link uk.org.ponder.rsf.processor.FatalErrorHandler}).
+ * </p>
+ * A strategy may return <code>null</code> to indicate it defers to some 
+ * later strategy.
  * @author Antranig Basman (amb26@ponder.org.uk)
  *
  */

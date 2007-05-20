@@ -161,7 +161,7 @@
   <bean id="XMLActionErrorStrategies"
     parent="XMLActionErrorStrategyParent" />
 
-  <bean id="viewExceptionStrategy"
+  <bean id="defaultViewExceptionStrategy"
     class="uk.org.ponder.rsf.flow.errors.SimpleViewExceptionStrategy">
     <property name="viewParametersParser">
       <ref bean="viewParametersParser" />
@@ -169,6 +169,11 @@
     <property name="defaultView">
       <ref bean="defaultViewProxy" />
     </property>
+  </bean>
+  
+  <bean parent="viewExceptionStrategyParent">
+    <property name="value" ref="defaultViewExceptionStrategy"/>
+    <property name="bindAfter" value="*"/>
   </bean>
 
 
