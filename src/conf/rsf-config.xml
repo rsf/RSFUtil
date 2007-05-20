@@ -447,6 +447,13 @@
     <property name="targetClass"
       value="uk.org.ponder.rsf.viewstate.ViewParameters" />
   </bean>
+  
+  <bean id="parsedViewParametersProxy" parent="RSACBridgePeaProxy">
+    <property name="targetBeanName" value="parsedViewParameters" />
+    <!-- Enough information to find the get() method -->
+    <property name="targetClass"
+      value="uk.org.ponder.rsf.viewstate.ViewParameters" />
+  </bean>
 
   <bean id="viewParamsMappingInfoManager"
     class="uk.org.ponder.rsf.viewstate.ViewParamsMappingInfoManager">
@@ -459,6 +466,11 @@
     <property name="beanModelAlterer" ref="DARApplier" />
     <property name="VPMappingInfoManager"
       ref="viewParamsMappingInfoManager" />
+  </bean>
+
+  <bean id="viewParamsInterceptorManager" 
+    class="uk.org.ponder.rsf.viewstate.ViewParamsInterceptorManager">
+    <property name="viewParameters" ref="parsedViewParametersProxy"/>
   </bean>
 
   <bean id="lazarusRedirector"
@@ -576,6 +588,15 @@
     <property name="mappingViewResolver" ref="viewResolver"/>
   </bean>
 
+  <bean id="viewExceptionStrategyManager"
+    class="uk.org.ponder.rsf.flow.errors.ViewExceptionStrategyManager">
+  </bean>
+
+  <bean id="viewExceptionStrategyParent" 
+   class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
+    <property name="targetPath"
+      value="viewExceptionStrategyManager.strategyList" />
+  </bean>
   <bean id="actionErrorStrategyManager"
     class="uk.org.ponder.rsf.flow.errors.ActionErrorStrategyManager">
     <property name="mergeStrategies" ref="XMLActionErrorStrategies" />

@@ -134,7 +134,7 @@
 
   <!-- The ViewParameters object giving rise to the current request. Highly
     polymorphic, in general of some user-defined type. -->
-  <bean id="viewParameters"
+  <bean id="parsedViewParameters"
     class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
     <property name="singleton" value="true" />
     <property name="targetObject" ref="viewParametersParser" />
@@ -145,6 +145,10 @@
         <ref local="requestMap" />
       </list>
     </property>
+  </bean>
+  
+  <bean id="viewParameters" factory-bean="viewParamsInterceptorManager" 
+    factory-method="getViewParameters">  
   </bean>
 
   <bean id="postDecoder" class="uk.org.ponder.rsf.processor.PostDecoder"
@@ -381,7 +385,7 @@
     class="uk.org.ponder.rsf.processor.RenderHandlerBracketer"
     lazy-init="true">
     <property name="errorStateManager" ref="errorStateManager" />
-    <property name="viewExceptionStrategy" ref="viewExceptionStrategy" />
+    <property name="viewExceptionStrategy" ref="viewExceptionStrategyManager" />
     <property name="viewParameters" ref="viewParameters" />
     <property name="renderHandler" ref="renderHandler" />
     <property name="redirectOnLevel1Error" ref="redirectOnLevel1Error" />
