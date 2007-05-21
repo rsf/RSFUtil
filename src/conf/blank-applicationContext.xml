@@ -63,6 +63,7 @@ with a client redirect rather than an internal reinterpretation -->
     <property name="deepBeanCloner" ref="deepBeanCloner" />
     <property name="viewIDInferrer" ref="viewIDInferrer" />
     <property name="implicitNullRedirect" ref="implicitNullRedirect"/>
+    <property name="defaultViewInfoReceiver" ref="defaultViewInfoReceiver"/>
     <property name="defaultViewParams" ref="defaultViewParametersProxy"/>
   </bean>
 
@@ -167,7 +168,7 @@ with a client redirect rather than an internal reinterpretation -->
     parent="XMLActionErrorStrategyParent" />
 
   <bean id="defaultViewExceptionStrategy"
-    class="uk.org.ponder.rsf.flow.errors.SimpleViewExceptionStrategy">
+    class="uk.org.ponder.rsf.flow.errors.DefaultViewExceptionStrategy">
     <property name="defaultView">
       <ref bean="defaultViewParametersProxy" />
     </property>
