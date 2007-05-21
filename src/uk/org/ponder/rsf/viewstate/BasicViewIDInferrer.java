@@ -12,7 +12,7 @@ import java.util.Map;
  */
 // TODO: this should ultimately connect up with ViewParamsMapInfo for some kind
 // of global inference strategy.
-public class DefaultViewIDInferrer implements ViewIDInferrer {
+public class BasicViewIDInferrer implements ViewIDInferrer {
 
   public String inferViewID(String pathinfo, Map requestmap) {
     int firstslashpos = pathinfo.indexOf('/', 1);

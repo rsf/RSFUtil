@@ -3,11 +3,9 @@
  */
 package uk.org.ponder.rsf.viewstate;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import uk.org.ponder.reflect.DeepBeanCloner;
-import uk.org.ponder.reflect.ReflectiveCache;
 import uk.org.ponder.util.Logger;
 
 /**
@@ -16,15 +14,24 @@ import uk.org.ponder.util.Logger;
  * pathinfo (up to first slash), which will be assumed to represent the viewID.
  * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
- * 
  */
-public class BasicViewParametersParser implements ViewParametersParser,
-    ViewParamsReceiver {
-  private Map exemplarmap;
+// Really has two functions, that of VPP and also of the basic default
+// view discoverer, since we have not made the effort to factor off 
+// ViewParamsReceiver
+public class BasicViewParametersParser implements ViewParametersParser {
   private ViewParamsMapper vpmapper;
   private DeepBeanCloner beancloner;
   private ViewIDInferrer viewIDInferrer;
+
+  private DefaultViewInfoReceiver defaultViewInfoReceiver;
+  private boolean implicitNullRedirect;
+  private ViewParameters defaultViewParams;
   
+  public void setDefaultViewInfoReceiver(
+      DefaultViewInfoReceiver defaultViewInfoReceiver) {
+    this.defaultViewInfoReceiver = defaultViewInfoReceiver;
+  }
+
   public void setViewParamsMapper(ViewParamsMapper vpmapper) {
     this.vpmapper = vpmapper;
   }
@@ -37,91 +44,42 @@ public class BasicViewParametersParser implements ViewParametersParser,
     this.viewIDInferrer = viewIDInferrer;
   }
   
-  // A single-threaded hashmap to be used during startup.
-  private Map pendingmap = new HashMap();
-
-  private ViewParameters defaultexemplar = new SimpleViewParameters();
-
-  private String defaultview;
-  // Called from ConcreteViewResolver.init(), i.e. "somewhat late"
-  public void setDefaultView(String viewid) {
-    defaultview = viewid;
+  public void setImplicitNullRedirect(boolean implicitNullRedirect) {
+    this.implicitNullRedirect = implicitNullRedirect;
   }
-
-  /**
-   * DO NOT call this method in application scope. Default view cannot be
-   * guaranteed to be called until all views are read.
-   * 
-   * @return The default view to be redirected to in case of a Level-1
-   *         exception.
-   */
-  public String getDefaultView() {
-    if (defaultview == null) {
-      Logger.log
-          .warn("Warning: no view has been marked as default during initialisation -"
-              + "\nDid you remember to define ViewProducers?");
-    }
-    return "/" + defaultview;
-  }
-
-  /**
-   * AT MOST ONE view parameters map may be set as "pending" during startup
-   * (presumably through reading of a static file). It will be actioned on
-   * initialisation of the bean, all further will be actioned immediately.
-   */
-  public void setViewParametersMap(Map exemplarmap) {
-    (this.exemplarmap == null ? pendingmap
-        : this.exemplarmap).putAll(exemplarmap);
-  }
-
-  public void setViewParamsExemplar(String viewid, ViewParameters vpexemplar) {
-    if (vpexemplar != null) {
-      (exemplarmap == null ? pendingmap
-          : exemplarmap).put(viewid, vpexemplar);
-    }
-  }
-
   
+  public void setDefaultViewParams(ViewParameters defaultViewParams) {
+    this.defaultViewParams = defaultViewParams;
+  }
   
-  public void setReflectiveCache(ReflectiveCache reflectivecache) {
-    exemplarmap = reflectivecache.getConcurrentMap(1);
-  }
-
-  public void init() {
-    exemplarmap.putAll(pendingmap);
-    pendingmap = null;
-  }
-
-  public void setDefaultExemplar(ViewParameters defaultexemplar) {
-    this.defaultexemplar = defaultexemplar;
-  }
-
   public ViewParameters parse(String pathinfo, Map requestmap) {
     // JSF memorial comment:
     // restoreView is the very first of the ViewHandler methods to be called for
     // each request, and it is guaranteed to be called. We take this opportunity
     // to stash away a parsed parameter object corresponding to our original
     // request.
-    String viewID = viewIDInferrer.inferViewID(pathinfo, requestmap);
-    ViewParameters vpexemplar = (ViewParameters) exemplarmap.get(viewID);
-    if (vpexemplar == null) {
-      vpexemplar = defaultexemplar;
+    if (implicitNullRedirect && (pathinfo.equals("") || pathinfo.equals("/") )) {
+      return defaultViewParams.get().copyBase(beancloner);
     }
-    ViewParameters origrequest = vpexemplar.copyBase(beancloner);
-    vpmapper.parseViewParameters(origrequest, requestmap, pathinfo);
+    else {
+      String viewID = viewIDInferrer.inferViewID(pathinfo, requestmap);
+      ViewParameters vpexemplar = defaultViewInfoReceiver.getViewParamsExemplar(viewID);
 
-    // this may *disagree* with value forced in by parsePathInfo due to VII
-    origrequest.viewID = viewID;
+      ViewParameters origrequest = vpexemplar.copyBase(beancloner);
+      vpmapper.parseViewParameters(origrequest, requestmap, pathinfo);
 
-    // Map requestmap = req.
-    // requestmap.put(ViewParameters.CURRENT_REQUEST, origrequest);
-    if (Logger.log.isDebugEnabled()) {
-      Logger.log.debug("Parsed view " + origrequest.viewID
-          + " from request parameters "
-          + vpmapper.toHTTPRequest(origrequest));
+    //  this may *disagree* with value forced in by parsePathInfo due to VII
+      origrequest.viewID = viewID;
+      // Map requestmap = req.
+      // requestmap.put(ViewParameters.CURRENT_REQUEST, origrequest);
+      if (Logger.log.isDebugEnabled()) {
+        Logger.log.debug("Parsed view " + origrequest.viewID
+            + " from request parameters "
+            + vpmapper.toHTTPRequest(origrequest));
+      }
+      return origrequest;
     }
-    return origrequest;
-
+  
   }
 
 }

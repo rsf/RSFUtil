@@ -58,12 +58,8 @@
   <bean id="multipartMap" factory-bean="earlyRequestParser"
     factory-method="getMultipartMap" />
 
-  <!-- This bean may be overriden with your default view, in reduced form
-    beginning with /  , otherwise it will be inferred from a view which reports
-    itself as a default. Do not try to get the value of this bean as an
-    application-scope dependency -->
-  <bean id="defaultView" factory-bean="viewParametersParser"
-    factory-method="getDefaultView" />
+  <bean id="defaultViewParameters" factory-bean="defaultViewInferrerManager"
+    factory-method="getViewParameters" />
 
   <bean id="handlerResolver"
     class="uk.org.ponder.rsf.processor.DefaultHandlerResolver">

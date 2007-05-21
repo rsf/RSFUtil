@@ -24,6 +24,12 @@
     <property name="value" value="false" />
   </bean>
 
+<!-- Set to <code>true</code> to handle an initial request with a null path
+with a client redirect rather than an internal reinterpretation -->
+  <bean id="implicitNullRedirect" class="uk.org.ponder.springutil.BooleanFactory">
+     <property name="value" value="false" />
+  </bean>
+
   <bean id="fatalErrorHandler"
     class="uk.org.ponder.rsf.processor.DefaultFatalErrorHandler" />
 
@@ -49,16 +55,15 @@
   </bean>
 
   <bean id="viewIDInferrer"
-    class="uk.org.ponder.rsf.viewstate.DefaultViewIDInferrer" />
+    class="uk.org.ponder.rsf.viewstate.BasicViewIDInferrer" />
 
   <bean id="viewParametersParser"
-    class="uk.org.ponder.rsf.viewstate.BasicViewParametersParser"
-    init-method="init">
+    class="uk.org.ponder.rsf.viewstate.BasicViewParametersParser">
     <property name="viewParamsMapper" ref="viewParamsMapper" />
     <property name="deepBeanCloner" ref="deepBeanCloner" />
-    <property name="reflectiveCache" ref="reflectiveCache" />
     <property name="viewIDInferrer" ref="viewIDInferrer" />
-    <property name="defaultExemplar" ref="viewParamsExemplar" />
+    <property name="implicitNullRedirect" ref="implicitNullRedirect"/>
+    <property name="defaultViewParams" ref="defaultViewParametersProxy"/>
   </bean>
 
   <bean name="baseURLProvider" parent="autoBaseURLProviderProxy" />
@@ -163,11 +168,8 @@
 
   <bean id="defaultViewExceptionStrategy"
     class="uk.org.ponder.rsf.flow.errors.SimpleViewExceptionStrategy">
-    <property name="viewParametersParser">
-      <ref bean="viewParametersParser" />
-    </property>
     <property name="defaultView">
-      <ref bean="defaultViewProxy" />
+      <ref bean="defaultViewParametersProxy" />
     </property>
   </bean>
   
@@ -281,7 +283,7 @@
         <ref bean="XMLViewResolver" />
       </list>
     </property>
-    <property name="viewParametersReceiver" ref="viewParametersParser" />
+    <property name="viewParametersReceiver" ref="defaultViewInfoReceiver" />
     <property name="navigationCaseReceiver" ref="navigationCasePooler" />
     <property name="contentTypeReceiver" ref="contentTypeInfoFactory" />
   </bean>
