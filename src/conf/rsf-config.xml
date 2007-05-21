@@ -454,6 +454,13 @@
     <property name="targetClass"
       value="uk.org.ponder.rsf.viewstate.ViewParameters" />
   </bean>
+  
+  <bean id="defaultViewParametersProxy" parent="RSACBridgePeaProxy">
+    <property name="targetBeanName" value="defaultViewParameters" />
+    <!-- Enough information to find the get() method -->
+    <property name="targetClass"
+      value="uk.org.ponder.rsf.viewstate.ViewParameters" />
+  </bean>
 
   <bean id="viewParamsMappingInfoManager"
     class="uk.org.ponder.rsf.viewstate.ViewParamsMappingInfoManager">
@@ -471,6 +478,31 @@
   <bean id="viewParamsInterceptorManager" 
     class="uk.org.ponder.rsf.viewstate.ViewParamsInterceptorManager">
     <property name="viewParameters" ref="parsedViewParametersProxy"/>
+  </bean>
+  
+  <bean class="uk.org.ponder.springutil.ByClassTLAB">
+    <property name="targetPath" value="viewParamsInterceptorManager.interceptors"/>
+    <property name="targetClass" value="uk.org.ponder.rsf.viewstate.ViewParamsInterceptor"/>
+    <property name="deliverBeans" value="true"/>
+  </bean>
+
+  <bean id="defaultViewInferrerManager"
+    class="uk.org.ponder.rsf.viewstate.DefaultViewInferrerManager"/>
+  
+  <bean id="defaultViewInferrerParent" class="uk.org.ponder.springutil.StaticTLAB" 
+    abstract="true">
+    <property name="targetPath" value="defaultViewInferrerManager.inferrers"/>
+  </bean>
+
+  <bean id="viewDefaultViewContributor" parent="defaultViewInferrerParent">
+    <property name="value" ref="defaultViewInfoReceiver"/>
+    <property name="bindAfter" value="*"/>
+  </bean>
+
+  <bean id="defaultViewInfoReceiver" 
+    class="uk.org.ponder.rsf.viewstate.DefaultViewInfoReceiver" init-method="init">
+    <property name="reflectiveCache" ref="reflectiveCache" />
+    <property name="defaultExemplar" ref="viewParamsExemplar" />
   </bean>
 
   <bean id="lazarusRedirector"
@@ -510,10 +542,6 @@
   <bean id="URLRewriter"
     class="uk.org.ponder.rsf.viewstate.URLRewriter">
     <property name="viewStateHandler" ref="viewStateHandler" />
-  </bean>
-
-  <bean id="defaultViewProxy" parent="RSACStringBridge">
-    <property name="targetBeanName" value="defaultView" />
   </bean>
 
   <!-- *** Standard framework SCR definitions *** -->
@@ -597,6 +625,7 @@
     <property name="targetPath"
       value="viewExceptionStrategyManager.strategyList" />
   </bean>
+  
   <bean id="actionErrorStrategyManager"
     class="uk.org.ponder.rsf.flow.errors.ActionErrorStrategyManager">
     <property name="mergeStrategies" ref="XMLActionErrorStrategies" />
