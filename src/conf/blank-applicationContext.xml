@@ -348,6 +348,7 @@ with a client redirect rather than an internal reinterpretation -->
     class="uk.org.ponder.springutil.ByClassTLAB">
     <property name="targetClass"
       value="uk.org.ponder.messageutil.MessageLocator" />
+      <!-- TODO - this appears incomplete - no target for TLAB? -->
   </bean>
 
   <!-- Backwards compatibility for old-fashioned users of RAB :P -->

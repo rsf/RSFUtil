@@ -306,7 +306,6 @@
 
   <bean id="autoTemplateContributorTLAB"
     class="uk.org.ponder.springutil.ByClassTLAB">
-    <property name="deliverBeans" value="true" />
     <property name="targetPath"
       value="viewTemplateResolver.templateResolverStrategies" />
     <property name="targetClass"
@@ -483,7 +482,6 @@
   <bean class="uk.org.ponder.springutil.ByClassTLAB">
     <property name="targetPath" value="viewParamsInterceptorManager.interceptors"/>
     <property name="targetClass" value="uk.org.ponder.rsf.viewstate.ViewParamsInterceptor"/>
-    <property name="deliverBeans" value="true"/>
   </bean>
 
   <bean id="defaultViewInferrerManager"
