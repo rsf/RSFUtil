@@ -11,6 +11,7 @@ import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.renderer.ComponentRenderer;
 import uk.org.ponder.rsf.renderer.IDAssigner;
 import uk.org.ponder.rsf.renderer.RenderSystem;
+import uk.org.ponder.rsf.renderer.RenderSystemContext;
 import uk.org.ponder.rsf.renderer.RenderUtil;
 import uk.org.ponder.rsf.renderer.TagRenderContext;
 import uk.org.ponder.rsf.renderer.decorator.DecoratorManager;
@@ -86,11 +87,16 @@ public class BasicHTMLRenderSystem implements RenderSystem {
     }
   }
 
+
+  public void renderDebugMessage(RenderSystemContext rsc, String string) {
+    rsc.pos.print("<span style=\"background-color:#FF582E\">");
+    rsc.xmlw.write(string);
+    rsc.pos.print("</span><br/>");
+  }
+  
   // This method is almost entirely dialect-invariant - awaiting final
   // factorisation of RenderSystem
-  public int renderComponent(UIComponent torendero, View view, XMLLump lump,
-      PrintOutputStream pos, IDAssigner IDassigner, XMLLumpMMap collecteds) {
-    XMLWriter xmlw = new XMLWriter(pos);
+  public int renderComponent(RenderSystemContext rsc, UIComponent torendero, XMLLump lump) {
     int lumpindex = lump.lumpindex;
     XMLLump[] lumps = lump.parent.lumps;
     int nextpos = -1;
@@ -118,12 +124,19 @@ public class BasicHTMLRenderSystem implements RenderSystem {
                   + scrname + " at lump " + lump.toString());
           scr = NullRewriteSCR.instance;
         }
-        int tagtype = RenderUtil.renderSCR(scr, lump, xmlw, collecteds);
+        int tagtype = RenderUtil.renderSCR(scr, lump, rsc.xmlw, rsc.collecteds);
         nextpos = tagtype == ComponentRenderer.LEAF_TAG ? outerclose.lumpindex + 1
             : outerendopen.lumpindex + 1;
       }
+      else {
+        if (rsc.debugrender) {
+          renderDebugMessage(rsc, "Leaf component missing which was expected with id " + 
+              lump.rsfID + " at " + lump.toString());
+        }
+      }
 
       if (lump.textEquals("<form ")) { // SINGLE non-portable line
+        renderDebugMessage(rsc, "Skipping form tag and all children here");
         Logger.log.warn("Warning: skipping form tag with rsf:id " + lump.rsfID
             + " and all children at " + lump.toString()
             + " since no peer component");
@@ -139,27 +152,27 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         endopen = payload.open_end;
         close = payload.close_tag;
         uselump = payload;
-        RenderUtil.dumpTillLump(lumps, lumpindex, payload.lumpindex, pos);
+        RenderUtil.dumpTillLump(lumps, lumpindex, payload.lumpindex, rsc.pos);
         lumpindex = payload.lumpindex;
       }
 
       HashMap attrcopy = new HashMap();
       attrcopy.putAll(uselump.attributemap);
-      IDassigner.adjustForID(attrcopy, torendero);
+      rsc.IDassigner.adjustForID(attrcopy, torendero);
       decoratormanager.decorate(torendero.decorators, uselump.getTag(),
           attrcopy);
 
       TagRenderContext rendercontext = new TagRenderContext(attrcopy, uselump,
-          endopen, close, pos, xmlw, nextpos);
+          endopen, close, rsc.pos, rsc.xmlw, nextpos);
       // ALWAYS dump the tag name, this can never be rewritten. (probably?!)
-      pos.write(uselump.parent.buffer, uselump.start, uselump.length);
+      rsc.pos.write(uselump.parent.buffer, uselump.start, uselump.length);
 
       if (torendero instanceof UIBasicListMember) {
-        torendero = RenderUtil.resolveListMember(view,
+        torendero = RenderUtil.resolveListMember(rsc.view,
             (UIBasicListMember) torendero);
       }
       try {
-        componentRenderer.renderComponent(torendero, view, rendercontext);
+        componentRenderer.renderComponent(torendero, rsc.view, rendercontext);
       }
       catch (Exception e) {
         throw UniversalRuntimeException.accumulate(e,
@@ -170,12 +183,13 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       // if there is a payload, dump the postamble.
       if (payload != null) {
         RenderUtil.dumpTillLump(lumps, close.lumpindex + 1,
-            outerclose.lumpindex + 1, pos);
+            outerclose.lumpindex + 1, rsc.pos);
       }
       nextpos = rendercontext.nextpos;
     }
 
     return nextpos;
   }
+
 
 }

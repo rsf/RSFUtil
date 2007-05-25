@@ -8,9 +8,6 @@ import uk.org.ponder.rsf.renderer.decorator.DecoratorManager;
 import uk.org.ponder.rsf.renderer.scr.StaticRendererCollection;
 import uk.org.ponder.rsf.request.RenderSystemDecoder;
 import uk.org.ponder.rsf.template.XMLLump;
-import uk.org.ponder.rsf.template.XMLLumpMMap;
-import uk.org.ponder.rsf.view.View;
-import uk.org.ponder.streamutil.write.PrintOutputStream;
 
 /**
  * A Render System encapsulates all operations that are specific to a
@@ -36,12 +33,13 @@ public interface RenderSystem extends RenderSystemDecoder {
    * a value to outgoing XML <code>id</code> attributes.
    * @return The render index that the renderer has moved along to.
    */
-  public int renderComponent(UIComponent torender, View view, XMLLump lump, 
-      PrintOutputStream pos, IDAssigner idassigner, XMLLumpMMap collected);
+  public int renderComponent(RenderSystemContext rsc, UIComponent torender, XMLLump lump);
 
   public void setComponentRenderer(ComponentRenderer componentRenderer);
   
   public void setStaticRenderers(StaticRendererCollection scrc);
 
   public void setDecoratorManager(DecoratorManager decoratormanager);
+
+  public void renderDebugMessage(RenderSystemContext rsc, String string);
 }

@@ -123,7 +123,15 @@ public abstract class ViewParameters implements AnyViewParameters {
    */
   public String endflow;
 
-  public static final String BASE_PARSE_SPEC = "flowtoken, endflow, errortoken, errorredirect, @0:viewID";
+  
+  /** This field is set indicating that this view will be rendered in 
+   * "debug mode" - full RSF IDs will be allocated to every rendered element,
+   * and omitted elements will be highlighted in place. 
+   */
+  public String debugrender;
+  
+  public static final String BASE_PARSE_SPEC = 
+    "flowtoken, endflow, errortoken, errorredirect, debugrender, @0:viewID";
 
   /**
    * "Ephemeral" fields of ViewParameters state that will not propagate by

@@ -11,10 +11,16 @@ package uk.org.ponder.rsf.content;
 
 public class ContentTypeInfo {
   /** A constant representing the standard "full" ID allocation strategy, 
-   * derived from the full ID of a component. Appropriate for HTML and similar
-   * dialects.
+   * derived from the full ID of a component. This will only be applied to
+   * tags which already have an XML id attribute supplied in the template.
+   * Appropriate for HTML and similar dialects.
    */
   public static final String ID_FULL = "full";
+  
+  /** The same strategy as {@link #ID_FULL}, only the id attribute will be 
+   * written onto every rendered tag (same as RSF pre-0.7 "full" strategy).
+   */
+  public static final String ID_FORCE = "force";
   /** Suppress generation of the "id" attribute. Appropriate for some types
    * of pure XML response.
    */
