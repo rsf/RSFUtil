@@ -116,6 +116,11 @@ public class RSFUtil {
     return togo.toString();
   }
 
+  public static String reportPath(UIComponent branch) {
+    String path = branch.getFullID();
+    return path.equals("")? "template root" : "full path " + path;
+  }
+  
   /** Returns the common ancestor path of s1 and s2 * */
   public static int commonPath(String s1, String s2) {
     int s1c = s1.lastIndexOf(':');
@@ -164,5 +169,6 @@ public class RSFUtil {
     throw new IllegalArgumentException(
         "Tried to remove " + failed.getFullID() + " which is not a child of this container");
   }
+
 
 }

@@ -46,7 +46,8 @@ public class IDAssigner {
       }
     }
     if (ID == null) {
-      if (IDstrategy.equals(ContentTypeInfo.ID_FULL) && attrcopy.get("id") != null) {
+      if (IDstrategy.equals(ContentTypeInfo.ID_FORCE) || 
+          (IDstrategy.equals(ContentTypeInfo.ID_FULL) && attrcopy.get("id") != null)) {
         ID = component.getFullID();
       }
     }

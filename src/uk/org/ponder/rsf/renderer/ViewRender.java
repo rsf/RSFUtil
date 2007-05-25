@@ -20,6 +20,7 @@ import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.template.XMLLumpList;
 import uk.org.ponder.rsf.template.XMLLumpMMap;
 import uk.org.ponder.rsf.template.XMLViewTemplate;
+import uk.org.ponder.rsf.util.RSFUtil;
 import uk.org.ponder.rsf.util.SplitID;
 import uk.org.ponder.rsf.view.View;
 import uk.org.ponder.rsf.view.ViewTemplate;
@@ -64,7 +65,9 @@ public class ViewRender {
   private ContentTypeInfo contenttypeinfo;
   private IDAssigner IDassigner;
   private DecoratorManager decoratormanager;
-
+  private boolean debugrender;
+  private RenderSystemContext rsc;
+  
   public void setViewTemplate(ViewTemplate viewtemplateo) {
     if (viewtemplateo instanceof XMLCompositeViewTemplate) {
       XMLCompositeViewTemplate viewtemplate = (XMLCompositeViewTemplate) viewtemplateo;
@@ -107,6 +110,10 @@ public class ViewRender {
     this.decoratormanager = decoratormanager;
   }
 
+  public void setDebugRender(boolean debugrender) {
+    this.debugrender = debugrender;
+  }
+  
   private void collectContributions() {
     Set seenset = new HashSet();
     for (Iterator lumpit = branchmap.values().iterator(); lumpit.hasNext();) {
@@ -119,7 +126,8 @@ public class ViewRender {
   }
   
   public void render(PrintOutputStream pos) {
-    IDassigner = new IDAssigner(contenttypeinfo.IDStrategy);
+    IDassigner = new IDAssigner(debugrender? ContentTypeInfo.ID_FORCE: 
+      contenttypeinfo.IDStrategy);
     UIBranchContainer messagecomponent = UIBranchContainer.make(view.viewroot, MessageTargetter.RSF_MESSAGES);
     branchmap = BranchResolver.resolveBranches(globalmap, view.viewroot,
         roott.rootlump);
@@ -133,6 +141,7 @@ public class ViewRender {
       pos.print(declaration);
     this.pos = pos;
     this.xmlw = new XMLWriter(pos);
+    rsc = new RenderSystemContext(debugrender, view, pos, xmlw, IDassigner, collected);
     rendereddeadletters = false;
     renderRecurse(view.viewroot, roott.rootlump, roott.lumps[roott.roottagindex]);
   }
@@ -189,8 +198,7 @@ public class ViewRender {
               // but no fallback.
               if (targetlump == null)
                 continue;
-              int renderend = renderer.renderComponent(child, view, targetlump, 
-                  pos, IDassigner, collected);
+              int renderend = renderer.renderComponent(rsc, child, targetlump);
               boolean wasopentag = tl.lumps[renderend].nestingdepth >= targetlump.nestingdepth;
               if (i != children.size() - 1) {
                 // at this point, magically locate any "glue" that matches the
@@ -221,9 +229,10 @@ public class ViewRender {
           }
         }
         else {
-          if (Logger.log.isDebugEnabled()) {
-            Logger.log.debug("No component with prefix " + prefix
-                + " found for domain at template lump " + renderindex
+          if (debugrender) {
+            renderer.renderDebugMessage(rsc, "No component with prefix " + prefix
+                + " found in container at " + RSFUtil.reportPath(basecontainer) +
+                        " at template position " + baselump.toString()
                 + ", skipping");
           }
         }
@@ -270,8 +279,7 @@ public class ViewRender {
           component = fetchComponent(basecontainer, id);
         }
         // if we find a leaf component, render it.
-        renderindex = renderer.renderComponent(component, view, lump, 
-            pos, IDassigner, collected);
+        renderindex = renderer.renderComponent(rsc, component, lump);
       } // end if unrepeatable component.
       if (renderindex == tl.lumps.length) {
         // deal with the case where component was root element - Ryan of 11/10/06

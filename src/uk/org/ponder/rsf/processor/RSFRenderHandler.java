@@ -33,6 +33,7 @@ public class RSFRenderHandler implements RenderHandler {
   private StatePreservationManager presmanager;
   private ViewRender viewrender;
   private TargettedMessageList targettedMessageList;
+  private boolean enableDebugRendering;
 
   public void setTargettedMessageList(TargettedMessageList targettedMessageList) {
     this.targettedMessageList = targettedMessageList;
@@ -62,6 +63,10 @@ public class RSFRenderHandler implements RenderHandler {
     this.presmanager = presmanager;
   }
 
+  public void setEnableDebugRendering(boolean enableDebugRendering) {
+    this.enableDebugRendering = enableDebugRendering;
+  }
+  
   public void setViewRender(ViewRender viewrender) {
     this.viewrender = viewrender;
   }
@@ -97,6 +102,7 @@ public class RSFRenderHandler implements RenderHandler {
     viewrender
           .setGlobalMessageTarget(errorstatemanager.errorstate.globaltargetid);
     viewrender.setView(view);
+    viewrender.setDebugRender(enableDebugRendering && viewparams.debugrender != null);
     viewrender.render(pos);
   }
 

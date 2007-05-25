@@ -401,6 +401,7 @@
     <property name="viewProcessor" ref="viewProcessor" />
     <property name="viewRender" ref="viewRender" />
     <property name="targettedMessageList" ref="targettedMessageList" />
+    <property name="enableDebugRendering" ref="enableDebugRendering"/>
   </bean>
 
   <!-- Beans for UVB (the Universal View Bus) -->

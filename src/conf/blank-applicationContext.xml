@@ -30,6 +30,10 @@ with a client redirect rather than an internal reinterpretation -->
      <property name="value" value="false" />
   </bean>
 
+  <bean id="enableDebugRendering" class="uk.org.ponder.springutil.BooleanFactory">
+     <property name="value" value="true" />
+  </bean>
+
   <bean id="fatalErrorHandler"
     class="uk.org.ponder.rsf.processor.DefaultFatalErrorHandler" />
 
@@ -344,11 +348,12 @@ with a client redirect rather than an internal reinterpretation -->
     <property name="value" value="flowLite-flowIDHolder" />
   </bean>
 
+  <!-- Mark all beans of type MessageLocator as request addressible -->
   <bean id="messageSourceTLAB" parent="requestAddressibleParent"
     class="uk.org.ponder.springutil.ByClassTLAB">
     <property name="targetClass"
       value="uk.org.ponder.messageutil.MessageLocator" />
-      <!-- TODO - this appears incomplete - no target for TLAB? -->
+    <property name="deliverBeans" value="false"/>
   </bean>
 
   <!-- Backwards compatibility for old-fashioned users of RAB :P -->
