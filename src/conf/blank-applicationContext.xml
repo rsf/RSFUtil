@@ -125,7 +125,7 @@ with a client redirect rather than an internal reinterpretation -->
     class="uk.org.ponder.rsf.viewstate.XMLSiteMapLoader"
     parent="XMLFactoryBean" abstract="true">
     <property name="location" value="/WEB-INF/sitemap.xml" />
-    <property name="viewParametersReceiver" ref="viewParametersParser" />
+    <property name="viewParametersReceiver" ref="defaultViewInfoReceiver" />
   </bean>
 
   <bean id="JSFNavigationMap" parent="XMLFactoryBean"

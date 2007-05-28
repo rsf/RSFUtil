@@ -47,10 +47,10 @@ public class ViewRender {
   private PrintOutputStream pos;
   private XMLWriter xmlw;
 
-  //a map of UIBranchContainer to XMLLump
+  // a map of UIBranchContainer to XMLLump
   private Map branchmap;
   private XMLLumpMMap collected = new XMLLumpMMap();
-  
+
   private XMLLump messagelump;
 
   private TargettedMessageList messagelist;
@@ -67,7 +67,7 @@ public class ViewRender {
   private DecoratorManager decoratormanager;
   private boolean debugrender;
   private RenderSystemContext rsc;
-  
+
   public void setViewTemplate(ViewTemplate viewtemplateo) {
     if (viewtemplateo instanceof XMLCompositeViewTemplate) {
       XMLCompositeViewTemplate viewtemplate = (XMLCompositeViewTemplate) viewtemplateo;
@@ -79,7 +79,7 @@ public class ViewRender {
       roott = (XMLViewTemplate) viewtemplateo;
       globalmap = roott.globalmap;
     }
-    
+
   }
 
   public void setView(View view) {
@@ -113,7 +113,7 @@ public class ViewRender {
   public void setDebugRender(boolean debugrender) {
     this.debugrender = debugrender;
   }
-  
+
   private void collectContributions() {
     Set seenset = new HashSet();
     for (Iterator lumpit = branchmap.values().iterator(); lumpit.hasNext();) {
@@ -124,11 +124,28 @@ public class ViewRender {
       }
     }
   }
-  
+
+  private void debugGlobalTargets() {
+    renderer.renderDebugMessage(rsc,
+        "All global branch targets in resolution set:");
+    for (Iterator globalit = globalmap.iterator(); globalit.hasNext();) {
+      String key = (String) globalit.next();
+      if (key.indexOf(':') != -1) {
+        renderer.renderDebugMessage(rsc, "Branch key " + key);
+        XMLLumpList res = globalmap.headsForID(key);
+        for (int i = 0; i < res.size(); ++i) {
+          renderer.renderDebugMessage(rsc, "\t" + res.lumpAt(i).toString());
+        }
+      }
+    }
+    renderer.renderDebugMessage(rsc, "");
+  }
+
   public void render(PrintOutputStream pos) {
-    IDassigner = new IDAssigner(debugrender? ContentTypeInfo.ID_FORCE: 
-      contenttypeinfo.IDStrategy);
-    UIBranchContainer messagecomponent = UIBranchContainer.make(view.viewroot, MessageTargetter.RSF_MESSAGES);
+    IDassigner = new IDAssigner(debugrender ? ContentTypeInfo.ID_FORCE
+        : contenttypeinfo.IDStrategy);
+    UIBranchContainer messagecomponent = UIBranchContainer.make(view.viewroot,
+        MessageTargetter.RSF_MESSAGES);
     branchmap = BranchResolver.resolveBranches(globalmap, view.viewroot,
         roott.rootlump);
     view.viewroot.remove(messagecomponent);
@@ -141,9 +158,14 @@ public class ViewRender {
       pos.print(declaration);
     this.pos = pos;
     this.xmlw = new XMLWriter(pos);
-    rsc = new RenderSystemContext(debugrender, view, pos, xmlw, IDassigner, collected);
+    rsc = new RenderSystemContext(debugrender, view, pos, xmlw, IDassigner,
+        collected);
     rendereddeadletters = false;
-    renderRecurse(view.viewroot, roott.rootlump, roott.lumps[roott.roottagindex]);
+    if (debugrender) {
+      debugGlobalTargets();
+    }
+    renderRecurse(view.viewroot, roott.rootlump,
+        roott.lumps[roott.roottagindex]);
   }
 
   private void renderBranch(UIBranchContainer child, XMLLump targetlump) {
@@ -153,13 +175,17 @@ public class ViewRender {
     dumpContainerHead(child, targetlump);
     renderRecurse(child, targetlump, firstchild);
   }
-  
+
   private void renderRecurse(UIBranchContainer basecontainer,
       XMLLump parentlump, XMLLump baselump) {
 
     int renderindex = baselump.lumpindex;
     int basedepth = parentlump.nestingdepth;
     XMLViewTemplate tl = parentlump.parent;
+    Set rendered = null;
+    if (debugrender) {
+      rendered = new HashSet();
+    }
 
     while (true) {
       // continue scanning along this template section until we either each
@@ -189,15 +215,37 @@ public class ViewRender {
             if (child instanceof UIBranchContainer) {
               XMLLump targetlump = (XMLLump) branchmap.get(child);
               if (targetlump != null) {
+                if (debugrender) {
+                  renderComment("Branching for " + child.getFullID() + " from "
+                      + lump + " to " + targetlump);
+                }
                 renderBranch((UIBranchContainer) child, targetlump);
+                if (debugrender) {
+                  renderComment("Branch returned for " + child.getFullID()
+                      + " to " + lump + " from " + targetlump);
+                }
+              }
+              else {
+                if (debugrender) {
+                  renderer.renderDebugMessage(rsc,
+                      "No matching template branch found for branch container with full ID "
+                          + child.getFullID()
+                          + " rendering from parent template branch "
+                          + baselump.toString());
+                }
               }
             }
             else { // repetitive leaf
               XMLLump targetlump = findChild(parentlump, child);
               // this case may trigger if there are suffix-specific renderers
               // but no fallback.
-              if (targetlump == null)
+              if (targetlump == null) {
+                renderer.renderDebugMessage(rsc,
+                    "Repetitive leaf with full ID " + child.getFullID()
+                        + " could not be rendered from parent template branch "
+                        + baselump.toString());
                 continue;
+              }
               int renderend = renderer.renderComponent(rsc, child, targetlump);
               boolean wasopentag = tl.lumps[renderend].nestingdepth >= targetlump.nestingdepth;
               if (i != children.size() - 1) {
@@ -226,25 +274,29 @@ public class ViewRender {
               }
             }
 
-          }
+          } // end for each repetitive child
         }
         else {
           if (debugrender) {
-            renderer.renderDebugMessage(rsc, "No component with prefix " + prefix
-                + " found in container at " + RSFUtil.reportPath(basecontainer) +
-                        " at template position " + baselump.toString()
-                + ", skipping");
+            renderer
+                .renderDebugMessage(rsc, "No branch container with prefix "
+                    + prefix + ": found at "
+                    + RSFUtil.reportPath(basecontainer)
+                    + " at template position " + baselump.toString()
+                    + ", skipping");
           }
         }
         // at this point, magically locate the "postamble" from lump, and
         // reset the index.
-        // Logger.log.info("Stack returned: skipping domain from ");
-        // debugLump(lump);
+
         XMLLump finallump = parentlump.downmap.getFinal(prefix);
         XMLLump closefinal = finallump.close_tag;
         renderindex = closefinal.lumpindex + 1;
-        // Logger.log.info("to ");
-        // debugLump(lumps[renderindex]);
+        if (debugrender) {
+          renderComment("Stack returned from branch for ID " + id + " to "
+              + baselump.toString() + ": skipping from " + lump.toString()
+              + " to " + closefinal.toString());
+        }
       }
       else if (ismessage) {
         TargettedMessageList messages = messagetargets.getMessages(lump);
@@ -260,10 +312,12 @@ public class ViewRender {
         }
         if (messages.size() != 0) {
           if (messagelump == null) {
-            Logger.log.warn("No message template is configured (containing branch with rsf id rsf-messages:)");
+            Logger.log
+                .warn("No message template is configured (containing branch with rsf id rsf-messages:)");
           }
           else {
-            UIBranchContainer messagebranch = messagerenderer.renderMessageList(messages);
+            UIBranchContainer messagebranch = messagerenderer
+                .renderMessageList(messages);
             renderBranch(messagebranch, messagelump);
           }
         }
@@ -276,33 +330,55 @@ public class ViewRender {
         // on, or skip completely if there is no peer in the component tree.
         UIComponent component = null;
         if (id != null) {
+          if (debugrender) {
+            rendered.add(id);
+          }
           component = fetchComponent(basecontainer, id);
         }
         // if we find a leaf component, render it.
         renderindex = renderer.renderComponent(rsc, component, lump);
       } // end if unrepeatable component.
       if (renderindex == tl.lumps.length) {
-        // deal with the case where component was root element - Ryan of 11/10/06
+        // deal with the case where component was root element - Ryan of
+        // 11/10/06
         break;
+      }
+    }
+    if (debugrender) {
+      UIComponent[] flatchildren = basecontainer.flatChildren();
+      for (int i = 0; i < flatchildren.length; ++i) {
+        UIComponent child = flatchildren[i];
+        if (!(child.ID.indexOf(':') != -1) && !rendered.contains(child.ID)) {
+          renderer.renderDebugMessage(rsc, "Leaf child component "
+              + child.getClass().getName() + " with full ID "
+              + child.getFullID() + " could not be found within template "
+              + baselump.toString());
+        }
       }
     }
   }
 
-  private static UIComponent fetchComponent(UIBranchContainer basecontainer, 
+  private void renderComment(String string) {
+    pos.print("<!-- " + string + "-->");
+
+  }
+
+  private static UIComponent fetchComponent(UIBranchContainer basecontainer,
       String id) {
     while (basecontainer != null) {
       UIComponent togo = basecontainer.getComponent(id);
-      if (togo != null) return togo;
+      if (togo != null)
+        return togo;
       basecontainer = (UIBranchContainer) basecontainer.parent;
     }
     return null;
   }
-  
-  private static List fetchComponents(UIBranchContainer basecontainer, 
-      String id) {
+
+  private static List fetchComponents(UIBranchContainer basecontainer, String id) {
     while (basecontainer != null) {
       List togo = basecontainer.getComponents(id);
-      if (togo != null) return togo;
+      if (togo != null)
+        return togo;
       basecontainer = (UIBranchContainer) basecontainer.parent;
     }
     return null;
@@ -333,7 +409,9 @@ public class ViewRender {
     IDassigner.adjustForID(attrcopy, branch);
     decoratormanager.decorate(branch.decorators, targetlump.getTag(), attrcopy);
     // TODO: normalise this silly space business
-    pos.write(targetlump.parent.buffer, targetlump.start, targetlump.length - 1);
+    pos
+        .write(targetlump.parent.buffer, targetlump.start,
+            targetlump.length - 1);
     XMLUtil.dumpAttributes(attrcopy, xmlw);
     pos.print(">");
   }

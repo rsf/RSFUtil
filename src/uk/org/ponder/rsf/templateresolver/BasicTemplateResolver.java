@@ -109,7 +109,7 @@ public class BasicTemplateResolver implements TemplateResolver {
       
       for (int j = 0; j < usebases.length; ++j) {
         XMLViewTemplate template = locateTemplate(viewparams, trs, usebases[j],
-            isexpected ? tried : null);
+            isexpected ? tried : null, ismultiple && isexpected);
         if (template != null) {
           if (xcvt != null) {
             xcvt.globalmap.aggregate(template.globalmap);
@@ -147,7 +147,7 @@ public class BasicTemplateResolver implements TemplateResolver {
   }
 
   public XMLViewTemplate locateTemplate(ViewParameters viewparams,
-      TemplateResolverStrategy strs, StringList bases, StringList tried) {
+      TemplateResolverStrategy strs, StringList bases, StringList tried, boolean logfailure) {
     String resourcebase = "/";
     if (strs instanceof BaseAwareTemplateResolverStrategy) {
       BaseAwareTemplateResolverStrategy batrs = (BaseAwareTemplateResolverStrategy) strs;
@@ -165,8 +165,8 @@ public class BasicTemplateResolver implements TemplateResolver {
       is = cachingiis.openStream(fullpath);
       if (is != null)
         break;
-      if (is == null && tried == null) {
-//        Logger.log.info("Failed to load template from " + fullpath);
+      if (is == null && logfailure) {
+        Logger.log.warn("Failed to load template from " + fullpath);
       }
     }
     if (is == null) {
