@@ -42,4 +42,5 @@ public interface RenderSystem extends RenderSystemDecoder {
   public void setDecoratorManager(DecoratorManager decoratormanager);
 
   public void renderDebugMessage(RenderSystemContext rsc, String string);
+
 }

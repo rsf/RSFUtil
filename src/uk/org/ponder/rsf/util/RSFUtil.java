@@ -118,7 +118,7 @@ public class RSFUtil {
 
   public static String reportPath(UIComponent branch) {
     String path = branch.getFullID();
-    return path.equals("")? "template root" : "full path " + path;
+    return path.equals("")? "component tree root" : "full path " + path;
   }
   
   /** Returns the common ancestor path of s1 and s2 * */

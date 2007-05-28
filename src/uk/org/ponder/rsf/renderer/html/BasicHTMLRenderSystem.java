@@ -9,7 +9,6 @@ import java.util.Map;
 import uk.org.ponder.rsf.components.UIBasicListMember;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.renderer.ComponentRenderer;
-import uk.org.ponder.rsf.renderer.IDAssigner;
 import uk.org.ponder.rsf.renderer.RenderSystem;
 import uk.org.ponder.rsf.renderer.RenderSystemContext;
 import uk.org.ponder.rsf.renderer.RenderUtil;
@@ -22,13 +21,9 @@ import uk.org.ponder.rsf.request.FossilizedConverter;
 import uk.org.ponder.rsf.request.SubmittedValueEntry;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.template.XMLLumpList;
-import uk.org.ponder.rsf.template.XMLLumpMMap;
-import uk.org.ponder.rsf.view.View;
-import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.util.Constants;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
-import uk.org.ponder.xml.XMLWriter;
 
 /**
  * The implementation of the standard XHTML rendering System. This class is due
@@ -89,7 +84,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
 
 
   public void renderDebugMessage(RenderSystemContext rsc, String string) {
-    rsc.pos.print("<span style=\"background-color:#FF582E\">");
+    rsc.pos.print("<span style=\"background-color:#FF466B;color:white;padding:1px;\">");
     rsc.xmlw.write(string);
     rsc.pos.print("</span><br/>");
   }
@@ -130,7 +125,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       }
       else {
         if (rsc.debugrender) {
-          renderDebugMessage(rsc, "Leaf component missing which was expected with id " + 
+          renderDebugMessage(rsc, "Leaf component missing which was expected with template id " + 
               lump.rsfID + " at " + lump.toString());
         }
       }

@@ -319,6 +319,7 @@
     abstract="true">
     <property name="rootResolverPriority" value="0" />
     <property name="baseDirectory" ref="defaultTemplatePath" />
+    <property name="expected" value="true"/>
   </bean>
 
   <bean id="templateExpander"
