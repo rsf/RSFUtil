@@ -149,7 +149,7 @@ public class ConcreteViewResolver implements MappingViewResolver {
     }
     if (specific == null && unknowniserror) {
       throw UniversalRuntimeException.accumulate(new SilentRedirectException(),
-          "Unable to resolve request for component tree for view " + viewid);
+          "No ViewComponentProducer is registered for view " + viewid);
     }
     ArrayList togo = new ArrayList();
     List allproducers = get(ALL_VIEW_PRODUCER);
