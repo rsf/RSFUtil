@@ -64,7 +64,7 @@ public class UIForm extends UISimpleContainer {
   
   public static UIForm make(UIContainer parent, String ID, ViewParameters viewparams) {
     UIForm togo = make(parent, ID);
-    togo.viewparams = viewparams;
+    togo.viewparams = viewparams.copyBase();
     togo.type = EarlyRequestParser.RENDER_REQUEST;
     return togo;
   }
