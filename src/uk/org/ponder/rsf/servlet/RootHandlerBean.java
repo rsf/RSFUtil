@@ -115,6 +115,8 @@ public class RootHandlerBean implements HandlerHook {
   private void handleGet() {
     PrintOutputStream pos = setupResponseWriter(
         contenttypeinfo.contentTypeHeader, request, response);
+    String fatalcode = null;
+    Throwable t1 = null;
     try {
       ViewParameters redirect = renderhandlerbracketer.handle(pos);
 
@@ -123,11 +125,18 @@ public class RootHandlerBean implements HandlerHook {
       }
     }
     catch (Throwable t) {
-      DefaultFatalErrorHandler.handleFatalErrorStrategy(fatalErrorHandler, t,
+      fatalcode = DefaultFatalErrorHandler.handleFatalErrorStrategy(fatalErrorHandler, t,
           pos);
+      t1 = t;
     }
     finally {
-      pos.close();
+      if (fatalcode != FatalErrorHandler.HANDLE_EXCEPTION_UPSTAIRS) {
+        // leave the stream open for a handler outside the system
+        pos.close();
+      }
+      else {
+        throw UniversalRuntimeException.accumulate(t1);
+      }
     }
   }
 
