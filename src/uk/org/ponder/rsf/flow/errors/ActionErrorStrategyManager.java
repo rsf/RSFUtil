@@ -47,9 +47,7 @@ public class ActionErrorStrategyManager implements ActionErrorStrategy {
   public Object handleError(String returncode, Exception exception,
       String flowstate, String viewID, TargettedMessage message) {
     Object code = null;
-    Throwable tohandlet = exception instanceof UniversalRuntimeException ? 
-        ((UniversalRuntimeException) exception).getTargetException()
-        : exception;
+    Throwable tohandlet = UniversalRuntimeException.unwrapException(exception);
     if (tohandlet != null && !(tohandlet instanceof Exception)) {
       // If it is an Error, throw it out immediately
       throw UniversalRuntimeException.accumulate(tohandlet);

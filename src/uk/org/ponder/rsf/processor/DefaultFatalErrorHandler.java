@@ -6,9 +6,9 @@ package uk.org.ponder.rsf.processor;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import uk.org.ponder.errorutil.ErrorUtil;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.util.Logger;
+import uk.org.ponder.util.UniversalRuntimeException;
 import uk.org.ponder.xml.XMLWriter;
 
 /**
@@ -20,7 +20,16 @@ import uk.org.ponder.xml.XMLWriter;
  */
 
 public class DefaultFatalErrorHandler implements FatalErrorHandler {
-  public static boolean handleFatalErrorStatic(Throwable t,
+  private Class[] propagated;
+
+  /** Set a list of exception classes which will cause no action to be
+   * performed by the fatal handler.
+   */
+  public void setPropagatedExceptions(Class[] propagated) {
+    this.propagated = propagated;
+  }
+  
+  public static String handleFatalErrorStatic(Throwable t,
       PrintOutputStream pos) {
     // We may have such a fatal misconfiguration that we can't even rely on
     // IKAT to format this error message
@@ -34,12 +43,12 @@ public class DefaultFatalErrorHandler implements FatalErrorHandler {
     xml.write(todump.toString());
     pos.println("</pre></body></html>");
     pos.close();
-    return true;
+    return HANDLED;
   }
 
-  public static void handleFatalErrorStrategy(FatalErrorHandler handler,
+  public static String handleFatalErrorStrategy(FatalErrorHandler handler,
       Throwable t, PrintOutputStream pos) {
-    boolean rendered = false;
+    String rendered = null;
     Throwable failed = null;
     try {
       rendered = handler.handleFatalError(t, pos);
@@ -47,12 +56,19 @@ public class DefaultFatalErrorHandler implements FatalErrorHandler {
     catch (Throwable t2) {
       failed = t2;
     }
-    if (!rendered || failed != null) {
-      handleFatalErrorStatic(t, pos);
+    if (rendered == null || failed != null) {
+      return handleFatalErrorStatic(t, pos);
     }
+    return rendered;
   }
 
-  public boolean handleFatalError(Throwable t, PrintOutputStream pos) {
+  public String handleFatalError(Throwable t, PrintOutputStream pos) {
+    Exception unwrapped = (Exception) UniversalRuntimeException.unwrapException(t);
+    if (propagated != null) {
+      for (int i = 0; i < propagated.length; ++ i) {
+        if (propagated[i].isInstance(unwrapped)) return HANDLE_EXCEPTION_UPSTAIRS;
+      }
+    }
     return handleFatalErrorStatic(t, pos);
   }
 
