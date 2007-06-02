@@ -14,4 +14,5 @@ public class UIListMember extends UIComponent {
   public String parentFullID;
 
   public int choiceindex;
+  public boolean willinput;
 }

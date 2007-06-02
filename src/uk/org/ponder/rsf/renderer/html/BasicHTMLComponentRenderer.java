@@ -293,6 +293,9 @@ public class BasicHTMLComponentRenderer implements ComponentRenderer {
       else if (torender.markup instanceof Reader) {
         rendered = StreamCopyUtil.readerToString((Reader) torender.markup);
       }
+      else if (torender.markup instanceof UIBoundString) {
+        rendered = ((UIBoundString)(torender.markup)).getValue();
+      }
       else if (torender.markup != null) {
         rendered = torender.markup.toString();
       }

@@ -33,6 +33,12 @@ public class ComponentChildIterator implements IterableBeanLocator {
           children.put(sam.tagname, child);
         }
       }
+      else if (sam.getDeclaredType() == Object.class) {
+        Object child = sam.getChildObject(parent);
+        if (child instanceof UIComponent) {
+          children.put(sam.tagname, child);
+        }
+      }
     }
   }
   

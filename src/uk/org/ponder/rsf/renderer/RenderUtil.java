@@ -156,8 +156,10 @@ public class RenderUtil {
     String submittingname = boundlist.submittingname;
     UIBoundString togo = new UIBoundString();
     togo.setValue(value);
-    togo.submittingname = submittingname;
-    togo.willinput = true;
+    if (torendero.willinput) {
+      togo.submittingname = submittingname;
+      togo.willinput = true;
+    }
     return togo;
   }
   
