@@ -16,6 +16,7 @@ public class UISelectChoice extends UIListMember {
     togo.ID = ID;
     togo.parentFullID = parentFullID;
     togo.choiceindex = choiceindex;
+    togo.willinput = true;
     tofill.addComponent(togo);
     return togo;
   }
