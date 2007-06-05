@@ -166,7 +166,8 @@ public class BasicTemplateResolver implements TemplateResolver {
       if (is != null)
         break;
       if (is == null && logfailure) {
-        Logger.log.warn("Failed to load template from " + fullpath);
+// This is not a real failure for other content types - see RSF-21        
+//        Logger.log.warn("Failed to load template from " + fullpath);
       }
     }
     if (is == null) {
