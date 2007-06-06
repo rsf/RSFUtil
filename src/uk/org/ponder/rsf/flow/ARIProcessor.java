@@ -37,7 +37,7 @@ public class ARIProcessor implements ActionResultInterceptor {
     
     accreteViewARIs(requestinterceptors, incoming);
     for (int i = 0; i < requestinterceptors.size(); ++ i) {
-      ActionResultInterceptor ari = (ActionResultInterceptor) interceptors.get(i);
+      ActionResultInterceptor ari = (ActionResultInterceptor) requestinterceptors.get(i);
       ari.interceptActionResult(ariresult, incoming, result);
     }
   }
