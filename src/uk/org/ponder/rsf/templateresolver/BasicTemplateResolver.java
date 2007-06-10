@@ -15,7 +15,6 @@ import uk.org.ponder.rsf.template.XMLCompositeViewTemplate;
 import uk.org.ponder.rsf.template.XMLViewTemplate;
 import uk.org.ponder.rsf.template.XMLViewTemplateParser;
 import uk.org.ponder.rsf.view.ViewTemplate;
-import uk.org.ponder.rsf.viewstate.BaseURLProvider;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.springutil.CachingInputStreamSource;
 import uk.org.ponder.stringutil.StringList;
@@ -33,13 +32,8 @@ public class BasicTemplateResolver implements TemplateResolver {
 
   private TemplateExtensionInferrer tei;
   private int cachesecs;
-  private BaseURLProvider bup;
   private TPIAggregator aggregator;
   private List strategies;
-
-  public void setBaseURLProvider(BaseURLProvider bup) {
-    this.bup = bup;
-  }
 
   public void setResourceLoader(ResourceLoader resourceLoader) {
     cachingiis = new CachingInputStreamSource(resourceLoader, cachesecs);
@@ -192,10 +186,10 @@ public class BasicTemplateResolver implements TemplateResolver {
         // there WILL be one slash in the path.
         int lastslashpos = fullpath.lastIndexOf('/');
         String resourcebaseext = fullpath.substring(1, lastslashpos + 1);
-        String extresourcebase = bup.getResourceBaseURL();
         if (strs instanceof BaseAwareTemplateResolverStrategy) {
           BaseAwareTemplateResolverStrategy batrs = (BaseAwareTemplateResolverStrategy) strs;
-          extresourcebase = batrs.getExternalURLBase();
+          String extresourcebase = batrs.getExternalURLBase();
+          template.setExtResourceBase(extresourcebase);
         }
         if (strs instanceof ForceContributingTRS) {
           ForceContributingTRS fctrs = (ForceContributingTRS) strs;
@@ -203,7 +197,7 @@ public class BasicTemplateResolver implements TemplateResolver {
             template.mustcollectmap = template.collectmap;
           }
         }
-        template.setResourceBase(extresourcebase + resourcebaseext);
+        template.setRelativeResourceBase(resourcebaseext);
         template.fullpath = fullpath;
         templates.put(fullpath, template);
       }

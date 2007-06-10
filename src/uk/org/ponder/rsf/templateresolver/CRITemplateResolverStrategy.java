@@ -64,7 +64,7 @@ public class CRITemplateResolverStrategy implements
   }
 
   public String getExternalURLBase() {
-   return cup.getContextBaseURL();
+   return cup == null? "" : cup.getContextBaseURL();
   }
 
   public String getTemplateResourceBase() {
