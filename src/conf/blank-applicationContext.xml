@@ -190,7 +190,6 @@ with a client redirect rather than an internal reinterpretation -->
     class="uk.org.ponder.rsf.templateresolver.BasicTemplateResolver">
     <property name="templateExtensionInferrer"
       ref="templateExtensionInferrer" />
-    <property name="baseURLProvider" ref="baseURLProvider" />
     <property name="TPIAggregator" ref="TPIAggregator" />
     <property name="resourceLoader" ref="resourceLoader" />
   </bean>
@@ -258,6 +257,8 @@ with a client redirect rather than an internal reinterpretation -->
   <bean id="rootTemplateContributorParent"
     class="uk.org.ponder.rsf.templateresolver.StaticTemplateResolverStrategy"
     abstract="true">
+    <!-- TODO: why do we set CUP here if this is (probably) a local
+      resolver? -->
     <property name="contextURLProvider" ref="contextURLProvider" />
     <property name="rootResolverPriority" value="2" />
     <property name="baseDirectory" ref="defaultTemplatePath" />
@@ -274,7 +275,9 @@ with a client redirect rather than an internal reinterpretation -->
     lazy-init="true" abstract="true">
     <property name="baseDirectory" ref="defaultTemplatePath" />
     <property name="consumerInfo" ref="consumerInfoProxy" />
+    <!-- 
     <property name="contextURLProvider" ref="contextURLProvider" />
+    -->
   </bean>
 
   <bean id="viewResolver"
@@ -322,7 +325,7 @@ with a client redirect rather than an internal reinterpretation -->
     class="uk.org.ponder.rsf.view.XMLViewResolver" abstract="true">
     <property name="XMLProvider" ref="XMLProvider" />
     <property name="templateExpander" ref="templateExpander" />
-    <property name="viewParamsReceiver" ref="viewParametersParser" />
+    <property name="viewParamsReceiver" ref="defaultViewInfoReceiver" />
   </bean>
 
   <bean id="staticViews" class="java.util.ArrayList">

@@ -19,7 +19,14 @@ public interface BasedViewTemplate extends ViewTemplate {
    * appending the relative URL above to this base URL. In Mond-speak,
    * resourceBase is the "URL which appears to be ."
    */
-  public void setResourceBase(String resbase);
+  public void setRelativeResourceBase(String resbase);
 
-  public String getResourceBase();
+  public String getRelativeResourceBase();
+  
+  /** Same semantics as 
+   * {@link uk.org.ponder.rsf.templateresolver.BaseAwareTemplateResolverStrategy}
+   */
+  public void setExtResourceBase(String extresourcebase);
+  
+  public String getExtResourceBase();
 }

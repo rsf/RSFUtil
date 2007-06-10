@@ -11,6 +11,8 @@ import uk.org.ponder.rsf.renderer.RenderUtil;
 import uk.org.ponder.rsf.renderer.scr.BasicSCR;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.view.BasedViewTemplate;
+import uk.org.ponder.rsf.viewstate.BaseURLProvider;
+import uk.org.ponder.rsf.viewstate.ContextURLProvider;
 import uk.org.ponder.rsf.viewstate.URLRewriter;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.xml.XMLUtil;
@@ -24,6 +26,7 @@ import uk.org.ponder.xml.XMLWriter;
 public class URLRewriteSCR implements BasicSCR {
   public static final String NAME = "rewrite-url";
   private URLRewriter rewriter;
+  private ContextURLProvider cup;
 //  private String resourcebase;
 
   public String getName() {
@@ -34,8 +37,16 @@ public class URLRewriteSCR implements BasicSCR {
     this.rewriter = resolver;
   }
 
+  public void setContextBaseProvider(ContextURLProvider cup) {
+    this.cup = cup;
+  }
+  
   public String resolveURL(BasedViewTemplate template, String toresolve) {
-    String resourcebase = template.getResourceBase();
+    String extresourcebase = template.getExtResourceBase();
+    if (extresourcebase == null || extresourcebase == "") {
+      extresourcebase = cup.getContextBaseURL();
+    }
+    String resourcebase = extresourcebase + template.getRelativeResourceBase();
     return rewriter.rewriteResourceURL(toresolve, resourcebase);
   }
 

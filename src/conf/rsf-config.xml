@@ -547,6 +547,7 @@
 
   <bean id="URLRewriteSCR"
     class="uk.org.ponder.rsf.renderer.html.URLRewriteSCR">
+    <property name="contextBaseProvider" ref="contextURLProvider" />
     <property name="URLRewriter" ref="URLRewriter" />
   </bean>
 

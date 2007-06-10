@@ -32,11 +32,21 @@ implements BasedViewTemplate {
   
   private String resourcebase;
 
-  public void setResourceBase(String resourcebase) {
+  private String extresourcebase;
+  
+  public void setExtResourceBase(String extresourcebase) {
+    this.extresourcebase = extresourcebase;
+  }
+  
+  public String getExtResourceBase() {
+    return extresourcebase;
+  }
+  
+  public void setRelativeResourceBase(String resourcebase) {
     this.resourcebase = resourcebase;
   }
 
-  public String getResourceBase() {
+  public String getRelativeResourceBase() {
     return resourcebase;
   }
 
