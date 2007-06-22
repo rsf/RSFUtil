@@ -6,13 +6,12 @@
 	<configs>
 		<config>src/conf/blank-applicationContext.xml</config>
 		<config>src/conf/rsf-requestscope-config.xml</config>
-		<config>test/uk/org/ponder/rsf/test/flow/minicontext.xml</config>
 		<config>src/conf/rsf-config.xml</config>
 		<config>src/conf/blank-requestContext.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
-			<name>RSF Blank Closure</name>
+			<name><![CDATA[RSF Blank Closure]]></name>
 			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
 			<incomplete>false</incomplete>
 			<configs>
