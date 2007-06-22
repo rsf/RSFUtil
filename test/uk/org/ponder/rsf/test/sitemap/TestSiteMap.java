@@ -5,11 +5,11 @@ package uk.org.ponder.rsf.test.sitemap;
 
 import java.util.HashMap;
 
-import uk.org.ponder.rsac.test.AbstractRSACTests;
+import uk.org.ponder.rsf.test.PlainRSFTests;
 import uk.org.ponder.rsf.viewstate.BasicViewParametersParser;
 import uk.org.ponder.rsf.viewstate.EntityCentredViewParameters;
 
-public class TestSiteMap extends AbstractRSACTests {
+public class TestSiteMap extends PlainRSFTests {
   public void testParseECVP() {
     BasicViewParametersParser bvpp = (BasicViewParametersParser) applicationContext.getBean("viewParametersParser");
     HashMap attrmap = new HashMap();
@@ -18,17 +18,5 @@ public class TestSiteMap extends AbstractRSACTests {
     System.out.println("ECVP for entity " + ecvp.entity.ID + " of type " + ecvp.entity.entityname);
   }
 
-  protected String[] getConfigLocations() {
-    return new String[] {
-        "classpath:conf/rsf-config.xml", "classpath:conf/blank-applicationContext.xml",
-        "classpath:uk/org/ponder/rsf/test/sitemap/sitemap-context.xml"
-    };
-  }
-
-  public String[] getRequestConfigLocations() {
-    return new String[] {
-        "classpath:conf/rsf-requestscope-config.xml",
-        "classpath:conf/blank-requestContext.xml"};
-  }
 }
 
