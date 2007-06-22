@@ -15,7 +15,7 @@
       bean into the correct field of the action bean -->
   <parameter type="elbinding">
     <valuebinding>#{numberGuessAction.data}</valuebinding>
-    <elrvalue>#{numberGuess}</elrvalue>
+    <rvalue type="elref">#{numberGuess}</rvalue>
   </parameter>
   </component>
 </view>
