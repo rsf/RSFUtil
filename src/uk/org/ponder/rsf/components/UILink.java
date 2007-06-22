@@ -67,4 +67,12 @@ public class UILink extends UIComponent {
     return make(parent, ID, (UIBoundString) null, target);
   }
 
+  /** Construct a navigation link which will leave both link target and
+   * nested markup unchanged from the template. This is useful, say, for
+   * conditionally rendering a relative link from the template.
+   */
+  public static UILink make(UIContainer parent, String ID) {
+    return make(parent, ID, (UIBoundString) null, null);
+  }
+  
 }
