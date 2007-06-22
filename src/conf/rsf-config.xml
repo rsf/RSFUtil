@@ -558,6 +558,9 @@
 
   <bean id="nullSCR"
     class="uk.org.ponder.rsf.renderer.scr.NullRewriteSCR" />
+    
+  <bean id="ignoreSCR"
+    class="uk.org.ponder.rsf.renderer.scr.IgnoreRewriteSCR" />
 
   <bean id="listenerConnector"
     class="uk.org.ponder.iocevent.BeetleConnector" />

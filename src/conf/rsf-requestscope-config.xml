@@ -225,6 +225,7 @@
         <ref bean="URLRewriteSCR" />
         <ref bean="headCollectSCR" />
         <ref bean="nullSCR" />
+        <ref bean="ignoreSCR" />
         <ref bean="consumerStaticRenderers" />
       </list>
     </property>

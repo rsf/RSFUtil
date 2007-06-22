@@ -205,18 +205,14 @@ public class BasicHTMLComponentRenderer implements ComponentRenderer {
     }
     else if (torendero instanceof UILink) {
       UILink torender = (UILink) torendero;
-      // TODO - imagine that an image link has been provided. this
-      // both needs URL rewritten inside, and also NOT BEING REPLACED with
-      // the supplied body text.
+
       String attrname = URLRewriteSCR.getLinkAttribute(trc.uselump);
       if (attrname != null) {
         String target = torender.target.getValue();
-        if (target == null || target.length() == 0) {
-          // some people may perversely want empty links - but they would
-          // always refer to *real* self and hence not be rewritten.
-          target = "";
+        if (UITypes.isPlaceholder(target)) {
+          target = (String) attrcopy.get(attrname);
         }
-        else if (!(torendero instanceof UIInternalLink)) {
+        if (!(torendero instanceof UIInternalLink)) {
           URLRewriteSCR urlrewriter = (URLRewriteSCR) scrc
               .getSCR(URLRewriteSCR.NAME);
           if (!URLUtil.isAbsolute(target)) {
