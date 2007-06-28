@@ -9,8 +9,8 @@
   <name>J-RSFUtil</name>
   <groupId>uk.org.ponder.rsfutil</groupId>
   <properties>
-    <rsfutil.version>0.7.2M3</rsfutil.version>
-    <jservletutil.version>1.2.2M3</jservletutil.version>
+    <rsfutil.version>0.7.2M4</rsfutil.version>
+    <jservletutil.version>1.2.2M4</jservletutil.version>
   </properties>
   <version>${rsfutil.version}</version>
   <organization>
