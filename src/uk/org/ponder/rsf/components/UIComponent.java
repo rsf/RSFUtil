@@ -4,6 +4,7 @@
 package uk.org.ponder.rsf.components;
 
 import uk.org.ponder.rsf.components.decorators.DecoratorList;
+import uk.org.ponder.rsf.components.decorators.UIDecorator;
 import uk.org.ponder.rsf.util.RSFUtil;
 
 /**
@@ -63,4 +64,14 @@ public class UIComponent {
    */
   public DecoratorList decorators;
   
+  /** Add the supplied decorator to the list for this component, initialising
+   * the list if necessary.
+   */
+  public UIComponent decorate(UIDecorator decorator) {
+    if (decorators == null) {
+      decorators = new DecoratorList();
+    }
+    decorators.add(decorator);
+    return this;
+  }
 }
