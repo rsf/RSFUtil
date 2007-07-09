@@ -17,7 +17,7 @@ public class HeadInferringTPI implements ContentTypedTPI {
   }
 
   public void adjustAttributes(String tag, Map attributes) {
-    if (tag.equals("head")) {
+    if (tag.equals("head") && attributes.get(XMLLump.ID_ATTRIBUTE) == null) {
       attributes.put(XMLLump.ID_ATTRIBUTE, XMLLump.SCR_PREFIX
           + HeadCollectingSCR.NAME);
     }
