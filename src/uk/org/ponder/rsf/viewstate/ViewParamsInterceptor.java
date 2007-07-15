@@ -12,5 +12,5 @@ package uk.org.ponder.rsf.viewstate;
  */
 
 public interface ViewParamsInterceptor {
-  public ViewParameters adjustViewParameters(ViewParameters incoming);
+  public AnyViewParameters adjustViewParameters(ViewParameters incoming);
 }

@@ -33,9 +33,13 @@
   </bean>
   
   <!--  Don't use an alias for this since we imagine it will be overridden -->
-  <bean id="pageProducer" 
+  <bean name="pageProducer" 
     class="org.springframework.beans.factory.config.BeanReferenceFactoryBean">
       <property name="targetBeanName" value="viewCollector"/>
+  </bean>
+  
+  <bean id="layoutProducerParent" abstract="true">
+    <property name="pageProducer" ref="pageBasicProducer"/>
   </bean>
 
   <!-- TODO: Move all preservers and lists of them into application scope. -->

@@ -13,6 +13,7 @@ import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.rsf.flow.errors.SilentRedirectException;
 import uk.org.ponder.rsf.flow.errors.ViewExceptionStrategy;
 import uk.org.ponder.rsf.state.ErrorStateManager;
+import uk.org.ponder.rsf.viewstate.AnyViewParameters;
 import uk.org.ponder.rsf.viewstate.ErrorViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
@@ -30,7 +31,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
 public class RenderHandlerBracketer {
   private ViewExceptionStrategy ves;
   private ErrorStateManager errorstatemanager;
-  private ViewParameters viewparams;
+  private AnyViewParameters anyviewparams;
   private RenderHandler renderhandler;
   private boolean redirectlevel1 = true;
 
@@ -46,8 +47,8 @@ public class RenderHandlerBracketer {
     this.errorstatemanager = errorstatemanager;
   }
   
-  public void setViewParameters(ViewParameters viewparams) {
-    this.viewparams = viewparams;
+  public void setViewParameters(AnyViewParameters viewparams) {
+    this.anyviewparams = viewparams;
   }
   // This is a lazy dependency
   public void setRenderHandler(RenderHandler renderhandler) {
@@ -57,7 +58,12 @@ public class RenderHandlerBracketer {
   /** The beanlocator is passed in to allow the late location of the 
    * GetHandlerImpl bean which needs to occur in a controlled exception context.
    */
-  public ViewParameters handle(PrintOutputStream pos) {
+  public AnyViewParameters handle(PrintOutputStream pos) {
+    // An interceptor may have issued a redirect.
+    if (anyviewparams instanceof ViewParameters) {
+      return anyviewparams;
+    }
+    ViewParameters viewparams = (ViewParameters) anyviewparams;
     boolean iserrorredirect = viewparams.errorredirect != null;
     // YES, reach into the original request! somewhat bad...
     viewparams.errorredirect = null;
