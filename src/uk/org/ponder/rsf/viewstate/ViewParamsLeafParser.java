@@ -16,14 +16,14 @@ import uk.org.ponder.conversion.LeafObjectParser;
 public class ViewParamsLeafParser implements LeafObjectParser {
   
   private ViewParametersParser parser;
-  private ViewParamsMapper vpmapper;
+  private ViewParamsCodec vpcodec;
 
   public void setViewParametersParser(ViewParametersParser parser) {
     this.parser = parser;
   }
 
-  public void setViewParamsMapper(ViewParamsMapper vpmapper) {
-    this.vpmapper = vpmapper;
+  public void setViewParamsCodec(ViewParamsCodec vpcodec) {
+    this.vpcodec = vpcodec;
   }
   
   public Object parse(String toparse) {
@@ -31,7 +31,7 @@ public class ViewParamsLeafParser implements LeafObjectParser {
   }
 
   public String render(Object torender) {
-    return vpmapper.toHTTPRequest((ViewParameters) torender);
+    return ViewParamUtil.toHTTPRequest(vpcodec, (ViewParameters) torender);
   }
 
   public Object copy(Object tocopy) {

@@ -17,6 +17,7 @@
   <bean id="messageLocator"
     class="uk.org.ponder.springutil.SpringMessageLocator">
     <property name="messageSource" ref="messageSource" />
+    <property name="localeGetter" ref="requestLocaleProxy"/>
   </bean>
 
   <bean id="ignoreFossilizedValues"
@@ -63,7 +64,7 @@ with a client redirect rather than an internal reinterpretation -->
 
   <bean id="viewParametersParser"
     class="uk.org.ponder.rsf.viewstate.BasicViewParametersParser">
-    <property name="viewParamsMapper" ref="viewParamsMapper" />
+    <property name="viewParamsCodec" ref="viewParamsCodec" />
     <property name="deepBeanCloner" ref="deepBeanCloner" />
     <property name="viewIDInferrer" ref="viewIDInferrer" />
     <property name="implicitNullRedirect" ref="implicitNullRedirect"/>
@@ -114,7 +115,7 @@ with a client redirect rather than an internal reinterpretation -->
     <property name="baseURLProvider" ref="baseURLProvider" />
     <property name="contextURLProvider" ref="contextURLProvider" />
     <property name="consumerInfo" ref="consumerInfoProxy" />
-    <property name="viewParamsMapper" ref="viewParamsMapper" />
+    <property name="viewParamsCodec" ref="viewParamsCodec" />
     <property name="ultimateRenderers" ref="ultimateRenderers" />
   </bean>
 

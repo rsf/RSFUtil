@@ -91,4 +91,8 @@ public class ServletEarlyRequestParser implements EarlyRequestParser {
     return requesttype;
   }
 
+  public String getEnvironmentType() {
+    return EarlyRequestParser.SERVLET_ENVIRONMENT;
+  }
+
 }

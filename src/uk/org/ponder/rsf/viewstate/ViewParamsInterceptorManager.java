@@ -18,13 +18,20 @@ public class ViewParamsInterceptorManager {
     this.inferred = inferred;
   }
 
-  public ViewParameters getViewParameters() {
+  public AnyViewParameters getAdjustedViewParameters() {
     ViewParameters adjust = inferred.get();
     if (interceptors != null) {
       for (int i = 0; i < interceptors.size(); ++i) {
         ViewParamsInterceptor interceptor = (ViewParamsInterceptor) interceptors
             .get(i);
-        adjust = interceptor.adjustViewParameters(adjust);
+        
+        AnyViewParameters newadjust = interceptor.adjustViewParameters(adjust);
+        if (!(newadjust instanceof ViewParameters)) {
+          return newadjust;
+        }
+        else {
+          adjust = (ViewParameters) newadjust;
+        }
       }
     }
     return adjust;

@@ -20,6 +20,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamsMapper;
 public class LazarusRedirector {
   private ViewParamsMapper viewParamsMapper;
   private RSACLazarusList lazarusListReceiver;
+  private String environmentType;
 
   public void setViewParamsMapper(ViewParamsMapper viewParamsMapper) {
     this.viewParamsMapper = viewParamsMapper;
@@ -28,12 +29,16 @@ public class LazarusRedirector {
   public void setLazarusListReceiver(RSACLazarusList lazarusListReceiver) {
     this.lazarusListReceiver = lazarusListReceiver;
   }
+  
+  public void setEnvironmentType(String environmentType) {
+    this.environmentType = environmentType;
+  }
 
   public void lazarusRedirect(final ViewParameters target) {
     Map params = viewParamsMapper.renderViewParamAttributes(target);
     String pathinfo = viewParamsMapper.toPathInfo(target);
     StaticEarlyRequestParser serp = new StaticEarlyRequestParser(null,
-        pathinfo, params, EarlyRequestParser.RENDER_REQUEST);
+        pathinfo, params, EarlyRequestParser.RENDER_REQUEST, environmentType);
     Map newmap = new HashMap();
     newmap.put("earlyRequestParser", serp);
     lazarusListReceiver.queueRunnable(lazarusListReceiver.getLazarusRunnable(

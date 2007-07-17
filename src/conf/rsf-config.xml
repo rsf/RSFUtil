@@ -468,6 +468,11 @@
     <property name="SAXalizerMappingContext" ref="ELMappingContext" />
   </bean>
 
+  <bean id="viewParamsCodec" 
+    class="org.springframework.beans.factory.config.BeanReferenceFactoryBean">
+    <property name="targetBeanName" value="viewParamsMapper"/>
+  </bean>
+
   <bean id="viewParamsMapper"
     class="uk.org.ponder.rsf.viewstate.ViewParamsMapper">
     <property name="beanModelAlterer" ref="DARApplier" />
@@ -527,7 +532,7 @@
 
   <bean id="viewParamsLeafParserTarget"
     class="uk.org.ponder.rsf.viewstate.ViewParamsLeafParser">
-    <property name="viewParamsMapper" ref="viewParamsMapper" />
+    <property name="viewParamsCodec" ref="viewParamsCodec" />
     <property name="viewParametersParser" ref="viewParametersParser" />
   </bean>
   <!-- 

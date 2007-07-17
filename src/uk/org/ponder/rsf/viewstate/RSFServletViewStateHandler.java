@@ -25,7 +25,7 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
   private ConsumerInfo ciproxy;
 
   private Map ultimaterenderers = new HashMap();
-  private ViewParamsMapper vpmapper;
+  private ViewParamsCodec vpcodec;
   private ContextURLProvider cup;
 
   public void setBaseURLProvider(BaseURLProvider urlprovider) {
@@ -40,13 +40,14 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
     this.ciproxy = ciproxy;
   }
 
-  public void setViewParamsMapper(ViewParamsMapper vpmapper) {
-    this.vpmapper = vpmapper;
+  public void setViewParamsCodec(ViewParamsCodec vpcodec) {
+    this.vpcodec = vpcodec;
   }
 
   public String getFullURL(ViewParameters viewparams) {
     // toHTTPRequest provides leading slash, and baseurl includes trailing slash
-    String requestparams = vpmapper.toHTTPRequest(viewparams).substring(1);
+    String requestparams = 
+      ViewParamUtil.toHTTPRequest(vpcodec, viewparams).substring(1);
 
     String usebaseurl = urlprovider.getBaseURL();
     String extraparams = "";
