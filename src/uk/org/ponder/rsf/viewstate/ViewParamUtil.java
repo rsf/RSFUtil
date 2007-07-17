@@ -11,6 +11,7 @@ import uk.org.ponder.reflect.DeepBeanCloner;
 import uk.org.ponder.rsac.GlobalBeanAccessor;
 import uk.org.ponder.rsf.components.ParameterList;
 import uk.org.ponder.rsf.components.UIParameter;
+import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.stringutil.URLUtil;
 
 /** Utilities for converting URL parameters to and from Objects (ViewParameters),
@@ -62,6 +63,51 @@ public class ViewParamUtil {
     return togo;
   }
 
+  public static String toHTTPRequest(ViewParamsCodec vpcodec, ViewParameters viewparams) {
+    RawURLState rus = vpcodec.renderViewParams(viewparams);
+    return ViewParamUtil.toHTTPRequest(rus);
+  }
+  
+  /**
+   * Returns the "mid-portion" of the URL corresponding to these parameters,
+   * i.e. /view-id/more-path-info?param1=val&param2=val#anchor
+   */
+  
+  public static String toHTTPRequest(RawURLState rawstate) {
+    CharWrap togo = new CharWrap();
+    togo.append(rawstate.pathinfo);
+    boolean isfirst = true;
+    for (Iterator keyit = rawstate.params.keySet().iterator(); keyit.hasNext();) {
+      String attrname = (String) keyit.next();
+      Object attrval = rawstate.params.get(attrname);
+      if (attrval instanceof String) {
+        togo.append(isfirst ? '?'
+            : '&');
+        togo.append(attrname);
+        togo.append("=");
+        togo.append(attrval);
+        isfirst = false;
+      }
+      else if (attrval instanceof String[]) {
+        String[] vals = (String[]) attrval;
+        for (int j = 0; j < vals.length; ++j) {
+          togo.append(isfirst ? '?'
+              : '&');
+          togo.append(attrname);
+          togo.append("=");
+          togo.append(vals[j]);
+          isfirst = false;
+        }
+      }
+    }
+    String anchorfield = rawstate.anchor;
+    if (rawstate.anchor != null) {
+        togo.append("#").append(anchorfield);
+    }
+    return togo.toString();
+  }
+  
+  
   /** Parse a "reduced URL" (as often seen in serialized component trees and
    * the like) into a full ViewParameters object.
    */

@@ -55,6 +55,9 @@
   <bean id="requestType" factory-bean="earlyRequestParser"
     factory-method="getRequestType" />
 
+  <bean id="requestEnvironmentType" factory-bean="earlyRequestParser"
+    factory-method="getEnvironmentType"/>
+
   <bean id="multipartMap" factory-bean="earlyRequestParser"
     factory-method="getMultipartMap" />
 
@@ -144,7 +147,7 @@
   </bean>
   
   <bean id="viewParameters" factory-bean="viewParamsInterceptorManager" 
-    factory-method="getViewParameters">  
+    factory-method="getAdjustedViewParameters">  
   </bean>
 
   <bean id="postDecoder" class="uk.org.ponder.rsf.processor.PostDecoder"

@@ -24,6 +24,15 @@ public interface EarlyRequestParser {
    */
   public static final String ACTION_REQUEST = "action";
 
+  /** Identifies this environment as a javax.servlet Servlets environment **/
+  public static final String SERVLET_ENVIRONMENT = "servlet";
+  
+  /** Identifies this environment as a JSR 168 javax.portlet Portlets environment **/
+  public static final String PORTLET_168_ENVIRONMENT = "portlet-168";
+
+  /** Identifies this environment as a JSR 286 javax.portlet Portlets environment **/
+  public static final String PORTLET_286_ENVIRONMENT = "portlet-286";
+  
   /** The parameter map from the request */
   public Map getRequestMap();
 
@@ -42,4 +51,9 @@ public interface EarlyRequestParser {
    * for the current request */
   
   public Map getMultipartMap();
+  
+  /** Returns one of the <code>_ENVIRONMENT</code> Strings above, if the environment
+   * can be determined to be one of the known standard types, or <code>null</code> otherwise. 
+   */
+  public String getEnvironmentType();
 }

@@ -17,7 +17,7 @@ import uk.org.ponder.stringutil.StringUtil;
  *
  */
 
-public class ViewParamsMapper {
+public class ViewParamsMapper implements ViewParamsCodec {
 
   private BeanModelAlterer bma;
 
@@ -43,6 +43,25 @@ public class ViewParamsMapper {
     return vpmim.getMappingInfo(target);
   }
 
+
+  public boolean parseViewParams(ViewParameters target, RawURLState rawstate) {
+    parseViewParameters(target, rawstate.params, rawstate.pathinfo);
+    return true;
+  }
+
+  public RawURLState renderViewParams(ViewParameters torender) {
+    RawURLState togo = new RawURLState();
+    togo.pathinfo = toPathInfo(torender);
+    togo.params = renderViewParamAttributes(torender);
+    String anchorfield = torender.getAnchorField();
+    if (anchorfield != null) {
+      String value = (String) bma.getFlattenedValue(anchorfield, torender,
+          String.class, null);
+      togo.anchor = value;
+    }
+    return togo;
+  }
+  
   /**
    * Parse the supplied raw URL information into a ViewParameters object, whose
    * type has already been deduced.
@@ -118,50 +137,6 @@ public class ViewParamsMapper {
       }
     }
     return togo;
-  }
-
-  /**
-   * Returns the "mid-portion" of the URL corresponding to these parameters,
-   * i.e. /view-id/more-path-info?param1=val&param2=val
-   */
-  public String toHTTPRequest(ViewParameters toconvert) {
-    CharWrap togo = new CharWrap();
-    togo.append(toPathInfo(toconvert));
-    ViewParamsMapInfo mapinfo = vpmim.getMappingInfo(toconvert);
-    boolean isfirst = true;
-    for (int i = 0; i < mapinfo.attrnames.length; ++i) {
-      String attrname = mapinfo.attrnames[i];
-      String path = mapinfo.paths[i];
-      Object attrval = bma.getFlattenedValue(path, toconvert, null, null);
-      if (attrval instanceof String) {
-        togo.append(isfirst ? '?'
-            : '&');
-        togo.append(attrname);
-        togo.append("=");
-        togo.append(attrval);
-        isfirst = false;
-      }
-      else if (attrval instanceof String[]) {
-        String[] vals = (String[]) attrval;
-        for (int j = 0; j < vals.length; ++j) {
-          togo.append(isfirst ? '?'
-              : '&');
-          togo.append(attrname);
-          togo.append("=");
-          togo.append(vals[j]);
-          isfirst = false;
-        }
-      }
-    }
-    String anchorfield = toconvert.getAnchorField();
-    if (anchorfield != null) {
-      String value = (String) bma.getFlattenedValue(anchorfield, toconvert,
-          String.class, null);
-      if (value != null) {
-        togo.append("#").append(value);
-      }
-    }
-    return togo.toString();
   }
 
 }

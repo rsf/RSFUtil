@@ -118,7 +118,7 @@ public class RootHandlerBean implements HandlerHook {
     String fatalcode = null;
     Throwable t1 = null;
     try {
-      ViewParameters redirect = renderhandlerbracketer.handle(pos);
+      AnyViewParameters redirect = renderhandlerbracketer.handle(pos);
 
       if (redirect != null) {
         issueRedirect(redirect, response);

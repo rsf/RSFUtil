@@ -19,7 +19,7 @@ import uk.org.ponder.util.Logger;
 // view discoverer, since we have not made the effort to factor off 
 // ViewParamsReceiver
 public class BasicViewParametersParser implements ViewParametersParser {
-  private ViewParamsMapper vpmapper;
+  private ViewParamsCodec vpcodec;
   private DeepBeanCloner beancloner;
   private ViewIDInferrer viewIDInferrer;
 
@@ -32,8 +32,8 @@ public class BasicViewParametersParser implements ViewParametersParser {
     this.defaultViewInfoReceiver = defaultViewInfoReceiver;
   }
 
-  public void setViewParamsMapper(ViewParamsMapper vpmapper) {
-    this.vpmapper = vpmapper;
+  public void setViewParamsCodec(ViewParamsCodec vpcodec) {
+    this.vpcodec = vpcodec;
   }
 
   public void setDeepBeanCloner(DeepBeanCloner beancloner) {
@@ -66,7 +66,7 @@ public class BasicViewParametersParser implements ViewParametersParser {
       ViewParameters vpexemplar = defaultViewInfoReceiver.getViewParamsExemplar(viewID);
 
       ViewParameters origrequest = vpexemplar.copyBase(beancloner);
-      vpmapper.parseViewParameters(origrequest, requestmap, pathinfo);
+      vpcodec.parseViewParams(origrequest, new RawURLState(requestmap, pathinfo));
 
     //  this may *disagree* with value forced in by parsePathInfo due to VII
       origrequest.viewID = viewID;
@@ -75,7 +75,7 @@ public class BasicViewParametersParser implements ViewParametersParser {
       if (Logger.log.isDebugEnabled()) {
         Logger.log.debug("Parsed view " + origrequest.viewID
             + " from request parameters "
-            + vpmapper.toHTTPRequest(origrequest));
+            + ViewParamUtil.toHTTPRequest(vpcodec, origrequest));
       }
       return origrequest;
     }

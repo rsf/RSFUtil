@@ -60,7 +60,7 @@ public class RenderHandlerBracketer {
    */
   public AnyViewParameters handle(PrintOutputStream pos) {
     // An interceptor may have issued a redirect.
-    if (anyviewparams instanceof ViewParameters) {
+    if (!(anyviewparams instanceof ViewParameters)) {
       return anyviewparams;
     }
     ViewParameters viewparams = (ViewParameters) anyviewparams;
