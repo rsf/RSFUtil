@@ -8,11 +8,14 @@
   might well want to override, as opposed to more 
   core dependencies in the main RSF configuration file rsf-config.xml. -->
 <beans>
-  <bean id="messageSource"
-    class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+  <bean id="messageSource" parent="messageSourceParent" />
+  
+  <bean id="messageSourceParent" abstract="true"
+      class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
     <property name="basename" value="WEB-INF/messages/messages" />
     <property name="cacheSeconds" value="10" />
-  </bean>
+    <property name="fallbackToSystemLocale" value="false"/>
+  </bean> 
 
   <bean id="messageLocator"
     class="uk.org.ponder.springutil.SpringMessageLocator">

@@ -134,8 +134,8 @@ public class BasicTemplateResolver implements TemplateResolver {
       Exception eclass = viewparams.viewID.trim().length() == 0? 
           (Exception)new SilentRedirectException() : new IllegalArgumentException();
       throw UniversalRuntimeException.accumulate(eclass,
-          "No TemplateResolverStrategy which was marked as a root resolver (rootPriority > 0) " +
-          "returned a template: tried paths (expected) " + tried.toString());
+          "No template found for view " + viewparams.viewID + ": tried paths (expected) " + 
+          tried.toString() + " from all TemplateResolverStrategy which were marked as a root resolver (rootPriority > 0) ");
     }
     return xcvt;
   }
