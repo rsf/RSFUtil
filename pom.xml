@@ -12,13 +12,16 @@
 		<rsfutil.version>0.7.2M5-SNAPSHOT</rsfutil.version>
 		<jservletutil.version>1.2.2M5-SNAPSHOT</jservletutil.version>
 	</properties>
-	<version>${rsfutil.version}</version>
 	<organization>
 		<name>CARET, University of Cambridge</name>
 		<url>http://www.caret.cam.ac.uk/</url>
 	</organization>
 	<inceptionYear>2005</inceptionYear>
-	<description>RSFUtil implements the RSF web framework. More info here: http://www2.caret.cam.ac.uk/rsfwiki/</description>
+	<url>http://www2.caret.cam.ac.uk/rsfwiki/</url>
+	<description>
+		RSFUtil implements the RSF web framework. More info here: http://www2.caret.cam.ac.uk/rsfwiki/
+	</description>
+	<version>${rsfutil.version}</version>
 
 	<developers>
 		<developer>
