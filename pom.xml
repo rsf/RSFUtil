@@ -173,7 +173,7 @@
 						<ruleset>/rulesets/logging-java.xml</ruleset>
 						<ruleset>/rulesets/migrating.xml</ruleset>
 						<ruleset>/rulesets/strings.xml</ruleset>
-						<ruleset>/rulesets/typeresolution.xml</ruleset>
+						<!-- <ruleset>/rulesets/typeresolution.xml</ruleset> Causes a screen buffer and thus a failure when building on servers -AZ -->
 						<ruleset>/rulesets/unusedcode.xml</ruleset>
 					</rulesets>
 					<format>xml</format>
