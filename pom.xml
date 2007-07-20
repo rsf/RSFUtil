@@ -24,6 +24,7 @@
    </description>
    <version>${rsfutil.version}</version>
 
+   <!-- project developers -->
    <developers>
       <developer>
          <id>amb26</id>
@@ -48,6 +49,7 @@
          <organizationUrl>http://www.caret.cam.ac.uk/</organizationUrl>
          <roles>
             <role>Developer</role>
+            <role>Documentation</role>
          </roles>
          <timezone>0</timezone>
       </developer>
@@ -65,7 +67,85 @@
       </developer>
    </developers>
 
+   <!-- project contributors -->
+   <contributors>
+      <contributor>
+         <name>Raymond Chan</name>
+         <email>raymond@caret.cam.ac.uk</email>
+         <url>http://www.caret.cam.ac.uk/contact/people/</url>
+         <organization>CARET</organization>
+         <organizationUrl>http://www.caret.cam.ac.uk/</organizationUrl>
+         <roles>
+            <role>Developer</role>
+         </roles>
+         <timezone>0</timezone>
+      </contributor>
+      <contributor>
+         <name>Hattie Truscott</name>
+         <email>harriet@caret.cam.ac.uk</email>
+         <url>http://www.caret.cam.ac.uk/contact/people/</url>
+         <organization>CARET</organization>
+         <organizationUrl>http://www.caret.cam.ac.uk/</organizationUrl>
+         <roles>
+            <role>Designer</role>
+         </roles>
+         <timezone>0</timezone>
+      </contributor>
+      <contributor>
+         <name>Dan Sheppard</name>
+         <email>dan@caret.cam.ac.uk</email>
+         <url>http://www.caret.cam.ac.uk/contact/people/</url>
+         <organization>CARET</organization>
+         <organizationUrl>http://www.caret.cam.ac.uk/</organizationUrl>
+         <roles>
+            <role>Developer</role>
+         </roles>
+         <timezone>0</timezone>
+      </contributor>
+   </contributors>
+
+   <mailingLists>
+      <mailingList>
+         <name>RSF Users List</name>
+         <subscribe>user-subscribe@caret.cam.ac.uk</subscribe>
+         <unsubscribe>user-unsubscribe@caret.cam.ac.uk</unsubscribe>
+         <post>list-rsfusers@caret.cam.ac.uk</post>
+         <archive>http://caret.cam.ac.uk/user/</archive>
+      </mailingList>
+      <mailingList>
+         <name>RSF Developers List</name>
+         <subscribe>user-subscribe@caret.cam.ac.uk</subscribe>
+         <unsubscribe>user-unsubscribe@caret.cam.ac.uk</unsubscribe>
+         <post>list-rsfdev@caret.cam.ac.uk</post>
+         <archive>http://caret.cam.ac.uk/user/</archive>
+      </mailingList>
+   </mailingLists>
+
+   <!-- source code repositories -->
+   <repositories>
+      <repository>
+         <id>Sakaiproject-Maven2</id>
+         <name>Sakaiproject Maven 2 Repository</name>
+         <url>https://source.sakaiproject.org/maven2</url>
+      </repository>
+      <repository>
+         <id>CARET-Maven2</id>
+         <name>CARET Maven 2 Repository</name>
+         <url>http://www2.caret.cam.ac.uk/maven2</url>
+      </repository>
+      <repository>
+         <id>CARET-Maven2-dev</id>
+         <name>CARET Maven 2 Development Repository</name>
+         <url>http://www2.caret.cam.ac.uk/maven2dev</url>
+         <snapshots>
+            <enabled>true</enabled>
+         </snapshots>
+      </repository>
+   </repositories>
+
+   <!-- maven 2 repo -->
    <distributionManagement>
+      <downloadUrl>http://www2.caret.cam.ac.uk/rsfwiki/Wiki.jsp?page=TrunkCode</downloadUrl>
       <repository>
          <id>CARET-Maven2-dev</id>
          <name>CARET Maven 2 Dev repository</name>
@@ -250,23 +330,28 @@
       </profile>
    </profiles>
 
+   <!-- require maven 2.0.7 to build RSF -->
+   <prerequisites>
+       <maven>2.0.7</maven>
+   </prerequisites>
+
    <!-- remove this? -->
-   <reports>
-      <report>maven-jdepend-plugin</report>
-      <report>maven-changelog-plugin</report>
-      <report>maven-changes-plugin</report>
-      <report>maven-checkstyle-plugin</report>
-      <report>maven-dashboard-plugin</report>
-      <report>maven-developer-activity-plugin</report>
-      <report>maven-file-activity-plugin</report>
-      <report>maven-javadoc-plugin</report>
-      <report>maven-license-plugin</report>
-      <report>maven-linkcheck-plugin</report>
-      <report>maven-faq-plugin</report>
-      <report>maven-multiproject-plugin</report>
-      <report>maven-multichanges-plugin</report>
-      <report>maven-tasklist-plugin</report>
-   </reports>
+<!--   <reports>-->
+<!--      <report>maven-jdepend-plugin</report>-->
+<!--      <report>maven-changelog-plugin</report>-->
+<!--      <report>maven-changes-plugin</report>-->
+<!--      <report>maven-checkstyle-plugin</report>-->
+<!--      <report>maven-dashboard-plugin</report>-->
+<!--      <report>maven-developer-activity-plugin</report>-->
+<!--      <report>maven-file-activity-plugin</report>-->
+<!--      <report>maven-javadoc-plugin</report>-->
+<!--      <report>maven-license-plugin</report>-->
+<!--      <report>maven-linkcheck-plugin</report>-->
+<!--      <report>maven-faq-plugin</report>-->
+<!--      <report>maven-multiproject-plugin</report>-->
+<!--      <report>maven-multichanges-plugin</report>-->
+<!--      <report>maven-tasklist-plugin</report>-->
+<!--   </reports>-->
 
    <dependencies>
       <dependency>
