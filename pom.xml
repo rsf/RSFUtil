@@ -84,14 +84,32 @@
       <notifiers>
          <notifier>
             <type>mail</type>
+            <sendOnError>true</sendOnError>
+            <sendOnFailure>true</sendOnFailure>
+            <sendOnSuccess>false</sendOnSuccess>
+            <sendOnWarning>false</sendOnWarning>
             <configuration>
                <address>antranig@caret.cam.ac.uk</address>
             </configuration>
          </notifier>
          <notifier>
             <type>mail</type>
+            <sendOnError>true</sendOnError>
+            <sendOnFailure>true</sendOnFailure>
+            <sendOnSuccess>false</sendOnSuccess>
+            <sendOnWarning>false</sendOnWarning>
             <configuration>
                <address>aaron@caret.cam.ac.uk</address>
+            </configuration>
+         </notifier>
+         <notifier>
+            <type>mail</type>
+            <sendOnError>true</sendOnError>
+            <sendOnFailure>true</sendOnFailure>
+            <sendOnSuccess>false</sendOnSuccess>
+            <sendOnWarning>false</sendOnWarning>
+            <configuration>
+               <address>sgithens@caret.cam.ac.uk</address>
             </configuration>
          </notifier>
       </notifiers>
