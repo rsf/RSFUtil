@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.rsf.flow.errors;
 
+import uk.org.ponder.rsf.viewstate.AnyViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.UniversalRuntimeException;
 
@@ -22,7 +23,7 @@ public class PropagatingViewExceptionStrategy implements ViewExceptionStrategy {
     this.propagated = propagated;
   }
   
-  public ViewParameters handleException(Exception e, ViewParameters incoming) {
+  public AnyViewParameters handleException(Exception e, ViewParameters incoming) {
     Exception unwrapped = (Exception) UniversalRuntimeException.unwrapException(e);
     if (propagated != null) {
       for (int i = 0; i < propagated.length; ++ i) {

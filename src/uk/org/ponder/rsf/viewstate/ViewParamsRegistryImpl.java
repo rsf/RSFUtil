@@ -6,6 +6,7 @@ package uk.org.ponder.rsf.viewstate;
 import java.util.HashMap;
 import java.util.Map;
 
+import uk.org.ponder.reflect.DeepBeanCloner;
 import uk.org.ponder.reflect.ReflectiveCache;
 import uk.org.ponder.util.Logger;
 
@@ -15,7 +16,7 @@ import uk.org.ponder.util.Logger;
  *
  */
 
-public class DefaultViewInfoReceiver implements ViewParamsReceiver, ViewParamsReporter {
+public class ViewParamsRegistryImpl implements ViewParamsReceiver, ViewParamsReporter, ViewParamsRegistry {
   // a concurrent map to be used when live
   private Map exemplarmap;
   
@@ -28,6 +29,10 @@ public class DefaultViewInfoReceiver implements ViewParamsReceiver, ViewParamsRe
     defaultview = viewid;
   }
   
+  private DeepBeanCloner beancloner;
+  public void setDeepBeanCloner(DeepBeanCloner beancloner) {
+    this.beancloner = beancloner;
+  }
  
   public void init() {
     exemplarmap.putAll(pendingmap);
@@ -71,9 +76,12 @@ public class DefaultViewInfoReceiver implements ViewParamsReceiver, ViewParamsRe
         : this.exemplarmap).putAll(exemplarmap);
   }
 
-  public ViewParameters getViewParamsExemplar(String viewid) {
-    ViewParameters togo = (ViewParameters) exemplarmap.get(viewid);
-    return togo == null? defaultexemplar : togo;
+  public ViewParameters getViewParamsExemplar(String viewID) {
+    ViewParameters togo = (ViewParameters) exemplarmap.get(viewID);
+    if (togo == null) togo = defaultexemplar;
+    togo = togo.copyBase(beancloner);
+    togo.viewID = viewID;
+    return togo;
   }
   
   public void setViewParamsExemplar(String viewid, ViewParameters vpexemplar) {

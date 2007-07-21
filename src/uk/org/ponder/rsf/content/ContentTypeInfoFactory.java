@@ -43,8 +43,10 @@ public class ContentTypeInfoFactory implements ContentTypeReceiver {
   }
   
   public String getContentType() {
-    ViewParameters viewparams = viewparamsproxy.get();
-    String fromview = (String) viewmap.get(viewparams.viewID);
+    ViewParameters viewparams = (ViewParameters) viewparamsproxy.get();
+    // For redirect or other "exotic" views, viewID may be null.
+    String fromview = viewparams.viewID == null? null : 
+      (String) viewmap.get(viewparams.viewID);
     if (fromview == null) {
       for (int i = 0; i < resolvers.size(); ++i) {
         fromview = ((ContentTypeResolver) resolvers.get(i))

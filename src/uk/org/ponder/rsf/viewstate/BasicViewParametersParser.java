@@ -5,7 +5,6 @@ package uk.org.ponder.rsf.viewstate;
 
 import java.util.Map;
 
-import uk.org.ponder.reflect.DeepBeanCloner;
 import uk.org.ponder.util.Logger;
 
 /**
@@ -20,24 +19,19 @@ import uk.org.ponder.util.Logger;
 // ViewParamsReceiver
 public class BasicViewParametersParser implements ViewParametersParser {
   private ViewParamsCodec vpcodec;
-  private DeepBeanCloner beancloner;
   private ViewIDInferrer viewIDInferrer;
 
-  private DefaultViewInfoReceiver defaultViewInfoReceiver;
+  private ViewParamsRegistryImpl defaultViewInfoReceiver;
   private boolean implicitNullRedirect;
   private ViewParameters defaultViewParams;
   
   public void setDefaultViewInfoReceiver(
-      DefaultViewInfoReceiver defaultViewInfoReceiver) {
+      ViewParamsRegistryImpl defaultViewInfoReceiver) {
     this.defaultViewInfoReceiver = defaultViewInfoReceiver;
   }
 
   public void setViewParamsCodec(ViewParamsCodec vpcodec) {
     this.vpcodec = vpcodec;
-  }
-
-  public void setDeepBeanCloner(DeepBeanCloner beancloner) {
-    this.beancloner = beancloner;
   }
 
   public void setViewIDInferrer(ViewIDInferrer viewIDInferrer) {
@@ -59,13 +53,12 @@ public class BasicViewParametersParser implements ViewParametersParser {
     // to stash away a parsed parameter object corresponding to our original
     // request.
     if (implicitNullRedirect && (pathinfo.equals("") || pathinfo.equals("/") )) {
-      return defaultViewParams.get().copyBase(beancloner);
+      return (ViewParameters) defaultViewParams.get().copy();
     }
     else {
       String viewID = viewIDInferrer.inferViewID(pathinfo, requestmap);
-      ViewParameters vpexemplar = defaultViewInfoReceiver.getViewParamsExemplar(viewID);
+      ViewParameters origrequest = defaultViewInfoReceiver.getViewParamsExemplar(viewID);
 
-      ViewParameters origrequest = vpexemplar.copyBase(beancloner);
       vpcodec.parseViewParams(origrequest, new RawURLState(requestmap, pathinfo));
 
     //  this may *disagree* with value forced in by parsePathInfo due to VII

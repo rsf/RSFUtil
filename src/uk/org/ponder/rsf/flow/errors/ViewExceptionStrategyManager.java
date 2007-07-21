@@ -5,6 +5,7 @@ package uk.org.ponder.rsf.flow.errors;
 
 import java.util.List;
 
+import uk.org.ponder.rsf.viewstate.AnyViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 public class ViewExceptionStrategyManager implements ViewExceptionStrategy {
@@ -14,10 +15,10 @@ public class ViewExceptionStrategyManager implements ViewExceptionStrategy {
     this.strategies = strategies;
   }
 
-  public ViewParameters handleException(Exception e, ViewParameters incoming) {
+  public AnyViewParameters handleException(Exception e, ViewParameters incoming) {
     for (int i = 0; i < strategies.size(); ++ i) {
       ViewExceptionStrategy strategy = (ViewExceptionStrategy) strategies.get(i);
-      ViewParameters result = strategy.handleException(e, incoming);
+      AnyViewParameters result = strategy.handleException(e, incoming);
       if (result != null) return result;
     }
     return null;

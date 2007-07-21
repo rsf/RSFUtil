@@ -74,6 +74,11 @@ public abstract class ViewParameters implements AnyViewParameters {
     return copyBase(ViewParamUtil.getCloner());
   }
 
+  /** For the AnyViewParameters interface **/
+  public AnyViewParameters copy() {
+    return copyBase();
+  }
+  
   /**
    * Make a "deep clone" of this ViewParameters object, representing the "same"
    * view state but sharing no Object state with this object. To enable this to
@@ -141,7 +146,7 @@ public abstract class ViewParameters implements AnyViewParameters {
       "errortoken", "endflow", "parseSpec", "anchorField" };
 
   /** Pea proxying method */
-  public ViewParameters get() {
+  public AnyViewParameters get() {
     return this;
   }
 }
