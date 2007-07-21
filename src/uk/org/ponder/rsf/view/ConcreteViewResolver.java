@@ -39,7 +39,7 @@ public class ConcreteViewResolver implements MappingViewResolver {
   private Map views = new HashMap();
 
   private List resolvers = new ArrayList();
-  private boolean unknowniserror = true;
+  private boolean unknowniserror = false;
   private ViewParamsReceiver vpreceiver;
   private NavigationCaseReceiver ncreceiver;
   private ContentTypeReceiver ctreceiver;

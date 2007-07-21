@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.rsf.flow.errors;
 
+import uk.org.ponder.rsf.viewstate.AnyViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /** The basic ViewExceptionStrategy which redirects to the determined default
@@ -13,11 +14,11 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  *
  */
 public class DefaultViewExceptionStrategy implements ViewExceptionStrategy {
-  private ViewParameters defaultview;
+  private AnyViewParameters defaultview;
   public void setDefaultView(ViewParameters defaultview) {
     this.defaultview = defaultview;
   }
-  public ViewParameters handleException(Exception e, ViewParameters incoming) {
+  public AnyViewParameters handleException(Exception e, ViewParameters incoming) {
     return defaultview.get();
   }
   

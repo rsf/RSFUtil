@@ -4,12 +4,16 @@
 package uk.org.ponder.rsf.components;
 
 /**
- * This component peers with a simple navigational link. Operating this link is
- * expected to give rise to an idempotent ("render") request. The basic case
- * where the command is rendered using a piece of non-bound text is handled by
- * filling in the <code>linktext</code> field. For more complex command
- * contents including bound ones, leave <code>linktext</code> as null and add
- * rendering components as childen of the link in the template.
+ * Peers with any tag/control in markup which is associated with a URL. In HTML,
+ * for example, these controls are links(&lt;a&gt;), &lt;img&gt;, &lt;frame&gt;,
+ * &lt;iframe&gt; and &lt;script&gt; tags. In the case the component simple
+ * navigational link, operating this link is expected to give rise to an
+ * idempotent ("render") request. In the case where the control accepts some
+ * text (links), this may be supplied as the <code>linktext</code> field,
+ * which may be either a direct String value or a bound String such as a
+ * {@link UIMessage}. For more complex command contents including bound ones,
+ * leave <code>linktext</code> as null and add rendering components as childen
+ * of the link in the template.
  * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
@@ -28,23 +32,27 @@ public class UILink extends UIComponent {
   /** A bound String representing any text to be rendered for this control * */
   public UIBoundString linktext;
 
-  /** Construct a navigation link.
+  /**
+   * Construct a navigation link.
+   * 
    * @param parent Container to which the link is to be added.
    * @param ID RSF ID of this link.
    * @param text Text to be rendered for this link.
-   * @param target @see {@link #target}
+   * @param target
+   * @see {@link #target}
    */
-  public static UILink make(UIContainer parent, String ID, String text,
+  public static UILink make(UIContainer parent, String ID, String linktext,
       String target) {
-    UIBoundString linktext = null;
-    if (text != null) {
-      linktext = new UIOutput();
-      linktext.setValue(text);
+    UIBoundString linktextnew = null;
+    if (linktext != null) {
+      linktextnew = new UIOutput();
+      linktextnew.setValue(linktext);
     }
     return make(parent, ID, linktext, target);
   }
 
-  /** Construct a navigation link with a bound control (e.g. UIMessage) forming
+  /**
+   * Construct a navigation link with a bound control (e.g. UIMessage) forming
    * the link text.
    */
   public static UILink make(UIContainer parent, String ID,
@@ -60,19 +68,21 @@ public class UILink extends UIComponent {
     return togo;
   }
 
-  /** Construct a navigation link which will leave nested markup unchanged
-   * from the template.
+  /**
+   * Construct a navigation link which will leave nested markup unchanged from
+   * the template.
    */
   public static UILink make(UIContainer parent, String ID, String target) {
     return make(parent, ID, (UIBoundString) null, target);
   }
 
-  /** Construct a navigation link which will leave both link target and
-   * nested markup unchanged from the template. This is useful, say, for
-   * conditionally rendering a relative link from the template.
+  /**
+   * Construct a navigation link which will leave both link target and nested
+   * markup unchanged from the template. This is useful, say, for conditionally
+   * rendering a relative link from the template.
    */
   public static UILink make(UIContainer parent, String ID) {
     return make(parent, ID, (UIBoundString) null, null);
   }
-  
+
 }

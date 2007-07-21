@@ -51,7 +51,16 @@ public class ErrorStateManager {
   // for a GET request this will be set, but empty.
   private RequestSubmittedValueCache requestrsvc;
   private ViewParameters viewparams;
+  private TargettedMessageList messages;
 
+  public void setTargettedMessageList(TargettedMessageList tml) {
+    this.messages = tml;
+  }
+  
+  public TargettedMessageList getTargettedMessageList() {
+    return messages;
+  }
+  
   public void setTSHolder(TokenStateHolder errortsholder) {
     this.errortsholder = errortsholder;
   }
@@ -73,15 +82,13 @@ public class ErrorStateManager {
       }
       else {
         errorstate = (ErrorTokenState) storederrorstateo;
+        messages.addMessages(errorstate.messages);
         return;
       }
     }
     errorstate = new ErrorTokenState();
   }
   
-  public TargettedMessageList getTargettedMessageList() {
-    return errorstate.messages;
-  }
 
   public void setRequestRSVC(RequestSubmittedValueCache requestrsvc) {
     this.requestrsvc = requestrsvc;
@@ -147,7 +154,6 @@ public class ErrorStateManager {
    *         there is no error.
    */
   public String requestComplete() {
-    TargettedMessageList messages = ThreadErrorState.getErrorState().messages;
     if (messages.size() > 0) {
      
       // the errors arose from this cycle, and hence must be referred to

@@ -51,7 +51,8 @@ public class ViewGenerator {
     View view = new View();
     pageproducer.fillComponents(view.viewroot);
     if (view.viewroot.navigationCases != null) {
-      navreceiver.receiveNavigationCases(viewParamsProxy.get().viewID,
+      ViewParameters params = (ViewParameters) viewParamsProxy.get();
+      navreceiver.receiveNavigationCases(params.viewID,
           view.viewroot.navigationCases);
     }
     if (Logger.log.isDebugEnabled() || view.viewroot.debug) {

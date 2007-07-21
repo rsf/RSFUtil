@@ -11,5 +11,9 @@ package uk.org.ponder.rsf.viewstate;
  */
 
 public interface AnyViewParameters {
-
+  /** Pea proxying method */
+  public AnyViewParameters get();
+  
+  public AnyViewParameters copy();
+ 
 }

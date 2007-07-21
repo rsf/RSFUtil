@@ -159,9 +159,8 @@
   </bean>
 
   <bean id="RSACErrorBridgeBracketer"
-    class="uk.org.ponder.rsac.BeanFetchBracketer">
-    <property name="targetBeanName" value="rootHandlerBean" />
-    <property name="wrappingBean" value="ErrorBBTarget" />
+    parent="alterationWrapperParent">
+    <property name="valueRef" value="ErrorBBTarget" />
   </bean>
 
   <bean id="RSACLazarusListProxy" parent="RSACBridgeProxy">
@@ -479,6 +478,19 @@
     <property name="VPMappingInfoManager"
       ref="viewParamsMappingInfoManager" />
   </bean>
+  
+  <bean id="siteMapParent"
+    class="uk.org.ponder.rsf.viewstate.XMLSiteMapLoader"
+    parent="XMLFactoryBean" abstract="true">
+    <property name="location" value="/WEB-INF/sitemap.xml" />
+    <property name="viewParametersReceiver" ref="viewParamsRegistry" />
+  </bean>
+
+  <bean id="viewParamsRegistrarParent" class="uk.org.ponder.rsf.viewstate.ViewParamsRegistrar"
+  init-method="init" abstract="true">
+    <property name="reflectiveCache" ref="reflectiveCache"/>
+    <property name="viewParametersReceiver" ref="viewParamsRegistry"/>
+  </bean>
 
   <bean id="viewParamsInterceptorManager" 
     class="uk.org.ponder.rsf.viewstate.ViewParamsInterceptorManager">
@@ -499,13 +511,14 @@
   </bean>
 
   <bean id="viewDefaultViewContributor" parent="defaultViewInferrerParent">
-    <property name="value" ref="defaultViewInfoReceiver"/>
+    <property name="value" ref="viewParamsRegistry"/>
     <property name="bindAfter" value="*"/>
   </bean>
 
-  <bean id="defaultViewInfoReceiver" 
-    class="uk.org.ponder.rsf.viewstate.DefaultViewInfoReceiver" init-method="init">
+  <bean id="viewParamsRegistry" 
+    class="uk.org.ponder.rsf.viewstate.ViewParamsRegistryImpl" init-method="init">
     <property name="reflectiveCache" ref="reflectiveCache" />
+    <property name="deepBeanCloner" ref="deepBeanCloner" />
     <property name="defaultExemplar" ref="viewParamsExemplar" />
   </bean>
 
@@ -637,6 +650,7 @@
   <bean id="actionErrorStrategyManager"
     class="uk.org.ponder.rsf.flow.errors.ActionErrorStrategyManager">
     <property name="mergeStrategies" ref="XMLActionErrorStrategies" />
+    <property name="targettedMessageList" ref="targettedMessageListProxy"/>
   </bean>
 
   <bean id="actionErrorStrategyParent"

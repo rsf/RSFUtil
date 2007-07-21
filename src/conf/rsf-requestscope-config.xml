@@ -187,8 +187,7 @@
   </bean>
 
   <!-- A list of the targetted messages accumulated during this request cycle. -->
-  <bean name="targettedMessageList" factory-bean="errorStateManager"
-    factory-method="getTargettedMessageList" />
+  <bean id="targettedMessageList" class="uk.org.ponder.messageutil.TargettedMessageList"/>
 
   <!--  requires input of requestRSVC in order to fix up errors at the
     end of a cycle -->
@@ -198,6 +197,7 @@
     <property name="TSHolder" ref="bandgapStateHolder" />
     <property name="viewParameters" ref="viewParameters" />
     <property name="requestRSVC" ref="requestRSVC" />
+    <property name="targettedMessageList" ref="targettedMessageList"/>
   </bean>
 
   <bean id="statePreservationManager"
@@ -364,6 +364,11 @@
   </bean>
   
   <!-- End "fixer" beans" -->
+
+  <bean id="componentProcessorContributorParent" class="uk.org.ponder.springutil.StaticTLAB" 
+    abstract="true">
+    <property name="targetPath" value="viewProcessor.clientComponentProcessors"/>
+  </bean>
 
   <bean id="viewProcessor"
     class="uk.org.ponder.rsf.componentprocessor.ViewProcessor">

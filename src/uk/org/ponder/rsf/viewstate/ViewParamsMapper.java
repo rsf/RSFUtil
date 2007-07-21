@@ -10,11 +10,12 @@ import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.stringutil.StringUtil;
 
-/** Framework class performing the function of parsing and rendering 
+/**
+ * Framework class performing the function of parsing and rendering
  * ViewParameters objects to and from their raw representations.
  * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
- *
+ * 
  */
 
 public class ViewParamsMapper implements ViewParamsCodec {
@@ -43,7 +44,6 @@ public class ViewParamsMapper implements ViewParamsCodec {
     return vpmim.getMappingInfo(target);
   }
 
-
   public boolean parseViewParams(ViewParameters target, RawURLState rawstate) {
     parseViewParameters(target, rawstate.params, rawstate.pathinfo);
     return true;
@@ -61,16 +61,16 @@ public class ViewParamsMapper implements ViewParamsCodec {
     }
     return togo;
   }
-  
+
   /**
    * Parse the supplied raw URL information into a ViewParameters object, whose
    * type has already been deduced.
    * 
    * @param target The ViewParameters object onto which URL information is to be
-   *          parsed.
+   *            parsed.
    * @param params The raw URL parameter map, a map of String onto String[].
-   * @param pathinfo The "pathinfo" segment of the URL, which starts with a leading slash
-   *          (/).
+   * @param pathinfo The "pathinfo" segment of the URL, which starts with a
+   *            leading slash (/).
    */
   public void parseViewParameters(ViewParameters target, Map params,
       String pathinfo) {
@@ -82,13 +82,15 @@ public class ViewParamsMapper implements ViewParamsCodec {
         bma.setBeanValue(path, target, valueo, null, true);
       }
     }
-    String[] segments = StringUtil.split(pathinfo, '/');
-    for (int i = 0; i < mapinfo.trunkpaths.length; ++i) {
-      // An extra segment will be produced for the initial /
-      int reqindex = i + 1;
-      if (reqindex < segments.length) {
-        String segment = segments[reqindex];
-        bma.setBeanValue(mapinfo.trunkpaths[i], target, segment, null, true);
+    if (pathinfo != null) {
+      String[] segments = StringUtil.split(pathinfo, '/');
+      for (int i = 0; i < mapinfo.trunkpaths.length; ++i) {
+        // An extra segment will be produced for the initial /
+        int reqindex = i + 1;
+        if (reqindex < segments.length) {
+          String segment = segments[reqindex];
+          bma.setBeanValue(mapinfo.trunkpaths[i], target, segment, null, true);
+        }
       }
     }
   }
@@ -106,7 +108,8 @@ public class ViewParamsMapper implements ViewParamsCodec {
         if (nullstarted) {
           throw new IllegalArgumentException(
               "Illegal outgoing URL state - value " + attrval
-                  + " at trunk position " + i + " follows previous missing value");
+                  + " at trunk position " + i
+                  + " follows previous missing value");
         }
         togo.append('/').append(attrval);
       }

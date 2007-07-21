@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.rsf.componentprocessor;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -28,10 +29,16 @@ import uk.org.ponder.util.Logger;
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
 public class ViewProcessor {
-  private List processors;
+  private List frameworkprocessors;
 
+  private List clientprocessors;
+  
   public void setComponentProcessors(List processors) {
-    this.processors = processors;
+    this.frameworkprocessors = processors;
+  }
+  
+  public void setClientComponentProcessors(List clientprocessors) {
+    this.clientprocessors = clientprocessors;
   }
 
   // List of components found in the tree. We may
@@ -57,6 +64,9 @@ public class ViewProcessor {
   }
 
   private void performFixup() {
+    List processors = new ArrayList(clientprocessors);
+    processors.addAll(frameworkprocessors);
+    
     for (int procind = 0; procind < processors.size(); ++procind) {
       ComponentProcessor proc = (ComponentProcessor) processors.get(procind);
       if (proc instanceof ViewReceiver) {

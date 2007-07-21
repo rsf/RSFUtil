@@ -19,4 +19,12 @@ public class RawViewParameters implements AnyViewParameters {
   public String toString() {
     return URL;
   }
+
+  public AnyViewParameters copy() {
+    return new RawViewParameters(URL);
+  }
+
+  public AnyViewParameters get() {
+    return this;
+  }
 }

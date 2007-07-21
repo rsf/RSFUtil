@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.rsf.flow.errors;
 
+import uk.org.ponder.rsf.viewstate.AnyViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /** Implemented by a bean representing a strategy for dealing with exceptions
@@ -22,9 +23,9 @@ public interface ViewExceptionStrategy {
   /** 
    * Handle an exception raised from a ViewProducer.
    * @param e The raised exception.
-   * @param incoming The ViewParameters of the view being rendered when the
+   * @param viewparams The ViewParameters of the view being rendered when the
    * exception was encountered.
    * @return ViewParameters to which the client is to be redirected.
    */
-  public ViewParameters handleException(Exception e, ViewParameters incoming);
+  public AnyViewParameters handleException(Exception e, ViewParameters viewparams);
 }

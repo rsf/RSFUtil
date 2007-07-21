@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.org.ponder.errorutil.CoreMessages;
-import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.messageutil.TargettedMessage;
+import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 /**
@@ -23,6 +23,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
 
 public class ActionErrorStrategyManager implements ActionErrorStrategy {
   private List strategies = new ArrayList();
+  private TargettedMessageList messages;
 
   public void setMergeStrategies(ActionErrorStrategyManager strategies) {
     this.strategies.addAll(strategies.getStrategies());
@@ -43,6 +44,10 @@ public class ActionErrorStrategyManager implements ActionErrorStrategy {
   public List getStrategies() {
     return strategies;
   }
+  
+  public void setTargettedMessageList(TargettedMessageList tml) {
+    this.messages = tml;
+  }
 
   public Object handleError(String returncode, Exception exception,
       String flowstate, String viewID, TargettedMessage message) {
@@ -61,8 +66,8 @@ public class ActionErrorStrategyManager implements ActionErrorStrategy {
     }
     if (exception != null && code == null) {
       // Logger.log.warn("Error invoking action", exception);
-      if (!ThreadErrorState.isError()) {
-        ThreadErrorState.addMessage(new TargettedMessage(
+      if (!messages.isError()) {
+        messages.addMessage(new TargettedMessage(
             CoreMessages.GENERAL_ACTION_ERROR));
       }
       throw UniversalRuntimeException.accumulate(exception,

@@ -68,10 +68,9 @@ with a client redirect rather than an internal reinterpretation -->
   <bean id="viewParametersParser"
     class="uk.org.ponder.rsf.viewstate.BasicViewParametersParser">
     <property name="viewParamsCodec" ref="viewParamsCodec" />
-    <property name="deepBeanCloner" ref="deepBeanCloner" />
     <property name="viewIDInferrer" ref="viewIDInferrer" />
     <property name="implicitNullRedirect" ref="implicitNullRedirect"/>
-    <property name="defaultViewInfoReceiver" ref="defaultViewInfoReceiver"/>
+    <property name="defaultViewInfoReceiver" ref="viewParamsRegistry"/>
     <property name="defaultViewParams" ref="defaultViewParametersProxy"/>
   </bean>
 
@@ -124,13 +123,6 @@ with a client redirect rather than an internal reinterpretation -->
 
 
   <!-- ***** NAVIGATION and ACTION RESULTS ***** -->
-
-  <bean id="siteMapDef"
-    class="uk.org.ponder.rsf.viewstate.XMLSiteMapLoader"
-    parent="XMLFactoryBean" abstract="true">
-    <property name="location" value="/WEB-INF/sitemap.xml" />
-    <property name="viewParametersReceiver" ref="defaultViewInfoReceiver" />
-  </bean>
 
   <bean id="JSFNavigationMap" parent="XMLFactoryBean"
     lazy-init="true">
@@ -295,7 +287,7 @@ with a client redirect rather than an internal reinterpretation -->
         <ref bean="XMLViewResolver" />
       </list>
     </property>
-    <property name="viewParametersReceiver" ref="defaultViewInfoReceiver" />
+    <property name="viewParametersReceiver" ref="viewParamsRegistry" />
     <property name="navigationCaseReceiver" ref="navigationCasePooler" />
     <property name="contentTypeReceiver" ref="contentTypeInfoFactory" />
   </bean>
@@ -329,7 +321,7 @@ with a client redirect rather than an internal reinterpretation -->
     class="uk.org.ponder.rsf.view.XMLViewResolver" abstract="true">
     <property name="XMLProvider" ref="XMLProvider" />
     <property name="templateExpander" ref="templateExpander" />
-    <property name="viewParamsReceiver" ref="defaultViewInfoReceiver" />
+    <property name="viewParamsReceiver" ref="viewParamsRegistry" />
   </bean>
 
   <bean id="staticViews" class="java.util.ArrayList">
