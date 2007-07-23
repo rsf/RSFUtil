@@ -20,7 +20,12 @@ public class ViewParamsMapInfo {
   public String[] trunkpaths;
   /** A lookup from the <code>paths</code> entry to <code>attrname</code> **/
   Map pathToAttr = new HashMap();
+  /** A lookup from the <code>attrname</code> entry to <code>path</code> **/
+  Map attrToPath = new HashMap();
   public String pathToAttribute(String path) {
     return (String) pathToAttr.get(path);
+  }
+  public String attributeToPath(String attribute) {
+    return (String) attrToPath.get(attribute);
   }
 }

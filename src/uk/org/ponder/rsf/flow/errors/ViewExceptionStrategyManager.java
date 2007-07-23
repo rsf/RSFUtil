@@ -24,6 +24,4 @@ public class ViewExceptionStrategyManager implements ViewExceptionStrategy {
     return null;
   }
   
-  
-  
 }

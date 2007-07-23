@@ -5,6 +5,8 @@ package uk.org.ponder.rsf.viewstate;
 
 import java.util.List;
 
+import uk.org.ponder.util.Logger;
+
 public class ViewParamsInterceptorManager {
   private List interceptors;
   private ViewParameters inferred;
@@ -24,15 +26,20 @@ public class ViewParamsInterceptorManager {
       for (int i = 0; i < interceptors.size(); ++i) {
         ViewParamsInterceptor interceptor = (ViewParamsInterceptor) interceptors
             .get(i);
-
-        AnyViewParameters newadjust = interceptor.adjustViewParameters(adjust);
-        if (newadjust != null) {
-          if (!(newadjust instanceof ViewParameters)) {
-            return newadjust;
+        try {
+          AnyViewParameters newadjust = interceptor
+              .adjustViewParameters(adjust);
+          if (newadjust != null) {
+            if (!(newadjust instanceof ViewParameters)) {
+              return newadjust;
+            }
+            else {
+              adjust = (ViewParameters) newadjust;
+            }
           }
-          else {
-            adjust = (ViewParameters) newadjust;
-          }
+        }
+        catch (Exception e) {
+          Logger.log.warn("Error adjusting ViewParameters", e);
         }
       }
     }
