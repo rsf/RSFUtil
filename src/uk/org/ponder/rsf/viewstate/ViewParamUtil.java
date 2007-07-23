@@ -81,21 +81,13 @@ public class ViewParamUtil {
       String attrname = (String) keyit.next();
       Object attrval = rawstate.params.get(attrname);
       if (attrval instanceof String) {
-        togo.append(isfirst ? '?'
-            : '&');
-        togo.append(attrname);
-        togo.append("=");
-        togo.append(attrval);
+        URLUtil.appendAttribute(togo, isfirst, attrname, (String) attrval);
         isfirst = false;
       }
       else if (attrval instanceof String[]) {
         String[] vals = (String[]) attrval;
         for (int j = 0; j < vals.length; ++j) {
-          togo.append(isfirst ? '?'
-              : '&');
-          togo.append(attrname);
-          togo.append("=");
-          togo.append(vals[j]);
+          URLUtil.appendAttribute(togo, isfirst, attrname, vals[j]);
           isfirst = false;
         }
       }

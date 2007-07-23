@@ -468,8 +468,15 @@
   </bean>
 
   <bean id="viewParamsCodec" 
-    class="org.springframework.beans.factory.config.BeanReferenceFactoryBean">
-    <property name="targetBeanName" value="viewParamsMapper"/>
+    class="uk.org.ponder.rsf.viewstate.ViewParamsCodecManager">
+  </bean>
+  
+  <bean id="viewParamsCodecParent" class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
+    <property name="targetPath" value="viewParamsCodec.viewParamsCodecs"/>
+  </bean>
+  
+  <bean id="defaultCodecContributor" parent="viewParamsCodecParent">
+    <property name="value" ref="viewParamsMapper"/>
   </bean>
 
   <bean id="viewParamsMapper"

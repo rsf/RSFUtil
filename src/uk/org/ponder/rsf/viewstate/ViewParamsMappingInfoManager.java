@@ -164,6 +164,7 @@ public class ViewParamsMappingInfoManager {
     togo.trunkpaths = trunkpaths.toStringArray();
     for (int i = 0; i < togo.attrnames.length; ++i) {
       togo.pathToAttr.put(togo.paths[i], togo.attrnames[i]);
+      togo.attrToPath.put(togo.attrnames[i], togo.paths[i]);
     }
     for (int i = 0; i < togo.trunkpaths.length; ++ i) {
       if (togo.trunkpaths[i] == null && togo.trunkpaths[i].length() == 0) {

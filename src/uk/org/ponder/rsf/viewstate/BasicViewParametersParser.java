@@ -59,7 +59,7 @@ public class BasicViewParametersParser implements ViewParametersParser {
       String viewID = viewIDInferrer.inferViewID(pathinfo, requestmap);
       ViewParameters origrequest = defaultViewInfoReceiver.getViewParamsExemplar(viewID);
 
-      vpcodec.parseViewParams(origrequest, new RawURLState(requestmap, pathinfo));
+      vpcodec.parseViewParams(origrequest, new RawURLState(requestmap, pathinfo), null);
 
     //  this may *disagree* with value forced in by parsePathInfo due to VII
       origrequest.viewID = viewID;

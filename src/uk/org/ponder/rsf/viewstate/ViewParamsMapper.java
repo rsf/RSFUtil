@@ -4,6 +4,7 @@
 package uk.org.ponder.rsf.viewstate;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import uk.org.ponder.beanutil.BeanModelAlterer;
@@ -44,8 +45,8 @@ public class ViewParamsMapper implements ViewParamsCodec {
     return vpmim.getMappingInfo(target);
   }
 
-  public boolean parseViewParams(ViewParameters target, RawURLState rawstate) {
-    parseViewParameters(target, rawstate.params, rawstate.pathinfo);
+  public boolean parseViewParams(ViewParameters target, RawURLState rawstate, Map unusedParams) {
+    parseViewParameters(target, rawstate.params, rawstate.pathinfo, unusedParams);
     return true;
   }
 
@@ -73,13 +74,19 @@ public class ViewParamsMapper implements ViewParamsCodec {
    *            leading slash (/).
    */
   public void parseViewParameters(ViewParameters target, Map params,
-      String pathinfo) {
+      String pathinfo, Map unusedParams) {
     ViewParamsMapInfo mapinfo = vpmim.getMappingInfo(target);
-    for (int i = 0; i < mapinfo.attrnames.length; ++i) {
-      String path = mapinfo.paths[i];
-      Object valueo = params.get(mapinfo.attrnames[i]);
-      if (valueo != null) {
-        bma.setBeanValue(path, target, valueo, null, true);
+    for (Iterator keyit = params.keySet().iterator(); keyit.hasNext();) {
+      String attr = (String) keyit.next();
+      Object valueo = params.get(attr);
+      String path = mapinfo.attributeToPath(attr);
+      if (path != null) {
+        if (valueo != null) {
+          bma.setBeanValue(path, target, valueo, null, true);
+        }
+      }
+      else {
+        if (unusedParams != null) unusedParams.put(attr, valueo);
       }
     }
     if (pathinfo != null) {
