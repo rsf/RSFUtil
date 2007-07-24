@@ -104,24 +104,7 @@
       </contributor>
    </contributors>
 
-   <mailingLists>
-      <mailingList>
-         <name>RSF Users List</name>
-         <subscribe>user-subscribe@caret.cam.ac.uk</subscribe>
-         <unsubscribe>user-unsubscribe@caret.cam.ac.uk</unsubscribe>
-         <post>list-rsfusers@caret.cam.ac.uk</post>
-         <archive>http://caret.cam.ac.uk/user/</archive>
-      </mailingList>
-      <mailingList>
-         <name>RSF Developers List</name>
-         <subscribe>user-subscribe@caret.cam.ac.uk</subscribe>
-         <unsubscribe>user-unsubscribe@caret.cam.ac.uk</unsubscribe>
-         <post>list-rsfdev@caret.cam.ac.uk</post>
-         <archive>http://caret.cam.ac.uk/user/</archive>
-      </mailingList>
-   </mailingLists>
-
-   <!-- source code repositories -->
+   <!-- maven repositories -->
    <repositories>
       <repository>
          <id>Sakaiproject-Maven2</id>
@@ -142,6 +125,35 @@
          </snapshots>
       </repository>
    </repositories>
+
+   <!-- RSF mailing lists -->
+   <mailingLists>
+      <mailingList>
+         <name>RSF Users List</name>
+         <subscribe>list-rsfusers-subscribe@caret.cam.ac.uk</subscribe>
+         <unsubscribe>list-rsfusers-unsubscribe@caret.cam.ac.uk</unsubscribe>
+         <post>list-rsfusers@caret.cam.ac.uk</post>
+         <archive>https://mail.caret.cam.ac.uk/pipermail/list-rsfusers/</archive>
+      </mailingList>
+      <mailingList>
+         <name>RSF Developers List</name>
+         <subscribe>list-rsfdev-subscribe@caret.cam.ac.uk</subscribe>
+         <unsubscribe>list-rsfdev-unsubscribe@caret.cam.ac.uk</unsubscribe>
+         <post>list-rsfdev@caret.cam.ac.uk</post>
+         <archive>https://mail.caret.cam.ac.uk/pipermail/list-rsfdev/</archive>
+      </mailingList>
+   </mailingLists>
+
+   <!-- define source code repository -->
+   <scm>
+      <connection>
+         scm:svn:https://saffron.caret.cam.ac.uk/svn/projects/RSFUtil/trunk/
+      </connection>
+      <developerConnection>
+         scm:svn:https://saffron.caret.cam.ac.uk/svn/projects/RSFUtil/trunk/
+      </developerConnection>
+      <url>https://saffron.caret.cam.ac.uk/svn/projects/RSFUtil/trunk/</url>
+   </scm>
 
    <!-- maven 2 repo -->
    <distributionManagement>
@@ -195,7 +207,6 @@
       </notifiers>
    </ciManagement>
 
-
    <!-- define the license -->
    <licenses>
       <license>
@@ -204,17 +215,6 @@
          <distribution>repo</distribution>
       </license>
    </licenses>
-
-   <!-- define source code repository -->
-   <scm>
-      <connection>
-         scm:svn:https://saffron.caret.cam.ac.uk/svn/projects/RSFUtil/trunk/
-      </connection>
-      <developerConnection>
-         scm:svn:https://saffron.caret.cam.ac.uk/svn/projects/RSFUtil/trunk/
-      </developerConnection>
-      <url>https://saffron.caret.cam.ac.uk/svn/projects/RSFUtil/trunk/</url>
-   </scm>
 
    <!-- define javadocs and jxr docs -->
    <reporting>
