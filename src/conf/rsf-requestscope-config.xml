@@ -185,6 +185,8 @@
       ref="ignoreFossilizedValues" />
     <property name="targettedMessageList" ref="targettedMessageList" />
   </bean>
+  
+  <bean id="beanInvalidationBracketer" factory-bean="RSVCApplier" factory-method="getBracketer"/>
 
   <!-- A list of the targetted messages accumulated during this request cycle. -->
   <bean id="targettedMessageList" class="uk.org.ponder.messageutil.TargettedMessageList"/>

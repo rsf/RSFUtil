@@ -43,7 +43,7 @@ public class BeanGuard {
   
   /** Sets the guard timing - either PRE, POST or AROUND.
    * WRITE guards default to POST, READ guards default to PRE.
-   * A guard object of type RunnableInvoker will foce mode to AROUND.
+   * A guard object of type RunnableInvoker will force mode to AROUND.
    *  **/
   
   public void setGuardTiming(String timing) {

@@ -149,6 +149,10 @@
   <bean id="targettedMessageListProxy" parent="RSACBridgeProxy">
     <property name="targetBeanName" value="targettedMessageList" />
   </bean>
+  
+  <bean id="beanInvalidationBracketerProxy" parent="RSACBridgeProxy">
+    <property name="targetBeanName" value="beanInvalidationBracketer"/>
+  </bean>
 
   <!-- Broken out as a separate bean to avoid cycle with RBL 
     (to RSACErrorBridgeBracketer) -->

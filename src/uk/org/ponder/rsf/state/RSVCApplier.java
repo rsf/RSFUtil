@@ -5,6 +5,7 @@ package uk.org.ponder.rsf.state;
 
 import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.beanutil.BeanModelAlterer;
+import uk.org.ponder.beanutil.ELReference;
 import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.beanutil.WriteableBeanLocator;
 import uk.org.ponder.conversion.LeafObjectParser;
@@ -69,7 +70,17 @@ public class RSVCApplier {
   public void setRootBeanLocator(BeanLocator rbl) {
     this.rbl = rbl;
   }
-  
+
+  public void applyAlterations(WriteableBeanLocator wbl, DARList toapply) {
+    try {
+      BeanInvalidationBracketer bib = getBracketer();
+      darapplier.applyAlterations(safebl, toapply, targettedMessageList, bib);
+    }
+    finally {
+      beanGuardProcessor.processPostGuards(bim, targettedMessageList, rbl);
+    }
+  }
+
   /**
    * Apply values from this RSVC to the model, and in addition process any
    * validations specified by BeanGuards.
@@ -78,75 +89,68 @@ public class RSVCApplier {
     // TODO: There is scope for a lot of policy here - mainly version checking.
     // Define a VersionCheckPolicy that will compare oldvalue to the model
     // value.
-    try {
-      DARList toapply = new DARList();
+    DARList toapply = new DARList();
 
-      for (int i = 0; i < rsvc.entries.size(); ++i) {
-        SubmittedValueEntry sve = rsvc.entryAt(i);
-        boolean unchangedValue = false;
-        // check against "old" values
-        if (sve.componentid != null && !ignoreFossilizedValues
-            && !sve.mustapply) {
-          if (sve.oldvalue != null && sve.valuebinding != null) {
-            versioncheckpolicy.checkOldVersion(sve); // will blow on error
+    for (int i = 0; i < rsvc.entries.size(); ++i) {
+      SubmittedValueEntry sve = rsvc.entryAt(i);
+      boolean unchangedValue = false;
+      // check against "old" values
+      if (sve.componentid != null && !ignoreFossilizedValues && !sve.mustapply) {
+        if (sve.oldvalue != null && sve.valuebinding != null) {
+          versioncheckpolicy.checkOldVersion(sve); // will blow on error
 
-            UIType type = UITypes.forObject(sve.oldvalue);
-            try {
-              // TODO: why did we need to hack the value flat like this - should
-              // have been taken care of by FixupNewValue in PostDecoder
-              Object flattened = darapplier.getFlattenedValue("", sve.newvalue,
-                  sve.oldvalue.getClass(), null);
-              // cull the change from touching the model.
-              if (type.valueUnchanged(sve.oldvalue, flattened))
-                unchangedValue = true;
-            }
-            catch (Exception e) {
-              Logger.log.warn("Error flattening value" + sve.newvalue
-                  + " into " + sve.oldvalue.getClass(), e);
-            }
-          }
-        }
-        DataAlterationRequest dar = null;
-        // NB unchanged CANNOT be EL or deletion SVE.
-        Object newvalue = unchangedValue ? DataAlterationRequest.INAPPLICABLE_VALUE
-            : sve.newvalue;
-        if (sve.isEL) {
-          newvalue = darapplier.getBeanValue((String) sve.newvalue, safebl);
-        }
-        if (sve.isdeletion) {
-          dar = new DataAlterationRequest(sve.valuebinding, newvalue,
-              DataAlterationRequest.DELETE);
-        }
-        else {
-          dar = new DataAlterationRequest(sve.valuebinding, newvalue);
-        }
-        if (sve.reshaperbinding != null) {
-          Object reshaper = safebl.locateBean(sve.reshaperbinding);
-          if (reshaper instanceof LeafObjectParser) {
-            reshaper = new LeafObjectDARReshaper((LeafObjectParser) reshaper);
-          }
+          UIType type = UITypes.forObject(sve.oldvalue);
           try {
-            dar = ((DARReshaper) reshaper).reshapeDAR(dar);
+            // TODO: why did we need to hack the value flat like this - should
+            // have been taken care of by FixupNewValue in PostDecoder
+            Object flattened = darapplier.getFlattenedValue("", sve.newvalue,
+                sve.oldvalue.getClass(), null);
+            // cull the change from touching the model.
+            if (type.valueUnchanged(sve.oldvalue, flattened))
+              unchangedValue = true;
           }
           catch (Exception e) {
-            Logger.log.info("Error reshaping value", e);
-            // errors initially accumulated referring to paths
-            targettedMessageList.addMessage(new TargettedMessage(
-                e.getMessage(), e, dar.path));
+            Logger.log.warn("Error flattening value" + sve.newvalue + " into "
+                + sve.oldvalue.getClass(), e);
           }
         }
-        toapply.add(dar);
-        // Do this INSIDE the loop since fetched values may change
-        darapplier.applyAlteration(safebl, dar, targettedMessageList,
-            getBracketer());
       }
+      DataAlterationRequest dar = null;
+      // NB unchanged CANNOT be EL or deletion SVE.
+      Object newvalue = unchangedValue ? DataAlterationRequest.INAPPLICABLE_VALUE
+          : sve.newvalue;
+      if (sve.isEL) {
+        newvalue = new ELReference((String) sve.newvalue);
+      }
+      if (sve.isdeletion) {
+        dar = new DataAlterationRequest(sve.valuebinding, newvalue,
+            DataAlterationRequest.DELETE);
+      }
+      else {
+        dar = new DataAlterationRequest(sve.valuebinding, newvalue);
+      }
+      if (sve.reshaperbinding != null) {
+        Object reshaper = safebl.locateBean(sve.reshaperbinding);
+        if (reshaper instanceof LeafObjectParser) {
+          reshaper = new LeafObjectDARReshaper((LeafObjectParser) reshaper);
+        }
+        try {
+          dar = ((DARReshaper) reshaper).reshapeDAR(dar);
+        }
+        catch (Exception e) {
+          Logger.log.info("Error reshaping value", e);
+          // errors initially accumulated referring to paths
+          targettedMessageList.addMessage(new TargettedMessage(e.getMessage(),
+              e, dar.path));
+        }
+      }
+      toapply.add(dar);
+
     }
-    finally {
-      beanGuardProcessor.processPostGuards(bim, targettedMessageList, rbl);
-    }
+    applyAlterations(safebl, toapply);
   }
 
-  private BeanInvalidationBracketer getBracketer() {
+  public BeanInvalidationBracketer getBracketer() {
     return new BeanInvalidationBracketer() {
       public void invalidate(String path, Runnable toinvoke) {
         bim.invalidate(path);

@@ -12,7 +12,8 @@ import uk.org.ponder.beanutil.BeanUtil;
  * @author Antranig Basman (amb26@ponder.org.uk)
  *
  */
-
+// TODO: in RSF 0.8 this class will be deprecated in favour of the version
+// in PUC.
 public class ELReference {
   public ELReference() {}
   public ELReference(String value) {

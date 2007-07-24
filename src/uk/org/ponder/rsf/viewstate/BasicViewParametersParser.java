@@ -11,6 +11,7 @@ import uk.org.ponder.util.Logger;
  * A simple parser of view parameters, which will parse into clones of supplied
  * "exemplar" objects. The lookup will be performed on the first segment of the
  * pathinfo (up to first slash), which will be assumed to represent the viewID.
+ * An application scope bean.
  * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
@@ -24,6 +25,7 @@ public class BasicViewParametersParser implements ViewParametersParser {
   private ViewParamsRegistryImpl defaultViewInfoReceiver;
   private boolean implicitNullRedirect;
   private ViewParameters defaultViewParams;
+  
   
   public void setDefaultViewInfoReceiver(
       ViewParamsRegistryImpl defaultViewInfoReceiver) {
@@ -47,6 +49,10 @@ public class BasicViewParametersParser implements ViewParametersParser {
   }
   
   public ViewParameters parse(String pathinfo, Map requestmap) {
+   return parse(pathinfo, requestmap, false); 
+  }
+  
+  public ViewParameters parse(String pathinfo, Map requestmap, boolean intercept) {
     // JSF memorial comment:
     // restoreView is the very first of the ViewHandler methods to be called for
     // each request, and it is guaranteed to be called. We take this opportunity
