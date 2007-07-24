@@ -64,7 +64,10 @@ public class ViewProcessor {
   }
 
   private void performFixup() {
-    List processors = new ArrayList(clientprocessors);
+    List processors = new ArrayList();
+    if (clientprocessors != null) {
+      processors.addAll(clientprocessors);
+    }
     processors.addAll(frameworkprocessors);
     
     for (int procind = 0; procind < processors.size(); ++procind) {

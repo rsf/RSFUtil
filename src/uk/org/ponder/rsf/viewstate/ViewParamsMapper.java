@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import uk.org.ponder.beanutil.BeanModelAlterer;
+import uk.org.ponder.mapping.DARList;
+import uk.org.ponder.mapping.DataAlterationRequest;
 import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.stringutil.StringUtil;
 
@@ -76,13 +78,15 @@ public class ViewParamsMapper implements ViewParamsCodec {
   public void parseViewParameters(ViewParameters target, Map params,
       String pathinfo, Map unusedParams) {
     ViewParamsMapInfo mapinfo = vpmim.getMappingInfo(target);
+    DARList toapply = new DARList();
+    
     for (Iterator keyit = params.keySet().iterator(); keyit.hasNext();) {
       String attr = (String) keyit.next();
       Object valueo = params.get(attr);
       String path = mapinfo.attributeToPath(attr);
       if (path != null) {
         if (valueo != null) {
-          bma.setBeanValue(path, target, valueo, null, true);
+          toapply.add(new DataAlterationRequest(path, valueo));
         }
       }
       else {
@@ -96,10 +100,11 @@ public class ViewParamsMapper implements ViewParamsCodec {
         int reqindex = i + 1;
         if (reqindex < segments.length) {
           String segment = segments[reqindex];
-          bma.setBeanValue(mapinfo.trunkpaths[i], target, segment, null, true);
+          toapply.add(new DataAlterationRequest(mapinfo.trunkpaths[i], segment));
         }
       }
     }
+    bma.applyAlterations(target, toapply, null, null);
   }
 
   public String toPathInfo(ViewParameters toconvert) {

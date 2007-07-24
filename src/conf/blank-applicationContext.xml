@@ -147,6 +147,7 @@ with a client redirect rather than an internal reinterpretation -->
     class="uk.org.ponder.rsf.flow.jsfnav.JSFNavActionResultInterpreter">
     <property name="navigationMap" ref="JSFNavigationMap" />
     <property name="navigationCasePooler" ref="navigationCasePooler" />
+    <property name="targettedMessageList" ref="targettedMessageListProxy"/>
   </bean>
 
   <!-- The default ActionResultInterpreter which directs to the incoming view-->

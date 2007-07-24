@@ -6,6 +6,7 @@ package uk.org.ponder.rsf.flow.jsfnav;
 import java.util.List;
 import java.util.Map;
 
+import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterpreter;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
@@ -24,6 +25,8 @@ public class JSFNavActionResultInterpreter implements ActionResultInterpreter {
 
   private Map fromviews;
 
+  private TargettedMessageList messages;
+
   public void setNavigationMap(NavigationMap map) {
     this.map = map;
   }
@@ -32,6 +35,10 @@ public class JSFNavActionResultInterpreter implements ActionResultInterpreter {
     fromviews = pooler.getPooledMap();
   }
 
+  public void setTargettedMessageList(TargettedMessageList messages) {
+    this.messages = messages;
+  }
+  
   private static void processCaseList(List caselist, ARIResult togo,
       Object result) {
     if (caselist != null) {
@@ -53,6 +60,12 @@ public class JSFNavActionResultInterpreter implements ActionResultInterpreter {
     ARIResult togo = new ARIResult();
     togo.resultingView = incoming;
     togo.propagateBeans = ARIResult.FLOW_END;
+    
+    if (messages.isError()) {
+      // Apply this default EARLY so that a following ARI2 can see our decision
+      return togo;
+    }
+    
     boolean matchingrule = false;
     
     if (map.navigationRules != null) {

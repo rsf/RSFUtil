@@ -7,7 +7,6 @@ import java.net.MalformedURLException;
 
 import uk.org.ponder.errorutil.ConfigurationException;
 import uk.org.ponder.errorutil.CoreMessages;
-import uk.org.ponder.errorutil.ThreadErrorState;
 import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.rsf.flow.errors.SilentRedirectException;
 import uk.org.ponder.rsf.flow.errors.ViewExceptionStrategy;
