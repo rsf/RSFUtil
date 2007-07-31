@@ -85,7 +85,9 @@ public class BeanCopyPreservationStrategy implements TSHPreservationStrategy,
     this.basekey = basekey;
   }
   
-  public int preserve(BeanLocator source, String tokenid) {
+
+  public int preserveImmediate(BeanLocator source, StringList beannames,
+      String tokenid) {
     HashMap beans = new HashMap();
     for (int i = 0; i < beannames.size(); ++i) {
       String beanname = beannames.stringAt(i);
@@ -111,6 +113,10 @@ public class BeanCopyPreservationStrategy implements TSHPreservationStrategy,
       Logger.log.info("BeanCopy saved " + beans.size() + " beans to token " + token);
     }
     return beans.size();
+  }
+  
+  public int preserve(BeanLocator source, String tokenid) {
+    return preserveImmediate(source, beannames, tokenid);
   }
 
   public int restore(WriteableBeanLocator target, String tokenid) {
@@ -152,6 +158,7 @@ public class BeanCopyPreservationStrategy implements TSHPreservationStrategy,
   public void setBeanName(String name) {
     this.basekey = name;
   }
+
 
 
 }

@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.rsf.preservation;
 
+import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.rsf.state.TokenStateHolder;
 import uk.org.ponder.stringutil.StringList;
@@ -15,5 +16,8 @@ public interface GenericBeanCopyPreservationStrategy extends
   public void setTokenStateHolder(TokenStateHolder holder);
 
   public void setBeanModelAlterer(BeanModelAlterer alterer);
+
+  public int preserveImmediate(BeanLocator source, 
+      StringList beannames, String tokenid);
 
 }

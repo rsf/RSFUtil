@@ -46,7 +46,8 @@ public class ExactBeanCopyPreservationStrategy implements
     this.alterer = alterer;
   }
 
-  public int preserve(BeanLocator source, String tokenid) {
+  public int preserveImmediate(BeanLocator source, StringList beannames,
+      String tokenid) {
     int cbeans = 0;
     for (int i = 0; i < beannames.size(); ++i) {
       String beanname = beannames.stringAt(i);
@@ -61,6 +62,10 @@ public class ExactBeanCopyPreservationStrategy implements
       }
     }
     return cbeans;
+  }
+  
+  public int preserve(BeanLocator source, String tokenid) {
+    return preserveImmediate(source, beannames, tokenid);
   }
 
   public int restore(WriteableBeanLocator target, String tokenid) {
