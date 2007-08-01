@@ -10,6 +10,7 @@ import org.apache.log4j.Level;
 
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIComponent;
+import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIJointContainer;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.template.XMLLumpList;
@@ -66,12 +67,11 @@ public class BranchResolver {
     }
   }
 
-  private void resolveRecurse(UIBranchContainer basecontainer,
-      XMLLump parentlump) {
+  private void resolveRecurse(UIContainer basecontainer, XMLLump parentlump) {
     UIComponent[] flatchildren = basecontainer.flatChildren();
     for (int i = 0; i < flatchildren.length; ++i) {
-      if (flatchildren[i] instanceof UIBranchContainer) {
-        UIBranchContainer branch = (UIBranchContainer) flatchildren[i];
+      if (flatchildren[i] instanceof UIContainer) {
+        UIContainer branch = (UIContainer) flatchildren[i];
         // ups! Do not resolve here if does not actually occur in parentlump.
         XMLLump resolved = resolveCall(parentlump, branch);
         if (Logger.log.isDebugEnabled()) {
@@ -94,15 +94,15 @@ public class BranchResolver {
     }
   }
 
-  private XMLLump resolveCall(XMLLump sourcescope, UIBranchContainer child) {
+  private XMLLump resolveCall(XMLLump sourcescope, UIContainer child) {
     String searchID = child instanceof UIJointContainer ? ((UIJointContainer) child).jointID
         : child.ID;
     SplitID split = new SplitID(searchID);
     String defprefix = split.prefix + SplitID.SEPARATOR;
     BestMatch bestmatch = new BestMatch();
     if (Logger.log.isDebugEnabled()) {
-      Logger.log
-          .debug("Resolving call for ID " + searchID + " from container " + child.debugChildren());
+      Logger.log.debug("Resolving call for ID " + searchID + " from container "
+          + child.debugChildren());
     }
     // first get lumps in THIS SCOPE with EXACTLY MATCHING ID.
     XMLLumpList scopelumps = sourcescope.downmap.headsForID(searchID);
@@ -115,19 +115,22 @@ public class BranchResolver {
       if (bestmatch.deficit == 0)
         return bestmatch.bestlump;
     }
-    XMLLumpList globallumps = globalmap.headsForID(searchID);
-    passDeficit(bestmatch, child, globallumps);
-    if (bestmatch.deficit == 0)
-      return bestmatch.bestlump;
-    if (!defprefix.equals(searchID)) {
-      XMLLumpList globaldeflumps = globalmap.headsForID(defprefix);
-      passDeficit(bestmatch, child, globaldeflumps);
+    // only enable global resolution if it is a branch
+    if (child instanceof UIBranchContainer) {
+      XMLLumpList globallumps = globalmap.headsForID(searchID);
+      passDeficit(bestmatch, child, globallumps);
+      if (bestmatch.deficit == 0)
+        return bestmatch.bestlump;
+      if (!defprefix.equals(searchID)) {
+        XMLLumpList globaldeflumps = globalmap.headsForID(defprefix);
+        passDeficit(bestmatch, child, globaldeflumps);
+      }
     }
     return bestmatch.bestlump;
 
   }
 
-  private void passDeficit(BestMatch bestmatch, UIBranchContainer container,
+  private void passDeficit(BestMatch bestmatch, UIContainer container,
       XMLLumpList tocheck) {
     if (tocheck == null)
       return;
@@ -155,7 +158,7 @@ public class BranchResolver {
   // A match is either an exact match in prefix and suffix, or else a "default
   // match" produced by looking for a "default" member in the template with the
   // name "prefix:" for the issued component prefix.
-  private int evalDeficit(UIBranchContainer container, XMLLump lump) {
+  private int evalDeficit(UIContainer container, XMLLump lump) {
     if (lump.downmap == null) {
       throw UniversalRuntimeException
           .accumulate(
