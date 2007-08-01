@@ -24,7 +24,6 @@ import uk.org.ponder.rsf.components.UIOutputMany;
 import uk.org.ponder.rsf.components.UIOutputMultiline;
 import uk.org.ponder.rsf.components.UIReplicator;
 import uk.org.ponder.rsf.components.UISelect;
-import uk.org.ponder.rsf.components.UISimpleContainer;
 import uk.org.ponder.rsf.components.UISwitch;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.components.decorators.UIDecorator;
@@ -55,7 +54,7 @@ public class RSFMappingLoader implements MappingLoader {
     UICommand.class, UIForm.class, UIInput.class, UIInternalLink.class,
     UILink.class, UIMessage.class, UIOutput.class, UIOutputMultiline.class,
     UIJointContainer.class, UIDecorator.class, 
-    UIBranchContainer.class, UISimpleContainer.class, UIELBinding.class,
+    UIBranchContainer.class, UIELBinding.class,
     UIDeletionBinding.class, UIReplicator.class, UISwitch.class, UISelect.class,
     UIInputMany.class, UIOutputMany.class, UIError.class, UIAnchor.class,
     UIVerbatim.class

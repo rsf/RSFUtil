@@ -129,13 +129,6 @@ public class BasicHTMLRenderSystem implements RenderSystem {
               lump.rsfID + " at " + lump.toString());
         }
       }
-
-      if (lump.textEquals("<form ")) { // SINGLE non-portable line
-//        renderDebugMessage(rsc, "Skipping form tag and all children here");
-        Logger.log.warn("Warning: skipping form tag with rsf:id " + lump.rsfID
-            + " and all children at " + lump.toString()
-            + " since no peer component");
-      }
     }
     else {
       // else there IS a component and we are going to render it. First make

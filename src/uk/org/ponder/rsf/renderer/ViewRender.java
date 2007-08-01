@@ -13,6 +13,7 @@ import java.util.Set;
 import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIComponent;
+import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.content.ContentTypeInfo;
 import uk.org.ponder.rsf.renderer.decorator.DecoratorManager;
 import uk.org.ponder.rsf.template.XMLCompositeViewTemplate;
@@ -168,15 +169,20 @@ public class ViewRender {
         roott.lumps[roott.roottagindex]);
   }
 
-  private void renderBranch(UIBranchContainer child, XMLLump targetlump) {
+  private void renderContainer(UIContainer child, XMLLump targetlump) {
     // may have jumped template file
     XMLViewTemplate t2 = targetlump.parent;
     XMLLump firstchild = t2.lumps[targetlump.open_end.lumpindex + 1];
-    dumpContainerHead(child, targetlump);
+    if (child instanceof UIBranchContainer) {
+      dumpBranchHead((UIBranchContainer) child, targetlump);
+    }
+    else {
+      renderer.renderComponent(rsc, child, targetlump);
+    }
     renderRecurse(child, targetlump, firstchild);
   }
 
-  private void renderRecurse(UIBranchContainer basecontainer,
+  private void renderRecurse(UIContainer basecontainer,
       XMLLump parentlump, XMLLump baselump) {
 
     int renderindex = baselump.lumpindex;
@@ -219,7 +225,7 @@ public class ViewRender {
                   renderComment("Branching for " + child.getFullID() + " from "
                       + lump + " to " + targetlump);
                 }
-                renderBranch((UIBranchContainer) child, targetlump);
+                renderContainer((UIBranchContainer) child, targetlump);
                 if (debugrender) {
                   renderComment("Branch returned for " + child.getFullID()
                       + " to " + lump + " from " + targetlump);
@@ -318,7 +324,7 @@ public class ViewRender {
           else {
             UIBranchContainer messagebranch = messagerenderer
                 .renderMessageList(messages);
-            renderBranch(messagebranch, messagelump);
+            renderContainer(messagebranch, messagelump);
           }
         }
         XMLLump closelump = lump.close_tag;
@@ -335,8 +341,16 @@ public class ViewRender {
           }
           component = fetchComponent(basecontainer, id);
         }
-        // if we find a leaf component, render it.
-        renderindex = renderer.renderComponent(rsc, component, lump);
+        // Form rendering is now subject to "fairly normal" branch rendering logic
+        // That is, a UIContainer may now also be a leaf
+        if (component instanceof UIContainer) {
+          renderContainer((UIContainer) component, lump);
+          renderindex = lump.close_tag.lumpindex + 1;
+        }
+        else {
+          // if we find a leaf component, render it.
+          renderindex = renderer.renderComponent(rsc, component, lump);   
+        }
       } // end if unrepeatable component.
       if (renderindex == tl.lumps.length) {
         // deal with the case where component was root element - Ryan of
@@ -363,23 +377,23 @@ public class ViewRender {
 
   }
 
-  private static UIComponent fetchComponent(UIBranchContainer basecontainer,
+  private static UIComponent fetchComponent(UIContainer basecontainer,
       String id) {
     while (basecontainer != null) {
       UIComponent togo = basecontainer.getComponent(id);
       if (togo != null)
         return togo;
-      basecontainer = (UIBranchContainer) basecontainer.parent;
+      basecontainer = basecontainer.parent;
     }
     return null;
   }
 
-  private static List fetchComponents(UIBranchContainer basecontainer, String id) {
+  private static List fetchComponents(UIContainer basecontainer, String id) {
     while (basecontainer != null) {
       List togo = basecontainer.getComponents(id);
       if (togo != null)
         return togo;
-      basecontainer = (UIBranchContainer) basecontainer.parent;
+      basecontainer = basecontainer.parent;
     }
     return null;
   }
@@ -403,7 +417,7 @@ public class ViewRender {
         : headlumps.lumpAt(0);
   }
 
-  private void dumpContainerHead(UIBranchContainer branch, XMLLump targetlump) {
+  private void dumpBranchHead(UIBranchContainer branch, XMLLump targetlump) {
     HashMap attrcopy = new HashMap();
     attrcopy.putAll(targetlump.attributemap);
     IDassigner.adjustForID(attrcopy, branch);

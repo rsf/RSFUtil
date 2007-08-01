@@ -16,7 +16,7 @@ package uk.org.ponder.rsf.components;
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
-public class UICommand extends UISimpleContainer {
+public class UICommand extends UIParameterHolder {
   /**
    * The EL reference of the action/method binding to be invoked when this
    * control is operated.

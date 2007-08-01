@@ -84,7 +84,6 @@ public class BeanCopyPreservationStrategy implements TSHPreservationStrategy,
   public void setBaseKey(String basekey) {
     this.basekey = basekey;
   }
-  
 
   public int preserveImmediate(BeanLocator source, StringList beannames,
       String tokenid) {
@@ -112,7 +111,7 @@ public class BeanCopyPreservationStrategy implements TSHPreservationStrategy,
     if (beans.size() != 0) {
       Logger.log.info("BeanCopy saved " + beans.size() + " beans to token " + token);
     }
-    return beans.size();
+    return beans.size();  
   }
   
   public int preserve(BeanLocator source, String tokenid) {

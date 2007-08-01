@@ -102,5 +102,9 @@ public class StaticTemplateResolverStrategy implements RootAwareTRS,
     return expected;
   }
 
+  public boolean isStatic() {
+    return true;
+  }
+
 
 }

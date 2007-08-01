@@ -29,5 +29,13 @@ public interface TemplateResolverStrategy {
    *         the leading slash.
    */
   public StringList resolveTemplatePath(ViewParameters viewparams);
+  
+  /** Determines whether this resolver strategy is "static" - that is, whether
+   * it returns results which are specific to the current view. The primary
+   * usage of this return is to determine whether to import *all* branch
+   * IDs into global resolution, or just branch IDs which occur at top level
+   * in the returned templates.
+   */
+  public boolean isStatic();
 
 }
