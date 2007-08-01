@@ -7,22 +7,20 @@ import uk.org.ponder.rsf.components.ComponentList;
 import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.ParameterList;
 import uk.org.ponder.rsf.components.UIBound;
-import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.view.ViewRoot;
-import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.util.AssertionException;
 
 /**
+ * Low-level utilities for working on RSF component trees.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
 public class RSFUtil {
-
   /**
    * This method returns an enclosing Form instance, where one is present in the
    * tree. Note that this only makes sense for HTML-style forms, and is a coding
@@ -37,15 +35,15 @@ public class RSFUtil {
     }
     return null;
   }
-  
+
   /**
-   * This method returns an enclosing ViewRoot instance, where one is present 
-   * in the tree (it should be, in every well-formed tree)
+   * This method returns an enclosing ViewRoot instance, where one is present in
+   * the tree (it should be, in every well-formed tree)
    */
   public static ViewRoot findViewRoot(UIComponent tofind) {
     while (tofind != null) {
       if (tofind instanceof ViewRoot)
-         return (ViewRoot) tofind;
+        return (ViewRoot) tofind;
       tofind = tofind.parent;
     }
     return null;
@@ -90,7 +88,8 @@ public class RSFUtil {
 
   // PROFILER hotspot: 1.5% of request render time.
   public static String getFullIDSegment(String ID, String localID) {
-    return ID + SplitID.SEPARATOR + localID + SplitID.SEPARATOR;
+    return SplitID.getPrefix(ID) + SplitID.SEPARATOR + localID
+        + SplitID.SEPARATOR;
   }
 
   /**
@@ -99,17 +98,14 @@ public class RSFUtil {
   // PROFILER hotspot: 2.4% render request time
   public static String computeFullID(UIComponent tocompute) {
     StringBuffer togo = new StringBuffer();
-    UIComponent move = tocompute;
-    if (!(move instanceof UIBranchContainer)) {
-      togo.insert(0, move.ID); // the tail part of an ID is always the
-                                // component's
-      // leaf ID itself.
+    if (!(tocompute instanceof UIContainer)) {
+      // the tail part of an ID is always the component's leaf ID itself.
+      togo.insert(0, tocompute.ID);
     }
+    UIContainer move = tocompute.parent;
     while (move.parent != null) { // ignore the top-level viewroot Branch
-
-      if (move instanceof UIBranchContainer) {
-        UIBranchContainer movec = (UIBranchContainer) move;
-        togo.insert(0, getFullIDSegment(movec.ID.toString(), movec.localID));
+      if (move.noID) {
+        togo.insert(0, getFullIDSegment(move.ID, move.localID));
       }
       move = move.parent;
     }
@@ -118,9 +114,10 @@ public class RSFUtil {
 
   public static String reportPath(UIComponent branch) {
     String path = branch.getFullID();
-    return path.equals("")? "component tree root" : "full path " + path;
+    return path.equals("") ? "component tree root"
+        : "full path " + path;
   }
-  
+
   /** Returns the common ancestor path of s1 and s2 * */
   public static int commonPath(String s1, String s2) {
     int s1c = s1.lastIndexOf(':');
@@ -145,30 +142,9 @@ public class RSFUtil {
     return togo;
   }
 
-  /**
-   * "Reduce" a component full ID by stripping out the local ID segments. Now
-   * disused.
-   */
-  public static String getReducedID(String fullID) {
-    String[] components = fullID.split(":");
-    CharWrap toappend = new CharWrap();
-    for (int i = 0; i < components.length; ++i) {
-      if (i % 3 != 2) {
-        toappend.append(components[i]);
-        // ID can either end on %0 for a container, or on %1 for a leaf.
-        // So if it is a container, we will retain the :.
-        if (i != components.length - 1) {
-          toappend.append(':');
-        }
-      }
-    }
-    return toappend.toString();
-  }
-  
   public static void failRemove(UIComponent failed) {
-    throw new IllegalArgumentException(
-        "Tried to remove " + failed.getFullID() + " which is not a child of this container");
+    throw new IllegalArgumentException("Tried to remove " + failed.getFullID()
+        + " which is not a child of this container");
   }
-
 
 }

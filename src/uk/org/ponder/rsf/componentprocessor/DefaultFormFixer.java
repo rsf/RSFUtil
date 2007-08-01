@@ -71,7 +71,6 @@ public class DefaultFormFixer implements ComponentProcessor, ViewReceiver {
     if (!(toprocesso instanceof UIForm))
       return;
     UIForm toprocess = (UIForm) toprocesso;
-    toprocess.fold();
 
     StringSet submittingnames = new StringSet();
 

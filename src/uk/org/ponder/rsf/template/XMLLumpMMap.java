@@ -6,11 +6,12 @@ package uk.org.ponder.rsf.template;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import uk.org.ponder.rsf.util.SplitID;
 import uk.org.ponder.stringutil.CharWrap;
 
 public class XMLLumpMMap {
   private HashMap idtolumps = new HashMap(8);
-  
+
   public String getHeadsDebug() {
     CharWrap message = new CharWrap();
     message.append("Heads: (");
@@ -19,16 +20,21 @@ public class XMLLumpMMap {
       if (!first) {
         message.append(", ");
       }
-      message.append((String)keys.next());
+      message.append((String) keys.next());
       first = false;
     }
     message.append(")");
     return message.toString();
   }
-  
+
   public XMLLumpList headsForID(String ID) {
     XMLLumpList togo = (XMLLumpList) idtolumps.get(ID);
     return togo;
+  }
+
+  private boolean isBranchKey(String key) {
+    Object togo = idtolumps.get(key);
+    return togo instanceof XMLLumpList && !isSpecial(key) && SplitID.isSplit(key);
   }
   
   public XMLLumpList headsForIDEnsure(String ID) {
@@ -43,42 +49,44 @@ public class XMLLumpMMap {
   public boolean hasID(String ID) {
     return idtolumps.get(ID) != null;
   }
-  
-  /** Returns an iterator of the String values of the IDs represented here.
+
+  /**
+   * Returns an iterator of the String values of the IDs represented here.
    */
   public Iterator iterator() {
     return idtolumps.keySet().iterator();
   }
-  
+
   private int concretes = 0;
 
   public int numConcretes() {
     return concretes;
   }
-  
+
   public void addLump(String ID, XMLLump lump) {
     XMLLumpList list = headsForIDEnsure(ID);
     list.add(lump);
     if (ID.indexOf(XMLLump.TRANSITION_SEPARATOR) == -1) {
-      ++ concretes;
+      ++concretes;
     }
   }
-  
-  public void addSingle(String key, XMLLump lump) {
-    idtolumps.put(key, lump);
-  }
-  public XMLLump getSingle(String key) {
-    return (XMLLump) idtolumps.get(key);
-  }
-  
+
+  /*
+   * public void addSingle(String key, XMLLump lump) { idtolumps.put(key, lump); }
+   * public XMLLump getSingle(String key) { return (XMLLump) idtolumps.get(key); }
+   */
+
   public static final String FINAL_SUFFIX = "*final";
-  
+
   public static final boolean isSpecial(String totest) {
-    return totest.endsWith(FINAL_SUFFIX) || totest.indexOf(XMLLump.TRANSITION_SEPARATOR) != -1;
+    return totest.endsWith(FINAL_SUFFIX)
+        || totest.indexOf(XMLLump.TRANSITION_SEPARATOR) != -1;
   }
+
   public void setFinal(String ID, XMLLump lump) {
     idtolumps.put(ID + FINAL_SUFFIX, lump);
   }
+
   public XMLLump getFinal(String ID) {
     return (XMLLump) idtolumps.get(ID + FINAL_SUFFIX);
   }
@@ -86,11 +94,13 @@ public class XMLLumpMMap {
   public void aggregate(XMLLumpMMap toaccrete) {
     for (Iterator it = toaccrete.iterator(); it.hasNext();) {
       String key = (String) it.next();
-      XMLLumpList list = toaccrete.headsForID(key);
-      for (int i = 0; i < list.size(); ++ i) {
-        addLump(key, list.lumpAt(i));
+      if (toaccrete.isBranchKey(key)) {
+        XMLLumpList list = toaccrete.headsForID(key);
+        for (int i = 0; i < list.size(); ++i) {
+          addLump(key, list.lumpAt(i));
+        }
       }
     }
   }
-  
+
 }

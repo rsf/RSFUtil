@@ -106,7 +106,12 @@ public class BasicTemplateResolver implements TemplateResolver {
             isexpected ? tried : null, ismultiple && isexpected);
         if (template != null) {
           if (xcvt != null) {
-            xcvt.globalmap.aggregate(template.globalmap);
+            if (trs.isStatic()) {
+             xcvt.globalmap.aggregate(template.rootlump.downmap);
+            }
+            else {
+              xcvt.globalmap.aggregate(template.globalmap);
+            }
             if (template.mustcollectmap != null) {
               xcvt.mustcollectmap.aggregate(template.mustcollectmap);
             }

@@ -79,4 +79,8 @@ public class CRITemplateResolverStrategy implements
     return rootpriority;
   }
 
+  public boolean isStatic() {
+    return false;
+  }
+
 }

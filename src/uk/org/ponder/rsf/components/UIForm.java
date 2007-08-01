@@ -19,7 +19,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
-public class UIForm extends UISimpleContainer {
+public class UIForm extends UIContainer {
 
   /** Which type of submission will this form trigger? For ACTION_REQUEST,
    * this will behave like a UICommand (e.g. HTTP POST) - for RENDER_REQUEST
@@ -56,25 +56,29 @@ public class UIForm extends UISimpleContainer {
     }
     UIForm togo = new UIForm();
     togo.ID = ID;
+    togo.noID = true;
     parent.addComponent(togo);
     return togo;
   }
   
-  /** Creates an "unmanaged" GET form, targetted at the supplied ViewParameters */
+  /** Creates an "unmanaged" GET ({@link EarlyRequestParser#RENDER_REQUEST}) 
+   * form, targetted at the supplied ViewParameters */
   
   public static UIForm make(UIContainer parent, String ID, ViewParameters viewparams) {
     UIForm togo = make(parent, ID);
     togo.viewparams = viewparams.copyBase();
     togo.type = EarlyRequestParser.RENDER_REQUEST;
+    togo.noID = true;
     return togo;
   }
-
+  
   /** Creates a form of the specified submission type, either 
-   * EarlyRequestParser.ACTION_REQUEST or EarlyRequestParser.RENDER_REQUEST.
+   * {@link EarlyRequestParser#ACTION_REQUEST} or {@link EarlyRequestParser#RENDER_REQUEST}.
    */
   public static UIForm make(UIContainer parent, String ID, String type) {
     UIForm togo = make(parent, ID);
     togo.type = type;
+    togo.noID = true;
     return togo;
   }
   

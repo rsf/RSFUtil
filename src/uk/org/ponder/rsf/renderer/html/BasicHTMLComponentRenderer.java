@@ -26,6 +26,7 @@ import uk.org.ponder.rsf.renderer.ComponentRenderer;
 import uk.org.ponder.rsf.renderer.RenderUtil;
 import uk.org.ponder.rsf.renderer.TagRenderContext;
 import uk.org.ponder.rsf.renderer.scr.StaticRendererCollection;
+import uk.org.ponder.rsf.request.EarlyRequestParser;
 import uk.org.ponder.rsf.request.FossilizedConverter;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.uitype.UITypes;
@@ -257,9 +258,9 @@ public class BasicHTMLComponentRenderer implements ComponentRenderer {
     // i.e. any "submitting" controls, if indeed they ever were there.
     else if (torendero instanceof UIForm) {
       UIForm torender = (UIForm) torendero;
-      if (attrcopy.get("method") == null) { // forms DEFAULT to be post
-        attrcopy.put("method", "post");
-      }
+      attrcopy.put("method", 
+          torender.type.equals(EarlyRequestParser.RENDER_REQUEST)?
+          "get" : "post");
       // form fixer guarantees that this URL is attribute free.
       attrcopy.put("action", torender.targetURL);
 
