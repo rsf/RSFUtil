@@ -7,6 +7,7 @@ import uk.org.ponder.rsf.components.ComponentList;
 import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.ParameterList;
 import uk.org.ponder.rsf.components.UIBound;
+import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIELBinding;
@@ -98,13 +99,17 @@ public class RSFUtil {
   // PROFILER hotspot: 2.4% render request time
   public static String computeFullID(UIComponent tocompute) {
     StringBuffer togo = new StringBuffer();
-    if (!(tocompute instanceof UIContainer)) {
+    UIContainer move = null;
+    if (!(tocompute instanceof UIBranchContainer)) {
       // the tail part of an ID is always the component's leaf ID itself.
       togo.insert(0, tocompute.ID);
+      move = tocompute.parent;
     }
-    UIContainer move = tocompute.parent;
+    else {
+      move = (UIContainer) tocompute;
+    }
     while (move.parent != null) { // ignore the top-level viewroot Branch
-      if (move.noID) {
+      if (!move.noID) {
         togo.insert(0, getFullIDSegment(move.ID, move.localID));
       }
       move = move.parent;

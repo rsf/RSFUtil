@@ -11,8 +11,6 @@ import uk.org.ponder.stringutil.StringList;
 public interface GenericBeanCopyPreservationStrategy extends
     TSHPreservationStrategy {
 
-  public int preserveImmediate(BeanLocator source, StringList beannames, String tokenid);
-  
   public void setPreservingBeans(StringList beannames);
 
   public void setTokenStateHolder(TokenStateHolder holder);
