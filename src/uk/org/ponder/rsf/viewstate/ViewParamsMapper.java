@@ -104,7 +104,7 @@ public class ViewParamsMapper implements ViewParamsCodec {
         }
       }
     }
-    bma.applyAlterations(target, toapply, null, null);
+    bma.applyAlterations(target, toapply, null);
   }
 
   public String toPathInfo(ViewParameters toconvert) {
