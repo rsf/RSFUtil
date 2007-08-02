@@ -11,9 +11,11 @@ import uk.org.ponder.beanutil.WriteableBeanLocator;
 import uk.org.ponder.conversion.LeafObjectParser;
 import uk.org.ponder.mapping.BeanInvalidationBracketer;
 import uk.org.ponder.mapping.BeanInvalidationModel;
+import uk.org.ponder.mapping.DAREnvironment;
 import uk.org.ponder.mapping.DARList;
 import uk.org.ponder.mapping.DARReshaper;
 import uk.org.ponder.mapping.DataAlterationRequest;
+import uk.org.ponder.mapping.DataConverterRegistry;
 import uk.org.ponder.mapping.LeafObjectDARReshaper;
 import uk.org.ponder.mapping.ListBeanInvalidationModel;
 import uk.org.ponder.messageutil.TargettedMessage;
@@ -36,6 +38,7 @@ public class RSVCApplier {
   private boolean ignoreFossilizedValues = true;
   private TargettedMessageList targettedMessageList;
   private BeanLocator rbl;
+  private DataConverterRegistry dataConverterRegistry;
 
   public void setIgnoreFossilizedValues(boolean ignoreFossilizedValues) {
     this.ignoreFossilizedValues = ignoreFossilizedValues;
@@ -71,10 +74,15 @@ public class RSVCApplier {
     this.rbl = rbl;
   }
 
+  public void setDataConverterRegistry(DataConverterRegistry dataConverterRegistry) {
+    this.dataConverterRegistry = dataConverterRegistry;
+  }
+  
   public void applyAlterations(WriteableBeanLocator wbl, DARList toapply) {
     try {
       BeanInvalidationBracketer bib = getBracketer();
-      darapplier.applyAlterations(safebl, toapply, targettedMessageList, bib);
+      darapplier.applyAlterations(safebl, toapply, 
+          new DAREnvironment(targettedMessageList, bib, dataConverterRegistry));
     }
     finally {
       beanGuardProcessor.processPostGuards(bim, targettedMessageList, rbl);

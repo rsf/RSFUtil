@@ -6,6 +6,7 @@ package uk.org.ponder.rsf.test.dar;
 import uk.org.ponder.arrayutil.ArrayUtil;
 import uk.org.ponder.beanutil.WriteableBeanLocator;
 import uk.org.ponder.mapping.DARApplier;
+import uk.org.ponder.mapping.DAREnvironment;
 import uk.org.ponder.mapping.DataAlterationRequest;
 import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.test.PlainRSFTests;
@@ -17,7 +18,7 @@ public class TestDARApplier extends PlainRSFTests {
     DataAlterationRequest dar = new DataAlterationRequest("DARTestBean.values", value);
     DARApplier darapplier = (DARApplier) applicationContext.getBean("DARApplier");
     TargettedMessageList tml = new TargettedMessageList();
-    darapplier.applyAlteration(rbl, dar, tml, null);
+    darapplier.applyAlteration(rbl, dar, new DAREnvironment(tml));
     
     DARTestBean togo = (DARTestBean) rbl.locateBean("DARTestBean");
     return togo;
