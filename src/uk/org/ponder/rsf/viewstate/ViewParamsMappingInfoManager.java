@@ -6,7 +6,7 @@ package uk.org.ponder.rsf.viewstate;
 import java.util.Map;
 
 import uk.org.ponder.arrayutil.ListUtil;
-import uk.org.ponder.beanutil.BeanUtil;
+import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.reflect.ReflectiveCache;
 import uk.org.ponder.saxalizer.AccessMethod;
 import uk.org.ponder.saxalizer.MethodAnalyser;
@@ -181,7 +181,7 @@ public class ViewParamsMappingInfoManager {
    */
   private void appendLeaves(Class rootclass, String pathroot,
       String attrprefix, StringList attnames, StringList paths) {
-    String[] components = BeanUtil.splitEL(pathroot);
+    String[] components = PathUtil.splitPath(pathroot);
 
     Class moveclass = rootclass;
     for (int i = 0; i < components.length; ++i) {
@@ -200,7 +200,7 @@ public class ViewParamsMappingInfoManager {
       SAXAccessMethod method = ma.allgetters[i];
       if (method.canGet() && method.canSet()
           && mappingcontext.saxleafparser.isLeafType(method.getAccessedType())) {
-        paths.add(BeanUtil.composeEL(pathroot, method.tagname));
+        paths.add(PathUtil.composePathEncoded(pathroot, method.tagname));
         attnames.add(attrprefix + method.tagname);
       }
     }

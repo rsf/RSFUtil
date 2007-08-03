@@ -6,7 +6,9 @@ package uk.org.ponder.rsf.componentprocessor;
 import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.beanutil.BeanResolver;
-import uk.org.ponder.conversion.LeafObjectParser;
+import uk.org.ponder.mapping.ConverterConverter;
+import uk.org.ponder.mapping.DataConverterRegistry;
+import uk.org.ponder.mapping.ShellInfo;
 import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIComponent;
@@ -37,6 +39,7 @@ public class ValueFixer implements ComponentProcessor {
   private RequestSubmittedValueCache rsvc;
   // private ErrorStateManager errorStateManager;
   private boolean renderfossilized;
+  private DataConverterRegistry dataConverterRegistry;
 
   public void setBeanLocator(BeanLocator beanlocator) {
     this.beanlocator = beanlocator;
@@ -50,12 +53,17 @@ public class ValueFixer implements ComponentProcessor {
     this.renderfossilized = renderfossilized;
   }
 
+  public void setDataConverterRegistry(
+      DataConverterRegistry dataConverterRegistry) {
+    this.dataConverterRegistry = dataConverterRegistry;
+  }
+
   private FormModel formModel;
 
   public void setFormModel(FormModel formModel) {
     this.formModel = formModel;
   }
-  
+
   public void setErrorStateManager(ErrorStateManager errorStateManager) {
     // this.errorStateManager = errorStateManager;
     if (errorStateManager.errorstate.rsvc != null) {
@@ -86,25 +94,26 @@ public class ValueFixer implements ComponentProcessor {
         hadcached = true;
       }
       UIForm form = formModel.formForComponent(toprocess);
-      boolean getform = form == null? false : 
-        form.type.equals(EarlyRequestParser.RENDER_REQUEST);
+      boolean getform = form == null ? false
+          : form.type.equals(EarlyRequestParser.RENDER_REQUEST);
+      Object root = getform ? (Object) form.viewparams
+          : beanlocator;
       if (toprocess.valuebinding != null
           && (toprocess.acquireValue() == null
               || UITypes.isPlaceholder(toprocess.acquireValue()) || hadcached)) {
         // a bound component ALWAYS contains a value of the correct type.
         Object oldvalue = toprocess.acquireValue();
         String stripbinding = toprocess.valuebinding.value;
-        BeanResolver resolver = computeResolver(toprocess);
+        BeanResolver resolver = computeResolver(toprocess, root);
         Object flatvalue = null;
-        Object root = getform? (Object)form.viewparams : beanlocator;
         try {
-          flatvalue = alterer.getFlattenedValue(stripbinding, root,
-              oldvalue.getClass(), resolver);
+          flatvalue = alterer.getFlattenedValue(stripbinding, root, oldvalue
+              .getClass(), resolver);
         }
         catch (Exception e) {
           // don't let a bad bean model prevent the correct reference being
           // encoded
-          Logger.log.info("Error resolving EL reference " + stripbinding 
+          Logger.log.info("Error resolving EL reference " + stripbinding
               + " for component with full ID " + toprocess.getFullID(), e);
         }
         if (flatvalue != null) {
@@ -116,9 +125,12 @@ public class ValueFixer implements ComponentProcessor {
       }
       else if (toprocess.resolver != null) {
         Object oldvalue = toprocess.acquireValue();
-        BeanResolver resolver = computeResolver(toprocess);
-        Object flatvalue = alterer.getFlattenedValue(null, oldvalue,
-            oldvalue.getClass(), resolver);
+        // Unclear about this branch - we apply resolvers in the tree to values
+        // which we already find there? Surely the value must already be adequately
+        // flat!
+        BeanResolver resolver = computeResolver(toprocess, root);
+        Object flatvalue = alterer.getFlattenedValue(null, oldvalue, oldvalue
+            .getClass(), resolver);
         if (flatvalue != null) {
           toprocess.updateValue(flatvalue);
         }
@@ -166,40 +178,36 @@ public class ValueFixer implements ComponentProcessor {
    * encoded things like DateParsers to be used first class, although we REALLY
    * expect users to make transit beans.
    */
-  private BeanResolver computeResolver(UIBound toprocess) {
+  private BeanResolver computeResolver(UIBound toprocess, Object root) {
     Object renderer = toprocess.resolver;
 
     if (renderer == null) {
-      return null;
+      if (toprocess.valuebinding != null) {
+        ShellInfo shells = alterer.fetchShells(toprocess.valuebinding.value,
+            root);
+
+        renderer = dataConverterRegistry.fetchConverter(shells);
+      }
     }
 
     if (renderer instanceof ELReference) {
       renderer = alterer.getBeanValue(((ELReference) renderer).value,
           beanlocator);
-    }
-    final Object finalrenderer = renderer;
-
-    if (renderer instanceof BeanResolver) {
-      return (BeanResolver) renderer;
-    }
-    else if (renderer instanceof LeafObjectParser) {
-      if (toprocess.darreshaper != null
-          && toprocess.resolver instanceof ELReference) {
+      if (toprocess.darreshaper == null) {
         toprocess.darreshaper = (ELReference) toprocess.resolver;
       }
-      return new BeanResolver() {
-        public String resolveBean(Object bean) {
-          return ((LeafObjectParser) finalrenderer).render(bean);
-        }
-      };
     }
-    else
+    if (renderer == null)
+      return null;
+    BeanResolver resolver = ConverterConverter.toResolver(renderer);
+    if (resolver == null) {
       throw UniversalRuntimeException.accumulate(
           new IllegalArgumentException(), "Renderer object for "
               + toprocess.getFullID() + " of unrecognised "
               + renderer.getClass()
               + " (expected BeanResolver or LeafObjectParser)");
+    }
+    return resolver;
   }
-
 
 }

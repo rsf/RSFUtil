@@ -8,16 +8,16 @@ import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.beanutil.ELReference;
 import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.beanutil.WriteableBeanLocator;
-import uk.org.ponder.conversion.LeafObjectParser;
 import uk.org.ponder.mapping.BeanInvalidationBracketer;
 import uk.org.ponder.mapping.BeanInvalidationModel;
+import uk.org.ponder.mapping.ConverterConverter;
 import uk.org.ponder.mapping.DAREnvironment;
 import uk.org.ponder.mapping.DARList;
 import uk.org.ponder.mapping.DARReshaper;
 import uk.org.ponder.mapping.DataAlterationRequest;
 import uk.org.ponder.mapping.DataConverterRegistry;
-import uk.org.ponder.mapping.LeafObjectDARReshaper;
 import uk.org.ponder.mapping.ListBeanInvalidationModel;
+import uk.org.ponder.mapping.ShellInfo;
 import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.request.ActionTarget;
@@ -137,13 +137,18 @@ public class RSVCApplier {
       else {
         dar = new DataAlterationRequest(sve.valuebinding, newvalue);
       }
+      Object reshapero = null;
       if (sve.reshaperbinding != null) {
-        Object reshaper = safebl.locateBean(sve.reshaperbinding);
-        if (reshaper instanceof LeafObjectParser) {
-          reshaper = new LeafObjectDARReshaper((LeafObjectParser) reshaper);
-        }
+        reshapero = safebl.locateBean(sve.reshaperbinding);
+      }
+      else {
+        ShellInfo shellinfo = darapplier.fetchShells(sve.valuebinding, safebl);
+        reshapero = dataConverterRegistry.fetchConverter(shellinfo);
+      }
+      if (reshapero != null) {
+        DARReshaper reshaper = ConverterConverter.toReshaper(reshapero);
         try {
-          dar = ((DARReshaper) reshaper).reshapeDAR(dar);
+          dar = reshaper.reshapeDAR(dar);
         }
         catch (Exception e) {
           Logger.log.info("Error reshaping value", e);
