@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import uk.org.ponder.beanutil.BeanUtil;
+import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.stringutil.StringList;
 
 
@@ -73,11 +74,11 @@ public class ELDependencyMap {
   /** Disused method */
   public List getInvalidatingEntries(String path) {
     ArrayList togo = new ArrayList();
-    String[] splitEL = BeanUtil.splitEL(path);
+    String[] splitEL = PathUtil.splitPath(path);
     StringList goup = new StringList();
     for (int i = 0; i < splitEL.length; ++ i) {
       goup.add(splitEL[i]);
-      String upstring = BeanUtil.composeEL(goup);
+      String upstring = PathUtil.composePath(goup.toStringArray());
       List deps = (List) writemap.get(upstring);
       if (deps != null) {
         togo.addAll(deps);

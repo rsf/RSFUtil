@@ -195,6 +195,11 @@
     init-method="init">
     <property name="beanLocator" ref="applicationContextBeanLocator"/>
   </bean>
+  
+  <bean id="dataConverterTLAB" class="uk.org.ponder.springutil.ByClassTLAB">
+    <property name="targetClass" value="uk.org.ponder.mapping.DataConverter"/>
+    <property name="targetPath" value="dataConverterRegistry.converters"/>
+  </bean>
 
   <!-- ******    RSF-SPECIFIC DEFINITIONS BELOW HERE    *******    -->
 

@@ -184,6 +184,7 @@
     <property name="ignoreFossilizedValues"
       ref="ignoreFossilizedValues" />
     <property name="targettedMessageList" ref="targettedMessageList" />
+    <property name="dataConverterRegistry" ref="dataConverterRegistry"/>
   </bean>
   
   <bean id="beanInvalidationBracketer" factory-bean="RSVCApplier" factory-method="getBracketer"/>
@@ -363,6 +364,7 @@
     <property name="errorStateManager" ref="errorStateManager" />
     <property name="renderFossilizedForms" ref="renderFossilizedForms" />
     <property name="formModel" ref="formModel"/>
+    <property name="dataConverterRegistry" ref="dataConverterRegistry"/>
   </bean>
   
   <!-- End "fixer" beans" -->
