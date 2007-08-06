@@ -8,8 +8,8 @@ import java.util.Map;
 import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.components.ComponentList;
-import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIComponent;
+import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.template.XMLLumpList;
 import uk.org.ponder.rsf.util.RSFUtil;
@@ -94,7 +94,7 @@ public class MessageTargetter {
             // implement
             // the first-level fallback check for messages targetted at it
             // globally.
-            UIBranchContainer globalbranch = (UIBranchContainer) globalrootpath
+            UIContainer globalbranch = (UIContainer) globalrootpath
                 .get(j);
             UIComponent globalnext = globalrootpath.componentAt(j);
             XMLLump peer = (XMLLump) branchmap.get(globalbranch);
@@ -103,7 +103,7 @@ public class MessageTargetter {
                 + globalnext.ID;
             best.checkTarget(search0);
           }
-          UIBranchContainer branch = (UIBranchContainer) rootpath.get(j);
+          UIContainer branch = (UIContainer) rootpath.get(j);
           UIComponent next = rootpath.componentAt(j);
           XMLLump peer = (XMLLump) branchmap.get(branch);
           best.setContainer(peer);

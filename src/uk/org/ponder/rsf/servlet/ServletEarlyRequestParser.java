@@ -37,7 +37,8 @@ public class ServletEarlyRequestParser implements EarlyRequestParser {
   }
 
   public void init() {
-    Logger.log.info("begin parseRequest for " + request.getRequestURI());
+    Logger.log.info("begin parseRequest for " + request.getMethod() + " " 
+        + request.getRequestURI());
     if (multipartresolver.isMultipart(request)) {
       try {
         this.request = multipartresolver.resolveMultipart(request);
