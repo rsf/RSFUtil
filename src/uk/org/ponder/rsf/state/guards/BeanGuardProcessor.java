@@ -138,7 +138,7 @@ public class BeanGuardProcessor implements ApplicationContextAware {
                   // NB, a Spring validator may not be applied to a null object!
                   springerrors = new BindException(guarded, guardedpath);
                   guardv.validate(guarded, springerrors);
-                  SpringErrorConverter.appendErrors(errors, springerrors);
+                  SpringErrorConverter.appendErrors(guardedpath, errors, springerrors);
                 }
               }
             }
