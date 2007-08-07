@@ -147,9 +147,9 @@ public class RSFActionHandler implements ActionHandler, ErrorHandler {
   }
 
   public AnyViewParameters handle() {
-    final String actionmethod = PostDecoder.decodeAction(normalizedmap);
 
     try {
+      final String actionmethod = PostDecoder.decodeAction(normalizedmap);
       // Do this FIRST in case it discovers any scopelocks required
       presmanager.scopeRestore();
       // invoke all state-altering operations within the runnable wrapper.
