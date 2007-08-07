@@ -53,8 +53,8 @@ public class XMLLump {
   // component holding the ID will be either a div or a span.
   public static final String PAYLOAD_COMPONENT = "payload-component";
   // this occurs in the SAME CONTAINER scope as the target???
-  public static final String FORID_PREFIX = "message-for";// + SplitID.SEPARATOR;
-  public static final String FORID_SUFFIX = ":*";
+  public static final String FORID_PREFIX = "message-for:";// + SplitID.SEPARATOR;
+  public static final String FORID_SUFFIX = "*";
   public XMLLump() {}
   public XMLLump(int lumpindex, int nestingdepth) {
     this.lumpindex = lumpindex;

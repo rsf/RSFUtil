@@ -53,7 +53,7 @@ public class RSVCPreservationStrategy implements StatePreservationStrategy,
     if (tokenstate == null) {
       tokenstate = new RequestSubmittedValueCache();
     }
-    int entries = requestrsvc.entries.size();
+    int entries = requestrsvc.getEntries();
     boolean[] done = new boolean[entries];
     // the initial set of "dependent EL" is the set of bean names we were 
     // asked to persist.
@@ -78,7 +78,7 @@ public class RSVCPreservationStrategy implements StatePreservationStrategy,
       }
     }
     holder.putTokenState(token, tokenstate);
-    Logger.log.info("RSVCPres saved " + tokenstate.entries.size() + " entries to token " + token);
+    Logger.log.info("RSVCPres saved " + tokenstate.getEntries() + " entries to token " + token);
     return entries;
   }
 
@@ -92,9 +92,9 @@ public class RSVCPreservationStrategy implements StatePreservationStrategy,
           +" which has expired");
     }
     else {
-      Logger.log.info("RSVCPres recovered " + tokenstate.entries.size() + " entries from token " + token);
+      Logger.log.info("RSVCPres recovered " + tokenstate.getEntries() + " entries from token " + token);
       rsvcapplier.applyValues(tokenstate);
-      return tokenstate.entries.size(); 
+      return tokenstate.getEntries();
     }
   }
 

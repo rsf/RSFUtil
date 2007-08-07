@@ -51,6 +51,7 @@ public class ErrorStateManager {
   private RequestSubmittedValueCache requestrsvc;
   private ViewParameters viewparams;
   private TargettedMessageList messages;
+  private String outgoingToken;
 
   public void setTargettedMessageList(TargettedMessageList tml) {
     this.messages = tml;
@@ -100,8 +101,8 @@ public class ErrorStateManager {
   }
 
   public String allocateOutgoingToken() {
-    if (errorstate.tokenID == null) {
-      errorstate.tokenID = viewparams.errortoken == null ? allocateToken()
+    if (outgoingToken == null) {
+      outgoingToken = errorstate.tokenID = viewparams.errortoken == null ? allocateToken()
           : viewparams.errortoken;
     }
     return errorstate.tokenID;
@@ -111,6 +112,9 @@ public class ErrorStateManager {
   // their fields as specified in RSVC. Called at the END of a POST cycle.
   private void fixupMessages(TargettedMessageList tml,
       RequestSubmittedValueCache rsvc) {
+    if (outgoingToken == null) {
+      return; // Do not fix up if the errors were not from this cycle
+    }
     for (int i = 0; i < tml.size(); ++i) {
       TargettedMessage tm = tml.messageAt(i);
       if (!tm.targetid.equals(TargettedMessage.TARGET_NONE)) {
@@ -160,16 +164,15 @@ public class ErrorStateManager {
       // but then all errors will have global target.
       fixupMessages(messages, requestrsvc);
 
-      allocateOutgoingToken();
       errorstate.globaltargetid = globaltargetid;
       if (messages.isError()) {
         // do not store the rsvc if no error, submitted values were accepted
         // we are propagating messages only
-        errorstate.rsvc = requestrsvc;
+        errorstate.rsvc = requestrsvc.copy();
       }
       errorstate.messages = messages;
       if (errorstate.rsvc != null) {
-        Logger.log.info(errorstate.rsvc.entries.size()
+        Logger.log.info(errorstate.rsvc.getEntries()
           + " RSVC values stored under error token " + errorstate.tokenID);
       }
       errortsholder.putTokenState(errorstate.tokenID, errorstate);

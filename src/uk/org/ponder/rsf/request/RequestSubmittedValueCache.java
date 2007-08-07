@@ -37,8 +37,18 @@ public class RequestSubmittedValueCache implements Serializable {
   private HashMap pathmap = new HashMap();
   /** The list of entries, in order of application.
    */
-  public List entries = new ArrayList();
+  private List entries = new ArrayList();
+  public int getEntries() {
+    return entries.size();
+  }
   public SubmittedValueEntry entryAt(int i) {
     return (SubmittedValueEntry) entries.get(i);
+  }
+  public RequestSubmittedValueCache copy() {
+    RequestSubmittedValueCache togo = new RequestSubmittedValueCache();
+    for (int i = 0; i < entries.size(); ++ i) {
+      togo.addEntry(entryAt(i));
+    }
+    return togo;
   }
 }

@@ -224,7 +224,12 @@ public class RSFActionHandler implements ActionHandler, ErrorHandler {
       }
     }
     finally {
-      String errortoken = errorstatemanager.requestComplete();
+      String errortoken = null;
+      if (messages.size() != 0) {
+        // messages on a POST cycle are DEFINITELY from our cycle
+        errortoken = errorstatemanager.allocateOutgoingToken();
+      }
+      errorstatemanager.requestComplete();
 
       if (ariresult.resultingView instanceof ViewParameters) {
         ((ViewParameters) ariresult.resultingView).errortoken = errortoken;
