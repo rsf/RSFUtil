@@ -165,7 +165,7 @@
 
   <!-- Marked as lazy-init because of late use from errorStateManager -->
   <bean id="requestRSVC" factory-bean="postDecoder"
-    factory-method="getRequestRSVC" />
+    factory-method="getRequestRSVC" lazy-init="true"/>
 
   <bean id="versionCheckPolicy"
     class="uk.org.ponder.rsf.state.NullVersionCheckPolicy" />

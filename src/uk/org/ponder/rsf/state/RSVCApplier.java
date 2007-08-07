@@ -28,6 +28,7 @@ import uk.org.ponder.rsf.uitype.UIType;
 import uk.org.ponder.rsf.uitype.UITypes;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.RunnableInvoker;
+import uk.org.ponder.util.UniversalRuntimeException;
 
 public class RSVCApplier {
   private VersionCheckPolicy versioncheckpolicy;
@@ -99,7 +100,7 @@ public class RSVCApplier {
     // value.
     DARList toapply = new DARList();
 
-    for (int i = 0; i < rsvc.entries.size(); ++i) {
+    for (int i = 0; i < rsvc.getEntries(); ++i) {
       SubmittedValueEntry sve = rsvc.entryAt(i);
       boolean unchangedValue = false;
       // check against "old" values
@@ -142,8 +143,13 @@ public class RSVCApplier {
         reshapero = safebl.locateBean(sve.reshaperbinding);
       }
       else {
-        ShellInfo shellinfo = darapplier.fetchShells(sve.valuebinding, safebl);
-        reshapero = dataConverterRegistry.fetchConverter(shellinfo);
+        try {
+          ShellInfo shellinfo = darapplier.fetchShells(sve.valuebinding, safebl);
+          reshapero = dataConverterRegistry.fetchConverter(shellinfo);
+        }
+        catch (Exception e) {
+          throw UniversalRuntimeException.accumulate(e, "Error traversing binding path " + sve.valuebinding);
+        }
       }
       if (reshapero != null) {
         DARReshaper reshaper = ConverterConverter.toReshaper(reshapero);

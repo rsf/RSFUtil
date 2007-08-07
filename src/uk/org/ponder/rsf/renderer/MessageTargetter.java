@@ -85,39 +85,31 @@ public class MessageTargetter {
             + " queued for nonexistent component ID " + message.targetid);
       }
       else {
+        SplitID split = new SplitID(targetid);
+        boolean hassuffix = split.suffix != null;
         ComponentList rootpath = RSFUtil.getRootPath(target);
         for (int j = 0; j < rootpath.size() - 1; ++j) {
           if (globalrootpath != null && j == globalrootpath.size() - 2) {
             // if we are at the branch level of the "submitting control" (which
-            // as we recall
-            // will ***NOT*** be nested in the branch stack at this point,
-            // implement
-            // the first-level fallback check for messages targetted at it
-            // globally.
-            UIContainer globalbranch = (UIContainer) globalrootpath
-                .get(j);
-            UIComponent globalnext = globalrootpath.componentAt(j);
+            // as we recall will ***NOT*** be nested in the branch stack at 
+            // this point, implement the first-level fallback check for 
+            // messages targetted at it globally.
+            UIContainer globalbranch = (UIContainer) globalrootpath.get(j);
             XMLLump peer = (XMLLump) branchmap.get(globalbranch);
             best.setContainer(peer);
-            String search0 = XMLLump.FORID_PREFIX + SplitID.SEPARATOR
-                + globalnext.ID;
+            String search0 = XMLLump.FORID_PREFIX + targetid;
             best.checkTarget(search0);
           }
           UIContainer branch = (UIContainer) rootpath.get(j);
-          UIComponent next = rootpath.componentAt(j);
           XMLLump peer = (XMLLump) branchmap.get(branch);
           best.setContainer(peer);
-          String search0 = XMLLump.FORID_PREFIX;
-          best.checkTarget(search0);
-          SplitID split = new SplitID(next.ID);
-          boolean hassuffix = split.suffix != null;
-          String search1 = search0 + SplitID.SEPARATOR + split.prefix;
+          best.checkTarget(XMLLump.FORID_PREFIX);
+          String search1 = XMLLump.FORID_PREFIX + split.prefix;
           best.checkTarget(search1);
           if (hassuffix) {
-            String search2 = XMLLump.FORID_PREFIX + next.ID;
+            String search2 = XMLLump.FORID_PREFIX + targetid;
             best.checkTarget(search2);
           }
-
         }
       }
       if (best.bestfor != null) {

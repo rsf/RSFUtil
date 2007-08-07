@@ -45,7 +45,7 @@ public class SVESorter {
   public SVESorter(RequestSubmittedValueCache tosort) {
     this.rsvc = tosort;
 
-    for (int i = 0; i < rsvc.entries.size(); ++i) {
+    for (int i = 0; i < rsvc.getEntries(); ++i) {
       SubmittedValueEntry entry = rsvc.entryAt(i);
       elmap.recordWrite(entry.valuebinding, entry);
       if (entry.newvalue instanceof String) {
@@ -59,7 +59,7 @@ public class SVESorter {
 
   public List getSortedRSVC() {
 
-    for (int i = 0; i < rsvc.entries.size(); ++i) {
+    for (int i = 0; i < rsvc.getEntries(); ++i) {
       SubmittedValueEntry entry = rsvc.entryAt(i);
       if (!emitted.contains(entry)) {
         attemptEvaluate(entry);
