@@ -330,7 +330,7 @@
       </profile>
    </profiles>
 
-   <!-- require maven 2.0.7 to build RSF -->
+   <!-- require maven 2.0.5 to build RSF -->
    <prerequisites>
        <maven>2.0.5</maven>
    </prerequisites>
@@ -403,6 +403,7 @@
             <targetPath>/</targetPath>
             <includes>
                <include>**/*.xml</include>
+               <include>**/*.html</include>
             </includes>
             <filtering>false</filtering>
          </resource>
