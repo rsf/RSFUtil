@@ -15,6 +15,7 @@ import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.mapping.BeanInvalidationModel;
+import uk.org.ponder.mapping.ShellInfo;
 import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.springutil.errors.SpringErrorConverter;
@@ -102,9 +103,9 @@ public class BeanGuardProcessor implements ApplicationContextAware {
             }
           }
           if (guardEL != null) {
-            guard = darapplier.getBeanValue(guardEL, rbl);
+            guard = darapplier.getBeanValue(guardEL, rbl, null);
           }
-          Object guarded = darapplier.getBeanValue(match, rbl);
+          Object guarded = darapplier.getBeanValue(match, rbl, null);
           try {
             if (guard instanceof RunnableInvoker) {
               if (toinvoke == null) {
@@ -123,7 +124,8 @@ public class BeanGuardProcessor implements ApplicationContextAware {
               // now invoking postguards
               if (toinvoke == null) {
                 if (guardmethod != null) {
-                  darapplier.invokeBeanMethod(guardmethod, guard);
+                  ShellInfo shells = darapplier.fetchShells(guardmethod, guard);
+                  darapplier.invokeBeanMethod(shells, null);
                 }
                 else if (guardproperty != null) {
                   darapplier

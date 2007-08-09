@@ -90,7 +90,7 @@ public class BeanCopyPreservationStrategy implements TSHPreservationStrategy,
     HashMap beans = new HashMap();
     for (int i = 0; i < beannames.size(); ++i) {
       String beanname = beannames.stringAt(i);
-      Object bean = alterer.getBeanValue(beanname, source);
+      Object bean = alterer.getBeanValue(beanname, source, null);
       // This branch generally useful for entity bean locators
       if (bean instanceof IterableBeanLocator) {
         IterableBeanLocator iterablebean = (IterableBeanLocator) bean;

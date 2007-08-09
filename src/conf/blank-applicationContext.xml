@@ -45,17 +45,6 @@ with a client redirect rather than an internal reinterpretation -->
     class="uk.org.ponder.springutil.BlankMultipartResolver">
   </bean>
 
-  <bean id="autoComponentProducerManager"
-    class="uk.org.ponder.rsf.view.AutoComponentProducerManager"
-    init-method="init">
-    <property name="reflectiveCache" ref="reflectiveCache" />
-    <property name="RSACBeanLocator" ref="RSACBeanLocator" />
-  </bean>
-
-  <bean id="consumerInfoProxy" parent="RSACBridgePeaProxy">
-    <property name="targetBeanName" value="consumerInfo" />
-  </bean>
-
   <!-- **** VIEWPARAMETERS and URL HANDLING **** -->
 
   <bean id="viewParamsExemplar"
@@ -461,6 +450,7 @@ with a client redirect rather than an internal reinterpretation -->
 
   <bean id="flowTokenStateHolder-memory"
     class="uk.org.ponder.rsf.state.InMemoryTSH">
+    <property name="reflectiveCache" ref="reflectiveCache"/>
     <property name="expirySeconds">
       <!-- deliberately short time for testing - all flows will expire after 
         30 seconds of disuse -->
@@ -473,6 +463,7 @@ with a client redirect rather than an internal reinterpretation -->
     data in transit to client storage -->
   <bean id="bandgapStateHolder-memory"
     class="uk.org.ponder.rsf.state.InMemoryTSH">
+    <property name="reflectiveCache" ref="reflectiveCache"/>
     <property name="expirySeconds">
       <!-- deliberately short time for testing - all errors will expire after 
         10 seconds of disuse -->

@@ -117,17 +117,19 @@
     <property name="fallbackBeans" ref="fallbackBeans" />
   </bean>
 
-  <!-- The "censored" bean locator into which it is safe to resolve EL
-    expressions coming in over the request -->
-  <bean id="RSACSafeBeanLocator"
-    class="uk.org.ponder.beanutil.SecuredBeanLocator">
-    <property name="beanLocator" ref="ELTargetBeanLocator" />
-    <property name="permittedBeanRoots"
-      ref="totalRequestAddressibleBeans" />
+ <!-- The "ID-defunneller", required to correctly process submissions from entity
+    selection controls -->
+  <bean id="id-defunnel"
+    class="uk.org.ponder.rsf.state.entity.IDDefunnellingReshaper">
+    <property name="beanModelAlterer" ref="DARApplier" />
+    <property name="mappingContext" ref="ELMappingContext" />
+    <property name="requestBeanLocator" ref="ELTargetBeanLocator" />
+    <property name="entityNameInferrer" ref="entityNameInferrerManager" />
+    <property name="addressibleBeanModel" ref="requestAddressibleBeanModel"/>
   </bean>
 
   <bean id="ELEvaluator" class="uk.org.ponder.beanutil.ELEvaluator">
-    <property name="beanLocator" ref="RSACSafeBeanLocator" />
+    <property name="beanLocator" ref="ELTargetBeanLocator" />
     <property name="beanModelAlterer" ref="DARApplier" />
   </bean>
 
@@ -176,7 +178,6 @@
 
   <bean id="RSVCApplier" class="uk.org.ponder.rsf.state.RSVCApplier">
     <property name="versionCheckPolicy" ref="versionCheckPolicy" />
-    <property name="safeBeanLocator" ref="RSACSafeBeanLocator" />
     <property name="rootBeanLocator" ref="ELTargetBeanLocator" />
     <property name="beanModelAlterer" ref="DARApplier" />
     <property name="beanInvalidationModel" ref="beanInvalidationModel" />
@@ -185,6 +186,7 @@
       ref="ignoreFossilizedValues" />
     <property name="targettedMessageList" ref="targettedMessageList" />
     <property name="dataConverterRegistry" ref="dataConverterRegistry"/>
+    <property name="addressibleBeanModel" ref="requestAddressibleBeanModel"/>
   </bean>
   
   <bean id="beanInvalidationBracketer" factory-bean="RSVCApplier" factory-method="getBracketer"/>

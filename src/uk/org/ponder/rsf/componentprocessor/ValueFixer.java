@@ -165,7 +165,7 @@ public class ValueFixer implements ComponentProcessor {
       UIVerbatim toprocess = (UIVerbatim) toprocesso;
       if (toprocess.markup instanceof ELReference) {
         ELReference ref = (ELReference) toprocess.markup;
-        toprocess.markup = alterer.getBeanValue(ref.value, beanlocator);
+        toprocess.markup = alterer.getBeanValue(ref.value, beanlocator, null);
       }
     }
   }
@@ -192,7 +192,7 @@ public class ValueFixer implements ComponentProcessor {
 
     if (renderer instanceof ELReference) {
       renderer = alterer.getBeanValue(((ELReference) renderer).value,
-          beanlocator);
+          beanlocator, null);
       if (toprocess.darreshaper == null) {
         toprocess.darreshaper = (ELReference) toprocess.resolver;
       }
