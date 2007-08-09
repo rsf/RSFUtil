@@ -124,12 +124,12 @@ public class TemplateExpander {
     Object lvalue = switchh.lvalue;
     if (lvalue instanceof ELReference) {
       lvalue = darapplier.getBeanValue(((ELReference) lvalue).value,
-          rbl);
+          rbl, null);
     }
     Object rvalue = switchh.rvalue;
     if (rvalue instanceof ELReference) {
       rvalue = darapplier.getBeanValue(((ELReference) rvalue).value,
-          rbl);
+          rbl, null);
     }
     UIComponent toadd = lvalue.equals(rvalue) ? switchh.truecomponent
         : switchh.falsecomponent;
@@ -247,7 +247,7 @@ public class TemplateExpander {
     // TODO: work out how to remap recursively - currently old remapstate is
     // thrown away.
     String listbinding = replicator.valuebinding.value;
-    Object collection = darapplier.getBeanValue(listbinding, rbl);
+    Object collection = darapplier.getBeanValue(listbinding, rbl, null);
     int index = 0;
     // for each member of the object "list", instantiate a BranchContainer with
     // corresponding localID, and then recurse further.

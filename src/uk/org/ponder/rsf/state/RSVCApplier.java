@@ -5,9 +5,8 @@ package uk.org.ponder.rsf.state;
 
 import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.beanutil.BeanModelAlterer;
+import uk.org.ponder.beanutil.BeanPredicateModel;
 import uk.org.ponder.beanutil.ELReference;
-import uk.org.ponder.beanutil.PathUtil;
-import uk.org.ponder.beanutil.WriteableBeanLocator;
 import uk.org.ponder.mapping.BeanInvalidationBracketer;
 import uk.org.ponder.mapping.BeanInvalidationModel;
 import uk.org.ponder.mapping.ConverterConverter;
@@ -33,13 +32,17 @@ import uk.org.ponder.util.UniversalRuntimeException;
 public class RSVCApplier {
   private VersionCheckPolicy versioncheckpolicy;
   private BeanModelAlterer darapplier;
-  private WriteableBeanLocator safebl;
   private BeanInvalidationModel bim;
   private BeanGuardProcessor beanGuardProcessor;
   private boolean ignoreFossilizedValues = true;
   private TargettedMessageList targettedMessageList;
   private BeanLocator rbl;
   private DataConverterRegistry dataConverterRegistry;
+  private BeanPredicateModel addressibleBeanModel;
+
+  public void setAddressibleBeanModel(BeanPredicateModel addressibleBeanModel) {
+    this.addressibleBeanModel = addressibleBeanModel;
+  }
 
   public void setIgnoreFossilizedValues(boolean ignoreFossilizedValues) {
     this.ignoreFossilizedValues = ignoreFossilizedValues;
@@ -65,12 +68,6 @@ public class RSVCApplier {
     this.targettedMessageList = targettedMessageList;
   }
 
-  // this will be used to locate request-scope beans.
-
-  public void setSafeBeanLocator(WriteableBeanLocator safebl) {
-    this.safebl = safebl;
-  }
-
   public void setRootBeanLocator(BeanLocator rbl) {
     this.rbl = rbl;
   }
@@ -79,11 +76,12 @@ public class RSVCApplier {
     this.dataConverterRegistry = dataConverterRegistry;
   }
   
-  public void applyAlterations(WriteableBeanLocator wbl, DARList toapply) {
+  public void applyAlterations(DARList toapply) {
     try {
       BeanInvalidationBracketer bib = getBracketer();
-      darapplier.applyAlterations(safebl, toapply, 
-          new DAREnvironment(targettedMessageList, bib, dataConverterRegistry));
+      darapplier.applyAlterations(rbl, toapply, 
+          new DAREnvironment(targettedMessageList, bib, addressibleBeanModel, 
+              dataConverterRegistry));
     }
     finally {
       beanGuardProcessor.processPostGuards(bim, targettedMessageList, rbl);
@@ -140,11 +138,11 @@ public class RSVCApplier {
       }
       Object reshapero = null;
       if (sve.reshaperbinding != null) {
-        reshapero = safebl.locateBean(sve.reshaperbinding);
+        reshapero = darapplier.getBeanValue(sve.reshaperbinding, rbl, addressibleBeanModel);
       }
       else {
         try {
-          ShellInfo shellinfo = darapplier.fetchShells(sve.valuebinding, safebl);
+          ShellInfo shellinfo = darapplier.fetchShells(sve.valuebinding, rbl);
           reshapero = dataConverterRegistry.fetchConverter(shellinfo);
         }
         catch (Exception e) {
@@ -166,7 +164,7 @@ public class RSVCApplier {
       toapply.add(dar);
 
     }
-    applyAlterations(safebl, toapply);
+    applyAlterations(toapply);
   }
 
   public BeanInvalidationBracketer getBracketer() {
@@ -183,16 +181,26 @@ public class RSVCApplier {
   }
 
   public Object invokeAction(String actionbinding, String knownvalue) {
-    String totail = PathUtil.getToTailPath(actionbinding);
-    String actionname = PathUtil.getTailPath(actionbinding);
-    Object penultimatebean = darapplier.getBeanValue(totail, safebl);
+    if (!addressibleBeanModel.isMatch(actionbinding)) {
+      throw UniversalRuntimeException.accumulate(new SecurityException(),
+          "Action binding " + actionbinding 
+          + " is not permissible - make sure to mark this path as request addressible - http://www2.caret.cam.ac.uk/rsfwiki/Wiki.jsp?page=RequestWriteableBean");
+    }
+    ShellInfo shells = darapplier.fetchShells(actionbinding, rbl);
+    int lastshell = shells.shells.length;
+    
+    Object penultimatebean = shells.shells[lastshell - 1];
+    String actionname = shells.segments[lastshell - 2];
+    // The only ActionTarget in the world is FlowActionProxyBean, we are not
+    // planning to keep it up
     if (penultimatebean instanceof ActionTarget) {
       Object returnvalue = ((ActionTarget) penultimatebean).invokeAction(
           actionname, knownvalue);
       return returnvalue;
     }
     else {
-      return darapplier.invokeBeanMethod(actionbinding, safebl);
+      return darapplier.invokeBeanMethod(shells, addressibleBeanModel);
     }
   }
+  
 }

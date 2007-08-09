@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Map;
 
 import uk.org.ponder.reflect.ReflectiveCache;
+import uk.org.ponder.rsac.GlobalBeanAccessor;
 import uk.org.ponder.util.Logger;
 
 /**
@@ -26,9 +27,14 @@ public class InMemoryTSH implements TokenStateHolder {
   // a map of String error token IDs to ErrorStateEntries.
   // the idea is that this be a timeout cache which is cleared out every
   // hour or so... all this functionality to be moved to another class.
-  private Map tokencache = ReflectiveCache.instance.getConcurrentMap(16);
+  private Map tokencache;
 
   private int expiryseconds;
+
+  public void setReflectiveCache(ReflectiveCache reflectiveCache) {
+    //this.reflectiveCache = reflectiveCache;
+    reflectiveCache.getConcurrentMap(16);
+  }
 
   TokenState getTokenStateRaw(String tokenID) {
     return (TokenState) tokencache.get(tokenID);

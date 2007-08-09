@@ -5,6 +5,7 @@ package uk.org.ponder.rsf.state.entity;
 
 import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.beanutil.BeanModelAlterer;
+import uk.org.ponder.beanutil.BeanPredicateModel;
 import uk.org.ponder.beanutil.BeanUtil;
 import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.mapping.DARReshaper;
@@ -31,9 +32,14 @@ public class IDDefunnellingReshaper implements DARReshaper {
   private BeanModelAlterer bma;
   private EntityNameInferrer eni;
   private SAXalizerMappingContext mappingcontext;
+  private BeanPredicateModel addressibleBeanModel;
 
   public void setBeanModelAlterer(BeanModelAlterer bma) {
     this.bma = bma;
+  }
+  
+  public void setAddressibleBeanModel(BeanPredicateModel addressibleBeanModel) {
+    this.addressibleBeanModel = addressibleBeanModel;
   }
   
   public void setRequestBeanLocator(BeanLocator rbl) {
@@ -55,7 +61,7 @@ public class IDDefunnellingReshaper implements DARReshaper {
       // be a concrete object!!
       String cutback2 = PathUtil.getToTailPath(cutback);
       String membername = PathUtil.getTailPath(cutback);
-      Object lastentity = bma.getBeanValue(cutback2, rbl);
+      Object lastentity = bma.getBeanValue(cutback2, rbl, addressibleBeanModel);
       MethodAnalyser ma = mappingcontext.getAnalyser(lastentity.getClass());
       AccessMethod sam = ma.getAccessMethod(membername);
       String entityname = eni.getEntityName(sam.getDeclaredType());
@@ -63,7 +69,7 @@ public class IDDefunnellingReshaper implements DARReshaper {
       if (toshape.data != null) {
       //    data has already been conformed in type to "oldvalue" and so is at least scalar
         String newentitypath = PathUtil.buildPath(entityname, (String)toshape.data);
-        newentity = bma.getBeanValue(newentitypath, rbl);
+        newentity = bma.getBeanValue(newentitypath, rbl, addressibleBeanModel);
       }
       DataAlterationRequest togo = new DataAlterationRequest(cutback, newentity);
       return togo;

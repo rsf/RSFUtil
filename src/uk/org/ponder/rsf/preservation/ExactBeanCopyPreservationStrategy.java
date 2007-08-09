@@ -53,7 +53,7 @@ public class ExactBeanCopyPreservationStrategy implements
       String beanname = beannames.stringAt(i);
       String targetkey = haskeys ? beanname
           : targetkeys.stringAt(i);
-      Object bean = alterer.getBeanValue(beanname, source);
+      Object bean = alterer.getBeanValue(beanname, source, null);
       if (bean != null) {
         holder.putTokenState(targetkey, bean);
         ++cbeans;

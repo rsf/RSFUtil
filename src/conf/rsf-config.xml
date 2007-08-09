@@ -224,6 +224,14 @@
     factory-method="getFallbackBeans" lazy-init="true">
   </bean>
 
+  <bean id="entityNameInferrerManager" class="uk.org.ponder.rsf.state.entity.EntityNameInferrerManager">
+  </bean>
+  
+  <bean class="uk.org.ponder.springutil.ByClassTLAB">
+    <property name="targetClass" value="uk.org.ponder.rsf.state.entity.EntityNameInferrer"/>
+    <property name="targetPath" value="entityNameInferrer.inferrers"/>
+  </bean>
+  
   <bean id="IDGenerator"
     class="uk.org.ponder.hashutil.EighteenIDGenerator" />
 
@@ -297,6 +305,10 @@
 
   <bean id="totalRequestAddressibleBeans"
     class="uk.org.ponder.springutil.StringListAggregatingFactory" />
+
+  <bean id="requestAddressibleBeanModel" class="uk.org.ponder.beanutil.ListBeanPredicateModel">
+    <property name="paths" ref="totalRequestAddressibleBeans"/>
+  </bean>
 
   <bean id="totalCopyPreservingBeans"
     class="uk.org.ponder.springutil.StringListAggregatingFactory" />
@@ -402,6 +414,17 @@
 
   <bean id="ELEvaluatorProxy" parent="RSACBridgeProxy">
     <property name="targetBeanName" value="ELEvaluator" />
+  </bean>
+  
+  <bean id="consumerInfoProxy" parent="RSACBridgePeaProxy">
+    <property name="targetBeanName" value="consumerInfo" />
+  </bean>
+
+  <bean id="autoComponentProducerManager"
+    class="uk.org.ponder.rsf.view.AutoComponentProducerManager"
+    init-method="init">
+    <property name="reflectiveCache" ref="reflectiveCache" />
+    <property name="RSACBeanLocator" ref="RSACBeanLocator" />
   </bean>
 
   <bean id="viewGenerator"
