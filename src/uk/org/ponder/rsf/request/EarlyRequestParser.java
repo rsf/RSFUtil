@@ -20,7 +20,7 @@ public interface EarlyRequestParser {
   public static final String RENDER_REQUEST = "render";
   /** Identifies this request as part of an "action" cycle - for a simple
    * HTTP servlet, corresponds to a POST, a JSR168 "processAction" request 
-   * or a WRSP performBlockingInteration request.
+   * or a WSRP performBlockingInteration request.
    */
   public static final String ACTION_REQUEST = "action";
 
