@@ -74,6 +74,7 @@ public class FlowStateManager {
     else { // it is a flow end.
       if (viewparams.flowtoken != null) {
         newview.endflow = "1";
+        newview.flowtoken = viewparams.flowtoken;
         presmanager.flowEnd(viewparams.flowtoken);
       }
     }
