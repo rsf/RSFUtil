@@ -330,9 +330,9 @@
       </profile>
    </profiles>
 
-   <!-- require maven 2.0.5 to build RSF -->
+   <!-- require maven 2.0.4 to build RSF -->
    <prerequisites>
-       <maven>2.0.5</maven>
+       <maven>2.0.4</maven>
    </prerequisites>
 
    <!-- remove this? -->
