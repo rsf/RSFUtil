@@ -170,8 +170,11 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       }
       // if there is a payload, dump the postamble.
       if (payload != null) {
-        RenderUtil.dumpTillLump(lumps, close.lumpindex + 1,
+        // the default case is initialised to tag close
+        if (rendercontext.nextpos == nextpos) {
+          RenderUtil.dumpTillLump(lumps, close.lumpindex + 1,
             outerclose.lumpindex + 1, rsc.pos);
+        }
       }
       nextpos = rendercontext.nextpos;
     }
