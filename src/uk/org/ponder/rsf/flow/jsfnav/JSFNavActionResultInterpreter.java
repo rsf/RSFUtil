@@ -48,7 +48,7 @@ public class JSFNavActionResultInterpreter implements ActionResultInterpreter {
         // more with JSF semantics
         if (navcase.fromOutcome == null || navcase.fromOutcome.equals(result)) {
           if (navcase.resultingView != null) {
-            togo.resultingView = navcase.resultingView;
+            togo.resultingView = navcase.resultingView.copy();
           }
           togo.propagateBeans = navcase.flowCondition;
         }
@@ -60,12 +60,7 @@ public class JSFNavActionResultInterpreter implements ActionResultInterpreter {
     ARIResult togo = new ARIResult();
     togo.resultingView = incoming;
     togo.propagateBeans = ARIResult.FLOW_END;
-    
-    if (messages.isError()) {
-      // Apply this default EARLY so that a following ARI2 can see our decision
-      return togo;
-    }
-    
+
     boolean matchingrule = false;
     
     if (map.navigationRules != null) {
@@ -82,6 +77,13 @@ public class JSFNavActionResultInterpreter implements ActionResultInterpreter {
       matchingrule = true;
     }
     processCaseList(rulesfromviews, togo, result);
+    if (messages.isError()) {
+      // Apply this default EARLY so that a following ARI2 can see our decision
+      // However, we *do* need to pick up any flow condition from the desired
+      // NavigationCase. In fact we probably need a separate "onError" form of
+      // NavigationCase "fromOutcome".
+      togo.resultingView = incoming.copyBase();
+    }
     return matchingrule? togo : null;
   }
 

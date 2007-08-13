@@ -145,7 +145,7 @@ with a client redirect rather than an internal reinterpretation -->
   </bean>
 
   <bean name="actionResultInterpreter"
-    class="uk.org.ponder.rsf.flow.DelegatingARI">
+    class="uk.org.ponder.rsf.flow.ARIManager">
     <property name="ARIList">
       <list>
         <ref bean="JSFNavigationARI" />

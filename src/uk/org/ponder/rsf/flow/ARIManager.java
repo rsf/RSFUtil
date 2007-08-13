@@ -14,7 +14,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  *
  */
 
-public class DelegatingARI implements ActionResultInterpreter {
+public class ARIManager implements ActionResultInterpreter {
 
   private List arilist;
 
