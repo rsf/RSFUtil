@@ -227,9 +227,9 @@
   <bean id="entityNameInferrerManager" class="uk.org.ponder.rsf.state.entity.EntityNameInferrerManager">
   </bean>
   
-  <bean class="uk.org.ponder.springutil.ByClassTLAB">
-    <property name="targetClass" value="uk.org.ponder.rsf.state.entity.EntityNameInferrer"/>
-    <property name="targetPath" value="entityNameInferrer.inferrers"/>
+  <bean id="entityNameInferrerParent" class="uk.org.ponder.springutil.StaticTLAB"
+    abstract="true">
+    <property name="targetPath" value="entityNameInferrerManager.inferrers"/>
   </bean>
   
   <bean id="IDGenerator"
