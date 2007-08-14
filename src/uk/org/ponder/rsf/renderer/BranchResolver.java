@@ -159,23 +159,13 @@ public class BranchResolver {
   // match" produced by looking for a "default" member in the template with the
   // name "prefix:" for the issued component prefix.
   private int evalDeficit(UIContainer container, XMLLump lump) {
-    if (lump.downmap == null) {
-      throw UniversalRuntimeException
-          .accumulate(
-              new IllegalArgumentException(),
-              "Error in template file: "
-                  + lump.toDebugString()
-                  + " with id "
-                  + container.getFullID()
-                  + " is the target of branch resolution but does not have branch ID");
-    }
     int deficit = 0;
     UIComponent[] children = container.flatChildren();
     doneprefix.clear();
     for (int i = 0; i < children.length; ++i) {
       UIComponent child = children[i];
       String prefix = SplitID.getPrefixColon(child.ID);
-      boolean matches = lump.downmap.hasID(child.ID);
+      boolean matches = lump.downmap != null && lump.downmap.hasID(child.ID);
       if (matches) {
         if (prefix != null)
           doneprefix.put(prefix, Boolean.TRUE);
@@ -183,7 +173,7 @@ public class BranchResolver {
       }
       int penalty = DEFICIT_PRIORITY;
       if (prefix != null) {
-        boolean matchesdef = lump.downmap.hasID(prefix);
+        boolean matchesdef = lump.downmap != null && lump.downmap.hasID(prefix);
         if (matchesdef) {
           doneprefix.put(prefix, Boolean.TRUE);
           continue;
@@ -194,7 +184,7 @@ public class BranchResolver {
       }
       deficit += penalty;
     }
-    deficit += lump.downmap.numConcretes() - children.length;
+    deficit += (lump.downmap == null? 0 : lump.downmap.numConcretes()) - children.length;
     // think about also penalising "unficit" - children appearing in template
     // that are NOT ISSUED by producer. This is a balance between resolution
     // cost here (extra hashmap) and cost of searching for each template child
