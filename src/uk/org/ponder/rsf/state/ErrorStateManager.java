@@ -157,7 +157,9 @@ public class ErrorStateManager {
    *         there is no error.
    */
   public String requestComplete() {
-    if (messages.size() > 0) {
+    // If tokenID is null, it is probably an odd condition where we are on a
+    // GET cycle and the errors are not for this view (perhaps SpringMVC)
+    if (messages.size() > 0 && errorstate.tokenID != null) {
      
       // the errors arose from this cycle, and hence must be referred to
       // by SVEs from this cycle. If it is a GET cycle, rsvc will be empty,
