@@ -190,7 +190,7 @@ public class RSVCApplier {
     int lastshell = shells.shells.length;
     
     Object penultimatebean = shells.shells[lastshell - 1];
-    String actionname = shells.segments[lastshell - 2];
+    String actionname = shells.segments[lastshell - 1];
     // The only ActionTarget in the world is FlowActionProxyBean, we are not
     // planning to keep it up
     if (penultimatebean instanceof ActionTarget) {
