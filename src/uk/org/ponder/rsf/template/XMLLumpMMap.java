@@ -6,7 +6,6 @@ package uk.org.ponder.rsf.template;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import uk.org.ponder.rsf.util.SplitID;
 import uk.org.ponder.stringutil.CharWrap;
 
 public class XMLLumpMMap {
@@ -34,7 +33,7 @@ public class XMLLumpMMap {
 
   private boolean isBranchKey(String key) {
     Object togo = idtolumps.get(key);
-    return togo instanceof XMLLumpList && !isSpecial(key) && SplitID.isSplit(key);
+    return togo instanceof XMLLumpList && !isSpecial(key);
   }
   
   public XMLLumpList headsForIDEnsure(String ID) {
