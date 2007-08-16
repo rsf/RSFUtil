@@ -70,7 +70,7 @@ public class BeanGuardProcessor implements ApplicationContextAware {
     toappend.add(invoker);
     return toappend;
   }
-  
+
   private void processGuards(BeanInvalidationModel bim,
       TargettedMessageList errors, BeanLocator rbl, Runnable toinvoke) {
     BindException springerrors = null;
@@ -123,15 +123,7 @@ public class BeanGuardProcessor implements ApplicationContextAware {
             else {
               // now invoking postguards
               if (toinvoke == null) {
-                if (guardmethod != null) {
-                  ShellInfo shells = darapplier.fetchShells(guardmethod, guard);
-                  darapplier.invokeBeanMethod(shells, null);
-                }
-                else if (guardproperty != null) {
-                  darapplier
-                      .setBeanValue(guardproperty, guard, guarded, errors, false);
-                }
-                else if (guard instanceof Validator) {
+                if (guard instanceof Validator) {
                   if (guarded == null) {
                     throw new IllegalArgumentException(
                         "Error: Spring Validator may not be used to validate a null object");
@@ -140,7 +132,25 @@ public class BeanGuardProcessor implements ApplicationContextAware {
                   // NB, a Spring validator may not be applied to a null object!
                   springerrors = new BindException(guarded, guardedpath);
                   guardv.validate(guarded, springerrors);
-                  SpringErrorConverter.appendErrors(guardedpath, errors, springerrors);
+                  SpringErrorConverter.appendErrors(guardedpath, errors,
+                      springerrors);
+                }
+                else {
+                  errors.pushNestedPath(guardedpath + TargettedMessageList.BACKUP_PATH);
+                  try {
+                    if (guardmethod != null) {
+                      ShellInfo shells = darapplier.fetchShells(guardmethod,
+                          guard);
+                      darapplier.invokeBeanMethod(shells, null);
+                    }
+                    else if (guardproperty != null) {
+                      darapplier.setBeanValue(guardproperty, guard, guarded,
+                          errors, false);
+                    }
+                  }
+                  finally {
+                    errors.popNestedPath();
+                  }
                 }
               }
             }
