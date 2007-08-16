@@ -5,7 +5,7 @@ package uk.org.ponder.rsf.state.guards.support;
 
 
 public class RequiredValueGuard {
-  private String code = "Value is required";
+  private String code = "value.required";
   
   public void setCode(String code) {
     this.code = code;
