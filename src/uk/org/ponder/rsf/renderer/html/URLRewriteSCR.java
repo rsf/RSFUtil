@@ -11,7 +11,6 @@ import uk.org.ponder.rsf.renderer.RenderUtil;
 import uk.org.ponder.rsf.renderer.scr.BasicSCR;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.view.BasedViewTemplate;
-import uk.org.ponder.rsf.viewstate.BaseURLProvider;
 import uk.org.ponder.rsf.viewstate.ContextURLProvider;
 import uk.org.ponder.rsf.viewstate.URLRewriter;
 import uk.org.ponder.streamutil.write.PrintOutputStream;

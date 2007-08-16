@@ -162,9 +162,9 @@
     <property name="TMLBeanName" value="targettedMessageList" />
   </bean>
 
-  <bean id="RSACErrorBridgeBracketer"
-    parent="alterationWrapperParent">
-    <property name="valueRef" value="ErrorBBTarget" />
+  <bean id="RSACErrorBridgeBracketer" class="uk.org.ponder.rsac.BeanFetchBracketer">
+    <property name="targetBeanName" value="rootHandlerBean"/>
+    <property name="wrappingBean" value="ErrorBBTarget"/>
   </bean>
 
   <bean id="RSACLazarusListProxy" parent="RSACBridgeProxy">
