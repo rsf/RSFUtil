@@ -33,7 +33,7 @@ public class ContentTypeInfoRegistry {
   public static final ContentTypeInfo HTML_FRAGMENT_CONTENTINFO = 
     new ContentTypeInfo(HTML_FRAGMENT, "html",  "",
         "text/html; charset=UTF-8",
-        ContentTypeInfo.ID_FULL, false
+        ContentTypeInfo.ID_FULL, true
         );
   
   public static final ContentTypeInfo AJAX_CONTENTINFO = 
@@ -49,7 +49,7 @@ public class ContentTypeInfoRegistry {
   public static final ContentTypeInfo RSS_0_91_CONTENTINFO = 
     new ContentTypeInfo(RSS_0_91, "rss",  
         "<!DOCTYPE rss PUBLIC \"-//Netscape Communications//DTD RSS 0.91//EN\"" +
- "\"http://my.netscape.com/publish/formats/rss-0.91.dtd\">",
+        "\"http://my.netscape.com/publish/formats/rss-0.91.dtd\">",
         "application/rss+xml; charset=UTF-8"
         );
   
