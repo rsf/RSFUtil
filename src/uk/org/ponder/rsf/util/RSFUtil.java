@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.rsf.util;
 
+import uk.org.ponder.rsac.GlobalBeanAccessor;
 import uk.org.ponder.rsf.components.ComponentList;
 import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.ParameterList;
@@ -14,6 +15,8 @@ import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.view.ViewRoot;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewStateHandler;
 import uk.org.ponder.util.AssertionException;
 
 /**
@@ -37,6 +40,16 @@ public class RSFUtil {
     return null;
   }
 
+  /** Returns a "fragment" (or AJAX) URL which is globally routable to the
+   * view with the supplied ViewParameters.
+   */
+  // Note that a dedicated getFragmentURL method is not yet implemented in
+  // VSH, this will go in step with RSF 0.8 and support for JSR-286
+  public static String getFragmentURL(ViewParameters viewparams) {
+    ViewStateHandler vsh = (ViewStateHandler) GlobalBeanAccessor.getRequestBean("viewStateHandler");
+    return vsh.getFullURL(viewparams);
+  }
+  
   /**
    * This method returns an enclosing ViewRoot instance, where one is present in
    * the tree (it should be, in every well-formed tree)
