@@ -139,9 +139,7 @@ public class BeanGuardProcessor implements ApplicationContextAware {
                   errors.pushNestedPath(guardedpath + TargettedMessageList.BACKUP_PATH);
                   try {
                     if (guardmethod != null) {
-                      ShellInfo shells = darapplier.fetchShells(guardmethod,
-                          guard);
-                      darapplier.invokeBeanMethod(shells, null);
+                      darapplier.invokeBeanMethod(guardmethod, guard);
                     }
                     else if (guardproperty != null) {
                       darapplier.setBeanValue(guardproperty, guard, guarded,

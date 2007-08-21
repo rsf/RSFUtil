@@ -56,12 +56,13 @@
     factory-method="getRequestType" />
 
   <bean id="requestEnvironmentType" factory-bean="earlyRequestParser"
-    factory-method="getEnvironmentType"/>
+    factory-method="getEnvironmentType" />
 
   <bean id="multipartMap" factory-bean="earlyRequestParser"
     factory-method="getMultipartMap" />
 
-  <bean id="defaultViewParameters" factory-bean="defaultViewInferrerManager"
+  <bean id="defaultViewParameters"
+    factory-bean="defaultViewInferrerManager"
     factory-method="getViewParameters" />
 
   <bean id="handlerResolver"
@@ -117,7 +118,7 @@
     <property name="fallbackBeans" ref="fallbackBeans" />
   </bean>
 
- <!-- The "ID-defunneller", required to correctly process submissions from entity
+  <!-- The "ID-defunneller", required to correctly process submissions from entity
     selection controls -->
   <bean id="id-defunnel"
     class="uk.org.ponder.rsf.state.entity.IDDefunnellingReshaper">
@@ -125,7 +126,16 @@
     <property name="mappingContext" ref="ELMappingContext" />
     <property name="requestBeanLocator" ref="ELTargetBeanLocator" />
     <property name="entityNameInferrer" ref="entityNameInferrerManager" />
-    <property name="addressibleBeanModel" ref="requestAddressibleBeanModel"/>
+    <property name="addressibleBeanModel"
+      ref="requestAddressibleBeanModel" />
+  </bean>
+
+  <bean id="entityBeanLocatorParent"
+    class="uk.org.ponder.beanutil.entity.EntityBeanLocator"
+    abstract="true" init-method="init">
+    <property name="beanLocator" ref="ELTargetBeanLocator" />
+    <property name="beanModelAlterer" ref="DARApplier" />
+    <property name="reflectiveCache" ref="reflectiveCache" />
   </bean>
 
   <bean id="ELEvaluator" class="uk.org.ponder.beanutil.ELEvaluator">
@@ -147,9 +157,9 @@
       </list>
     </property>
   </bean>
-  
-  <bean id="viewParameters" factory-bean="viewParamsInterceptorManager" 
-    factory-method="getAdjustedViewParameters">  
+
+  <bean id="viewParameters" factory-bean="viewParamsInterceptorManager"
+    factory-method="getAdjustedViewParameters">
   </bean>
 
   <bean id="postDecoder" class="uk.org.ponder.rsf.processor.PostDecoder"
@@ -167,7 +177,7 @@
 
   <!-- Marked as lazy-init because of late use from errorStateManager -->
   <bean id="requestRSVC" factory-bean="postDecoder"
-    factory-method="getRequestRSVC" lazy-init="true"/>
+    factory-method="getRequestRSVC" lazy-init="true" />
 
   <bean id="versionCheckPolicy"
     class="uk.org.ponder.rsf.state.NullVersionCheckPolicy" />
@@ -185,14 +195,17 @@
     <property name="ignoreFossilizedValues"
       ref="ignoreFossilizedValues" />
     <property name="targettedMessageList" ref="targettedMessageList" />
-    <property name="dataConverterRegistry" ref="dataConverterRegistry"/>
-    <property name="addressibleBeanModel" ref="requestAddressibleBeanModel"/>
+    <property name="dataConverterRegistry" ref="dataConverterRegistry" />
+    <property name="addressibleBeanModel"
+      ref="requestAddressibleBeanModel" />
   </bean>
-  
-  <bean id="beanInvalidationBracketer" factory-bean="RSVCApplier" factory-method="getBracketer"/>
+
+  <bean id="beanInvalidationBracketer" factory-bean="RSVCApplier"
+    factory-method="getBracketer" />
 
   <!-- A list of the targetted messages accumulated during this request cycle. -->
-  <bean id="targettedMessageList" class="uk.org.ponder.messageutil.TargettedMessageList"/>
+  <bean id="targettedMessageList"
+    class="uk.org.ponder.messageutil.TargettedMessageList" />
 
   <!--  requires input of requestRSVC in order to fix up errors at the
     end of a cycle -->
@@ -202,7 +215,7 @@
     <property name="TSHolder" ref="bandgapStateHolder" />
     <property name="viewParameters" ref="viewParameters" />
     <property name="requestRSVC" ref="requestRSVC" />
-    <property name="targettedMessageList" ref="targettedMessageList"/>
+    <property name="targettedMessageList" ref="targettedMessageList" />
   </bean>
 
   <bean id="statePreservationManager"
@@ -287,14 +300,15 @@
       ref="actionErrorStrategyManager" />
     <property name="flowStateManager" ref="flowStateManager" />
     <property name="targettedMessageList" ref="targettedMessageList" />
-    <property name="actionResultInterceptor" ref="actionResultInterceptorProcessor"/>
+    <property name="actionResultInterceptor"
+      ref="actionResultInterceptorProcessor" />
   </bean>
 
-<!-- Always use this bean through the pea proxy, even in request scope - it
-   will not be available until the request is almost concluded. -->
+  <!-- Always use this bean through the pea proxy, even in request scope - it
+    will not be available until the request is almost concluded. -->
   <bean id="ARIResultConcrete" factory-bean="actionHandler"
-    factory-method="getARIResult" /> 
-    
+    factory-method="getARIResult" />
+
   <!-- A useful "EL-target" bean to allow scopes to be destroyed via EL -->
   <bean id="destroyScope"
     class="uk.org.ponder.rsf.state.scope.ScopedBeanDestroyer" />
@@ -336,7 +350,8 @@
   <!--
     <bean id="view" factory-bean="viewgenerator" factory-method="getView"/>
   -->
-  <bean id="formModel" class="uk.org.ponder.rsf.componentprocessor.BasicFormModel"/>
+  <bean id="formModel"
+    class="uk.org.ponder.rsf.componentprocessor.BasicFormModel" />
   <!-- Begin request scope "fixer" beans - manipulate component tree in between
     generation and rendering -->
 
@@ -345,8 +360,9 @@
   <bean id="containmentFormFixer"
     class="uk.org.ponder.rsf.componentprocessor.ContainmentFormChildFixer">
     <property name="mappingContext" ref="ELMappingContext" />
-    <property name="viewParamsMappingInfoManager" ref="viewParamsMappingInfoManager"/>
-    <property name="formModel" ref="formModel"/>
+    <property name="viewParamsMappingInfoManager"
+      ref="viewParamsMappingInfoManager" />
+    <property name="formModel" ref="formModel" />
   </bean>
 
   <bean id="formFixer"
@@ -365,15 +381,16 @@
     <property name="fossilizedConverter" ref="fossilizedConverter" />
     <property name="errorStateManager" ref="errorStateManager" />
     <property name="renderFossilizedForms" ref="renderFossilizedForms" />
-    <property name="formModel" ref="formModel"/>
-    <property name="dataConverterRegistry" ref="dataConverterRegistry"/>
+    <property name="formModel" ref="formModel" />
+    <property name="dataConverterRegistry" ref="dataConverterRegistry" />
   </bean>
-  
+
   <!-- End "fixer" beans" -->
 
-  <bean id="componentProcessorContributorParent" class="uk.org.ponder.springutil.StaticTLAB" 
-    abstract="true">
-    <property name="targetPath" value="viewProcessor.clientComponentProcessors"/>
+  <bean id="componentProcessorContributorParent"
+    class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
+    <property name="targetPath"
+      value="viewProcessor.clientComponentProcessors" />
   </bean>
 
   <bean id="viewProcessor"
@@ -396,7 +413,8 @@
     class="uk.org.ponder.rsf.processor.RenderHandlerBracketer"
     lazy-init="true">
     <property name="errorStateManager" ref="errorStateManager" />
-    <property name="viewExceptionStrategy" ref="viewExceptionStrategyManager" />
+    <property name="viewExceptionStrategy"
+      ref="viewExceptionStrategyManager" />
     <property name="viewParameters" ref="viewParameters" />
     <property name="renderHandler" ref="renderHandler" />
     <property name="redirectOnLevel1Error" ref="redirectOnLevel1Error" />
@@ -416,7 +434,7 @@
     <property name="viewProcessor" ref="viewProcessor" />
     <property name="viewRender" ref="viewRender" />
     <property name="targettedMessageList" ref="targettedMessageList" />
-    <property name="enableDebugRendering" ref="enableDebugRendering"/>
+    <property name="enableDebugRendering" ref="enableDebugRendering" />
   </bean>
 
   <!-- Beans for UVB (the Universal View Bus) -->

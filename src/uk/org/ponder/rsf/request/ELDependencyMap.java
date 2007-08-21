@@ -78,7 +78,7 @@ public class ELDependencyMap {
     StringList goup = new StringList();
     for (int i = 0; i < splitEL.length; ++ i) {
       goup.add(splitEL[i]);
-      String upstring = PathUtil.composePath(goup.toStringArray());
+      String upstring = PathUtil.buildPath(goup.toStringArray());
       List deps = (List) writemap.get(upstring);
       if (deps != null) {
         togo.addAll(deps);
