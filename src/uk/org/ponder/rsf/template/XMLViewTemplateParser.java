@@ -266,7 +266,7 @@ public class XMLViewTemplateParser implements ViewTemplateParser {
   private XMLLump findTopContainer(String id) {
     for (int i = tagstack.size() - 1; i >= 0; --i) {
       XMLLump lump = tagstack.lumpAt(i);
-      if (lump.rsfID != null && SplitID.isSplit(lump.rsfID))
+      if (lump.rsfID != null && (id.equals(XMLLump.PAYLOAD_COMPONENT) || SplitID.isSplit(lump.rsfID)))
         return lump;
     }
     return t.rootlump;
