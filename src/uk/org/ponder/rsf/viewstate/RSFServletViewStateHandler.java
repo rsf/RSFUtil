@@ -82,12 +82,8 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
   }
 
   public Map getAttrMap(ViewParameters viewparams) {
-    Map togo = new HashMap();
-    String fullURL = getFullURL(viewparams);
-    int qpos = fullURL.indexOf('?');
-    if (qpos != -1) {
-      return URLUtil.paramsToMap(fullURL.substring(qpos + 1), togo);
-    }
+    RawURLState rus = vpcodec.renderViewParams(viewparams);
+    Map togo = rus.params;
     return togo;
   }
 

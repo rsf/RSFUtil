@@ -6,6 +6,7 @@ package uk.org.ponder.rsf.template;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import uk.org.ponder.rsf.util.SplitID;
 import uk.org.ponder.stringutil.CharWrap;
 
 public class XMLLumpMMap {
@@ -32,8 +33,7 @@ public class XMLLumpMMap {
   }
 
   private boolean isBranchKey(String key) {
-    Object togo = idtolumps.get(key);
-    return togo instanceof XMLLumpList && !isSpecial(key);
+    return SplitID.isSplit(key);
   }
   
   public XMLLumpList headsForIDEnsure(String ID) {
@@ -65,29 +65,7 @@ public class XMLLumpMMap {
   public void addLump(String ID, XMLLump lump) {
     XMLLumpList list = headsForIDEnsure(ID);
     list.add(lump);
-    if (ID.indexOf(XMLLump.TRANSITION_SEPARATOR) == -1) {
-      ++concretes;
-    }
-  }
-
-  /*
-   * public void addSingle(String key, XMLLump lump) { idtolumps.put(key, lump); }
-   * public XMLLump getSingle(String key) { return (XMLLump) idtolumps.get(key); }
-   */
-
-  public static final String FINAL_SUFFIX = "*final";
-
-  public static final boolean isSpecial(String totest) {
-    return totest.endsWith(FINAL_SUFFIX)
-        || totest.indexOf(XMLLump.TRANSITION_SEPARATOR) != -1;
-  }
-
-  public void setFinal(String ID, XMLLump lump) {
-    idtolumps.put(ID + FINAL_SUFFIX, lump);
-  }
-
-  public XMLLump getFinal(String ID) {
-    return (XMLLump) idtolumps.get(ID + FINAL_SUFFIX);
+    ++concretes;
   }
 
   public void aggregate(XMLLumpMMap toaccrete) {

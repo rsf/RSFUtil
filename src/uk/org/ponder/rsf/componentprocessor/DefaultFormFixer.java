@@ -101,7 +101,7 @@ public class DefaultFormFixer implements ComponentProcessor, ViewReceiver {
     if (toprocess.targetURL == null) {
       // form will submit to current URL if none other specified
       if (toprocess.viewparams == null) {
-        toprocess.viewparams = (ViewParameters) viewparams.copyBase();
+        toprocess.viewparams = viewparams.copyBase();
         if (viewparams.endflow == null) {
           toprocess.viewparams.flowtoken = viewparams.flowtoken;
         }

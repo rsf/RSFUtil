@@ -192,7 +192,7 @@ public class RenderUtil {
   }
 
   public static boolean isFirstSCR(XMLLump lump, String scrname) {
-    XMLLump parent = lump.uplump;
+    XMLLump parent = lump.getDownHolder();
     String lookname = XMLLump.SCR_PREFIX + scrname;
     XMLLumpList sames = new XMLLumpList();
     sames.addAll(parent.downmap.headsForID(lookname));

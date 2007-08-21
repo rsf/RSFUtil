@@ -4,6 +4,7 @@
 package uk.org.ponder.rsf.template;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import uk.org.ponder.arrayutil.ArrayUtil;
 
@@ -16,9 +17,6 @@ import uk.org.ponder.arrayutil.ArrayUtil;
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
 public class XMLLump {
-  /** This string is used as separator between transition entries in forwardmap,
-  * of the form "old-id-suffix  new-id-suffix" */
-  public static final String TRANSITION_SEPARATOR = "  ";
   public int lumpindex;
   public int line, column;
   public int nestingdepth;
@@ -27,16 +25,19 @@ public class XMLLump {
  
   public int start, length;
   public String rsfID;
-  public XMLLump open_end = null;        // lump containing " >"
-  public XMLLump close_tag = null;       // lump containing "</close">
-  public XMLLump uplump = null;
+  public XMLLump open_end;        // lump containing " >"
+  public XMLLump close_tag;       // lump containing "</close">
+  public XMLLump uplump;
   // open and close will be the same for empty tag case " />"
   // headlump has standard text of |<tagname | to allow easy identification.
-  public XMLLumpMMap downmap = null;
+  public XMLLumpMMap downmap;
   
+  // potentially present on *every* tag - maps branch names to their final close lump 
+  private Map endmap;
   // map from attribute name to lump where value occurs.
   // this may be reformed to map to text if we collapse attribute lumps?
-  public HashMap attributemap = null;
+  // this is a HashMap so that the fast clone method is easily accessible
+  public HashMap attributemap;
   // the (XHTML) attribute appearing in the template file designating a 
   // template component. 
   public static final String ID_ATTRIBUTE = "rsf:id";
@@ -60,6 +61,22 @@ public class XMLLump {
     this.lumpindex = lumpindex;
     this.nestingdepth = nestingdepth;
   }
+  public XMLLump getDownHolder() {
+    XMLLump move = this;
+    while (move != null && move.downmap == null) move = move.uplump;
+    return move;
+  }
+  public XMLLump getFinal(String id) {
+    return (XMLLump) (endmap == null? null : endmap.get(id));
+  }
+
+  public void setFinal(String ID, XMLLump lump) {
+    if (endmap == null) {
+      endmap = new HashMap(8);
+    }
+    endmap.put(ID, lump);
+  }
+  
   public boolean textEquals(String tocheck) {
     return ArrayUtil.equals(tocheck, parent.buffer, start, length);
   }

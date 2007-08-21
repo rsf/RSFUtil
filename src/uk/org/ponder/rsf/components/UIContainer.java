@@ -57,18 +57,12 @@ public abstract class UIContainer extends UIParameterHolder {
   }
 
   /**
-   * Return all child components with the given prefix. This should be an ID
-   * containing colon designating a child container.
+   * Return all child components with the given prefix. This may be either a 
+   * List if the component genuinely represents a branch structure, or a single
+   * component if a leaf.
    */
-  public List getComponents(String id) {
-    Object togo = childmap.get(id);
-    if (togo != null && !(togo instanceof List)) {
-      throw new IllegalArgumentException(
-          "Error in view tree: component with id " + id
-              + " was expected to be a branch container but was a leaf."
-              + "\n (did you forget to use a colon in the component ID?)");
-    }
-    return (List) togo;
+  public Object getComponents(String id) {
+    return childmap.get(id);
   }
 
   public String debugChildren() {

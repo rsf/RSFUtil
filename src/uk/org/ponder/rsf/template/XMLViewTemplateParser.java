@@ -12,6 +12,7 @@ import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParser;
 
 import uk.org.ponder.arrayutil.ArrayUtil;
+import uk.org.ponder.arrayutil.ListUtil;
 import uk.org.ponder.rsf.renderer.ViewRender;
 import uk.org.ponder.rsf.util.SplitID;
 import uk.org.ponder.rsf.view.ViewTemplate;
@@ -132,6 +133,9 @@ public class XMLViewTemplateParser implements ViewTemplateParser {
       setLumpChars(backlump, null, 0, 0);
     }
     XMLLump headlump = newLump(parser);
+    XMLLump stacktop = getStackTop();
+    headlump.uplump = stacktop;
+    
     if (t.roottagindex == -1)
       t.roottagindex = headlump.lumpindex;
     String tagname = parser.getName();
@@ -150,12 +154,17 @@ public class XMLViewTemplateParser implements ViewTemplateParser {
       String attrvalue = parser.getAttributeValue(i);
       headlump.attributemap.put(attrname, attrvalue);
     }
+    try {
     if (parseinterceptors != null) {
       for (int i = 0; i < parseinterceptors.size(); ++i) {
         TemplateParseInterceptor parseinterceptor = (TemplateParseInterceptor) parseinterceptors
             .get(i);
         parseinterceptor.adjustAttributes(tagname, headlump.attributemap);
       }
+    }
+    }
+    catch (Exception e) {
+      throw UniversalRuntimeException.accumulate(e, "Error processing tag " + headlump);
     }
     attrs = headlump.attributemap.size(); // TPI may have changed it
     if (headlump.attributemap.isEmpty()) {
@@ -178,12 +187,12 @@ public class XMLViewTemplateParser implements ViewTemplateParser {
           checkContribute(ID, headlump);
           headlump.rsfID = ID;
 
-          XMLLump stacktop = findTopContainer(ID);
-          if (stacktop.downmap == null) {
-            stacktop.downmap = new XMLLumpMMap(); // to handle payload-component case
+          XMLLump downreg = findTopContainer(ID);
+          if (downreg.downmap == null) {
+            downreg.downmap = new XMLLumpMMap(); // to handle payload-component case
           }
-          stacktop.downmap.addLump(ID, headlump);
-          headlump.uplump = stacktop;
+          downreg.downmap.addLump(ID, headlump);
+      
           t.globalmap.addLump(ID, headlump);
 
           SplitID split = new SplitID(ID);
@@ -201,20 +210,9 @@ public class XMLViewTemplateParser implements ViewTemplateParser {
           // }
           else if (split.suffix != null) {
             // a repetitive tag is found.
-            headlump.downmap = new XMLLumpMMap();
-
             // Repetitions within a SCOPE should be UNIQUE and CONTIGUOUS.
-            XMLLump prevlast = stacktop.downmap.getFinal(split.prefix);
-            stacktop.downmap.setFinal(split.prefix, headlump);
-            if (prevlast != null) {
-              // only store transitions from non-initial state -
-              // TODO: see if transition system will ever be needed.
-              String prevsuffix = SplitID.getSuffix(prevlast.rsfID);
-              String transitionkey = split.prefix + SplitID.SEPARATOR
-                  + prevsuffix + XMLLump.TRANSITION_SEPARATOR + split.suffix;
-              stacktop.downmap.addLump(transitionkey, prevlast);
-              t.globalmap.addLump(transitionkey, prevlast);
-            }
+            //XMLLump prevlast = stacktop.getFinal(split.prefix);
+            stacktop.setFinal(split.prefix, headlump);
           }
         }
         else { // is not rsf:id attribute
@@ -259,11 +257,16 @@ public class XMLViewTemplateParser implements ViewTemplateParser {
     tagstack.remove(nestingdepth);
     justended = true;
   }
-
+  
+  private XMLLump getStackTop() {
+    XMLLump togo = (XMLLump) ListUtil.peek(tagstack);
+    return togo == null? t.rootlump : togo;
+  }
+  
   private XMLLump findTopContainer(String id) {
     for (int i = tagstack.size() - 1; i >= 0; --i) {
       XMLLump lump = tagstack.lumpAt(i);
-      if (lump.rsfID != null)
+      if (lump.rsfID != null && SplitID.isSplit(lump.rsfID))
         return lump;
     }
     return t.rootlump;
