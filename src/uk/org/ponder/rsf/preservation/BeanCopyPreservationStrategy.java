@@ -108,9 +108,7 @@ public class BeanCopyPreservationStrategy implements TSHPreservationStrategy,
     }
     String token = basekey + tokenid;
     holder.putTokenState(token, beans);
-    if (beans.size() != 0) {
-      Logger.log.info("BeanCopy saved " + beans.size() + " beans to token " + token);
-    }
+    Logger.log.info("BeanCopy saved " + beans.size() + " beans to token " + token);
     return beans.size();  
   }
   
@@ -125,7 +123,7 @@ public class BeanCopyPreservationStrategy implements TSHPreservationStrategy,
     if (beans == null) {
       if (expected) {
         throw UniversalRuntimeException.accumulate(new ExpiredFlowException(),
-          "Client requested restoration of expired flow state with ID "
+          "Client requested restoration of expired flow state with IDDD "
               + tokenid);
       }
       return 0;
@@ -151,7 +149,9 @@ public class BeanCopyPreservationStrategy implements TSHPreservationStrategy,
   }
 
   public void clear(String tokenid) {
-    holder.clearTokenState(basekey + tokenid);
+    String token = basekey + tokenid;
+    Logger.log.info("Cleared token state for " + token);
+    holder.clearTokenState(token);
   }
 
   public void setBeanName(String name) {

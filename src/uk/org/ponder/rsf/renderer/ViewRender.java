@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import uk.org.ponder.arrayutil.ListUtil;
 import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIComponent;
@@ -206,12 +207,13 @@ public class ViewRender {
 
       String id = lump.rsfID;
       boolean ismessage = id.startsWith(XMLLump.FORID_PREFIX);
-      if (id != null && !ismessage && id.indexOf(SplitID.SEPARATOR) != -1) {
+     
+      if (id != null && !ismessage && SplitID.isSplit(id)) {
         // we have entered a repetitive domain, by diagnosis of the template.
         // Seek in the component tree for the child list that must be here
         // at this component, and process them in order, looking them up in
         // the forward map, which must ALSO be here.
-        String prefix = SplitID.getPrefix(id);
+        String prefix = SplitID.getPrefix(id); 
         List children = fetchComponents(basecontainer, prefix);
         // these are all children with the same prefix, which will be rendered
         // synchronously.
@@ -254,6 +256,11 @@ public class ViewRender {
               }
               int renderend = renderer.renderComponent(rsc, child, targetlump);
               boolean wasopentag = tl.lumps[renderend].nestingdepth >= targetlump.nestingdepth;
+              UIContainer newbase = child instanceof UIContainer? (UIContainer) child : basecontainer;
+              if (wasopentag) {
+                renderRecurse(newbase, targetlump, tl.lumps[renderend]);
+                renderend = targetlump.close_tag.lumpindex + 1;
+              }
               if (i != children.size() - 1) {
                 // at this point, magically locate any "glue" that matches the
                 // transition
@@ -262,7 +269,7 @@ public class ViewRender {
                 // until we reach the next component with a matching id prefix.
                 // NB transition matching is not implemented and may never be.
                 RenderUtil.dumpScan(tl.lumps, renderend,
-                    targetlump.nestingdepth - 1, pos, false, wasopentag);
+                    targetlump.nestingdepth - 1, pos, false, false);
                 // we discard any index reached by this dump, continuing the
                 // controlled sequence as long as there are any children.
                 // given we are in the middle of a sequence here, we expect to
@@ -276,7 +283,7 @@ public class ViewRender {
               }
               else {
                 RenderUtil.dumpScan(tl.lumps, renderend,
-                    targetlump.nestingdepth, pos, true, wasopentag);
+                    targetlump.nestingdepth, pos, true, false);
               }
             }
 
@@ -295,7 +302,8 @@ public class ViewRender {
         // at this point, magically locate the "postamble" from lump, and
         // reset the index.
 
-        XMLLump finallump = parentlump.downmap.getFinal(prefix);
+        XMLLump finallump = lump.uplump.getFinal(prefix); 
+          //parentlump.downmap.getFinal(prefix);
         XMLLump closefinal = finallump.close_tag;
         renderindex = closefinal.lumpindex + 1;
         if (debugrender) {
@@ -389,13 +397,14 @@ public class ViewRender {
   }
 
   private static List fetchComponents(UIContainer basecontainer, String id) {
+    Object togo = null;
     while (basecontainer != null) {
-      List togo = basecontainer.getComponents(id);
+      togo = basecontainer.getComponents(id);
       if (togo != null)
-        return togo;
+        break;
       basecontainer = basecontainer.parent;
     }
-    return null;
+    return togo == null? null : (togo instanceof List? (List)togo : ListUtil.instance(togo));
   }
 
   private XMLLump findChild(XMLLump sourcescope, UIComponent child) {
@@ -404,7 +413,7 @@ public class ViewRender {
     // matches exactly or in prefix.
     SplitID split = new SplitID(child.ID);
     XMLLumpList headlumps = sourcescope.downmap.headsForID(child.ID);
-    if (headlumps == null && split.suffix != null) {
+    if (headlumps == null) {
       headlumps = sourcescope.downmap.headsForID(split.prefix
           + SplitID.SEPARATOR);
       // if (headlumps.size() == 0) {

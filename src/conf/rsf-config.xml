@@ -330,6 +330,12 @@
       <bean class="uk.org.ponder.rsf.template.RSFNamespaceRemovingTPI" />
     </property>
   </bean>
+  
+    <bean parent="templateParseInterceptorParent">
+    <property name="value">
+      <bean class="uk.org.ponder.rsf.renderer.html.FormRelabellingTPI" />
+    </property>
+  </bean>
 
   <bean id="autoTemplateContributorTLAB"
     class="uk.org.ponder.springutil.ByClassTLAB">

@@ -18,7 +18,6 @@ import uk.org.ponder.rsf.template.XMLLumpMMap;
 import uk.org.ponder.rsf.util.SplitID;
 import uk.org.ponder.rsf.view.ViewRoot;
 import uk.org.ponder.util.Logger;
-import uk.org.ponder.util.UniversalRuntimeException;
 
 /**
  * Performs a first "light" pass of the template and component tree to resolve
