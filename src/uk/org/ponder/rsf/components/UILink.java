@@ -48,7 +48,7 @@ public class UILink extends UIComponent {
       linktextnew = new UIOutput();
       linktextnew.setValue(linktext);
     }
-    return make(parent, ID, linktext, target);
+    return make(parent, ID, linktextnew, target);
   }
 
   /**
