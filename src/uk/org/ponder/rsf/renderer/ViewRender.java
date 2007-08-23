@@ -220,14 +220,14 @@ public class ViewRender {
         if (children != null) {
           for (int i = 0; i < children.size(); ++i) {
             UIComponent child = (UIComponent) children.get(i);
-            if (child instanceof UIBranchContainer) {
+            if (child instanceof UIContainer) {
               XMLLump targetlump = (XMLLump) branchmap.get(child);
               if (targetlump != null) {
                 if (debugrender) {
                   renderComment("Branching for " + child.getFullID() + " from "
                       + lump + " to " + targetlump);
                 }
-                renderContainer((UIBranchContainer) child, targetlump);
+                renderContainer((UIContainer) child, targetlump);
                 if (debugrender) {
                   renderComment("Branch returned for " + child.getFullID()
                       + " to " + lump + " from " + targetlump);
