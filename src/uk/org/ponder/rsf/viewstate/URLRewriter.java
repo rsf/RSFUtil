@@ -40,7 +40,7 @@ public class URLRewriter {
    */
   public String rewriteResourceURL(String path, String resourcebase) {
     String resourceURL = null;
-    if (!URLUtil.isAbsolute(path) && path.charAt(0) != '/') {
+    if (!URLUtil.isAbsolute(path) && (path.length() == 0 || path.charAt(0) != '/')) {
       if (isContextURL(path)) {
         resourceURL = rewriteContextURL(path);
       }
