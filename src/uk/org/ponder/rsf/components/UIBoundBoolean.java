@@ -7,7 +7,7 @@ import uk.org.ponder.rsf.uitype.BooleanUIType;
 
 /**
  * Component holding a single boolean value, which will peer with a component
- * like a checkbox or radio button.
+ * such as a checkbox or radio button.
  * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
@@ -42,6 +42,11 @@ public class UIBoundBoolean extends UIBound {
     return togo;
   }
 
+  public static UIBoundBoolean make(UIBranchContainer parent,
+      String ID, String binding, boolean initvalue) {
+    return make(parent, ID, binding, initvalue? Boolean.TRUE : Boolean.FALSE);
+  }
+
   public static UIBoundBoolean make(UIContainer parent, String ID,
       String binding) {
     return make(parent, ID, binding, null);
@@ -62,4 +67,5 @@ public class UIBoundBoolean extends UIBound {
   public static UIBoundBoolean make(UIContainer parent, String ID) {
     return make(parent, ID, null, (Boolean) null);
   }
+
 }
