@@ -4,11 +4,12 @@
 package uk.org.ponder.rsf.templateresolver;
 
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.core.io.ResourceLoader;
 
+import uk.org.ponder.reflect.ReflectiveCache;
 import uk.org.ponder.rsf.flow.errors.SilentRedirectException;
 import uk.org.ponder.rsf.template.TPIAggregator;
 import uk.org.ponder.rsf.template.XMLCompositeViewTemplate;
@@ -60,8 +61,12 @@ public class BasicTemplateResolver implements TemplateResolver {
     this.aggregator = aggregator;
   }
 
+  public void setReflectiveCache(ReflectiveCache reflectiveCache) {
+    templates = reflectiveCache.getConcurrentMap(1);
+  }
+  
   // this is a map of viewID onto template file.
-  private HashMap templates = new HashMap();
+  private Map templates;
 
   private CachingInputStreamSource cachingiis;
 

@@ -178,6 +178,7 @@ with a client redirect rather than an internal reinterpretation -->
       ref="templateExtensionInferrer" />
     <property name="TPIAggregator" ref="TPIAggregator" />
     <property name="resourceLoader" ref="resourceLoader" />
+    <property name="reflectiveCache" ref="reflectiveCache"/>
   </bean>
 
   <bean id="contentTypeInfoMap"
