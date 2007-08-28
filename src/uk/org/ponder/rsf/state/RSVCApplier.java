@@ -142,7 +142,7 @@ public class RSVCApplier {
       }
       else {
         try {
-          ShellInfo shellinfo = darapplier.fetchShells(sve.valuebinding, rbl);
+          ShellInfo shellinfo = darapplier.fetchShells(sve.valuebinding, rbl, false);
           reshapero = dataConverterRegistry.fetchConverter(shellinfo);
         }
         catch (Exception e) {
@@ -186,7 +186,7 @@ public class RSVCApplier {
           "Action binding " + actionbinding 
           + " is not permissible - make sure to mark this path as request addressible - http://www2.caret.cam.ac.uk/rsfwiki/Wiki.jsp?page=RequestWriteableBean");
     }
-    ShellInfo shells = darapplier.fetchShells(actionbinding, rbl);
+    ShellInfo shells = darapplier.fetchShells(actionbinding, rbl, true);
     int lastshell = shells.shells.length;
     
     Object penultimatebean = shells.shells[lastshell - 1];

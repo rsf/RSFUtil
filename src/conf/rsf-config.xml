@@ -145,6 +145,8 @@
       <ref bean="ELMappingContext" />
     </property>
   </bean>
+  
+  <bean id="constantReturn" class="uk.org.ponder.beanutil.ConstantReturnInvoker" />
 
   <bean id="targettedMessageListProxy" parent="RSACBridgeProxy">
     <property name="targetBeanName" value="targettedMessageList" />
