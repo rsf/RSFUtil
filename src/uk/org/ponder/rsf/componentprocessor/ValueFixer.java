@@ -184,7 +184,7 @@ public class ValueFixer implements ComponentProcessor {
     if (renderer == null) {
       if (toprocess.valuebinding != null) {
         ShellInfo shells = alterer.fetchShells(toprocess.valuebinding.value,
-            root);
+            root, false);
 
         renderer = dataConverterRegistry.fetchConverter(shells);
       }

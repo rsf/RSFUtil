@@ -330,7 +330,7 @@ with a client redirect rather than an internal reinterpretation -->
 
   <bean id="frameworkRABeans" parent="requestAddressibleParent">
     <property name="value"
-      value="flowLite-flowIDHolder, destroyscope, fieldGetter" />
+      value="flowLite-flowIDHolder, destroyscope, fieldGetter, constantReturn" />
   </bean>
 
   <bean id="frameworkCPBeans" parent="copyPreservingParent">
