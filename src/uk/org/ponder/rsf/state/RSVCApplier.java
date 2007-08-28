@@ -188,6 +188,11 @@ public class RSVCApplier {
     }
     ShellInfo shells = darapplier.fetchShells(actionbinding, rbl, true);
     int lastshell = shells.shells.length;
+    for (int i = 0; i < lastshell; ++ i) {
+      if (shells.shells[i] instanceof ActionTarget) {
+        lastshell = i + 1;
+      }
+    }
     
     Object penultimatebean = shells.shells[lastshell - 1];
     String actionname = shells.segments[lastshell - 1];
