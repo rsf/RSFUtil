@@ -69,13 +69,21 @@ public class EntityBeanLocatorImpl implements EntityBeanLocator {
     if (sebl.removeEL == null) {
       throw new UnsupportedOperationException("Cannot implement removal from EntityBeanLocator without removeEL being set");
     }
-    // TODO Auto-generated method stub
-    return false;
+    // TODO: support the case where the fetch method signature accepts an object
+    // rather than its ID
+    Object togo = sebl.bma.invokeBeanMethod(PathUtil.composePath(sebl.removeEL, '\'' + beanname + '\''),
+        beanlocator);
+    if (togo == null) return false;
+    if (togo instanceof Boolean) {
+      return ((Boolean)togo).booleanValue();
+    }
+    return true;
   }
 
   public void set(String beanname, Object toset) {
-    // TODO Auto-generated method stub
-    
+    // Only places the object in the cache, not a particularly useful implementation,
+    // unless the save method has relevant semantics
+    delivered.put(beanname, toset);
   }
   
   public Map getDeliveredBeans() {

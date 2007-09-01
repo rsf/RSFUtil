@@ -100,7 +100,7 @@ public class StaticEntityBeanLocatorImpl implements
     }
     EntityBeanLocatorImpl togo = new EntityBeanLocatorImpl(this);
     wbl.set(beanName, togo);
-    return this;
+    return togo;
   }
 
   public Class getObjectType() {
