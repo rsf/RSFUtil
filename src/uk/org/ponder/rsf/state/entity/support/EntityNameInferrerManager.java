@@ -1,9 +1,11 @@
 /*
  * Created on 9 Aug 2007
  */
-package uk.org.ponder.rsf.state.entity;
+package uk.org.ponder.rsf.state.entity.support;
 
 import java.util.List;
+
+import uk.org.ponder.rsf.state.entity.EntityNameInferrer;
 
 public class EntityNameInferrerManager implements EntityNameInferrer {
   private List inferrers;

@@ -226,7 +226,7 @@
     factory-method="getFallbackBeans" lazy-init="true">
   </bean>
 
-  <bean id="entityNameInferrerManager" class="uk.org.ponder.rsf.state.entity.EntityNameInferrerManager">
+  <bean id="entityNameInferrerManager" class="uk.org.ponder.rsf.state.entity.support.EntityNameInferrerManager">
   </bean>
   
   <bean id="entityNameInferrerParent" class="uk.org.ponder.springutil.StaticTLAB"

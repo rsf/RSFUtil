@@ -1,7 +1,7 @@
 /*
  * Created on 14-Feb-2006
  */
-package uk.org.ponder.rsf.state.entity;
+package uk.org.ponder.rsf.state.entity.support;
 
 import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.beanutil.BeanModelAlterer;
@@ -9,6 +9,7 @@ import uk.org.ponder.beanutil.BeanPredicateModel;
 import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.mapping.DARReshaper;
 import uk.org.ponder.mapping.DataAlterationRequest;
+import uk.org.ponder.rsf.state.entity.EntityNameInferrer;
 import uk.org.ponder.saxalizer.AccessMethod;
 import uk.org.ponder.saxalizer.MethodAnalyser;
 import uk.org.ponder.saxalizer.SAXalizerMappingContext;

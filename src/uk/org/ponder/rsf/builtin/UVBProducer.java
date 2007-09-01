@@ -65,7 +65,7 @@ public class UVBProducer implements ViewComponentProducer, ContentTypeReporter,
       for (int i = 0; i < uvbbean.paths.length; ++i) {
         String path = uvbbean.paths[i];
         Object bean = uvbbean.values[i];
-        UIOutput out = UIOutput.make(tofill, ":" + i, leafparser
+        UIOutput out = UIOutput.make(tofill, ":" + i, bean == null? "" : leafparser
             .render(bean));
         out.decorators = new DecoratorList(new UIIDStrategyDecorator(path));
       }
