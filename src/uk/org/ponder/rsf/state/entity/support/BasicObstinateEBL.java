@@ -1,7 +1,7 @@
 /*
  * Created on Dec 2, 2006
  */
-package uk.org.ponder.rsf.state.entity;
+package uk.org.ponder.rsf.state.entity.support;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,6 +12,10 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import uk.org.ponder.beanutil.BeanUtil;
 import uk.org.ponder.beanutil.entity.NewEntityEntry;
 import uk.org.ponder.beanutil.entity.NewEntityReceiver;
+import uk.org.ponder.rsf.state.entity.EntityHandler;
+import uk.org.ponder.rsf.state.entity.EntityMapper;
+import uk.org.ponder.rsf.state.entity.ObstinateEntityBeanLocator;
+import uk.org.ponder.rsf.state.entity.UpdatableEntityHandler;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 public class BasicObstinateEBL implements ObstinateEntityBeanLocator {

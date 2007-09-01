@@ -1,7 +1,7 @@
 /*
  * Created on 10-Jan-2006
  */
-package uk.org.ponder.rsf.state.entity;
+package uk.org.ponder.rsf.state.entity.support;
 
 import uk.org.ponder.beanutil.entity.EntityID;
 import uk.org.ponder.beanutil.entity.EntityIDRewriter;

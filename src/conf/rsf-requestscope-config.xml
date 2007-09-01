@@ -121,7 +121,7 @@
   <!-- The "ID-defunneller", required to correctly process submissions from entity
     selection controls -->
   <bean id="id-defunnel"
-    class="uk.org.ponder.rsf.state.entity.IDDefunnellingReshaper">
+    class="uk.org.ponder.rsf.state.entity.support.IDDefunnellingReshaper">
     <property name="beanModelAlterer" ref="DARApplier" />
     <property name="mappingContext" ref="ELMappingContext" />
     <property name="requestBeanLocator" ref="ELTargetBeanLocator" />

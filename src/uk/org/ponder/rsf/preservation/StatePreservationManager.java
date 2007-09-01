@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import uk.org.ponder.beanutil.BeanLocator;
-import uk.org.ponder.beanutil.NullBeanLocator;
 import uk.org.ponder.beanutil.WriteableBeanLocator;
+import uk.org.ponder.beanutil.support.NullBeanLocator;
 import uk.org.ponder.stringutil.StringList;
 
 /** The central manager of all PreservationStrategies. This is a request-scope
