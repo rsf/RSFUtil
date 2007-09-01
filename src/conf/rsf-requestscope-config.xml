@@ -130,14 +130,6 @@
       ref="requestAddressibleBeanModel" />
   </bean>
 
-  <bean id="entityBeanLocatorParent"
-    class="uk.org.ponder.rsf.state.entity.support.StaticEntityBeanLocatorImpl"
-    abstract="true" init-method="init"> 
-    <property name="RSACBeanLocator" ref="RSACBeanLocator" />
-    <property name="beanModelAlterer" ref="DARApplier" />
-    <property name="reflectiveCache" ref="reflectiveCache" />
-  </bean>
-
   <bean id="ELEvaluator" class="uk.org.ponder.beanutil.support.ELEvaluator">
     <property name="beanLocator" ref="ELTargetBeanLocator" />
     <property name="beanModelAlterer" ref="DARApplier" />

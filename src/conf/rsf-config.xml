@@ -234,6 +234,19 @@
     <property name="targetPath" value="entityNameInferrerManager.inferrers"/>
   </bean>
   
+  <bean id="entityBeanLocatorParent"
+    class="uk.org.ponder.rsf.state.entity.support.StaticEntityBeanLocatorImpl"
+    abstract="true" init-method="init"> 
+    <property name="RSACBeanLocator" ref="RSACBeanLocator" />
+    <property name="beanModelAlterer" ref="DARApplier" />
+    <property name="reflectiveCache" ref="reflectiveCache" />
+  </bean>
+  
+  <bean class="uk.org.ponder.springutil.ByClassTLAB">
+    <property name="targetClass" value="uk.org.ponder.rsf.state.entity.support.StaticEntityBeanLocatorImpl"/>
+    <property name="targetPath" value="entityNameInferrerManager.inferrers"/>
+  </bean>
+  
   <bean id="IDGenerator"
     class="uk.org.ponder.hashutil.EighteenIDGenerator" />
 
