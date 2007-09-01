@@ -12,7 +12,7 @@
     factory-method="getDeadBeanLocator" />
 
   <bean id="OTMParent"
-    class="uk.org.ponder.beanutil.ObstinateTravellingMap"
+    class="uk.org.ponder.beanutil.support.ObstinateTravellingMap"
     init-method="init" abstract="true">
     <property name="beanModelAlterer" ref="DARApplier" />
     <property name="staticLeafParser" ref="staticLeafParser" />
@@ -131,14 +131,14 @@
   </bean>
 
   <bean id="entityBeanLocatorParent"
-    class="uk.org.ponder.beanutil.entity.EntityBeanLocator"
-    abstract="true" init-method="init">
-    <property name="beanLocator" ref="ELTargetBeanLocator" />
+    class="uk.org.ponder.rsf.state.entity.support.StaticEntityBeanLocatorImpl"
+    abstract="true" init-method="init"> 
+    <property name="RSACBeanLocator" ref="RSACBeanLocator" />
     <property name="beanModelAlterer" ref="DARApplier" />
     <property name="reflectiveCache" ref="reflectiveCache" />
   </bean>
 
-  <bean id="ELEvaluator" class="uk.org.ponder.beanutil.ELEvaluator">
+  <bean id="ELEvaluator" class="uk.org.ponder.beanutil.support.ELEvaluator">
     <property name="beanLocator" ref="ELTargetBeanLocator" />
     <property name="beanModelAlterer" ref="DARApplier" />
   </bean>
