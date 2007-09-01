@@ -28,7 +28,7 @@
     class="uk.org.ponder.saxalizer.mapping.ContainerTypeRegistry" />
 
   <bean id="indexedPropertyAccessor"
-    class="uk.org.ponder.beanutil.IndexedPropertyAccessor">
+    class="uk.org.ponder.beanutil.support.IndexedPropertyAccessor">
     <property name="containerTypeRegistry" ref="containerTypeRegistry" />
   </bean>
 
@@ -140,13 +140,13 @@
   </bean>
 
   <bean id="fieldGetter"
-    class="uk.org.ponder.beanutil.BeanFieldResolver">
+    class="uk.org.ponder.beanutil.support.BeanFieldResolver">
     <property name="mappingContext">
       <ref bean="ELMappingContext" />
     </property>
   </bean>
   
-  <bean id="constantReturn" class="uk.org.ponder.beanutil.ConstantReturnInvoker" />
+  <bean id="constantReturn" class="uk.org.ponder.beanutil.support.ConstantReturnInvoker" />
 
   <bean id="targettedMessageListProxy" parent="RSACBridgeProxy">
     <property name="targetBeanName" value="targettedMessageList" />
@@ -308,7 +308,7 @@
   <bean id="totalRequestAddressibleBeans"
     class="uk.org.ponder.springutil.StringListAggregatingFactory" />
 
-  <bean id="requestAddressibleBeanModel" class="uk.org.ponder.beanutil.ListBeanPredicateModel">
+  <bean id="requestAddressibleBeanModel" class="uk.org.ponder.beanutil.support.ListBeanPredicateModel">
     <property name="paths" ref="totalRequestAddressibleBeans"/>
   </bean>
 
