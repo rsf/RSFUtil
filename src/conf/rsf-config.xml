@@ -203,15 +203,10 @@
     <property name="targetPath" value="dataConverterRegistry.converters"/>
   </bean>
 
-  <bean id="ARIResultPenningReshaperConverter" class="uk.org.ponder.mapping.DataConverter">
-    <property name="converterEL" value="ARIResultPenningReshaper"/>
-    <property name="targetPath" value="ARIResult"/>
-  </bean>
-  
   <bean parent="actionResultInterceptorParent">
     <property name="value">
       <bean parent="RSACBridgeProxy">
-        <property name="targetBeanName" value="ARIResultPenningReshaperConverter"/>
+        <property name="targetBeanName" value="ARIResult"/>
       </bean>
     </property>
   </bean>
