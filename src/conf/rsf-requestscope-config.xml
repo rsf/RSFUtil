@@ -130,7 +130,9 @@
       ref="requestAddressibleBeanModel" />
   </bean>
 
-  <bean id="ARIResultPenningReshaper" class="uk.org.ponder.rsf.flow.support.ARIResultPenningReshaper">
+<!-- The "real" ARIResult is called ARIResultConcrete - this bean is here only
+to intercept bindings -->
+  <bean id="ARIResult" class="uk.org.ponder.rsf.flow.support.ARIResultPenningReshaper">
     <property name="beanModelAlterer" ref="DARApplier"/>
     <property name="targettedMessageList" ref="targettedMessageList"/>
   </bean>
