@@ -203,6 +203,19 @@
     <property name="targetPath" value="dataConverterRegistry.converters"/>
   </bean>
 
+  <bean id="ARIResultPenningReshaperConverter" class="uk.org.ponder.mapping.DataConverter">
+    <property name="converterEL" value="ARIResultPenningReshaper"/>
+    <property name="targetPath" value="ARIResult"/>
+  </bean>
+  
+  <bean parent="actionResultInterceptorParent">
+    <property name="value">
+      <bean parent="RSACBridgeProxy">
+        <property name="targetBeanName" value="ARIResultPenningReshaperConverter"/>
+      </bean>
+    </property>
+  </bean>
+
   <!-- ******    RSF-SPECIFIC DEFINITIONS BELOW HERE    *******    -->
 
   <bean id="RSACResourceLocator"
@@ -700,7 +713,7 @@
   </bean>
 
   <bean id="actionResultInterceptorProcessor" 
-    class="uk.org.ponder.rsf.flow.ARIProcessor">
+    class="uk.org.ponder.rsf.flow.support.ARIProcessor">
     <property name="mappingViewResolver" ref="viewResolver"/>
   </bean>
 

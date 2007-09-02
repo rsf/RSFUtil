@@ -1,10 +1,11 @@
 /*
  * Created on 05-Jan-2006
  */
-package uk.org.ponder.rsf.flow;
+package uk.org.ponder.rsf.flow.support;
 
 import java.util.Collections;
 
+import uk.org.ponder.rsf.flow.FlowIDHolder;
 import uk.org.ponder.rsf.state.LockGetter;
 import uk.org.ponder.stringutil.StringList;
 import uk.org.ponder.util.Logger;

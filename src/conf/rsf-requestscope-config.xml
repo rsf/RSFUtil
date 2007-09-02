@@ -130,6 +130,11 @@
       ref="requestAddressibleBeanModel" />
   </bean>
 
+  <bean id="ARIResultPenningReshaper" class="uk.org.ponder.rsf.flow.support.ARIResultPenningReshaper">
+    <property name="beanModelAlterer" ref="DARApplier"/>
+    <property name="targettedMessageList" ref="targettedMessageList"/>
+  </bean>
+
   <bean id="ELEvaluator" class="uk.org.ponder.beanutil.support.ELEvaluator">
     <property name="beanLocator" ref="ELTargetBeanLocator" />
     <property name="beanModelAlterer" ref="DARApplier" />
@@ -270,7 +275,7 @@
   </bean>
 
   <bean id="flowStateManager"
-    class="uk.org.ponder.rsf.flow.FlowStateManager">
+    class="uk.org.ponder.rsf.flow.support.FlowStateManager">
     <property name="errorStateManager" ref="errorStateManager" />
     <property name="statePreservationManager"
       ref="statePreservationManager" />
