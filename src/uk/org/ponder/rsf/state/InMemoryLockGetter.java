@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * An application scope bean designed as a FlowLockGetter suitable for a
  * single-JVM application. Will cooperate, for example, with
- * {@link uk.org.ponder.rsf.flow.BasicScopedAlterationWrapper}
+ * {@link uk.org.ponder.rsf.flow.support.BasicScopedAlterationWrapper}
  * 
  * @author Antranig Basman (amb26@ponder.org.uk)
  * 

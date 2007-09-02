@@ -126,7 +126,7 @@ with a client redirect rather than an internal reinterpretation -->
     defer to the default ARI. However this will be overridden should the actual
     action invokation ALREADY return an ARIResult, as with a FlowActionProxyBean. -->
   <bean name="ARIResolver"
-    class="uk.org.ponder.rsf.flow.NullARIResolver">
+    class="uk.org.ponder.rsf.flow.support.BasicARIResolver">
     <property name="actionResultInterpreter">
       <ref bean="actionResultInterpreter" />
     </property>
@@ -141,11 +141,11 @@ with a client redirect rather than an internal reinterpretation -->
 
   <!-- The default ActionResultInterpreter which directs to the incoming view-->
   <bean id="defaultActionResultInterpreter"
-    class="uk.org.ponder.rsf.flow.DefaultActionResultInterpreter">
+    class="uk.org.ponder.rsf.flow.support.DefaultActionResultInterpreter">
   </bean>
 
   <bean name="actionResultInterpreter"
-    class="uk.org.ponder.rsf.flow.ARIManager">
+    class="uk.org.ponder.rsf.flow.support.ARIManager">
     <property name="ARIList">
       <list>
         <ref bean="JSFNavigationARI" />
@@ -331,7 +331,7 @@ with a client redirect rather than an internal reinterpretation -->
 
   <bean id="frameworkRABeans" parent="requestAddressibleParent">
     <property name="value"
-      value="flowLite-flowIDHolder, destroyscope, fieldGetter, constantReturn" />
+      value="flowLite-flowIDHolder, destroyscope, fieldGetter, constantReturn, ARIResult" />
   </bean>
 
   <bean id="frameworkCPBeans" parent="copyPreservingParent">

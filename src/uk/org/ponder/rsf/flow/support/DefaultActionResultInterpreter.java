@@ -1,8 +1,10 @@
 /*
  * Created on Oct 8, 2005
  */
-package uk.org.ponder.rsf.flow;
+package uk.org.ponder.rsf.flow.support;
 
+import uk.org.ponder.rsf.flow.ARIResult;
+import uk.org.ponder.rsf.flow.ActionResultInterpreter;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /** An action result interpreter that simply redirects to the incoming

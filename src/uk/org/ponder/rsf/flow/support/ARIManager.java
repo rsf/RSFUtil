@@ -1,10 +1,12 @@
 /*
  * Created on 07-May-2006
  */
-package uk.org.ponder.rsf.flow;
+package uk.org.ponder.rsf.flow.support;
 
 import java.util.List;
 
+import uk.org.ponder.rsf.flow.ARIResult;
+import uk.org.ponder.rsf.flow.ActionResultInterpreter;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /** An ARIResolver that will accept a list of primary resolvers which it

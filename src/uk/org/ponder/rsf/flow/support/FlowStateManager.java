@@ -1,8 +1,9 @@
 /*
  * Created on 6 Aug 2006
  */
-package uk.org.ponder.rsf.flow;
+package uk.org.ponder.rsf.flow.support;
 
+import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.preservation.StatePreservationManager;
 import uk.org.ponder.rsf.state.ErrorStateManager;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
