@@ -24,11 +24,16 @@ import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
+import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 public class UVBProducer implements ViewComponentProducer, ContentTypeReporter, 
   NavigationCaseReporter {
   public static final String VIEW_ID = "UVBview";
+  /** The View Parameters that address this view, held as a static variable for
+   * convenience. 
+   */
+  public static final ViewParameters PARAMS = new SimpleViewParameters(VIEW_ID);
 //  private BeanDestroyer beanDestroyer;
   private StaticLeafParser leafparser;
   private UVBBean uvbbean;
