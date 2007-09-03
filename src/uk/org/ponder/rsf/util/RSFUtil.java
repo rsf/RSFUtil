@@ -3,7 +3,6 @@
  */
 package uk.org.ponder.rsf.util;
 
-import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.rsf.components.ComponentList;
 import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.ParameterList;
