@@ -10,4 +10,10 @@ public class UIParameterHolder extends UIComponent {
    * control.
    */
   public ParameterList parameters = new ParameterList();
+  
+  /** Add the supplied parameter to the parameter list stored */
+  public UIParameterHolder addParameter(UIParameter param) {
+    parameters.add(param);
+    return this;
+  }
 }
