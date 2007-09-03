@@ -3,11 +3,18 @@
  */
 package uk.org.ponder.rsf.componentprocessor;
 
+import javax.swing.plaf.basic.BasicScrollPaneUI.VSBChangeListener;
+
+import uk.org.ponder.conversion.StaticLeafParser;
+import uk.org.ponder.htmlutil.HTMLUtil;
 import uk.org.ponder.rsf.components.UIComponent;
+import uk.org.ponder.rsf.components.UIInitBlock;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.uitype.UITypes;
 import uk.org.ponder.rsf.viewstate.InternalURLRewriter;
+import uk.org.ponder.rsf.viewstate.RawViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewStateHandler;
 
 public class ViewParamsFixer implements ComponentProcessor {
@@ -41,5 +48,31 @@ public class ViewParamsFixer implements ComponentProcessor {
         toprocess.target.setValue(inturlrewriter.rewriteRenderURL(target));
       }
     }
+    else if (toprocesso instanceof UIInitBlock) {
+      UIInitBlock toprocess = (UIInitBlock) toprocesso;
+      String[] rendered = new String[toprocess.arguments.length];
+      for (int i = 0; i < toprocess.arguments.length; ++ i) {
+        rendered[i] = convertInitArgument(toprocess.arguments[i]);
+      }
+      toprocess.markup = HTMLUtil.emitJavascriptCall(toprocess.functionname, rendered);
+    }
+  }
+
+  private String convertInitArgument(Object object) {
+    // TODO: upgrade this to an implementation capable of rendering JSON
+    StaticLeafParser parser = StaticLeafParser.instance();
+    if (parser.isLeafType(object.getClass())) {
+      return parser.render(object);
+    }
+    if (object instanceof UIComponent) {
+      return ((UIComponent)object).getFullID();
+    }
+    if (object instanceof ViewParameters) {
+      return viewstatehandler.getFullURL((ViewParameters) object);
+    }
+    if (object instanceof RawViewParameters) {
+      return ((RawViewParameters)object).URL;
+    }
+    throw new IllegalArgumentException("Cannot render init block argument of unrecognised " + object.getClass());
   }
 }
