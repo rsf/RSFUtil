@@ -15,7 +15,6 @@ import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.mapping.BeanInvalidationModel;
-import uk.org.ponder.mapping.ShellInfo;
 import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.springutil.errors.SpringErrorConverter;
