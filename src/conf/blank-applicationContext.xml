@@ -267,12 +267,15 @@ with a client redirect rather than an internal reinterpretation -->
     -->
   </bean>
 
-  <bean id="viewResolver"
-    class="uk.org.ponder.rsf.view.ConcreteViewResolver"
+  <bean id="unknownViewIsError" class="uk.org.ponder.springutil.BooleanGetterFactory">
+    <property name="value" value="true"/>
+  </bean>
+
+  <bean id="viewResolver" class="uk.org.ponder.rsf.view.ConcreteViewResolver"
     init-method="init">
     <property name="views" ref="staticViews" />
-    <property name="autoComponentProducerManager"
-      ref="autoComponentProducerManager" />
+    <property name="unknownViewIsError" ref="unknownViewIsError"/>
+    <property name="autoComponentProducerManager" ref="autoComponentProducerManager" />
     <property name="viewResolvers">
       <list>
         <ref bean="XMLViewResolver" />

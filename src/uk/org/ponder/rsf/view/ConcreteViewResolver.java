@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import uk.org.ponder.booleanutil.BooleanGetter;
+import uk.org.ponder.booleanutil.BooleanHolder;
 import uk.org.ponder.rsf.content.ContentTypeReceiver;
 import uk.org.ponder.rsf.content.ContentTypeReporter;
 import uk.org.ponder.rsf.flow.errors.SilentRedirectException;
@@ -39,13 +41,13 @@ public class ConcreteViewResolver implements MappingViewResolver {
   private Map views = new HashMap();
 
   private List resolvers = new ArrayList();
-  private boolean unknowniserror = false;
+  private BooleanGetter unknowniserror = new BooleanHolder(true);
   private ViewParamsReceiver vpreceiver;
   private NavigationCaseReceiver ncreceiver;
   private ContentTypeReceiver ctreceiver;
   private AutoComponentProducerManager automanager;
 
-  public void setUnknownViewIsError(boolean unknowniserror) {
+  public void setUnknownViewIsError(BooleanGetter unknowniserror) {
     this.unknowniserror = unknowniserror;
   }
 
@@ -147,7 +149,7 @@ public class ConcreteViewResolver implements MappingViewResolver {
           break;
       }
     }
-    if (specific == null && unknowniserror) {
+    if (specific == null && unknowniserror.get() == Boolean.TRUE) {
       throw UniversalRuntimeException.accumulate(new SilentRedirectException(),
           "No ViewComponentProducer is registered for view " + viewid);
     }
