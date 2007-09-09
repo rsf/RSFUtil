@@ -209,6 +209,7 @@ public class BasicTemplateResolver implements TemplateResolver {
         }
         template.setRelativeResourceBase(resourcebaseext);
         template.fullpath = fullpath;
+        template.isstatictemplate = strs.isStatic();
         templates.put(fullpath, template);
       }
       catch (Exception e) {

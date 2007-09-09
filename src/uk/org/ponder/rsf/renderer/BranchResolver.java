@@ -93,6 +93,17 @@ public class BranchResolver {
     }
   }
 
+  private void resolveInScope(String searchID, String defprefix, BestMatch bestmatch, XMLLumpMMap scope, UIContainer child) {
+    XMLLumpList scopelumps = scope.headsForID(searchID);
+    passDeficit(bestmatch, child, scopelumps);
+    if (bestmatch.deficit == 0)
+      return;
+    if (!defprefix.equals(searchID)) {
+      XMLLumpList scopedeflumps = scope.headsForID(defprefix);
+      passDeficit(bestmatch, child, scopedeflumps);
+    }
+  }
+  
   private XMLLump resolveCall(XMLLump sourcescope, UIContainer child) {
     String searchID = child instanceof UIJointContainer ? ((UIJointContainer) child).jointID
         : child.ID;
@@ -104,26 +115,17 @@ public class BranchResolver {
           + child.debugChildren());
     }
     // first get lumps in THIS SCOPE with EXACTLY MATCHING ID.
-    XMLLumpList scopelumps = sourcescope.downmap.headsForID(searchID);
-    passDeficit(bestmatch, child, scopelumps);
-    if (bestmatch.deficit == 0)
+    resolveInScope(searchID, defprefix, bestmatch, sourcescope.downmap, child);
+    if (bestmatch.deficit == 0) {
       return bestmatch.bestlump;
-    if (!defprefix.equals(child.ID)) {
-      XMLLumpList scopedeflumps = sourcescope.downmap.headsForID(defprefix);
-      passDeficit(bestmatch, child, scopedeflumps);
-      if (bestmatch.deficit == 0)
-        return bestmatch.bestlump;
     }
     // only enable global resolution if it is a branch
     if (child instanceof UIBranchContainer) {
-      XMLLumpList globallumps = globalmap.headsForID(searchID);
-      passDeficit(bestmatch, child, globallumps);
-      if (bestmatch.deficit == 0)
-        return bestmatch.bestlump;
-      if (!defprefix.equals(searchID)) {
-        XMLLumpList globaldeflumps = globalmap.headsForID(defprefix);
-        passDeficit(bestmatch, child, globaldeflumps);
+      if (sourcescope.parent.isstatictemplate) {
+        // make sure we can resolve local (intra-template) branches in the static case
+        resolveInScope(searchID, defprefix, bestmatch, sourcescope.parent.globalmap, child);
       }
+      resolveInScope(searchID, defprefix, bestmatch, globalmap, child);
     }
     return bestmatch.bestlump;
 

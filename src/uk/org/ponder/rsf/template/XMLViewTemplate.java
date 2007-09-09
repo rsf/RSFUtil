@@ -4,7 +4,6 @@
 package uk.org.ponder.rsf.template;
 
 import uk.org.ponder.rsf.view.BasedViewTemplate;
-import uk.org.ponder.rsf.view.GenericViewTemplate;
 
 /**
  * The raw constituents of an XML view template, being i) The XMLLump[] array,
@@ -16,15 +15,15 @@ import uk.org.ponder.rsf.view.GenericViewTemplate;
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
-public class XMLViewTemplate extends GenericViewTemplate 
-implements BasedViewTemplate {
+public class XMLViewTemplate extends GenericXMLViewTemplate implements BasedViewTemplate {
   // a hypothetical "root lump" whose downmap contains root RSF components.
   public XMLLump rootlump;
-  // public XMLLumpMMap globalmap;
   // private HashMap foridtocomponent = new HashMap();
   public XMLLump[] lumps;
   // index of the first lump holding root document tag
   public int roottagindex;
+  // true if this is a "local" template which only contributes the root to global resolution
+  public boolean isstatictemplate;
   
   public char[] buffer;
   // The template's full path, for debugging purposes
