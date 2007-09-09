@@ -739,7 +739,7 @@
   </bean>
 
   <bean id="actionResultInterceptorProcessor"
-    class="uk.org.ponder.rsf.flow.support.ARIProcessor">
+    class="uk.org.ponder.rsf.flow.support.ARI2Processor">
     <property name="mappingViewResolver" ref="viewResolver" />
   </bean>
 

@@ -97,7 +97,7 @@ public class UVBProducer implements ViewComponentProducer, ContentTypeReporter,
 
   public List reportNavigationCases() {
     List togo = new ArrayList();
-    togo.add(new NavigationCase(null, null, ARIResult.FLOW_ONESTEP));
+    togo.add(new NavigationCase(null, PARAMS, ARIResult.FLOW_ONESTEP));
     return togo;
   }
   
