@@ -7,7 +7,7 @@ import java.util.List;
 
 import uk.org.ponder.util.Logger;
 
-public class ViewParamsInterceptorManager {
+public class ViewParamsInterceptorManager implements ViewParamsInterceptor {
   private List interceptors;
   private ViewParameters inferred;
 
@@ -22,19 +22,25 @@ public class ViewParamsInterceptorManager {
 
   public AnyViewParameters getAdjustedViewParameters() {
     ViewParameters adjust = (ViewParameters) inferred.get();
+    AnyViewParameters adjusted = adjustViewParameters(adjust);
+    return adjusted == null? adjust : adjusted;
+  }
+
+  public AnyViewParameters adjustViewParameters(ViewParameters incoming) {
+    ViewParameters togo = null;
     if (interceptors != null) {
       for (int i = 0; i < interceptors.size(); ++i) {
         ViewParamsInterceptor interceptor = (ViewParamsInterceptor) interceptors
             .get(i);
         try {
           AnyViewParameters newadjust = interceptor
-              .adjustViewParameters(adjust);
+              .adjustViewParameters(incoming);
           if (newadjust != null) {
             if (!(newadjust instanceof ViewParameters)) {
               return newadjust;
             }
             else {
-              adjust = (ViewParameters) newadjust;
+              togo = (ViewParameters) newadjust;
             }
           }
         }
@@ -43,6 +49,7 @@ public class ViewParamsInterceptorManager {
         }
       }
     }
-    return adjust;
+    return togo;
   }
+
 }

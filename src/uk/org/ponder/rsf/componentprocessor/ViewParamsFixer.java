@@ -3,8 +3,6 @@
  */
 package uk.org.ponder.rsf.componentprocessor;
 
-import javax.swing.plaf.basic.BasicScrollPaneUI.VSBChangeListener;
-
 import uk.org.ponder.conversion.StaticLeafParser;
 import uk.org.ponder.htmlutil.HTMLUtil;
 import uk.org.ponder.rsf.components.UIComponent;
@@ -12,22 +10,31 @@ import uk.org.ponder.rsf.components.UIInitBlock;
 import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.uitype.UITypes;
+import uk.org.ponder.rsf.viewstate.AnyViewParameters;
 import uk.org.ponder.rsf.viewstate.InternalURLRewriter;
 import uk.org.ponder.rsf.viewstate.RawViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParamsInterceptor;
 import uk.org.ponder.rsf.viewstate.ViewStateHandler;
 
 public class ViewParamsFixer implements ComponentProcessor {
   private ViewStateHandler viewstatehandler;
   private InternalURLRewriter inturlrewriter;
+  private ViewParamsInterceptor environmentalInterceptor;
+
+  public void setEnvironmentalInterceptor(
+      ViewParamsInterceptor environmentalInterceptor) {
+    this.environmentalInterceptor = environmentalInterceptor;
+  }
+
   public void setViewStateHandler(ViewStateHandler viewstatehandler) {
     this.viewstatehandler = viewstatehandler;
   }
-  
+
   public void setInternalURLRewriter(InternalURLRewriter inturlrewriter) {
     this.inturlrewriter = inturlrewriter;
   }
-  
+
   public void processComponent(UIComponent toprocesso) {
     if (toprocesso instanceof UIInternalLink) {
       UIInternalLink toprocess = (UIInternalLink) toprocesso;
@@ -37,13 +44,15 @@ public class ViewParamsFixer implements ComponentProcessor {
         toprocess.target = new UIOutput();
       }
       if (toprocess.viewparams != null) {
-        toprocess.target.setValue(viewstatehandler.getFullURL(toprocess.viewparams));
+        toprocess.target.setValue(viewstatehandler
+            .getFullURL(toprocess.viewparams));
       }
       else {
         String target = toprocess.target.getValue();
         if (target == null || UITypes.isPlaceholder(target)) {
-          throw new IllegalArgumentException("UIInternalLink with fullID " + 
-              toprocesso.getFullID() + " discovered with neither ViewParameters nor URL");
+          throw new IllegalArgumentException("UIInternalLink with fullID "
+              + toprocesso.getFullID()
+              + " discovered with neither ViewParameters nor URL");
         }
         toprocess.target.setValue(inturlrewriter.rewriteRenderURL(target));
       }
@@ -51,10 +60,11 @@ public class ViewParamsFixer implements ComponentProcessor {
     else if (toprocesso instanceof UIInitBlock) {
       UIInitBlock toprocess = (UIInitBlock) toprocesso;
       String[] rendered = new String[toprocess.arguments.length];
-      for (int i = 0; i < toprocess.arguments.length; ++ i) {
+      for (int i = 0; i < toprocess.arguments.length; ++i) {
         rendered[i] = convertInitArgument(toprocess.arguments[i]);
       }
-      toprocess.markup = HTMLUtil.emitJavascriptCall(toprocess.functionname, rendered);
+      toprocess.markup = HTMLUtil.emitJavascriptCall(toprocess.functionname,
+          rendered);
     }
   }
 
@@ -65,14 +75,27 @@ public class ViewParamsFixer implements ComponentProcessor {
       return parser.render(object);
     }
     if (object instanceof UIComponent) {
-      return ((UIComponent)object).getFullID();
+      return ((UIComponent) object).getFullID();
     }
-    if (object instanceof ViewParameters) {
-      return viewstatehandler.getFullURL((ViewParameters) object);
+    if (object instanceof AnyViewParameters) {
+      AnyViewParameters viewparams = (AnyViewParameters) object;
+      if (object instanceof ViewParameters) {
+        AnyViewParameters intercepted = environmentalInterceptor
+            .adjustViewParameters((ViewParameters) viewparams);
+        if (intercepted != null) {
+          viewparams = intercepted;
+        }
+      }
+      if (viewparams instanceof ViewParameters) {
+        return viewstatehandler.getFullURL((ViewParameters) viewparams);
+      }
+      object = viewparams;
     }
     if (object instanceof RawViewParameters) {
-      return ((RawViewParameters)object).URL;
+      return ((RawViewParameters) object).URL;
     }
-    throw new IllegalArgumentException("Cannot render init block argument of unrecognised " + object.getClass());
+    throw new IllegalArgumentException(
+        "Cannot render init block argument of unrecognised "
+            + object.getClass());
   }
 }
