@@ -3,9 +3,8 @@
  */
 package uk.org.ponder.rsf.template;
 
-import uk.org.ponder.rsf.view.GenericViewTemplate;
 
-public class XMLCompositeViewTemplate extends GenericViewTemplate {
+public class XMLCompositeViewTemplate extends GenericXMLViewTemplate {
   public XMLViewTemplate roottemplate;
   
   public XMLCompositeViewTemplate() {
