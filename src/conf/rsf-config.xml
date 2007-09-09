@@ -145,15 +145,16 @@
       <ref bean="ELMappingContext" />
     </property>
   </bean>
-  
-  <bean id="constantReturn" class="uk.org.ponder.beanutil.support.ConstantReturnInvoker" />
+
+  <bean id="constantReturn"
+    class="uk.org.ponder.beanutil.support.ConstantReturnInvoker" />
 
   <bean id="targettedMessageListProxy" parent="RSACBridgeProxy">
     <property name="targetBeanName" value="targettedMessageList" />
   </bean>
-  
+
   <bean id="beanInvalidationBracketerProxy" parent="RSACBridgeProxy">
-    <property name="targetBeanName" value="beanInvalidationBracketer"/>
+    <property name="targetBeanName" value="beanInvalidationBracketer" />
   </bean>
 
   <!-- Broken out as a separate bean to avoid cycle with RBL 
@@ -164,9 +165,10 @@
     <property name="TMLBeanName" value="targettedMessageList" />
   </bean>
 
-  <bean id="RSACErrorBridgeBracketer" class="uk.org.ponder.rsac.BeanFetchBracketer">
-    <property name="targetBeanName" value="rootHandlerBean"/>
-    <property name="wrappingBean" value="ErrorBBTarget"/>
+  <bean id="RSACErrorBridgeBracketer"
+    class="uk.org.ponder.rsac.BeanFetchBracketer">
+    <property name="targetBeanName" value="rootHandlerBean" />
+    <property name="wrappingBean" value="ErrorBBTarget" />
   </bean>
 
   <bean id="RSACLazarusListProxy" parent="RSACBridgeProxy">
@@ -191,22 +193,27 @@
   <bean id="collectedAlterationWrapper"
     class="uk.org.ponder.util.CollectingRunnableInvoker" />
 
-  <bean id="applicationContextBeanLocator" class="uk.org.ponder.springutil.BeanFactoryBeanLocator" />
+  <bean id="applicationContextBeanLocator"
+    class="uk.org.ponder.springutil.BeanFactoryBeanLocator" />
 
-  <bean id="dataConverterRegistry" class="uk.org.ponder.mapping.DataConverterRegistry"
+  <bean id="dataConverterRegistry"
+    class="uk.org.ponder.mapping.DataConverterRegistry"
     init-method="init">
-    <property name="beanLocator" ref="applicationContextBeanLocator"/>
+    <property name="beanLocator" ref="applicationContextBeanLocator" />
   </bean>
-  
-  <bean id="dataConverterTLAB" class="uk.org.ponder.springutil.ByClassTLAB">
-    <property name="targetClass" value="uk.org.ponder.mapping.DataConverter"/>
-    <property name="targetPath" value="dataConverterRegistry.converters"/>
+
+  <bean id="dataConverterTLAB"
+    class="uk.org.ponder.springutil.ByClassTLAB">
+    <property name="targetClass"
+      value="uk.org.ponder.mapping.DataConverter" />
+    <property name="targetPath"
+      value="dataConverterRegistry.converters" />
   </bean>
 
   <bean parent="actionResultInterceptorParent">
     <property name="value">
       <bean parent="RSACBridgeProxy">
-        <property name="targetBeanName" value="ARIResult"/>
+        <property name="targetBeanName" value="ARIResult" />
       </bean>
     </property>
   </bean>
@@ -234,27 +241,31 @@
     factory-method="getFallbackBeans" lazy-init="true">
   </bean>
 
-  <bean id="entityNameInferrerManager" class="uk.org.ponder.rsf.state.entity.support.EntityNameInferrerManager">
+  <bean id="entityNameInferrerManager"
+    class="uk.org.ponder.rsf.state.entity.support.EntityNameInferrerManager">
   </bean>
-  
-  <bean id="entityNameInferrerParent" class="uk.org.ponder.springutil.StaticTLAB"
-    abstract="true">
-    <property name="targetPath" value="entityNameInferrerManager.inferrers"/>
+
+  <bean id="entityNameInferrerParent"
+    class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
+    <property name="targetPath"
+      value="entityNameInferrerManager.inferrers" />
   </bean>
-  
+
   <bean id="entityBeanLocatorParent"
     class="uk.org.ponder.rsf.state.entity.support.StaticEntityBeanLocatorImpl"
-    abstract="true" init-method="init"> 
+    abstract="true" init-method="init">
     <property name="RSACBeanLocator" ref="RSACBeanLocator" />
     <property name="beanModelAlterer" ref="DARApplier" />
     <property name="reflectiveCache" ref="reflectiveCache" />
   </bean>
-  
+
   <bean class="uk.org.ponder.springutil.ByClassTLAB">
-    <property name="targetClass" value="uk.org.ponder.rsf.state.entity.support.StaticEntityBeanLocatorImpl"/>
-    <property name="targetPath" value="entityNameInferrerManager.inferrers"/>
+    <property name="targetClass"
+      value="uk.org.ponder.rsf.state.entity.support.StaticEntityBeanLocatorImpl" />
+    <property name="targetPath"
+      value="entityNameInferrerManager.inferrers" />
   </bean>
-  
+
   <bean id="IDGenerator"
     class="uk.org.ponder.hashutil.EighteenIDGenerator" />
 
@@ -300,6 +311,7 @@
     class="uk.org.ponder.rsf.componentprocessor.ViewParamsFixer">
     <property name="viewStateHandler" ref="viewStateHandler" />
     <property name="internalURLRewriter" ref="internalURLRewriter" />
+    <property name="environmentalInterceptor" ref="environmentalViewParamsInterceptorManager"/>
   </bean>
 
   <bean id="requestAddressibleParent"
@@ -329,8 +341,9 @@
   <bean id="totalRequestAddressibleBeans"
     class="uk.org.ponder.springutil.StringListAggregatingFactory" />
 
-  <bean id="requestAddressibleBeanModel" class="uk.org.ponder.beanutil.support.ListBeanPredicateModel">
-    <property name="paths" ref="totalRequestAddressibleBeans"/>
+  <bean id="requestAddressibleBeanModel"
+    class="uk.org.ponder.beanutil.support.ListBeanPredicateModel">
+    <property name="paths" ref="totalRequestAddressibleBeans" />
   </bean>
 
   <bean id="totalCopyPreservingBeans"
@@ -353,8 +366,8 @@
       <bean class="uk.org.ponder.rsf.template.RSFNamespaceRemovingTPI" />
     </property>
   </bean>
-  
-    <bean parent="templateParseInterceptorParent">
+
+  <bean parent="templateParseInterceptorParent">
     <property name="value">
       <bean class="uk.org.ponder.rsf.renderer.html.FormRelabellingTPI" />
     </property>
@@ -375,7 +388,7 @@
     abstract="true">
     <property name="rootResolverPriority" value="0" />
     <property name="baseDirectory" ref="defaultTemplatePath" />
-    <property name="expected" value="true"/>
+    <property name="expected" value="true" />
   </bean>
 
   <bean id="templateExpander"
@@ -426,12 +439,13 @@
     <property name="staticRenderers" ref="staticRenderersProxy" />
     <property name="decoratorManager" ref="decoratorManager" />
     <property name="componentRenderer">
-      <bean class="uk.org.ponder.rsf.renderer.html.BasicHTMLComponentRenderer">
+      <bean
+        class="uk.org.ponder.rsf.renderer.html.BasicHTMLComponentRenderer">
         <property name="staticRenderers" ref="staticRenderersProxy" />
       </bean>
     </property>
   </bean>
-  
+
   <bean id="decoratorManager"
     class="uk.org.ponder.rsf.renderer.decorator.DecoratorManager">
     <property name="contentTypeInfo" ref="contentTypeInfoProxy" />
@@ -444,7 +458,7 @@
   <bean id="ELEvaluatorProxy" parent="RSACBridgeProxy">
     <property name="targetBeanName" value="ELEvaluator" />
   </bean>
-  
+
   <bean id="consumerInfoProxy" parent="RSACBridgePeaProxy">
     <property name="targetBeanName" value="consumerInfo" />
   </bean>
@@ -514,14 +528,14 @@
     <property name="targetClass"
       value="uk.org.ponder.rsf.viewstate.ViewParameters" />
   </bean>
-  
+
   <bean id="parsedViewParametersProxy" parent="RSACBridgePeaProxy">
     <property name="targetBeanName" value="parsedViewParameters" />
     <!-- Enough information to find the get() method -->
     <property name="targetClass"
       value="uk.org.ponder.rsf.viewstate.ViewParameters" />
   </bean>
-  
+
   <bean id="defaultViewParametersProxy" parent="RSACBridgePeaProxy">
     <property name="targetBeanName" value="defaultViewParameters" />
     <!-- Enough information to find the get() method -->
@@ -535,16 +549,18 @@
     <property name="SAXalizerMappingContext" ref="ELMappingContext" />
   </bean>
 
-  <bean id="viewParamsCodec" 
+  <bean id="viewParamsCodec"
     class="uk.org.ponder.rsf.viewstate.ViewParamsCodecManager">
   </bean>
-  
-  <bean id="viewParamsCodecParent" class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
-    <property name="targetPath" value="viewParamsCodec.viewParamsCodecs"/>
+
+  <bean id="viewParamsCodecParent"
+    class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
+    <property name="targetPath"
+      value="viewParamsCodec.viewParamsCodecs" />
   </bean>
-  
+
   <bean id="defaultCodecContributor" parent="viewParamsCodecParent">
-    <property name="value" ref="viewParamsMapper"/>
+    <property name="value" ref="viewParamsMapper" />
   </bean>
 
   <bean id="viewParamsMapper"
@@ -553,7 +569,7 @@
     <property name="VPMappingInfoManager"
       ref="viewParamsMappingInfoManager" />
   </bean>
-  
+
   <bean id="siteMapParent"
     class="uk.org.ponder.rsf.viewstate.XMLSiteMapLoader"
     parent="XMLFactoryBean" abstract="true">
@@ -561,37 +577,52 @@
     <property name="viewParametersReceiver" ref="viewParamsRegistry" />
   </bean>
 
-  <bean id="viewParamsRegistrarParent" class="uk.org.ponder.rsf.viewstate.ViewParamsRegistrar"
-  init-method="init" abstract="true">
-    <property name="reflectiveCache" ref="reflectiveCache"/>
-    <property name="viewParametersReceiver" ref="viewParamsRegistry"/>
+  <bean id="viewParamsRegistrarParent"
+    class="uk.org.ponder.rsf.viewstate.ViewParamsRegistrar"
+    init-method="init" abstract="true">
+    <property name="reflectiveCache" ref="reflectiveCache" />
+    <property name="viewParametersReceiver" ref="viewParamsRegistry" />
   </bean>
 
-  <bean id="viewParamsInterceptorManager" 
+  <bean id="viewParamsInterceptorManager"
     class="uk.org.ponder.rsf.viewstate.ViewParamsInterceptorManager">
-    <property name="viewParameters" ref="parsedViewParametersProxy"/>
+    <property name="viewParameters" ref="parsedViewParametersProxy" />
   </bean>
-  
-  <bean class="uk.org.ponder.springutil.ByClassTLAB">
-    <property name="targetPath" value="viewParamsInterceptorManager.interceptors"/>
-    <property name="targetClass" value="uk.org.ponder.rsf.viewstate.ViewParamsInterceptor"/>
+
+  <bean id="viewParamsInterceptorParent"
+    class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
+    <property name="targetPath"
+      value="viewParamsInterceptorManager.interceptors" />
+  </bean>
+
+  <bean id="environmentalViewParamsInterceptorManager" 
+    class="uk.org.ponder.rsf.viewstate.ViewParamsInterceptorManager">
+  </bean>
+
+  <bean id="environmentalViewParamsInterceptorParent"
+    class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
+    <property name="targetPath"
+      value="environmentalViewParamsInterceptorManager.interceptors" />
   </bean>
 
   <bean id="defaultViewInferrerManager"
-    class="uk.org.ponder.rsf.viewstate.DefaultViewInferrerManager"/>
-  
-  <bean id="defaultViewInferrerParent" class="uk.org.ponder.springutil.StaticTLAB" 
-    abstract="true">
-    <property name="targetPath" value="defaultViewInferrerManager.inferrers"/>
+    class="uk.org.ponder.rsf.viewstate.DefaultViewInferrerManager" />
+
+  <bean id="defaultViewInferrerParent"
+    class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
+    <property name="targetPath"
+      value="defaultViewInferrerManager.inferrers" />
   </bean>
 
-  <bean id="viewDefaultViewContributor" parent="defaultViewInferrerParent">
-    <property name="value" ref="viewParamsRegistry"/>
-    <property name="bindAfter" value="*"/>
+  <bean id="viewDefaultViewContributor"
+    parent="defaultViewInferrerParent">
+    <property name="value" ref="viewParamsRegistry" />
+    <property name="bindAfter" value="*" />
   </bean>
 
-  <bean id="viewParamsRegistry" 
-    class="uk.org.ponder.rsf.viewstate.ViewParamsRegistryImpl" init-method="init">
+  <bean id="viewParamsRegistry"
+    class="uk.org.ponder.rsf.viewstate.ViewParamsRegistryImpl"
+    init-method="init">
     <property name="reflectiveCache" ref="reflectiveCache" />
     <property name="deepBeanCloner" ref="deepBeanCloner" />
     <property name="defaultExemplar" ref="viewParamsExemplar" />
@@ -651,7 +682,7 @@
 
   <bean id="nullSCR"
     class="uk.org.ponder.rsf.renderer.scr.NullRewriteSCR" />
-    
+
   <bean id="ignoreSCR"
     class="uk.org.ponder.rsf.renderer.scr.IgnoreRewriteSCR" />
 
@@ -707,25 +738,26 @@
       value="actionResultInterceptorProcessor.interceptors" />
   </bean>
 
-  <bean id="actionResultInterceptorProcessor" 
+  <bean id="actionResultInterceptorProcessor"
     class="uk.org.ponder.rsf.flow.support.ARIProcessor">
-    <property name="mappingViewResolver" ref="viewResolver"/>
+    <property name="mappingViewResolver" ref="viewResolver" />
   </bean>
 
   <bean id="viewExceptionStrategyManager"
     class="uk.org.ponder.rsf.flow.errors.ViewExceptionStrategyManager">
   </bean>
 
-  <bean id="viewExceptionStrategyParent" 
-   class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
+  <bean id="viewExceptionStrategyParent"
+    class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
     <property name="targetPath"
       value="viewExceptionStrategyManager.strategyList" />
   </bean>
-  
+
   <bean id="actionErrorStrategyManager"
     class="uk.org.ponder.rsf.flow.errors.ActionErrorStrategyManager">
     <property name="mergeStrategies" ref="XMLActionErrorStrategies" />
-    <property name="targettedMessageList" ref="targettedMessageListProxy"/>
+    <property name="targettedMessageList"
+      ref="targettedMessageListProxy" />
   </bean>
 
   <bean id="actionErrorStrategyParent"
