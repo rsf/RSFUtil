@@ -18,7 +18,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  *
  */
 
-public class ARIProcessor implements ActionResultInterceptor {
+public class ARI2Processor implements ActionResultInterceptor {
   private List interceptors;
   private MappingViewResolver mappingViewResolver;
   
