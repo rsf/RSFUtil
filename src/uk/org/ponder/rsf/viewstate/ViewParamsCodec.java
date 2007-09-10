@@ -22,5 +22,12 @@ public interface ViewParamsCodec {
    * if the parameters are not supported.
    */
   public RawURLState renderViewParams(ViewParameters toparse);
+  /** Parse the supplied ViewParameters out of its Raw form. The codec may
+   * also support the functionality of reporting any "left-over" parameters
+   * that were in the raw state but now used in the conversion.
+   */
   public boolean parseViewParams(ViewParameters target, RawURLState rawstate, Map unusedParams);
+  
+  /** Returns a ViewParamsMapInfo for the supplied params */
+  public ViewParamsMapInfo getMappingInfo(ViewParameters viewparams);
 }

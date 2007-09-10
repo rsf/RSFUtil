@@ -10,9 +10,12 @@ import java.util.Map;
 import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.mapping.DARList;
 import uk.org.ponder.mapping.DataAlterationRequest;
+import uk.org.ponder.rsf.viewstate.CoreViewParamsCodec;
 import uk.org.ponder.rsf.viewstate.RawURLState;
+import uk.org.ponder.rsf.viewstate.ViewParamUtil;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsCodec;
+import uk.org.ponder.rsf.viewstate.ViewParamsMapInfo;
 import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.stringutil.StringUtil;
 
@@ -24,7 +27,7 @@ import uk.org.ponder.stringutil.StringUtil;
  * 
  */
 
-public class ViewParamsMapper implements ViewParamsCodec {
+public class ViewParamsMapper implements CoreViewParamsCodec {
 
   private BeanModelAlterer bma;
 
@@ -46,7 +49,7 @@ public class ViewParamsMapper implements ViewParamsCodec {
     return bma;
   }
 
-  public ConcreteViewParamsMapInfo getMappingInfo(ViewParameters target) {
+  public ViewParamsMapInfo getMappingInfo(ViewParameters target) {
     return vpmim.getMappingInfo(target);
   }
 
@@ -83,6 +86,26 @@ public class ViewParamsMapper implements ViewParamsCodec {
     ConcreteViewParamsMapInfo mapinfo = vpmim.getMappingInfo(target);
     DARList toapply = new DARList();
     
+    if (pathinfo != null) {
+      String[] segments = StringUtil.split(pathinfo, '/');
+      for (int i = 0; i < mapinfo.trunkpaths.length; ++i) {
+        // An extra segment will be produced for the initial /
+        int reqindex = i + 1;
+        if (reqindex < segments.length) {
+          // look for surrogate attributes first
+          Object segment = params.get(ViewParamUtil.getAttrIndex(i, true));
+          // only apply low priority if we are at an endpoint
+          if (segment == null && unusedParams == null) {
+            segment = params.get(ViewParamUtil.getAttrIndex(i, false));
+          }
+          if (segment == null) {
+            segment = segments[reqindex];
+          }
+          
+          toapply.add(new DataAlterationRequest(mapinfo.trunkpaths[i], segment));
+        }
+      }
+    }
     for (Iterator keyit = params.keySet().iterator(); keyit.hasNext();) {
       String attr = (String) keyit.next();
       Object valueo = params.get(attr);
@@ -94,17 +117,6 @@ public class ViewParamsMapper implements ViewParamsCodec {
       }
       else {
         if (unusedParams != null) unusedParams.put(attr, valueo);
-      }
-    }
-    if (pathinfo != null) {
-      String[] segments = StringUtil.split(pathinfo, '/');
-      for (int i = 0; i < mapinfo.trunkpaths.length; ++i) {
-        // An extra segment will be produced for the initial /
-        int reqindex = i + 1;
-        if (reqindex < segments.length) {
-          String segment = segments[reqindex];
-          toapply.add(new DataAlterationRequest(mapinfo.trunkpaths[i], segment));
-        }
       }
     }
     bma.applyAlterations(target, toapply, null);
@@ -146,13 +158,7 @@ public class ViewParamsMapper implements ViewParamsCodec {
     for (int i = 0; i < mapinfo.attrnames.length; ++i) {
       String attrname = mapinfo.attrnames[i];
       String path = mapinfo.paths[i];
-      Object attrval = bma.getFlattenedValue(path, toconvert, null, null);
-      if (attrval instanceof String[]) {
-        togo.put(attrname, attrval);
-      }
-      else if (attrval instanceof String) {
-        togo.put(attrname, new String[] { (String) attrval });
-      }
+      putAttr(togo, path, attrname, toconvert);
     }
     return togo;
   }
@@ -161,4 +167,24 @@ public class ViewParamsMapper implements ViewParamsCodec {
     return true;
   }
 
+  public Map renderViewParamsNonTrunk(ViewParameters torender,
+      boolean highpriority) {
+    Map togo = renderViewParamAttributes(torender);
+    ConcreteViewParamsMapInfo mapinfo = vpmim.getMappingInfo(torender);
+    for (int i = 0; i < mapinfo.trunkpaths.length; ++ i) {
+      putAttr(togo, mapinfo.trunkpaths[i], ViewParamUtil.getAttrIndex(i, highpriority), torender);
+    }
+    return togo;
+  }
+
+  private void putAttr(Map target, String path, String attrname, ViewParameters torender) {
+    Object attrval = bma.getFlattenedValue(path, torender, null, null);
+    if (attrval instanceof String[]) {
+      target.put(attrname, attrval);
+    }
+    else if (attrval instanceof String) {
+      target.put(attrname, new String[] { (String) attrval });
+    }
+  }
+  
 }

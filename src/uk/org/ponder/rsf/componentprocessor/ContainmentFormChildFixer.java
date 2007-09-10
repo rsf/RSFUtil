@@ -17,7 +17,7 @@ import uk.org.ponder.rsf.request.EarlyRequestParser;
 import uk.org.ponder.rsf.request.SubmittedValueEntry;
 import uk.org.ponder.rsf.util.RSFUtil;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
-import uk.org.ponder.rsf.viewstate.support.ViewParamsMappingInfoManager;
+import uk.org.ponder.rsf.viewstate.ViewParamsCodec;
 import uk.org.ponder.saxalizer.SAXalizerMappingContext;
 import uk.org.ponder.stringutil.StringList;
 import uk.org.ponder.util.Logger;
@@ -41,7 +41,7 @@ import uk.org.ponder.util.Logger;
 public class ContainmentFormChildFixer implements ComponentProcessor {
 
   private SAXalizerMappingContext mappingcontext;
-  private ViewParamsMappingInfoManager vpmim;
+  private ViewParamsCodec vpcodec;
   private FormModel formModel;
 
   public void setFormModel(FormModel formModel) {
@@ -52,8 +52,8 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
     this.mappingcontext = mappingcontext;
   }
 
-  public void setViewParamsMappingInfoManager(ViewParamsMappingInfoManager vpmim) {
-    this.vpmim = vpmim;
+  public void setViewParamsCodec(ViewParamsCodec vpcodec) {
+    this.vpcodec = vpcodec;
   }
 
   public void processComponent(UIComponent toprocesso) {
@@ -86,7 +86,7 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
         if (getform) {
           if (bound.valuebinding != null) {
             ViewParameters viewparams = toprocess.viewparams;
-            String attrname = vpmim.getMappingInfo(toprocess.viewparams)
+            String attrname = vpcodec.getMappingInfo(toprocess.viewparams)
                 .pathToAttribute(bound.valuebinding.value);
             if (attrname == null) {
               Logger.log.warn("Warning: Unable to look up path "
