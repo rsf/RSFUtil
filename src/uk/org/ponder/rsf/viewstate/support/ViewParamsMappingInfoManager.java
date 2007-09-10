@@ -9,6 +9,7 @@ import uk.org.ponder.arrayutil.ListUtil;
 import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.reflect.ReflectiveCache;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParamUtil;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.saxalizer.AccessMethod;
 import uk.org.ponder.saxalizer.MethodAnalyser;
@@ -173,6 +174,11 @@ public class ViewParamsMappingInfoManager {
         throw new IllegalArgumentException("Error in parseSpec - trunk path at index " 
             + i + " has not been set");
       }
+      String highattr = ViewParamUtil.getAttrIndex(i, true);
+      String lowattr = ViewParamUtil.getAttrIndex(i, false);
+      togo.pathToAttr.put(togo.trunkpaths[i], highattr);
+      togo.attrToPath.put(highattr, togo.trunkpaths[i]);
+      togo.attrToPath.put(lowattr, togo.trunkpaths[i]);
     }
     return togo;
   }

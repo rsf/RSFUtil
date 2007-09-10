@@ -45,6 +45,39 @@ public class ViewParamUtil {
     return URLUtil.paramsToMap(fullURL.substring(qpos + 1), togo);
   }
   
+  /** A prefix for a ViewParameters attribute representing a "surrogate" pathinfo
+   * trunk segment. This is useful, for example when constructing a GET form which
+   * is attempting to submit against a part of the view state which has been mapped
+   * into the trunk path.
+   */
+  public static final String HIGH_PREFIX = "!";
+  /** An alternative representation of HIGH_PREFIX which will not take priority
+   * when determining the overall viewID of a param set.
+   */
+  public static final String LOW_PREFIX = "~";
+  
+  /** Convert a "surrogate" attribute name ("!0", "!1" etc) to its pathinfo index
+   * or return -1 if not recognised.
+   */
+  public static int attrToIndex(String attrname) {
+    if (attrname.startsWith(HIGH_PREFIX) || attrname.startsWith(LOW_PREFIX)) {
+      try {
+        return Integer.parseInt(attrname.substring(1));
+      }
+      catch (Exception e) {
+       return -1;
+      }
+    }
+    return -1;
+  }
+  
+  /** Returns the "surrogate attribute name" corresponding to a given pathinfo
+   * index and its priority level.
+   */
+  public static String getAttrIndex(int index, boolean highpriority) {
+    return (highpriority? HIGH_PREFIX : LOW_PREFIX) + index;
+  }
+  
   public static ParameterList mapToParamList(Map toconvert) {
     ParameterList togo = new ParameterList();
     for (Iterator keyit = toconvert.keySet().iterator(); keyit.hasNext();) {
@@ -114,6 +147,11 @@ public class ViewParamUtil {
     return parser.parse(pathinfo, params); 
   }
 
+  
+  /** Convert an AnyViewParameters to a full URL, using the supplied ViewStateHandler
+   * in the case of a ViewParameters, or the contained URL in the case of
+   * RawViewParameters.
+   */ 
   public static String getAnyFullURL(AnyViewParameters viewparams, ViewStateHandler vsh) {
     return viewparams instanceof RawViewParameters ? ((RawViewParameters) viewparams).URL
         : vsh.getFullURL((ViewParameters) viewparams);

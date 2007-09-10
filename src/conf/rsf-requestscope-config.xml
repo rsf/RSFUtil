@@ -359,8 +359,7 @@ to intercept bindings -->
   <bean id="containmentFormFixer"
     class="uk.org.ponder.rsf.componentprocessor.ContainmentFormChildFixer">
     <property name="mappingContext" ref="ELMappingContext" />
-    <property name="viewParamsMappingInfoManager"
-      ref="viewParamsMappingInfoManager" />
+    <property name="viewParamsCodec" ref="viewParamsCodec" />
     <property name="formModel" ref="formModel" />
   </bean>
 

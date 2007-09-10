@@ -9,6 +9,7 @@ import java.util.Map;
 import uk.org.ponder.rsf.viewstate.RawURLState;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsCodec;
+import uk.org.ponder.rsf.viewstate.ViewParamsMapInfo;
 
 public class ViewParamsCodecManager implements ViewParamsCodec {
   private List codecs;
@@ -36,6 +37,10 @@ public class ViewParamsCodecManager implements ViewParamsCodec {
 
   public RawURLState renderViewParams(ViewParameters toparse) {
     return getCodec(toparse).renderViewParams(toparse);
+  }
+
+  public ViewParamsMapInfo getMappingInfo(ViewParameters viewparams) {
+    return getCodec(viewparams).getMappingInfo(viewparams);
   }
  
 }
