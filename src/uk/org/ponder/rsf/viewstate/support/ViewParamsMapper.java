@@ -1,7 +1,7 @@
 /*
  * Created on 07-May-2006
  */
-package uk.org.ponder.rsf.viewstate;
+package uk.org.ponder.rsf.viewstate.support;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -10,6 +10,9 @@ import java.util.Map;
 import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.mapping.DARList;
 import uk.org.ponder.mapping.DataAlterationRequest;
+import uk.org.ponder.rsf.viewstate.RawURLState;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParamsCodec;
 import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.stringutil.StringUtil;
 
@@ -43,7 +46,7 @@ public class ViewParamsMapper implements ViewParamsCodec {
     return bma;
   }
 
-  public ViewParamsMapInfo getMappingInfo(ViewParameters target) {
+  public ConcreteViewParamsMapInfo getMappingInfo(ViewParameters target) {
     return vpmim.getMappingInfo(target);
   }
 
@@ -77,7 +80,7 @@ public class ViewParamsMapper implements ViewParamsCodec {
    */
   public void parseViewParameters(ViewParameters target, Map params,
       String pathinfo, Map unusedParams) {
-    ViewParamsMapInfo mapinfo = vpmim.getMappingInfo(target);
+    ConcreteViewParamsMapInfo mapinfo = vpmim.getMappingInfo(target);
     DARList toapply = new DARList();
     
     for (Iterator keyit = params.keySet().iterator(); keyit.hasNext();) {
@@ -109,7 +112,7 @@ public class ViewParamsMapper implements ViewParamsCodec {
 
   public String toPathInfo(ViewParameters toconvert) {
     CharWrap togo = new CharWrap();
-    ViewParamsMapInfo mapinfo = vpmim.getMappingInfo(toconvert);
+    ConcreteViewParamsMapInfo mapinfo = vpmim.getMappingInfo(toconvert);
     boolean nullstarted = false;
     for (int i = 0; i < mapinfo.trunkpaths.length; ++i) {
       String trunkpath = mapinfo.trunkpaths[i];
@@ -139,7 +142,7 @@ public class ViewParamsMapper implements ViewParamsCodec {
 
   public Map renderViewParamAttributes(ViewParameters toconvert) {
     Map togo = new HashMap();
-    ViewParamsMapInfo mapinfo = vpmim.getMappingInfo(toconvert);
+    ConcreteViewParamsMapInfo mapinfo = vpmim.getMappingInfo(toconvert);
     for (int i = 0; i < mapinfo.attrnames.length; ++i) {
       String attrname = mapinfo.attrnames[i];
       String path = mapinfo.paths[i];
@@ -152,6 +155,10 @@ public class ViewParamsMapper implements ViewParamsCodec {
       }
     }
     return togo;
+  }
+
+  public boolean isSupported(ViewParameters viewparams) {
+    return true;
   }
 
 }

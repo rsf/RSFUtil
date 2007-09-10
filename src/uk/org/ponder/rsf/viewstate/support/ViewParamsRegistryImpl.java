@@ -1,13 +1,18 @@
 /*
  * Created on 21 May 2007
  */
-package uk.org.ponder.rsf.viewstate;
+package uk.org.ponder.rsf.viewstate.support;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import uk.org.ponder.reflect.DeepBeanCloner;
 import uk.org.ponder.reflect.ReflectiveCache;
+import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParamsReceiver;
+import uk.org.ponder.rsf.viewstate.ViewParamsRegistry;
+import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 import uk.org.ponder.util.Logger;
 
 /** Receives and coordinates view parameters information from the ViewProducers,

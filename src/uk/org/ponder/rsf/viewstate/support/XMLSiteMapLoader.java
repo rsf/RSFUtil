@@ -1,10 +1,13 @@
 /*
  * Created on 11-Jan-2006
  */
-package uk.org.ponder.rsf.viewstate;
+package uk.org.ponder.rsf.viewstate.support;
 
 import java.util.Iterator;
 
+import uk.org.ponder.rsf.viewstate.SiteMap;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParamsReceiver;
 import uk.org.ponder.springutil.XMLFactoryBean;
 
 /** A Spring FactoryBean that will embody a BasicViewParametersParser

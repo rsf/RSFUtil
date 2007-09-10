@@ -8,7 +8,7 @@ import java.util.Map;
 
 import uk.org.ponder.rsac.RSACLazarusList;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
-import uk.org.ponder.rsf.viewstate.ViewParamsMapper;
+import uk.org.ponder.rsf.viewstate.support.ViewParamsMapper;
 
 /** Performs an *internal* redirect to the RSF system, by registering a 
  * "Lazarus listener" which will fire a further request at end of the current

@@ -17,7 +17,7 @@ import uk.org.ponder.rsf.request.EarlyRequestParser;
 import uk.org.ponder.rsf.request.SubmittedValueEntry;
 import uk.org.ponder.rsf.util.RSFUtil;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
-import uk.org.ponder.rsf.viewstate.ViewParamsMappingInfoManager;
+import uk.org.ponder.rsf.viewstate.support.ViewParamsMappingInfoManager;
 import uk.org.ponder.saxalizer.SAXalizerMappingContext;
 import uk.org.ponder.stringutil.StringList;
 import uk.org.ponder.util.Logger;

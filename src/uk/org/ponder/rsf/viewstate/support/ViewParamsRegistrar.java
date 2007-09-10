@@ -1,9 +1,12 @@
 /*
  * Created on 18 Jul 2007
  */
-package uk.org.ponder.rsf.viewstate;
+package uk.org.ponder.rsf.viewstate.support;
 
 import uk.org.ponder.reflect.ReflectiveCache;
+import uk.org.ponder.rsf.viewstate.SiteMap;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParamsReceiver;
 
 /** A utility class to allow views without producers to easily register
  * their ViewParameters types using a Spring definition (alternative was the

@@ -1,8 +1,10 @@
 /*
  * Created on 14 Aug 2006
  */
-package uk.org.ponder.rsf.viewstate;
+package uk.org.ponder.rsf.viewstate.support;
 
+import uk.org.ponder.rsf.viewstate.BaseURLProvider;
+import uk.org.ponder.rsf.viewstate.ContextURLProvider;
 import uk.org.ponder.webapputil.ConsumerInfo;
 
 public class CRIContextURLProvider implements ContextURLProvider {

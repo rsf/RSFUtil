@@ -1,10 +1,13 @@
 /*
  * Created on 18 May 2007
  */
-package uk.org.ponder.rsf.viewstate;
+package uk.org.ponder.rsf.viewstate.support;
 
 import java.util.List;
 
+import uk.org.ponder.rsf.viewstate.AnyViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParamsInterceptor;
 import uk.org.ponder.util.Logger;
 
 public class ViewParamsInterceptorManager implements ViewParamsInterceptor {
