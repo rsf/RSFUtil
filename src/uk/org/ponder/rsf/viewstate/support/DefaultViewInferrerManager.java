@@ -1,9 +1,12 @@
 /*
  * Created on 21 May 2007
  */
-package uk.org.ponder.rsf.viewstate;
+package uk.org.ponder.rsf.viewstate.support;
 
 import java.util.List;
+
+import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
 /** Coordinates all the DefaultViewsInferrers in the system **/
 

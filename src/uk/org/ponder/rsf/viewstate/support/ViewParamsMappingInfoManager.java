@@ -1,13 +1,15 @@
 /*
  * Created on 07-May-2006
  */
-package uk.org.ponder.rsf.viewstate;
+package uk.org.ponder.rsf.viewstate.support;
 
 import java.util.Map;
 
 import uk.org.ponder.arrayutil.ListUtil;
 import uk.org.ponder.beanutil.PathUtil;
 import uk.org.ponder.reflect.ReflectiveCache;
+import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.saxalizer.AccessMethod;
 import uk.org.ponder.saxalizer.MethodAnalyser;
 import uk.org.ponder.saxalizer.SAXAccessMethod;
@@ -49,9 +51,9 @@ public class ViewParamsMappingInfoManager {
    * @param viewparams a VP object
    * @return a VPMI for this VP object
    */
-  public ViewParamsMapInfo getMappingInfo(ViewParameters viewparams) {
+  public ConcreteViewParamsMapInfo getMappingInfo(ViewParameters viewparams) {
     Class clazz = viewparams.getClass();
-    ViewParamsMapInfo togo = (ViewParamsMapInfo) viewparamsmap.get(clazz);
+    ConcreteViewParamsMapInfo togo = (ConcreteViewParamsMapInfo) viewparamsmap.get(clazz);
     if (togo == null) {
       togo = computeMappingInfo(viewparams);
       viewparamsmap.put(clazz, togo);
@@ -99,7 +101,7 @@ public class ViewParamsMappingInfoManager {
    * @param viewparams the VP object
    * @return a ViewParamsMapInfo representing the VP object fields
    */
-  private ViewParamsMapInfo computeMappingInfo(ViewParameters viewparams) {
+  private ConcreteViewParamsMapInfo computeMappingInfo(ViewParameters viewparams) {
     StringList attnames = new StringList();
     StringList paths = new StringList();
     StringList trunkpaths = new StringList();
@@ -158,7 +160,7 @@ public class ViewParamsMappingInfoManager {
         }
       }
     }
-    ViewParamsMapInfo togo = new ViewParamsMapInfo();
+    ConcreteViewParamsMapInfo togo = new ConcreteViewParamsMapInfo();
     togo.attrnames = attnames.toStringArray();
     togo.paths = paths.toStringArray();
     togo.trunkpaths = trunkpaths.toStringArray();

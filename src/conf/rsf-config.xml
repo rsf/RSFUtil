@@ -544,13 +544,13 @@
   </bean>
 
   <bean id="viewParamsMappingInfoManager"
-    class="uk.org.ponder.rsf.viewstate.ViewParamsMappingInfoManager">
+    class="uk.org.ponder.rsf.viewstate.support.ViewParamsMappingInfoManager">
     <property name="reflectiveCache" ref="reflectiveCache" />
     <property name="SAXalizerMappingContext" ref="ELMappingContext" />
   </bean>
 
   <bean id="viewParamsCodec"
-    class="uk.org.ponder.rsf.viewstate.ViewParamsCodecManager">
+    class="uk.org.ponder.rsf.viewstate.support.ViewParamsCodecManager">
   </bean>
 
   <bean id="viewParamsCodecParent"
@@ -564,28 +564,28 @@
   </bean>
 
   <bean id="viewParamsMapper"
-    class="uk.org.ponder.rsf.viewstate.ViewParamsMapper">
+    class="uk.org.ponder.rsf.viewstate.support.ViewParamsMapper">
     <property name="beanModelAlterer" ref="DARApplier" />
     <property name="VPMappingInfoManager"
       ref="viewParamsMappingInfoManager" />
   </bean>
 
   <bean id="siteMapParent"
-    class="uk.org.ponder.rsf.viewstate.XMLSiteMapLoader"
+    class="uk.org.ponder.rsf.viewstate.support.XMLSiteMapLoader"
     parent="XMLFactoryBean" abstract="true">
     <property name="location" value="/WEB-INF/sitemap.xml" />
     <property name="viewParametersReceiver" ref="viewParamsRegistry" />
   </bean>
 
   <bean id="viewParamsRegistrarParent"
-    class="uk.org.ponder.rsf.viewstate.ViewParamsRegistrar"
+    class="uk.org.ponder.rsf.viewstate.support.ViewParamsRegistrar"
     init-method="init" abstract="true">
     <property name="reflectiveCache" ref="reflectiveCache" />
     <property name="viewParametersReceiver" ref="viewParamsRegistry" />
   </bean>
 
   <bean id="viewParamsInterceptorManager"
-    class="uk.org.ponder.rsf.viewstate.ViewParamsInterceptorManager">
+    class="uk.org.ponder.rsf.viewstate.support.ViewParamsInterceptorManager">
     <property name="viewParameters" ref="parsedViewParametersProxy" />
   </bean>
 
@@ -596,7 +596,7 @@
   </bean>
 
   <bean id="environmentalViewParamsInterceptorManager" 
-    class="uk.org.ponder.rsf.viewstate.ViewParamsInterceptorManager">
+    class="uk.org.ponder.rsf.viewstate.support.ViewParamsInterceptorManager">
   </bean>
 
   <bean id="environmentalViewParamsInterceptorParent"
@@ -606,7 +606,7 @@
   </bean>
 
   <bean id="defaultViewInferrerManager"
-    class="uk.org.ponder.rsf.viewstate.DefaultViewInferrerManager" />
+    class="uk.org.ponder.rsf.viewstate.support.DefaultViewInferrerManager" />
 
   <bean id="defaultViewInferrerParent"
     class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
@@ -621,7 +621,7 @@
   </bean>
 
   <bean id="viewParamsRegistry"
-    class="uk.org.ponder.rsf.viewstate.ViewParamsRegistryImpl"
+    class="uk.org.ponder.rsf.viewstate.support.ViewParamsRegistryImpl"
     init-method="init">
     <property name="reflectiveCache" ref="reflectiveCache" />
     <property name="deepBeanCloner" ref="deepBeanCloner" />

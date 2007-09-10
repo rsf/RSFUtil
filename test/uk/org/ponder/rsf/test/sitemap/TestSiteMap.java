@@ -6,8 +6,8 @@ package uk.org.ponder.rsf.test.sitemap;
 import java.util.HashMap;
 
 import uk.org.ponder.rsf.test.PlainRSFTests;
-import uk.org.ponder.rsf.viewstate.BasicViewParametersParser;
 import uk.org.ponder.rsf.viewstate.EntityCentredViewParameters;
+import uk.org.ponder.rsf.viewstate.support.BasicViewParametersParser;
 
 public class TestSiteMap extends PlainRSFTests {
   public void testParseECVP() {

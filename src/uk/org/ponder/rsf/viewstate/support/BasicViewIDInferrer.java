@@ -1,9 +1,11 @@
 /*
  * Created on 11 Jul 2006
  */
-package uk.org.ponder.rsf.viewstate;
+package uk.org.ponder.rsf.viewstate.support;
 
 import java.util.Map;
+
+import uk.org.ponder.rsf.viewstate.ViewIDInferrer;
 
 /** The RSF default ViewIDInferrer which simply adopts the first section
  * of pathInfo up to the first /.
