@@ -41,13 +41,14 @@ public class XMLLump {
   // the (XHTML) attribute appearing in the template file designating a 
   // template component. 
   public static final String ID_ATTRIBUTE = "rsf:id";
-  // A value for the rsf:id attribute representing a component that needs
-  // URL rewriting (issued URLs beginning with root /). NEVER issue a component
-  // with this ID!
+  /** The prefix indicating an rsf:id for a 
+   * {@link uk.org.ponder.rsf.renderer.scr.StaticComponentRenderer}
+   */
   public static final String SCR_PREFIX = "scr=";
-  // Value for rsf:id that represents a CollectingSCR
+  /** The prefix indicating an rsf:id for a simple internationalised message **/
+  public static final String MSG_PREFIX = "msg=";  
+  /** Value for rsf:id that represents a CollectingSCR */
   public static final String SCR_CONTRIBUTE_PREFIX = "scr=contribute-";
-  public static final String URL_REWRITE = "rewrite-url";
   // A value for the rsf:id attribute indicating that the actual (leaf) component
   // to be targetted by component rendering is somewhere inside the component
   // holding the ID. NEVER issue a component with this ID! In this case, the

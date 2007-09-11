@@ -14,7 +14,7 @@ import uk.org.ponder.xml.XMLWriter;
  */
 public interface CollectingSCR extends StaticComponentRenderer {
   /** Return an array of names of "contributing" SCRs,
-   * consisting of the text following {@link XMLLump}.SCR_CONTRIBUTE_PREFIX
+   * consisting of the text following {@link XMLLump#SCR_CONTRIBUTE_PREFIX}
    * in the rsf:id of the contribution marker.
    * 
    */
