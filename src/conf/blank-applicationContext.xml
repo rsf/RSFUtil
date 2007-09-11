@@ -271,7 +271,7 @@ with a client redirect rather than an internal reinterpretation -->
     <property name="value" value="true"/>
   </bean>
 
-  <bean id="viewResolver" class="uk.org.ponder.rsf.view.ConcreteViewResolver"
+  <bean id="viewResolver" class="uk.org.ponder.rsf.view.support.ConcreteViewResolver"
     init-method="init">
     <property name="views" ref="staticViews" />
     <property name="unknownViewIsError" ref="unknownViewIsError"/>
@@ -309,10 +309,10 @@ with a client redirect rather than an internal reinterpretation -->
 
   <!--  override this bean with a concrete bean derived from XmlViewResolverDef -->
   <bean id="XMLViewResolver"
-    class="uk.org.ponder.rsf.view.NullViewResolver" />
+    class="uk.org.ponder.rsf.view.support.NullViewResolver" />
 
   <bean id="XMLViewResolverParent"
-    class="uk.org.ponder.rsf.view.XMLViewResolver" abstract="true">
+    class="uk.org.ponder.rsf.view.support.XMLViewResolver" abstract="true">
     <property name="XMLProvider" ref="XMLProvider" />
     <property name="templateExpander" ref="templateExpander" />
     <property name="viewParamsReceiver" ref="viewParamsRegistry" />

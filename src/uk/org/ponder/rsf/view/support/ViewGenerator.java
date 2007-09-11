@@ -1,7 +1,7 @@
 /*
  * Created on Sep 23, 2005
  */
-package uk.org.ponder.rsf.view;
+package uk.org.ponder.rsf.view.support;
 
 import java.io.ByteArrayOutputStream;
 
@@ -9,6 +9,7 @@ import org.apache.log4j.Level;
 
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReceiver;
 import uk.org.ponder.rsf.producers.NullaryProducer;
+import uk.org.ponder.rsf.view.View;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.saxalizer.XMLProvider;
 import uk.org.ponder.streamutil.write.StringPOS;

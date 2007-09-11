@@ -1,7 +1,7 @@
 /*
  * Created on Oct 20, 2004
  */
-package uk.org.ponder.rsf.view;
+package uk.org.ponder.rsf.view.support;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +16,11 @@ import uk.org.ponder.rsf.flow.errors.SilentRedirectException;
 import uk.org.ponder.rsf.flow.jsfnav.DynamicNavigationCaseReporter;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReceiver;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
+import uk.org.ponder.rsf.view.ComponentProducer;
+import uk.org.ponder.rsf.view.DefaultView;
+import uk.org.ponder.rsf.view.MappingViewResolver;
+import uk.org.ponder.rsf.view.ViewComponentProducer;
+import uk.org.ponder.rsf.view.ViewResolver;
 import uk.org.ponder.rsf.viewstate.ViewParamsReceiver;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 import uk.org.ponder.util.UniversalRuntimeException;

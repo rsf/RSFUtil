@@ -19,7 +19,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * 
  */
 
-public class ContentTypeInfoFactory implements ContentTypeReceiver {
+public class ContentTypeInfoFactory implements ContentTypeReceiver, ContentTypeReporter, ContentTypeResolver {
   private List resolvers;
   private ViewParameters viewparamsproxy;
   private Map typeinfomap;
@@ -42,8 +42,7 @@ public class ContentTypeInfoFactory implements ContentTypeReceiver {
     viewmap = reflectivecache.getConcurrentMap(1);
   }
   
-  public String getContentType() {
-    ViewParameters viewparams = (ViewParameters) viewparamsproxy.get();
+  public String resolveContentType(ViewParameters viewparams) {
     // For redirect or other "exotic" views, viewID may be null.
     String fromview = viewparams.viewID == null? null : 
       (String) viewmap.get(viewparams.viewID);
@@ -56,6 +55,11 @@ public class ContentTypeInfoFactory implements ContentTypeReceiver {
       }
     }
     return fromview;
+  }
+  
+  public String getContentType() {
+    ViewParameters viewparams = (ViewParameters) viewparamsproxy.get();
+    return resolveContentType(viewparams);
   }
 
   public ContentTypeInfo getContentTypeInfo() {

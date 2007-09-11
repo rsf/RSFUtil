@@ -1,12 +1,16 @@
 /*
  * Created on 17-Sep-2006
  */
-package uk.org.ponder.rsf.view;
+package uk.org.ponder.rsf.view.support;
 
 import java.util.List;
 
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.producers.NullaryProducer;
+import uk.org.ponder.rsf.view.ComponentChecker;
+import uk.org.ponder.rsf.view.ComponentProducer;
+import uk.org.ponder.rsf.view.ViewNotFoundException;
+import uk.org.ponder.rsf.view.ViewResolver;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.UniversalRuntimeException;
 

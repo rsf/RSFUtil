@@ -6,7 +6,7 @@ package uk.org.ponder.rsf.servlet;
 import javax.servlet.http.HttpServletRequest;
 
 import uk.org.ponder.rsf.viewstate.BaseURLProvider;
-import uk.org.ponder.rsf.viewstate.StaticBaseURLProvider;
+import uk.org.ponder.rsf.viewstate.support.StaticBaseURLProvider;
 import uk.org.ponder.servletutil.ServletUtil;
 
 /** A request-scope bean which automatically infers the base URL to be
