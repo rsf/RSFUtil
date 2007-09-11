@@ -149,11 +149,13 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       rsc.IDassigner.adjustForID(attrcopy, torendero);
       decoratormanager.decorate(torendero.decorators, uselump.getTag(),
           attrcopy);
-
+      boolean iselide = lump.rsfID.startsWith(XMLLump.ELISION_PREFIX);
       TagRenderContext rendercontext = new TagRenderContext(attrcopy, uselump,
-          endopen, close, rsc.pos, rsc.xmlw, nextpos);
+          endopen, close, rsc.pos, rsc.xmlw, nextpos, iselide);
       // ALWAYS dump the tag name, this can never be rewritten. (probably?!)
-      rsc.pos.write(uselump.parent.buffer, uselump.start, uselump.length);
+      if (!iselide) {
+        rsc.pos.write(uselump.parent.buffer, uselump.start, uselump.length);
+      }
 
       if (torendero instanceof UIBasicListMember) {
         torendero = RenderUtil.resolveListMember(rsc.view,

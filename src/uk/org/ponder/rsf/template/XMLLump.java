@@ -57,6 +57,9 @@ public class XMLLump {
   // this occurs in the SAME CONTAINER scope as the target???
   public static final String FORID_PREFIX = "message-for:";// + SplitID.SEPARATOR;
   public static final String FORID_SUFFIX = "*";
+  /** This prefix for an rsf:id will elide the surrounding tag when rendered. This
+   * cannot be combined with an empty body*/
+  public static final String ELISION_PREFIX = "~";
   public XMLLump() {}
   public XMLLump(int lumpindex, int nestingdepth) {
     this.lumpindex = lumpindex;

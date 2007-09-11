@@ -24,11 +24,13 @@ public class TagRenderContext {
   public XMLLump close;
   public PrintOutputStream pos;
   public XMLWriter xmlw;
+  public boolean iselide;
 
   public int nextpos;
 
   public TagRenderContext(Map attrcopy, XMLLump uselump, XMLLump endopen,
-      XMLLump close, PrintOutputStream pos, XMLWriter xmlw, int nextpos) {
+      XMLLump close, PrintOutputStream pos, XMLWriter xmlw, int nextpos,
+      boolean iselide) {
     this.attrcopy = attrcopy;
     this.uselump = uselump;
     this.endopen = endopen;
@@ -36,19 +38,20 @@ public class TagRenderContext {
     this.pos = pos;
     this.xmlw = xmlw;
     this.nextpos = nextpos;
+    this.iselide = iselide;
   }
 
-  
-  
   public void closeTag() {
-    pos.print("</");
-    pos.write(uselump.parent.buffer, uselump.start + 1, uselump.length - 2);
-    pos.print(">");
+    if (!iselide) {
+      pos.print("</");
+      pos.write(uselump.parent.buffer, uselump.start + 1, uselump.length - 2);
+      pos.print(">");
+    }
   }
 
   public void renderUnchanged() {
     RenderUtil.dumpTillLump(uselump.parent.lumps, uselump.lumpindex + 1,
-        close.lumpindex + 1, pos);
+        close.lumpindex + (iselide ? 0 : 1), pos);
   }
 
   public void rewriteLeaf(String value) {
@@ -59,15 +62,22 @@ public class TagRenderContext {
   }
 
   public void rewriteLeafOpen(String value) {
-    if (value != null && !UITypes.isPlaceholder(value))
-      replaceBody(value);
-    else
-      replaceAttributesOpen();
+    if (iselide) {
+      rewriteLeaf(value);
+    }
+    else {
+      if (value != null && !UITypes.isPlaceholder(value))
+        replaceBody(value);
+      else
+        replaceAttributesOpen();
+    }
   }
 
   public void replaceBody(String value) {
     XMLUtil.dumpAttributes(attrcopy, xmlw);
-    pos.print(">");
+    if (!iselide) {
+      pos.print(">");
+    }
     xmlw.write(value);
     closeTag();
   }
@@ -79,21 +89,27 @@ public class TagRenderContext {
   }
 
   public void replaceAttributesOpen() {
-    XMLUtil.dumpAttributes(attrcopy, xmlw);
-    pos.print(isEmpty() ? "/>"
-        : ">");
+    if (iselide) {
+      replaceAttributes();
+    }
+    else {
+      XMLUtil.dumpAttributes(attrcopy, xmlw);
+      pos.print(isEmpty() ? "/>" : ">");
 
-    nextpos = endopen.lumpindex + 1;
+      nextpos = endopen.lumpindex + 1;
+    }
   }
 
   public void dumpTemplateBody() {
     if (isEmpty()) {
-      pos.print("/>");
+      if (!iselide) {
+        pos.print("/>");
+      }
     }
     else {
       pos.print(">");
       RenderUtil.dumpTillLump(uselump.parent.lumps, endopen.lumpindex + 1,
-          close.lumpindex + 1, pos);
+          close.lumpindex + (iselide ? 0 : 1), pos);
     }
   }
 
