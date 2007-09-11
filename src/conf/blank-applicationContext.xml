@@ -390,8 +390,11 @@ with a client redirect rather than an internal reinterpretation -->
   <bean id="HTMLAlternativeTextRenderer"
     class="uk.org.ponder.rsf.renderer.html.decorators.HTMLAlternativeTextRenderer"/>
     
-  <bean id="HTMLTextDimensionsRenderer"
+  <bean id="HTMLTextDimensionsDecoratorRenderer"
     class="uk.org.ponder.rsf.renderer.html.decorators.HTMLTextDimensionsDecoratorRenderer"/>
+
+  <bean id="HTMLCellSpanDecoratorRenderer"
+    class="uk.org.ponder.rsf.renderer.html.decorators.HTMLCellSpanDecoratorRenderer"/>
 
   <bean id="CSSDecoratorRenderer"
     class="uk.org.ponder.rsf.renderer.html.decorators.CSSDecoratorRenderer" />
