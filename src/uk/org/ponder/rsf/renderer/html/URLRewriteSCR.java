@@ -4,6 +4,7 @@
 package uk.org.ponder.rsf.renderer.html;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import uk.org.ponder.htmlutil.HTMLConstants;
 import uk.org.ponder.rsf.renderer.ComponentRenderer;
@@ -61,18 +62,18 @@ public class URLRewriteSCR implements BasicSCR {
    * @return Either <code>null</code> if no modification was performed, or a
    *         modifiable attribute map.
    */
-  public HashMap getResolvedURLMap(
-      BasedViewTemplate template, HashMap attrs, String name, HashMap cloned) {
-    String toresolve = (String) attrs.get(name);
+  public Map getResolvedURLMap(XMLLump lump, String name, Map cloned) {
+    String toresolve = (String) lump.attributemap.get(name);
     if (toresolve == null || rewriter == null) return cloned;
-    String resolved = resolveURL(template, toresolve);
+    String resolved = resolveURL(lump.parent, toresolve);
     if (resolved == null) {
       return cloned;
     }
     else {
-      HashMap togo = null;
+      Map togo = null;
       if (cloned == null) {
-        togo = (HashMap) attrs.clone();
+        togo = new HashMap();
+        togo.putAll(lump.attributemap);
       }
       else {
         togo = cloned;
@@ -93,20 +94,23 @@ public class URLRewriteSCR implements BasicSCR {
     }
     return null;
   }
-
+ 
+  public Map rewriteURLs(XMLLump lump, Map attrcopy) {
+    String linkattr = getLinkAttribute(lump);
+    attrcopy = getResolvedURLMap(lump, linkattr, attrcopy);
+    for (int i = 0; i < HTMLConstants.ubiquitousURL.length; ++i) {
+      attrcopy = getResolvedURLMap(lump, HTMLConstants.ubiquitousURL[i], attrcopy);
+    }
+    return attrcopy;
+  }
+  
   public int render(XMLLump lump, XMLWriter xmlw) {
     PrintOutputStream pos = xmlw.getInternalWriter();
-    HashMap newattrs = null;
+    Map newattrs = null;
     XMLLump close = lump.close_tag;
     XMLLump endopen = lump.open_end;
-    String linkattr = getLinkAttribute(lump);
-    if (linkattr != null) {
-      newattrs = getResolvedURLMap(lump.parent, lump.attributemap, linkattr, newattrs);
-    }
-    for (int i = 0; i < HTMLConstants.ubiquitousURL.length; ++i) {
-      newattrs = getResolvedURLMap(lump.parent, lump.attributemap,
-          HTMLConstants.ubiquitousURL[i], newattrs);
-    }
+    newattrs = rewriteURLs(lump, newattrs);
+   
     xmlw.writeRaw(lump.parent.buffer, lump.start, lump.length);
     if (newattrs == null) {
       RenderUtil.dumpTillLump(lump.parent.lumps, lump.lumpindex + 1, endopen.lumpindex + 1, pos);

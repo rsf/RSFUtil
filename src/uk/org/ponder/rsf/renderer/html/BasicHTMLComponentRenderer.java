@@ -15,7 +15,6 @@ import uk.org.ponder.rsf.components.UIBoundString;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIForm;
-import uk.org.ponder.rsf.components.UIInternalLink;
 import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.components.UIOutputMultiline;
 import uk.org.ponder.rsf.components.UIParameter;
@@ -34,7 +33,6 @@ import uk.org.ponder.rsf.view.View;
 import uk.org.ponder.streamutil.StreamCopyUtil;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.stringutil.StringList;
-import uk.org.ponder.stringutil.URLUtil;
 import uk.org.ponder.util.Constants;
 import uk.org.ponder.xml.XMLUtil;
 import uk.org.ponder.xml.XMLWriter;
@@ -68,6 +66,10 @@ public class BasicHTMLComponentRenderer implements ComponentRenderer {
     int lumpindex = trc.uselump.lumpindex;
     PrintOutputStream pos = trc.pos;
 
+    // Make an early and general attempt to rewrite side-URLs
+    URLRewriteSCR urlrewriter = (URLRewriteSCR) scrc.getSCR(URLRewriteSCR.NAME);
+    urlrewriter.rewriteURLs(trc.uselump, attrcopy);
+    
     if (torendero instanceof UIBound) {
       UIBound torender = (UIBound) torendero;
 
@@ -213,14 +215,10 @@ public class BasicHTMLComponentRenderer implements ComponentRenderer {
         if (UITypes.isPlaceholder(target)) {
           target = (String) attrcopy.get(attrname);
         }
-        if (!(torendero instanceof UIInternalLink)) {
-          URLRewriteSCR urlrewriter = (URLRewriteSCR) scrc
-              .getSCR(URLRewriteSCR.NAME);
-          if (!URLUtil.isAbsolute(target)) {
-            String rewritten = urlrewriter.resolveURL(trc.uselump.parent,
-                target);
-            if (rewritten != null)
-              target = rewritten;
+        else {
+          String resolved = urlrewriter.resolveURL(trc.uselump.parent, target);
+          if (resolved != null) {
+            target = resolved;
           }
         }
         attrcopy.put(attrname, target);
@@ -239,8 +237,7 @@ public class BasicHTMLComponentRenderer implements ComponentRenderer {
       UICommand torender = (UICommand) torendero;
       String value = RenderUtil.makeURLAttributes(torender.parameters);
       // any desired "attributes" decoded for JUST THIS ACTION must be
-      // secretly
-      // bundled as this special attribute.
+      // secretly bundled as this special attribute.
       attrcopy.put("name", FossilizedConverter.COMMAND_LINK_PARAMETERS + value);
       String text = torender.commandtext == null ? null
           : torender.commandtext.getValue();
@@ -250,12 +247,7 @@ public class BasicHTMLComponentRenderer implements ComponentRenderer {
         text = null;
       }
       trc.rewriteLeaf(text);
-      // RenderUtil.dumpHiddenField(SubmittedValueEntry.ACTION_METHOD,
-      // torender.actionhandler, pos);
     }
-    // Forms behave slightly oddly in the hierarchy - by the time they reach
-    // the renderer, they have been "shunted out" of line with their children,
-    // i.e. any "submitting" controls, if indeed they ever were there.
     else if (torendero instanceof UIForm) {
       UIForm torender = (UIForm) torendero;
       attrcopy.put("method", 
@@ -269,15 +261,6 @@ public class BasicHTMLComponentRenderer implements ComponentRenderer {
         UIParameter param = torender.parameters.parameterAt(i);
         RenderUtil.dumpHiddenField(param, xmlw);
       }
-      // override "nextpos" - form is expected to contain numerous nested
-      // Components.
-      // this is the only ANOMALY!! Forms together with payload cannot work.
-      // the fact we are at the wrong recursion level will "come out in the
-      // wash"
-      // since we must return to the base recursion level before we exit this
-      // domain.
-      // Assuming there are no paths *IN* through forms that do not also lead
-      // *OUT* there will be no problem. Check what this *MEANS* tomorrow.
     }
     else if (torendero instanceof UIVerbatim) {
       UIVerbatim torender = (UIVerbatim) torendero;
