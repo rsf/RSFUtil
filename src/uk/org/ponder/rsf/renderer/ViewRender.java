@@ -206,9 +206,9 @@ public class ViewRender {
         break;
 
       String id = lump.rsfID;
-      boolean ismessage = id.startsWith(XMLLump.FORID_PREFIX);
+      boolean ismessagefor = id.startsWith(XMLLump.FORID_PREFIX);
      
-      if (id != null && !ismessage && SplitID.isSplit(id)) {
+      if (id != null && !ismessagefor && SplitID.isSplit(id)) {
         // we have entered a repetitive domain, by diagnosis of the template.
         // Seek in the component tree for the child list that must be here
         // at this component, and process them in order, looking them up in
@@ -312,7 +312,7 @@ public class ViewRender {
               + " to " + closefinal.toString());
         }
       }
-      else if (ismessage) {
+      else if (ismessagefor) {
         TargettedMessageList messages = messagetargets.getMessages(lump);
         if (messages == null)
           messages = new TargettedMessageList();
@@ -385,8 +385,12 @@ public class ViewRender {
 
   }
 
-  private static UIComponent fetchComponent(UIContainer basecontainer,
+  private UIComponent fetchComponent(UIContainer basecontainer,
       String id) {
+    if (id.startsWith(XMLLump.MSG_PREFIX)) {
+      String key = id.substring(XMLLump.MSG_PREFIX.length());
+      return messagerenderer.renderMessage(key);
+    }
     while (basecontainer != null) {
       UIComponent togo = basecontainer.getComponent(id);
       if (togo != null)
