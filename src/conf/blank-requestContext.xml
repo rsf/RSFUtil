@@ -35,11 +35,25 @@
   <!--  Don't use an alias for this since we imagine it will be overridden -->
   <bean name="pageProducer" 
     class="org.springframework.beans.factory.config.BeanReferenceFactoryBean">
-      <property name="targetBeanName" value="viewCollector"/>
+      <property name="targetBeanName" value="layoutCollector"/>
   </bean>
   
-  <bean id="layoutProducerParent" abstract="true">
-    <property name="pageProducer" ref="pageBasicProducer"/>
+  <bean id="layoutProducerParent" class="uk.org.ponder.rsf.view.LayoutProducerHolder" 
+     abstract="true">
+     <property name="viewGroupName" value="HTMLViewGroup" />
+  </bean>
+
+  <bean id="layoutCollectorTLAB" class="uk.org.ponder.springutil.ByClassTLAB" init-method="init">
+    <property name="RSACBeanLocator" ref="RSACBeanLocator"/>
+    <property name="targetClass" value="uk.org.ponder.rsf.view.LayoutProducerHolder"/>
+    <property name="targetPath" value="layoutCollector.holders"/>
+  </bean>
+
+  <bean id="layoutCollector" class="uk.org.ponder.rsf.view.support.LayoutCollector">
+    <property name="ELEvaluator" ref="ELEvaluator"/>
+    <property name="upstreamProducer" ref="viewCollector"/>
+    <property name="viewGroupResolver" ref="viewGroupResolver"/>
+    <property name="viewParameters" ref="viewParameters"/>
   </bean>
 
   <!-- TODO: Move all preservers and lists of them into application scope. -->

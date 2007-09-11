@@ -1,7 +1,9 @@
 /*
  * Created on Oct 25, 2005
  */
-package uk.org.ponder.rsf.viewstate;
+package uk.org.ponder.rsf.viewstate.support;
+
+import uk.org.ponder.rsf.viewstate.BaseURLProvider;
 
 
 public class StaticBaseURLProvider implements BaseURLProvider {

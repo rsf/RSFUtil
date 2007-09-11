@@ -1,7 +1,7 @@
 /*
  * Created on 27-Feb-2006
  */
-package uk.org.ponder.rsf.view;
+package uk.org.ponder.rsf.view.support;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,6 +15,9 @@ import org.springframework.context.ApplicationContextAware;
 
 import uk.org.ponder.reflect.ReflectiveCache;
 import uk.org.ponder.rsac.RSACBeanLocator;
+import uk.org.ponder.rsf.view.ComponentProducer;
+import uk.org.ponder.rsf.view.ComponentProducerWrapper;
+import uk.org.ponder.rsf.view.ViewComponentProducer;
 
 /**
  * Manages a set of beans representing view producers. The slightly unusual

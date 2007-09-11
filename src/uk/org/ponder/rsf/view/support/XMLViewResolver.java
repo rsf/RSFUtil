@@ -1,7 +1,7 @@
 /*
  * Created on Nov 25, 2005
  */
-package uk.org.ponder.rsf.view;
+package uk.org.ponder.rsf.view.support;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -15,6 +15,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 import uk.org.ponder.rsf.expander.TemplateExpander;
+import uk.org.ponder.rsf.view.ViewResolver;
+import uk.org.ponder.rsf.view.ViewRoot;
 import uk.org.ponder.rsf.viewstate.ViewParamsReceiver;
 import uk.org.ponder.saxalizer.XMLProvider;
 import uk.org.ponder.springutil.CachingInputStreamSource;

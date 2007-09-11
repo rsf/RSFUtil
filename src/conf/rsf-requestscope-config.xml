@@ -340,7 +340,7 @@ to intercept bindings -->
   <!-- Collects together all ViewProducers, and selects those appropriate for 
     this request -->
   <bean id="viewCollector"
-    class="uk.org.ponder.rsf.view.ViewCollector">
+    class="uk.org.ponder.rsf.view.support.ViewCollector">
     <property name="viewResolver" ref="viewResolver" />
     <property name="viewParameters" ref="viewParameters" />
     <property name="componentChecker" ref="viewTemplate" />

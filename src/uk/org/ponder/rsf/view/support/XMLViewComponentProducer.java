@@ -1,10 +1,13 @@
 /*
  * Created on Nov 24, 2005
  */
-package uk.org.ponder.rsf.view;
+package uk.org.ponder.rsf.view.support;
 
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.expander.TemplateExpander;
+import uk.org.ponder.rsf.view.ComponentChecker;
+import uk.org.ponder.rsf.view.ViewComponentProducer;
+import uk.org.ponder.rsf.view.ViewRoot;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /** A ViewComponentProducer that returns components deserialized from an
