@@ -63,7 +63,7 @@ public class DecoratorManager implements ApplicationContextAware {
   private Map getTypeMap(UIDecorator dec) {
     Class clazz = dec.getClass();
     while (clazz != null && clazz != UIDecorator.class) { 
-      Map typemap = (Map) byClass.get(dec.getClass());
+      Map typemap = (Map) byClass.get(clazz);
       if (typemap != null && !typemap.isEmpty()) {
         return typemap;
       }
