@@ -206,9 +206,15 @@ public class ViewRender {
         break;
 
       String id = lump.rsfID;
+      if (id == null) {
+        throw new IllegalArgumentException("Fatal internal error during rendering - no rsf:id found on stopping tag " + lump);
+      }
+      if (id.startsWith(XMLLump.ELISION_PREFIX)) {
+        id = id.substring(XMLLump.ELISION_PREFIX.length());
+      }
       boolean ismessagefor = id.startsWith(XMLLump.FORID_PREFIX);
      
-      if (id != null && !ismessagefor && SplitID.isSplit(id)) {
+      if (!ismessagefor && SplitID.isSplit(id)) {
         // we have entered a repetitive domain, by diagnosis of the template.
         // Seek in the component tree for the child list that must be here
         // at this component, and process them in order, looking them up in
