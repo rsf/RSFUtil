@@ -81,8 +81,12 @@ public class MessageTargetter {
       // TODO: what if action has, despite errors, insisted on redirecting to
       // a DIFFERENT view?
       if (target == null) {
-        Logger.log.warn("Warning: Message " + message.acquireMessageCode()
-            + " queued for nonexistent component ID " + message.targetid);
+        // remove this spurious warning for now. "globaltarget" system was
+        // intended to at least identify the right form in the view by means
+        // of the submitting control, but needs review. In the meantime, there
+        // is now the "DEAD_LETTER" last-ditch system for final delivery.
+//        Logger.log.warn("Warning: Message " + message.acquireMessageCode()
+//            + " queued for nonexistent component ID " + message.targetid);
       }
       else {
         SplitID split = new SplitID(targetid);
