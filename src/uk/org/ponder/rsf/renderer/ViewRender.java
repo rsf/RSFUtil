@@ -58,8 +58,6 @@ public class ViewRender {
   private TargettedMessageList messagelist;
   // a map of HTMLLumps to StringList of messages due to be delivered to
   // that component when it is reached (registered with a FORID prefix)
-  // NB - this will not work, rethink message architecture.
-  // hah. NOW it will work! Only 2 months to fix that.
   private MessageTargetMap messagetargets;
   private MessageRenderer messagerenderer;
   private String globalmessagetarget;

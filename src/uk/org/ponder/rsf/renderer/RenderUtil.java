@@ -80,7 +80,7 @@ public class RenderUtil {
       ++renderindex;
     }
     // ASSUMPTIONS: close tags are ONE LUMP
-    if (!closeparent && lumps[renderindex].rsfID == null)
+    if (!closeparent && (renderindex == lumps.length || lumps[renderindex].rsfID == null))
       --renderindex;
     int limit = (renderindex == lumps.length ? buffer.length
         : lumps[renderindex].start);
