@@ -478,4 +478,6 @@ with a client redirect rather than an internal reinterpretation -->
     </property>
   </bean>
 
+  <import resource="classpath:/conf/springutil-validators.xml"/>
+
 </beans>

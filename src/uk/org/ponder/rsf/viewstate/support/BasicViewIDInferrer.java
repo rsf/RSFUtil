@@ -28,7 +28,7 @@ public class BasicViewIDInferrer implements StaticViewIDInferrer {
       if (high0 != null) {
         return high0 instanceof String? (String)high0 : ((String[]) high0)[0];
       }
-      String[] segments = StringUtil.split(pathinfo, '/');
+      String[] segments = StringUtil.split(pathinfo, '/', false);
       boolean slash0 = pathinfo.charAt(0) == '/';
       return segments[index + (slash0? 1 : 0)];
     }
