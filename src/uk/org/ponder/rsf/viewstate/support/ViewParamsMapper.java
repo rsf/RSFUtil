@@ -87,7 +87,7 @@ public class ViewParamsMapper implements CoreViewParamsCodec {
     DARList toapply = new DARList();
     
     if (pathinfo != null) {
-      String[] segments = StringUtil.split(pathinfo, '/');
+      String[] segments = StringUtil.split(pathinfo, '/', false);
       for (int i = 0; i < mapinfo.trunkpaths.length; ++i) {
         // An extra segment will be produced for the initial /
         int reqindex = i + 1;

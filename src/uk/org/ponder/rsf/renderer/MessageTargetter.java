@@ -78,6 +78,10 @@ public class MessageTargetter {
       }
       best.bestfor = DEAD_LETTERS;
       UIComponent target = view.getComponent(targetid);
+//      int colpos = targetid.lastIndexOf(':');
+//      if (colpos != -1) {
+//        targetid = targetid.substring(colpos + 1);
+//      }
       // TODO: what if action has, despite errors, insisted on redirecting to
       // a DIFFERENT view?
       if (target == null) {

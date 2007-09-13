@@ -157,6 +157,16 @@
     <property name="targetBeanName" value="beanInvalidationBracketer" />
   </bean>
 
+
+  <bean class="uk.org.ponder.springutil.ByClassTLAB">
+    <property name="targetClass" value="uk.org.ponder.springutil.validator.ValidatorFactory"/>
+    <property name="targetPath" value="validatorCompostor.validators"/>
+  </bean>
+
+  <bean id="validatorCompostor" class="uk.org.ponder.springutil.validator.support.ValidatorCompostorImpl" init-method="init">
+    <property name="beanModelAlterer" ref="DARApplier"/>
+  </bean>
+
   <!-- Broken out as a separate bean to avoid cycle with RBL 
     (to RSACErrorBridgeBracketer) -->
   <bean id="ErrorBBTarget" class="uk.org.ponder.rsac.RSACErrorBridge"
