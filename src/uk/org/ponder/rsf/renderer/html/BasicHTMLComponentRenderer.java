@@ -283,8 +283,10 @@ public class BasicHTMLComponentRenderer implements ComponentRenderer {
         trc.renderUnchanged();
       }
       else {
-        XMLUtil.dumpAttributes(attrcopy, xmlw);
-        pos.print(">");
+        if (!trc.iselide) {
+          XMLUtil.dumpAttributes(attrcopy, xmlw);
+          pos.print(">");
+        }
         pos.print(rendered);
         trc.closeTag();
       }
