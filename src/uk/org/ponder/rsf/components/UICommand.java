@@ -3,6 +3,8 @@
  */
 package uk.org.ponder.rsf.components;
 
+import uk.org.ponder.beanutil.PathUtil;
+
 /**
  * Represents a control that will cause a non-idempotent (POST) request to the
  * server. The basic case where the command is rendered using a piece of
@@ -98,4 +100,15 @@ public class UICommand extends UIParameterHolder {
     return make(parent, ID, (UIBoundString) null, null);
   }
 
+  /** Sets the method binding for this UICommand to perform no action but to
+   * return the supplied value, should the cycle complete without errors. 
+   * This will overwrite any existing method binding for the component.
+   * @param returnvalue The required return value from the action cycle.
+   * @return this component.
+   */
+  public UICommand setReturn(String returnvalue) {
+    methodbinding = new ELReference(PathUtil.composePath("constantReturn", returnvalue));
+    return this;
+  }
+  
 }
