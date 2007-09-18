@@ -102,28 +102,19 @@ public class ValueFixer implements ComponentProcessor {
           && (toprocess.acquireValue() == null
               || UITypes.isPlaceholder(toprocess.acquireValue()) || hadcached)) {
         // a bound component ALWAYS contains a value of the correct type.
-
+        Object oldvalue = toprocess.acquireValue();
+        String stripbinding = toprocess.valuebinding.value;
+        BeanResolver resolver = computeResolver(toprocess, root);
         Object flatvalue = null;
-        // If it was cached, we want to propagate the old "oldvalue" to the next request
-        if (hadcached) {
-          flatvalue = sve.oldvalue;
+        try {
+          flatvalue = alterer.getFlattenedValue(stripbinding, root, oldvalue
+              .getClass(), resolver);
         }
-        else {
-          Object oldvalue = toprocess.acquireValue();
-          String stripbinding = toprocess.valuebinding.value;
-          BeanResolver resolver = computeResolver(toprocess, root);
-
-          try {
-            flatvalue = alterer.getFlattenedValue(stripbinding, root, oldvalue
-                .getClass(), resolver);
-          }
-          catch (Exception e) {
-            // don't let a bad bean model prevent the correct reference being
-            // encoded
-            Logger.log.info("Error resolving EL reference " + stripbinding
-                + " for component with full ID " + toprocess.getFullID(), e);
-
-          }
+        catch (Exception e) {
+          // don't let a bad bean model prevent the correct reference being
+          // encoded
+          Logger.log.info("Error resolving EL reference " + stripbinding
+              + " for component with full ID " + toprocess.getFullID(), e);
         }
         if (flatvalue != null) {
           modelvalue = flatvalue;
@@ -135,8 +126,8 @@ public class ValueFixer implements ComponentProcessor {
       else if (toprocess.resolver != null) {
         Object oldvalue = toprocess.acquireValue();
         // Unclear about this branch - we apply resolvers in the tree to values
-        // which we already find there? Surely the value must already be
-        // adequately flat!
+        // which we already find there? Surely the value must already be adequately
+        // flat!
         BeanResolver resolver = computeResolver(toprocess, root);
         Object flatvalue = alterer.getFlattenedValue(null, oldvalue, oldvalue
             .getClass(), resolver);
