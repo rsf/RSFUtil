@@ -83,7 +83,9 @@ public class TagRenderContext {
   }
 
   public void replaceAttributes() {
-    XMLUtil.dumpAttributes(attrcopy, xmlw);
+    if (!iselide) {
+      XMLUtil.dumpAttributes(attrcopy, xmlw);
+    }
 
     dumpTemplateBody();
   }
@@ -107,7 +109,9 @@ public class TagRenderContext {
       }
     }
     else {
-      pos.print(">");
+      if (!iselide) {
+        pos.print(">");
+      }
       RenderUtil.dumpTillLump(uselump.parent.lumps, endopen.lumpindex + 1,
           close.lumpindex + (iselide ? 0 : 1), pos);
     }
