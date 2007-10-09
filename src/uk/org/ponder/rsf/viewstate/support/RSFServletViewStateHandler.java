@@ -95,13 +95,8 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
     return togo;
   }
 
-  public String encodeResourceURL(String resourcepath) {
-    if (URLUtil.isAbsolute(resourcepath) || resourcepath.charAt(0) == '/') {
-      return resourcepath;
-    }
-    else {
-      return cup.getContextBaseURL() + resourcepath;
-    }
+  public String encodeResourceURL(String resourcepath) {  
+    return cup.getContextBaseURL() + resourcepath;
   }
 
   // in servlet context, rendered URLs agree with ultimate ones.
