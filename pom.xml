@@ -36,7 +36,7 @@
       <url>http://www2.caret.cam.ac.uk/maven2</url>
     </repository>
   </repositories>
-  
+
   <scm>
     <connection>
       scm:svn:https://saffron.caret.cam.ac.uk/svn/projects/trunk/RSFUtil/
@@ -144,12 +144,6 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <version>1.2.9</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
       <groupId>xpp3</groupId>
       <artifactId>xpp3_min</artifactId>
       <version>1.1.3.4.O</version>
@@ -162,8 +156,17 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
   <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.4</source>
+          <target>1.4</target>
+        </configuration>
+      </plugin>
+    </plugins>
+    
     <sourceDirectory>src</sourceDirectory>
     <resources>
       <resource>
