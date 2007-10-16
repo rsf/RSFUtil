@@ -33,6 +33,9 @@ public interface EarlyRequestParser {
   /** Identifies this environment as a JSR 286 javax.portlet Portlets environment **/
   public static final String PORTLET_286_ENVIRONMENT = "portlet-286";
   
+  /** Identifies this environment as a Spring Web Flow "forwards" environment **/
+  public static final String SPRING_WEBFLOW_ENVIRONMENT = "Spring Web Flow";
+  
   /** The parameter map from the request */
   public Map getRequestMap();
 

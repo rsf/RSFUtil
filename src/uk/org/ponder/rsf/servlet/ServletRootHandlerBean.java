@@ -9,21 +9,12 @@ import java.io.OutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import uk.org.ponder.rsf.components.ParameterList;
-import uk.org.ponder.rsf.content.ContentTypeInfo;
-import uk.org.ponder.rsf.processor.ActionHandler;
-import uk.org.ponder.rsf.processor.DefaultFatalErrorHandler;
-import uk.org.ponder.rsf.processor.FatalErrorHandler;
-import uk.org.ponder.rsf.processor.HandlerHook;
-import uk.org.ponder.rsf.processor.RenderHandlerBracketer;
+import uk.org.ponder.rsf.processor.RootHandlerBeanBase;
 import uk.org.ponder.rsf.renderer.RenderUtil;
-import uk.org.ponder.rsf.request.EarlyRequestParser;
-import uk.org.ponder.rsf.request.LazarusRedirector;
 import uk.org.ponder.rsf.viewstate.AnyViewParameters;
 import uk.org.ponder.rsf.viewstate.NoViewParameters;
 import uk.org.ponder.rsf.viewstate.RawViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
-import uk.org.ponder.rsf.viewstate.ViewStateHandler;
 import uk.org.ponder.servletutil.ServletResponseWriter;
 import uk.org.ponder.streamutil.write.OutputStreamPOS;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
@@ -41,18 +32,9 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
  */
-public class RootHandlerBean implements HandlerHook {
-  private String requesttype;
-  private HttpServletRequest request;
+public class ServletRootHandlerBean extends RootHandlerBeanBase {
   private HttpServletResponse response;
-  private ViewStateHandler viewstatehandler;
-  private ParameterList outgoingparams;
-  private RenderHandlerBracketer renderhandlerbracketer;
-  private ActionHandler actionhandler;
-  private HandlerHook handlerhook;
-  private ContentTypeInfo contenttypeinfo;
-  private FatalErrorHandler fatalErrorHandler;
-  private LazarusRedirector lazarusRedirector;
+  private HttpServletRequest request;
 
   public void setHttpServletRequest(HttpServletRequest request) {
     this.request = request;
@@ -62,98 +44,12 @@ public class RootHandlerBean implements HandlerHook {
     this.response = response;
   }
 
-  public void setRequestType(String requesttype) {
-    this.requesttype = requesttype;
-  }
-
-  public void setViewStateHandler(ViewStateHandler viewstatehandler) {
-    this.viewstatehandler = viewstatehandler;
-  }
-
-  public void setOutgoingParams(ParameterList outgoingparams) {
-    this.outgoingparams = outgoingparams;
-  }
-
-  public void setRenderHandlerBracketer(
-      RenderHandlerBracketer renderhandlerbracketer) {
-    this.renderhandlerbracketer = renderhandlerbracketer;
-  }
-
-  public void setActionHandler(ActionHandler actionhandler) {
-    this.actionhandler = actionhandler;
-  }
-
-  public void setFatalErrorHandler(FatalErrorHandler fatalErrorHandler) {
-    this.fatalErrorHandler = fatalErrorHandler;
-  }
-
-  public void setContentTypeInfo(ContentTypeInfo contenttypeinfo) {
-    this.contenttypeinfo = contenttypeinfo;
-  }
-
-  public void setLazarusRedirector(LazarusRedirector lazarusRedirector) {
-    this.lazarusRedirector = lazarusRedirector;
-  }
-  
-  public boolean handle() {
-    if (handlerhook == null || !handlerhook.handle()) {
-      if (requesttype.equals(EarlyRequestParser.RENDER_REQUEST)) {
-        handleGet();
-      }
-      else {
-        handlePost();
-      }
-    }
-    Logger.log.info("Request handled");
-    return true;
-  }
-
-  public void setHandlerHook(HandlerHook handlerhook) {
-    this.handlerhook = handlerhook;
-  }
-
-  private void handleGet() {
-    PrintOutputStream pos = setupResponseWriter(
-        contenttypeinfo.contentTypeHeader, request, response);
-    String fatalcode = null;
-    Throwable t1 = null;
-    try {
-      AnyViewParameters redirect = renderhandlerbracketer.handle(pos);
-
-      if (redirect != null) {
-        issueRedirect(redirect, response);
-      }
-    }
-    catch (Throwable t) {
-      fatalcode = DefaultFatalErrorHandler.handleFatalErrorStrategy(fatalErrorHandler, t,
-          pos);
-      t1 = t;
-    }
-    finally {
-      if (fatalcode != FatalErrorHandler.HANDLE_EXCEPTION_UPSTAIRS) {
-        // leave the stream open for a handler outside the system
-        pos.close();
-      }
-      else {
-        throw UniversalRuntimeException.accumulate(t1);
-      }
-    }
-  }
-
-  private void handlePost() {
-
-    AnyViewParameters redirect = actionhandler.handle();
-
-    issueRedirect(redirect, response);
-  }
-
   // If this is a web service request, send the required redirect URL
   // to the client via the body of the POST response. Otherwise, issue
   // the redirect directly to the client via this connection.
   // TODO: This method might need some state, depending on the client.
   // maybe we can do this all with "request beans"?
-  public void issueRedirect(AnyViewParameters viewparamso,
-      HttpServletResponse response) {
+  public void issueRedirect(AnyViewParameters viewparamso, PrintOutputStream pos) {
     if (viewparamso instanceof NoViewParameters) return;
     
     String path = viewparamso instanceof RawViewParameters ? ((RawViewParameters) viewparamso).URL
@@ -178,8 +74,8 @@ public class RootHandlerBean implements HandlerHook {
   }
 
 
-  public static PrintOutputStream setupResponseWriter(String contenttype,
-      HttpServletRequest request, HttpServletResponse response) {
+  public static PrintOutputStream setupResponseWriter(HttpServletRequest request, 
+       HttpServletResponse response, String contenttype) {
     try {
       response.setContentType(contenttype);
       // response.setContentType("application/xhtml+xml; charset=UTF-8");
@@ -206,6 +102,10 @@ public class RootHandlerBean implements HandlerHook {
       throw UniversalRuntimeException.accumulate(ioe,
           "Error setting up response writer");
     }
+  }
+
+  public PrintOutputStream setupResponseWriter() {
+    return setupResponseWriter(request, response, contenttypeinfo.contentTypeHeader);
   }
 
 }

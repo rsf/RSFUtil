@@ -5,6 +5,8 @@ package uk.org.ponder.rsf.processor;
 
 import java.util.List;
 
+/** Collected target of HandlerHooks within the request **/
+
 public class HandlerHookHandler implements HandlerHook {
   private List handlers;
 

@@ -15,7 +15,6 @@ import uk.org.ponder.rsf.viewstate.ViewParamUtil;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsCodec;
 import uk.org.ponder.rsf.viewstate.ViewStateHandler;
-import uk.org.ponder.stringutil.URLUtil;
 import uk.org.ponder.webapputil.ConsumerInfo;
 
 /**
