@@ -235,7 +235,7 @@
   </bean>
 
   <bean id="RSACBeanLocatorFactory"
-    class="uk.org.ponder.rsac.RSACBeanLocatorFactory">
+    class="uk.org.ponder.rsac.support.RSACBeanLocatorFactory">
     <property name="RSACResourceLocator">
       <ref local="RSACResourceLocator" />
     </property>

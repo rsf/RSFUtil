@@ -6,7 +6,7 @@ package uk.org.ponder.rsf.request;
 import java.util.HashMap;
 import java.util.Map;
 
-import uk.org.ponder.rsac.RSACLazarusList;
+import uk.org.ponder.rsac.support.RSACLazarusList;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.support.ViewParamsMapper;
 

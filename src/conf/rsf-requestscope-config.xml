@@ -19,7 +19,7 @@
     <property name="seed" ref="ELTargetBeanLocator" />
   </bean>
 
-  <bean id="RSACLazarusList" class="uk.org.ponder.rsac.RSACLazarusList"
+  <bean id="RSACLazarusList" class="uk.org.ponder.rsac.support.RSACLazarusList"
     lazy-init="true">
     <property name="RSACBeanLocator" ref="RSACBeanLocator" />
   </bean>
@@ -91,7 +91,7 @@
   </bean>
 
   <bean id="rootHandlerBeanBase" abstract="true"
-    class="uk.org.ponder.rsf.servlet.RootHandlerBean"
+    class="uk.org.ponder.rsf.servlet.ServletRootHandlerBean"
     init-method="handle">
     <property name="requestType" ref="requestType" />
     <property name="viewStateHandler" ref="viewStateHandler" />
