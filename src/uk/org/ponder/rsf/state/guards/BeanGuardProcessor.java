@@ -18,6 +18,7 @@ import uk.org.ponder.mapping.BeanInvalidationModel;
 import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.springutil.errors.SpringErrorConverter;
+import uk.org.ponder.springutil.validator.ValidatorGetter;
 import uk.org.ponder.util.CollectingRunnableInvoker;
 import uk.org.ponder.util.RunnableInvoker;
 
@@ -103,7 +104,13 @@ public class BeanGuardProcessor implements ApplicationContextAware {
           }
           if (guardEL != null) {
             guard = darapplier.getBeanValue(guardEL, rbl, null);
+            if (guard == null) {
+              throw new IllegalArgumentException("null value found for guard EL path " + guardEL);
+            }
           }
+          if (guard instanceof ValidatorGetter) {
+            guard = ((ValidatorGetter)guard).get();
+            }
           Object guarded = darapplier.getBeanValue(match, rbl, null);
           try {
             if (guard instanceof RunnableInvoker) {

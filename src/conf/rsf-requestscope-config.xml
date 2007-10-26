@@ -443,7 +443,6 @@ to intercept bindings -->
 
   <bean id="UVBView" class="uk.org.ponder.rsf.builtin.UVBProducer">
     <property name="UVBBean" ref="UVBBean" />
-    <!--     <property name="beanDestroyer" ref="UVBScope"/> -->
     <property name="targettedMessageList" ref="targettedMessageList" />
     <property name="messageLocator" ref="messageLocator" />
     <property name="leafParser" ref="staticLeafParser" />

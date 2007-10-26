@@ -167,6 +167,10 @@
     <property name="beanModelAlterer" ref="DARApplier"/>
   </bean>
 
+  <bean id="validatorBuilderParent" class="uk.org.ponder.springutil.validator.support.ValidatorBuilder">
+    <property name="validatorCompostor" ref="validatorCompostor"/>
+  </bean>
+
   <!-- Broken out as a separate bean to avoid cycle with RBL 
     (to RSACErrorBridgeBracketer) -->
   <bean id="ErrorBBTarget" class="uk.org.ponder.rsac.RSACErrorBridge"
@@ -650,6 +654,7 @@
     class="uk.org.ponder.rsf.request.LazarusRedirector">
     <property name="lazarusListReceiver" ref="RSACLazarusListProxy" />
     <property name="viewParamsMapper" ref="viewParamsMapper" />
+    <property name="requestLocale" ref="requestLocaleProxy"/>
   </bean>
 
   <!--  Lazy loading needed to break dependence cycle - SiteMap via BasicViewParamsParser
@@ -835,5 +840,10 @@
 
   <bean parent="requestAddressibleParent">
     <property name="value" value="UVBBean" />
+  </bean>
+  
+  <bean parent="writeGuardParent">
+    <property name="guardedPath" value="UVBBean.paths"/>
+    <property name="guardMethod" value="UVBBean.populate"/>
   </bean>
 </beans>

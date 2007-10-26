@@ -77,7 +77,7 @@ public class UVBProducer implements ViewComponentProducer, ContentTypeReporter,
     }
     for (int i = 0; i < tml.size(); ++i) {
       TargettedMessage message = tml.messageAt(i);
-      String rendered = messageLocator.getMessage(message.messagecodes,
+      String rendered = message.message != null? message.message : messageLocator.getMessage(message.messagecodes,
           message.args);
       UIOutput out = UIOutput.make(tofill, "tml:" + i, rendered);
       Map attrmap = new HashMap();

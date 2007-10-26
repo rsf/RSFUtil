@@ -6,6 +6,7 @@ package uk.org.ponder.rsf.request;
 import java.util.HashMap;
 import java.util.Map;
 
+import uk.org.ponder.localeutil.LocaleGetter;
 import uk.org.ponder.rsac.support.RSACLazarusList;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.support.ViewParamsMapper;
@@ -21,6 +22,7 @@ public class LazarusRedirector {
   private ViewParamsMapper viewParamsMapper;
   private RSACLazarusList lazarusListReceiver;
   private String environmentType;
+  private LocaleGetter localegetter;
 
   public void setViewParamsMapper(ViewParamsMapper viewParamsMapper) {
     this.viewParamsMapper = viewParamsMapper;
@@ -29,16 +31,20 @@ public class LazarusRedirector {
   public void setLazarusListReceiver(RSACLazarusList lazarusListReceiver) {
     this.lazarusListReceiver = lazarusListReceiver;
   }
-  
+  // Not currently set
   public void setEnvironmentType(String environmentType) {
     this.environmentType = environmentType;
+  }
+  
+  public void setRequestLocale(LocaleGetter locale) {
+    this.localegetter = locale;
   }
 
   public void lazarusRedirect(final ViewParameters target) {
     Map params = viewParamsMapper.renderViewParamAttributes(target);
     String pathinfo = viewParamsMapper.toPathInfo(target);
     StaticEarlyRequestParser serp = new StaticEarlyRequestParser(null,
-        pathinfo, params, EarlyRequestParser.RENDER_REQUEST, environmentType);
+        pathinfo, params, EarlyRequestParser.RENDER_REQUEST, environmentType, localegetter.get());
     Map newmap = new HashMap();
     newmap.put("earlyRequestParser", serp);
     lazarusListReceiver.queueRunnable(lazarusListReceiver.getLazarusRunnable(

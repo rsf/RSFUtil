@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.rsf.request;
 
+import java.util.Locale;
 import java.util.Map;
 /** A static implementation of EarlyRequestParser which returns already
  * determined values. Most useful with the {@link LazarusRedirector}.
@@ -15,13 +16,15 @@ public class StaticEarlyRequestParser implements EarlyRequestParser {
   private Map requestMap;
   private String requestType;
   private String environmentType;
+  private Locale locale;
 
   public StaticEarlyRequestParser(Map multipartMap, String pathInfo,
-      Map requestMap, String requestType, String environmentType) {
+      Map requestMap, String requestType, String environmentType, Locale locale) {
     this.multipartMap = multipartMap;
     this.pathInfo = pathInfo;
     this.requestMap = requestMap;
     this.requestType = requestType;
+    this.locale = locale;
   }
 
   public Map getMultipartMap() {
@@ -44,5 +47,10 @@ public class StaticEarlyRequestParser implements EarlyRequestParser {
     return environmentType;
   }
 
+  // Not ALL EarlyRequestParsers dispense this directly. Currently it is only
+  // SWF, which obliges us to factor this off "early".
+  public Locale getLocale() {
+    return locale;
+  }
   
 }

@@ -15,6 +15,7 @@ import uk.org.ponder.rsf.viewstate.ViewParamUtil;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsCodec;
 import uk.org.ponder.rsf.viewstate.ViewStateHandler;
+import uk.org.ponder.stringutil.URLUtil;
 import uk.org.ponder.webapputil.ConsumerInfo;
 
 /**
@@ -94,8 +95,15 @@ public class RSFServletViewStateHandler implements ViewStateHandler {
     return togo;
   }
 
-  public String encodeResourceURL(String resourcepath) {  
-    return cup.getContextBaseURL() + resourcepath;
+  // In Servlet environment, will receive absolute URLs and so actually does
+  // not need to act.
+  public String encodeResourceURL(String resourcepath) {
+    if (URLUtil.isAbsolute(resourcepath) || resourcepath.charAt(0) == '/') {
+      return resourcepath;
+    }
+    else {
+      return cup.getContextBaseURL() + resourcepath;
+    }
   }
 
   // in servlet context, rendered URLs agree with ultimate ones.
