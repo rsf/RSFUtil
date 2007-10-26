@@ -123,7 +123,7 @@ public class BeanCopyPreservationStrategy implements TSHPreservationStrategy,
     if (beans == null) {
       if (expected) {
         throw UniversalRuntimeException.accumulate(new ExpiredFlowException(),
-          "Client requested restoration of expired flow state with IDDD "
+          "Client requested restoration of expired flow state with ID "
               + tokenid);
       }
       return 0;
