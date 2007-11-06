@@ -16,22 +16,6 @@ public class SimpleViewParameters extends ViewParameters {
   public SimpleViewParameters(String viewID) {
     this.viewID = viewID;
   }
- 
-  public void clearParams() {
-  }
-
-  public void parsePathInfo(String pathinfo) {
-    // remove leading / which is specced to be there
-    viewID = pathinfo.substring(1);
-  }
-
-  public String toPathInfo() {
-    if (viewID == null) {
-      throw new IllegalArgumentException("ViewParameters of " + getClass() 
-          + " does not have a viewID set");
-    }
-    return "/" + viewID;
-  }
 
   public String getParseSpec() {
     return ViewParameters.BASE_PARSE_SPEC;
