@@ -108,7 +108,7 @@ public class BasicHTMLComponentRenderer implements ComponentRenderer {
         }
         if (torendero instanceof UIBoundBoolean) {
           if (((UIBoundBoolean) torender).getValue()) {
-            attrcopy.put("checked", "yes");
+            attrcopy.put("checked", "checked");
           }
           else {
             attrcopy.remove("checked");
