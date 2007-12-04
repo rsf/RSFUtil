@@ -57,7 +57,7 @@ public class EntityBeanLocatorImpl implements EntityBeanLocator {
       String savemethod = PathUtil.getTailPath(sebl.saveEL);
       Object saver = sebl.bma.getBeanValue(penultimate, beanlocator, null);
 
-      for (Iterator it = delivered.entrySet().iterator(); it.hasNext();) {
+      for (Iterator it = delivered.keySet().iterator(); it.hasNext();) {
         String key = (String) it.next();
         Object value = delivered.get(key);
         sebl.reflectivecache.invokeMethod(saver, savemethod, new Object[] { value });
