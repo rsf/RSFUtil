@@ -100,6 +100,10 @@ public class StaticEntityBeanLocatorImpl implements
     }
     EntityBeanLocatorImpl togo = new EntityBeanLocatorImpl(this);
     wbl.set(beanName, togo);
+    if (entityClazz == null) {
+      Object newsample = togo.locateBean(EntityBeanLocator.NEW_PREFIX);
+      entityClazz = newsample.getClass();
+    }
     return togo;
   }
 
