@@ -12,9 +12,7 @@ import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIForm;
-import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.request.EarlyRequestParser;
-import uk.org.ponder.rsf.request.SubmittedValueEntry;
 import uk.org.ponder.rsf.util.RSFUtil;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsCodec;
@@ -122,15 +120,6 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
     else if (child instanceof UICommand) {
       toprocess.submittingcontrols.add(child.getFullID());
       formModel.registerChild(toprocess, child);
-      // add the notation explaining which control is submitting, when it does
-      UICommand command = (UICommand) child;
-      command.parameters.add(new UIParameter(
-          SubmittedValueEntry.SUBMITTING_CONTROL, child.getFullID()));
-      if (command.methodbinding != null) {
-        command.parameters
-            .add(new UIParameter(SubmittedValueEntry.FAST_TRACK_ACTION,
-                command.methodbinding.value));
-      }
     }
     if (child instanceof UIContainer) {
       registerContainer(toprocess, (UIContainer) child);
