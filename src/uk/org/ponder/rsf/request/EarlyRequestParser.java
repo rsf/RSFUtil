@@ -36,6 +36,9 @@ public interface EarlyRequestParser {
   /** Identifies this environment as a Spring Web Flow "forwards" environment **/
   public static final String SPRING_WEBFLOW_ENVIRONMENT = "Spring Web Flow";
   
+  /** Identifies this environment as a standalone "test" environment **/
+  public static final String TEST_ENVIRONMENT = "test";
+  
   /** The parameter map from the request */
   public Map getRequestMap();
 
