@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
+	"http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+	<bean id="flowTokenStateHolder" 
+	   class="org.springframework.beans.factory.config.BeanReferenceFactoryBean">
+     <property name="targetBeanName" value="flowTokenStateHolder-memory"/>
+  </bean>
+    <bean id="bandgapStateHolder" 
+     class="org.springframework.beans.factory.config.BeanReferenceFactoryBean">
+     <property name="targetBeanName" value="bandgapStateHolder-memory"/>
+  </bean>
+</beans>
