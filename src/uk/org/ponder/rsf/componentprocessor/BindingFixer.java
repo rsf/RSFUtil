@@ -8,9 +8,10 @@ import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIDeletionBinding;
 import uk.org.ponder.rsf.components.UIELBinding;
-import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIParameter;
+import uk.org.ponder.rsf.components.UIParameterHolder;
 import uk.org.ponder.rsf.request.FossilizedConverter;
+import uk.org.ponder.rsf.request.SubmittedValueEntry;
 
 /** A fixer which converts deletion and EL bindings to their "raw" form
  * as fossilized key/value pairs.
@@ -26,11 +27,19 @@ public class BindingFixer implements ComponentProcessor {
   }
   
   public void processComponent(UIComponent toprocess) {
-    if (toprocess instanceof UIForm) {
-      processParameterList(((UIForm)toprocess).parameters);
+    if (toprocess instanceof UICommand) {
+      // add the notation explaining which control is submitting, when it does
+      UICommand command = (UICommand) toprocess;
+      command.parameters.add(new UIParameter(
+          SubmittedValueEntry.SUBMITTING_CONTROL, toprocess.getFullID()));
+      if (command.methodbinding != null) {
+        command.parameters
+            .add(new UIParameter(SubmittedValueEntry.FAST_TRACK_ACTION,
+                command.methodbinding.value));
+      }
     }
-    else if (toprocess instanceof UICommand) {
-      processParameterList(((UICommand)toprocess).parameters);
+    if (toprocess instanceof UIParameterHolder) {
+      processParameterList(((UIParameterHolder)toprocess).parameters);
     }
   }
 
