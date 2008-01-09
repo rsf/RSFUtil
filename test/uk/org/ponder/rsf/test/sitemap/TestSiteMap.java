@@ -5,7 +5,7 @@ package uk.org.ponder.rsf.test.sitemap;
 
 import java.util.HashMap;
 
-import uk.org.ponder.rsf.test.PlainRSFTests;
+import uk.org.ponder.rsf.bare.junit.PlainRSFTests;
 import uk.org.ponder.rsf.viewstate.EntityCentredViewParameters;
 import uk.org.ponder.rsf.viewstate.support.BasicViewParametersParser;
 

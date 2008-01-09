@@ -5,10 +5,10 @@ package uk.org.ponder.rsf.test.rvb;
 
 import uk.org.ponder.arrayutil.ArrayUtil;
 import uk.org.ponder.beanutil.BeanLocator;
+import uk.org.ponder.rsf.bare.junit.PlainRSFTests;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.flow.ARIResult;
-import uk.org.ponder.rsf.test.PlainRSFTests;
 import uk.org.ponder.rsf.util.RSFUtil;
 import uk.org.ponder.rsf.viewstate.EntityCentredViewParameters;
 

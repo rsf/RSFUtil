@@ -9,7 +9,7 @@ import uk.org.ponder.mapping.DARApplier;
 import uk.org.ponder.mapping.DAREnvironment;
 import uk.org.ponder.mapping.DataAlterationRequest;
 import uk.org.ponder.messageutil.TargettedMessageList;
-import uk.org.ponder.rsf.test.PlainRSFTests;
+import uk.org.ponder.rsf.bare.junit.PlainRSFTests;
 
 public class TestDARApplier extends PlainRSFTests {
   

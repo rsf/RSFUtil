@@ -7,10 +7,10 @@ import java.util.List;
 
 import uk.org.ponder.arrayutil.ListUtil;
 import uk.org.ponder.beanutil.entity.EntityID;
+import uk.org.ponder.rsf.bare.RequestLauncher;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
-import uk.org.ponder.rsf.test.RequestLauncher;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.EntityCentredViewParameters;
