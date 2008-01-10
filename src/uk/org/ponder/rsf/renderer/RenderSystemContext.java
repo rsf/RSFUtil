@@ -17,10 +17,19 @@ import uk.org.ponder.xml.XMLWriter;
  */
 
 public class RenderSystemContext {
+  /** Flag indicating whether this rendering is to be performed in debug mode 
+   */
   public boolean debugrender;
+  /** The view currently being rendered - necessary to resolve
+  * any inter-component references. */
   public View view;
+  /** The output stream where the transformed template data is to be
+  * written. */
   public PrintOutputStream pos;
+  /** An XML-based wrapper for the PrintOutputStream **/
   public XMLWriter xmlw;
+  /** @param idassigner An {@link IDAssigner} object to be used for assigning 
+  * a value to outgoing XML <code>id</code> attributes.*/
   public IDAssigner IDassigner;
   public XMLLumpMMap collecteds;
 

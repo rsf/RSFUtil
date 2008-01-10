@@ -23,14 +23,8 @@ public interface RenderSystem extends RenderSystemDecoder {
    * (at least in prefix) the rsf:id of tag specified in lumpindex. The 
    * component may be <code>null</code> where the tag is to be target of a 
    * static rewrite rule, in which case the System will invoke the relevant SCR.
-   * @param view The view currently being rendered - necessary to resolve
-   * any inter-component references.
    * @param lump The lump (head lump holding open tag) where
    * the tag appears within the template requiring rewrite.
-   * @param pos The output stream where the transformed template data is to be
-   * written.
-   * @param idassigner An {@link IDAssigner} object to be used for assigning 
-   * a value to outgoing XML <code>id</code> attributes.
    * @return The render index that the renderer has moved along to.
    */
   public int renderComponent(RenderSystemContext rsc, UIComponent torender, XMLLump lump);

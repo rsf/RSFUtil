@@ -51,11 +51,8 @@ public class URLRewriteSCR implements BasicSCR {
   }
 
   /**
-   * @param attrs
-   *          A non-modifiable map of the attributes that may need to be
-   *          filtered.
-   * @param name
-   *          The name of an attribute whose value is a URL requiring rewriting.
+   * @param lump The template lump where the attribute that may require filtering
+   *          are held (non-modifiable)
    * @param cloned
    *          Either a modifiable map of the attributes, or <code>null</code>
    *          if none yet exists.

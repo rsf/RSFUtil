@@ -38,8 +38,7 @@ public class UILink extends UIComponent {
    * @param parent Container to which the link is to be added.
    * @param ID RSF ID of this link.
    * @param text Text to be rendered for this link.
-   * @param target
-   * @see {@link #target}
+   * @param target See {@link #target}
    */
   public static UILink make(UIContainer parent, String ID, String linktext,
       String target) {
