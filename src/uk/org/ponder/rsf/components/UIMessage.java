@@ -21,7 +21,7 @@ public class UIMessage extends UIBoundString {
   }
   
   /** Constructs a "standalone" message component
-   * See {@link #make(String), #make(UIContainer, String, String[], Object[])
+   * See {@link #make(String), #make(UIContainer, String, String[], Object[])}
    */
   
   public static UIMessage make(String messagekey, Object[] arguments) {
@@ -32,7 +32,7 @@ public class UIMessage extends UIBoundString {
   }
  
   /** Constructs a "standalone" message component
-   * See {@link #make(String), #make(UIContainer, String, String[], Object[])
+   * See {@link #make(String), #make(UIContainer, String, String[], Object[])}
    */
   
   private static UIMessage make(String[] messagekeys, Object[] arguments) {

@@ -13,7 +13,7 @@ public interface ViewParamsRegistry {
   /** Return a fresh clone of the exemplar for the specified view - this will
    * be of the correct type, perhaps with some initialised fields, but an 
    * unshared copy ready to be fully initialised, perhaps with a call to 
-   * {@link ViewParamsCodec#parseViewParams(ViewParameters, RawURLState).
+   * {@link ViewParamsCodec#parseViewParams(ViewParameters, RawURLState)}.
    * The <code>viewID</code> field in the returned exemplar will be set to the
    * argument supplied.
    */
