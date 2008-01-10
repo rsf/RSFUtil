@@ -9,13 +9,14 @@ import java.util.Map;
 import org.springframework.context.ApplicationContext;
 
 import uk.org.ponder.arrayutil.ArrayUtil;
-import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.rsac.RSACBeanLocator;
+import uk.org.ponder.rsf.bare.junit.PlainRSFTests;
 import uk.org.ponder.rsf.componentprocessor.BindingFixer;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.components.UIParameterHolder;
+import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.request.EarlyRequestParser;
 
 /**
@@ -109,20 +110,22 @@ public class RequestLauncher implements EarlyRequestParser {
    * @return A BeanLocator holding the final state of the request context.
    * 
    */
-  public BeanLocator submitForm(UIForm form, UICommand command) {
+  public ActionResponse submitForm(UIForm form, UICommand command) {
     processAndAccrete(form);
 
     if (command != null) {
       processAndAccrete(command);
     }
+    setRequestType(EarlyRequestParser.ACTION_REQUEST);
 
-    BeanLocator togo = null;
+    ActionResponse togo = new ActionResponse();
     if (!singleshot) {
       rsacbl.startRequest();
     }
     try {
       rsacbl.getBeanLocator().locateBean("rootHandlerBean");
-      togo = rsacbl.getDeadBeanLocator();
+      togo.requestContext = rsacbl.getDeadBeanLocator();
+      togo.ARIResult = (ARIResult) rsacbl.getBeanLocator().locateBean("ARIResultConcrete");
     }
     finally {
       if (!singleshot) {

@@ -33,7 +33,7 @@ public class InMemoryTSH implements TokenStateHolder {
 
   public void setReflectiveCache(ReflectiveCache reflectiveCache) {
     //this.reflectiveCache = reflectiveCache;
-    reflectiveCache.getConcurrentMap(16);
+    tokencache = reflectiveCache.getConcurrentMap(16);
   }
 
   TokenState getTokenStateRaw(String tokenID) {
