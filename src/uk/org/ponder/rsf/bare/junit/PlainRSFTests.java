@@ -9,13 +9,21 @@ import uk.org.ponder.rsf.bare.RequestLauncher;
 
 public class PlainRSFTests extends AbstractRSACTests {
 
-  protected String[] getConfigLocations() {
-    return new String[] {
-        "classpath:conf/rsf-config.xml", "classpath:conf/blank-applicationContext.xml",
+  public PlainRSFTests() {
+    contributeConfigLocations(new String[] {
+        "classpath:conf/rsf-config.xml", 
+        "classpath:conf/blank-applicationContext.xml",
         "classpath:conf/test-applicationContext.xml"
-    };
+    });
+    
+    contributeRequestConfigLocations(
+        new String[] {
+            "classpath:conf/rsf-requestscope-config.xml",
+            "classpath:conf/blank-requestContext.xml",
+            "classpath:conf/test-requestContext.xml"} 
+    );
   }
-
+  
   protected RequestLauncher requestLauncher;
   
   private RequestLauncher allocateRequestLauncher() {
@@ -31,12 +39,6 @@ public class PlainRSFTests extends AbstractRSACTests {
     }
   }
   
-  public String[] getRequestConfigLocations() {
-    return new String[] {
-        "classpath:conf/rsf-requestscope-config.xml",
-        "classpath:conf/blank-requestContext.xml",
-        "classpath:conf/test-requestContext.xml"};
-  }
 
   protected void onSetUp() throws Exception {
     super.onSetUp();

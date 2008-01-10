@@ -3,8 +3,7 @@
  */
 package uk.org.ponder.rsf.test.rvb;
 
-import uk.org.ponder.arrayutil.ArrayUtil;
-import uk.org.ponder.beanutil.BeanLocator;
+import uk.org.ponder.rsf.bare.ActionResponse;
 import uk.org.ponder.rsf.bare.junit.PlainRSFTests;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIForm;
@@ -16,10 +15,10 @@ import uk.org.ponder.rsf.viewstate.EntityCentredViewParameters;
 // http://ponder.org.uk/rsf/posts/list/8.page
 
 public class TestRVB extends PlainRSFTests {
-  public String[] getRequestConfigLocations() {
-    return (String[]) ArrayUtil.append(super.getRequestConfigLocations(),
-        "classpath:uk/org/ponder/rsf/test/rvb/rvb-request-context.xml"
-        );
+  
+  public TestRVB() {
+    contributeRequestConfigLocation("classpath:uk/org/ponder/rsf/test/rvb/rvb-request-context.xml");
+    contributeConfigLocation("classpath:uk/org/ponder/rsf/test/rvb/rvb-application-context.xml");
   }
   
   public void testResultingViewBindings() {
@@ -27,11 +26,11 @@ public class TestRVB extends PlainRSFTests {
     RSFUtil.addResultingViewBinding(dummyform, "entity.ID", "idholder.id");
     UICommand command = UICommand.make(dummyform, "mycommand", "idholder.act");
     
-    BeanLocator result = getRequestLauncher().submitForm(dummyform, command);
+    ActionResponse result = getRequestLauncher().submitForm(dummyform, command);
+    ARIResult ariresult = result.ARIResult;
     
-    ARIResult ariresult = (ARIResult) result.locateBean("ARIResultConcrete");
     assertTrue(ariresult.resultingView instanceof EntityCentredViewParameters);
     EntityCentredViewParameters ecvp = (EntityCentredViewParameters) ariresult.resultingView;
-    assertEquals(ecvp.entity.ID, IDHolder.NEW_ID);
+    assertEquals(IDHolder.NEW_ID, ecvp.entity.ID);
   }
 }
