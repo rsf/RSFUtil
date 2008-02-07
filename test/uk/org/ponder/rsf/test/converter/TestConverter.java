@@ -17,11 +17,11 @@ import uk.org.ponder.rsf.components.UIInput;
 public class TestConverter extends PlainRSFTests {
   
   public TestConverter() {
-    contributeRequestConfigLocation("classpath:uk/org/ponder/rsf/test/rvb/converter-request-context.xml");
-    contributeConfigLocation("classpath:uk/org/ponder/rsf/test/rvb/converter-application-context.xml");
+    contributeRequestConfigLocation("classpath:uk/org/ponder/rsf/test/converter/converter-request-context.xml");
+    contributeConfigLocation("classpath:uk/org/ponder/rsf/test/converter/converter-application-context.xml");
   }
   
-  public void testResultingViewBindings() {
+  public void testConverter() {
     RenderResponse response = getRequestLauncher().renderView();
     ViewWrapper wrapper = response.viewWrapper;
     

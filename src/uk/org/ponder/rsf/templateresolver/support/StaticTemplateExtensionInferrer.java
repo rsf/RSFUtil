@@ -1,8 +1,9 @@
 /*
  * Created on Apr 26, 2006
  */
-package uk.org.ponder.rsf.templateresolver;
+package uk.org.ponder.rsf.templateresolver.support;
 
+import uk.org.ponder.rsf.templateresolver.TemplateExtensionInferrer;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /** A simple TemplateExtensionInferror that always returns the same extension */

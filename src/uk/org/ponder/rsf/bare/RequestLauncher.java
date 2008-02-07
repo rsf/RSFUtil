@@ -22,6 +22,7 @@ import uk.org.ponder.rsf.renderer.ViewRender;
 import uk.org.ponder.rsf.request.EarlyRequestParser;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.saxalizer.SAXalizerMappingContext;
 
 /**
  * A point of control for a "standard" RSF request cycle in a test environment,
@@ -124,7 +125,8 @@ public class RequestLauncher implements EarlyRequestParser {
       
       togo.requestContext = rsacbl.getDeadBeanLocator();
       ViewRender viewRender = (ViewRender) context.locateBean("viewRender"); 
-      togo.viewRoot = viewRender.getView().viewroot;
+      SAXalizerMappingContext smc = (SAXalizerMappingContext) context.locateBean("ELMappingContext");
+      togo.viewWrapper = new ViewWrapper(viewRender.getView().viewroot, smc);
       BareRootHandlerBean brhb = (BareRootHandlerBean) context.locateBean("rootHandlerBean");
       togo.markup = brhb.getMarkup();
     }

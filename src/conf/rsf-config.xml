@@ -398,7 +398,7 @@
 
   <!-- A basic "internal" (to this webapp) template contributor -->
   <bean id="templateContributorParent"
-    class="uk.org.ponder.rsf.templateresolver.StaticTemplateResolverStrategy"
+    class="uk.org.ponder.rsf.templateresolver.support.StaticTemplateResolverStrategy"
     abstract="true">
     <property name="rootResolverPriority" value="0" />
     <property name="baseDirectory" ref="defaultTemplatePath" />
