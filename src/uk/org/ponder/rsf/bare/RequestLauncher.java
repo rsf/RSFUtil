@@ -9,6 +9,7 @@ import java.util.Map;
 import org.springframework.context.ApplicationContext;
 
 import uk.org.ponder.arrayutil.ArrayUtil;
+import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.rsac.RSACBeanLocator;
 import uk.org.ponder.rsf.bare.junit.PlainRSFTests;
 import uk.org.ponder.rsf.componentprocessor.BindingFixer;
@@ -17,7 +18,10 @@ import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.components.UIParameterHolder;
 import uk.org.ponder.rsf.flow.ARIResult;
+import uk.org.ponder.rsf.renderer.ViewRender;
 import uk.org.ponder.rsf.request.EarlyRequestParser;
+import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /**
  * A point of control for a "standard" RSF request cycle in a test environment,
@@ -99,6 +103,40 @@ public class RequestLauncher implements EarlyRequestParser {
     }
   }
 
+  /** Perform a rendering of the (default) test view **/
+  public RenderResponse renderView() {
+    return renderView(new SimpleViewParameters(TEST_VIEW));
+  }
+  
+  /** Perform a rendering of the specified view 
+   * @param torender The ViewParameters specifying the view to be rendered.
+   * @return A {@link RenderResponse} record holding a summary of the final
+   * context state after action processing.
+   * **/
+  public RenderResponse renderView(ViewParameters torender) {
+    RenderResponse togo = new RenderResponse();
+    if (!singleshot) {
+      rsacbl.startRequest();
+    }
+    try {
+      BeanLocator context = rsacbl.getBeanLocator(); 
+      context.locateBean("rootHandlerBean");
+      
+      togo.requestContext = rsacbl.getDeadBeanLocator();
+      ViewRender viewRender = (ViewRender) context.locateBean("viewRender"); 
+      togo.viewRoot = viewRender.getView().viewroot;
+      BareRootHandlerBean brhb = (BareRootHandlerBean) context.locateBean("rootHandlerBean");
+      togo.markup = brhb.getMarkup();
+    }
+    finally {
+      if (!singleshot) {
+        rsacbl.endRequest();
+      }
+    }
+    return togo;
+    
+  }
+  
   /**
    * Submit the supplied form, as if via the specified command, returning the
    * "final state" of the request context at cycle end (note that any disposable
@@ -107,8 +145,8 @@ public class RequestLauncher implements EarlyRequestParser {
    * @param form A form to be submitted to form this test cycle's input.
    * @param command The form command which it is to appear the form was
    *            submitted by. This may be <code>null</code>
-   * @return A BeanLocator holding the final state of the request context.
-   * 
+   * @return An {@link ActionResponse} record holding a summary of the final
+   * context state after action processing.
    */
   public ActionResponse submitForm(UIForm form, UICommand command) {
     processAndAccrete(form);

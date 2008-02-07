@@ -6,7 +6,7 @@ package uk.org.ponder.rsf.state;
 import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.beanutil.BeanPredicateModel;
-import uk.org.ponder.beanutil.ELReference;
+import uk.org.ponder.beanutil.CoreELReference;
 import uk.org.ponder.mapping.BeanInvalidationBracketer;
 import uk.org.ponder.mapping.BeanInvalidationModel;
 import uk.org.ponder.mapping.ConverterConverter;
@@ -127,7 +127,7 @@ public class RSVCApplier {
       Object newvalue = unchangedValue ? DataAlterationRequest.INAPPLICABLE_VALUE
           : sve.newvalue;
       if (sve.isEL) {
-        newvalue = new ELReference((String) sve.newvalue);
+        newvalue = new CoreELReference((String) sve.newvalue);
       }
       if (sve.isdeletion) {
         dar = new DataAlterationRequest(sve.valuebinding, newvalue,

@@ -124,7 +124,7 @@ public class ContainmentFormChildFixer implements ComponentProcessor {
     if (child instanceof UIContainer) {
       registerContainer(toprocess, (UIContainer) child);
     }
-    IterableBeanLocator children = new ComponentChildIterator(child,
+    IterableBeanLocator children = new ConcreteChildIterator(child,
         mappingcontext);
     for (Iterator childit = children.iterator(); childit.hasNext();) {
       UIComponent nested = (UIComponent) children.locateBean((String) childit
