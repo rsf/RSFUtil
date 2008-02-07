@@ -54,13 +54,20 @@ public class UIComponent {
     this.fullID = fullID;
   }
   
+  /** Acquires the value of the fullID field without triggering a computation.
+   * This is to be used primarily from text fixtures.
+   */
+  public String acquireFullID() {
+    return fullID;
+  }
+  
   /** The containing parent of this component, or <code>null</code> for the
    * UIContainer representing the view root.
    */
   public UIContainer parent;
   
   /** A list of "decorators" which alter the rendering behaviour of this 
-   * component, orthogonal to its binding behaviour. Usually <code>null</code>
+   * component, orthogonal to its binding behaviour. Usually <code>null</code>.
    */
   public DecoratorList decorators;
   

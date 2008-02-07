@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.rsf.componentprocessor;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -19,10 +20,10 @@ import uk.org.ponder.saxalizer.SAXalizerMappingContext;
  *
  */
 
-public class ComponentChildIterator implements IterableBeanLocator {
+public class ConcreteChildIterator implements IterableBeanLocator {
   private Map children = new HashMap();
   
-  public ComponentChildIterator(UIComponent parent, SAXalizerMappingContext mappingcontext) {
+  public ConcreteChildIterator(UIComponent parent, SAXalizerMappingContext mappingcontext) {
     MethodAnalyser ma = mappingcontext.getAnalyser(parent.getClass());
     for (int i = 0; i < ma.allgetters.length; ++ i) {
       SAXAccessMethod sam = ma.allgetters[i];
@@ -40,6 +41,10 @@ public class ComponentChildIterator implements IterableBeanLocator {
         }
       }
     }
+  }
+  
+  public Collection children() {
+    return children.values();
   }
   
   public Iterator iterator() {

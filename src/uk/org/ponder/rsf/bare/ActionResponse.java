@@ -3,7 +3,6 @@
  */
 package uk.org.ponder.rsf.bare;
 
-import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.rsf.flow.ARIResult;
 
 /** A record summarising the response from a POST operation, consisting of the
@@ -12,7 +11,7 @@ import uk.org.ponder.rsf.flow.ARIResult;
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
 
-public class ActionResponse {
-  public BeanLocator requestContext;
+public class ActionResponse extends RequestResponse {
+
   public ARIResult ARIResult;
 }

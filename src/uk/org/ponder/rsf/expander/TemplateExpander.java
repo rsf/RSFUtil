@@ -6,6 +6,7 @@ package uk.org.ponder.rsf.expander;
 import java.util.Enumeration;
 
 import uk.org.ponder.beanutil.BeanLocator;
+import uk.org.ponder.iterationutil.EnumerationConverter;
 import uk.org.ponder.mapping.DARApplier;
 import uk.org.ponder.reflect.DeepBeanCloner;
 import uk.org.ponder.rsf.components.ComponentList;
@@ -25,7 +26,6 @@ import uk.org.ponder.rsf.viewstate.EntityCentredViewParameters;
 import uk.org.ponder.saxalizer.AccessMethod;
 import uk.org.ponder.saxalizer.MethodAnalyser;
 import uk.org.ponder.saxalizer.SAXAccessMethod;
-import uk.org.ponder.util.EnumerationConverter;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 /**

@@ -135,7 +135,7 @@ public class ViewProcessor {
       if (thischild instanceof UIContainer) {
         appendContainer((UIContainer) thischild);
       }
-      ComponentChildIterator children = new ComponentChildIterator(thischild, mappingcontext);
+      ConcreteChildIterator children = new ConcreteChildIterator(thischild, mappingcontext);
       for (Iterator childit = children.iterator(); childit.hasNext(); ) {
         String childname = (String) childit.next();
         appendComponent((UIBound) children.locateBean(childname), thischild.getFullID() + "-" + childname);

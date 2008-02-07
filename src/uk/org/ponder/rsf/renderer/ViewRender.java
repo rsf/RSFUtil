@@ -86,6 +86,11 @@ public class ViewRender {
     this.view = view;
   }
 
+  // a useful access point for the rendered view for testing and debugging purposes
+  public View getView() {
+    return view;
+  }
+  
   public void setRenderSystem(RenderSystem renderer) {
     this.renderer = renderer;
   }
