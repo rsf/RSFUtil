@@ -256,7 +256,7 @@ to intercept bindings -->
   <!-- Get rid of this and turn the TemplateResolver itself into a 
     request-scope bean -->
   <bean id="viewTemplate"
-    class="uk.org.ponder.rsf.templateresolver.TemplateLoaderBean">
+    class="uk.org.ponder.rsf.templateresolver.support.TemplateLoaderBean">
     <!-- EXTERNAL DEPENDENCY! The application supplies the template resolver -->
     <property name="templateResolver" ref="viewTemplateResolver" />
     <property name="viewParameters" ref="viewParameters" />

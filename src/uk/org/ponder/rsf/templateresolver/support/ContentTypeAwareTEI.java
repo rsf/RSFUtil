@@ -1,9 +1,10 @@
 /*
  * Created on 11 Oct 2006
  */
-package uk.org.ponder.rsf.templateresolver;
+package uk.org.ponder.rsf.templateresolver.support;
 
 import uk.org.ponder.rsf.content.ContentTypeInfo;
+import uk.org.ponder.rsf.templateresolver.TemplateExtensionInferrer;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 public class ContentTypeAwareTEI implements TemplateExtensionInferrer {

@@ -3,6 +3,8 @@
  */
 package uk.org.ponder.rsf.templateresolver;
 
+import uk.org.ponder.rsf.templateresolver.support.CRITemplateResolverStrategy;
+
 /** An superinterface for a TemplateResolverStrategy that explicitly participates
  * in root resolution. A TRS that does *not* implement this interface will have
  * inferred a default priority of <code>1</code>

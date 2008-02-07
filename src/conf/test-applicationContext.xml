@@ -17,4 +17,7 @@
     <property name="value" value="false" />
   </bean>
 
+  <bean id="templateResolverStrategy" 
+    class="uk.org.ponder.rsf.templateresolver.support.EmptyTemplateResolverStrategy" />
+
 </beans>

@@ -1,7 +1,7 @@
 /*
  * Created on Sep 19, 2005
  */
-package uk.org.ponder.rsf.templateresolver;
+package uk.org.ponder.rsf.templateresolver.support;
 
 import java.io.InputStream;
 import java.util.List;
@@ -15,6 +15,14 @@ import uk.org.ponder.rsf.template.TPIAggregator;
 import uk.org.ponder.rsf.template.XMLCompositeViewTemplate;
 import uk.org.ponder.rsf.template.XMLViewTemplate;
 import uk.org.ponder.rsf.template.XMLViewTemplateParser;
+import uk.org.ponder.rsf.templateresolver.BaseAwareTemplateResolverStrategy;
+import uk.org.ponder.rsf.templateresolver.ExpectedTRS;
+import uk.org.ponder.rsf.templateresolver.ForceContributingTRS;
+import uk.org.ponder.rsf.templateresolver.MultipleTemplateResolverStrategy;
+import uk.org.ponder.rsf.templateresolver.RootAwareTRS;
+import uk.org.ponder.rsf.templateresolver.TemplateExtensionInferrer;
+import uk.org.ponder.rsf.templateresolver.TemplateResolver;
+import uk.org.ponder.rsf.templateresolver.TemplateResolverStrategy;
 import uk.org.ponder.rsf.view.ViewTemplate;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.springutil.CachingInputStreamSource;
@@ -106,9 +114,14 @@ public class BasicTemplateResolver implements TemplateResolver {
         usebases = new StringList[] { bases };
       }
       
+      TemplateResolutionContext trc = 
+        new TemplateResolutionContext(viewparams, trs,  isexpected ? tried : null, ismultiple && isexpected);
+      
+      
       for (int j = 0; j < usebases.length; ++j) {
-        XMLViewTemplate template = locateTemplate(viewparams, trs, usebases[j],
-            isexpected ? tried : null, ismultiple && isexpected);
+        trc.bases = usebases[j];
+        resolveTemplateStream(trc);
+        XMLViewTemplate template = parseTemplate(trc);
         if (template != null) {
           if (xcvt != null) {
             if (trs.isStatic()) {
@@ -150,71 +163,72 @@ public class BasicTemplateResolver implements TemplateResolver {
     return xcvt;
   }
 
-  public XMLViewTemplate locateTemplate(ViewParameters viewparams,
-      TemplateResolverStrategy strs, StringList bases, StringList tried, boolean logfailure) {
+  public void resolveTemplateStream(TemplateResolutionContext trc) {
     String resourcebase = "/";
-    if (strs instanceof BaseAwareTemplateResolverStrategy) {
-      BaseAwareTemplateResolverStrategy batrs = (BaseAwareTemplateResolverStrategy) strs;
+    if (trc.trs instanceof BaseAwareTemplateResolverStrategy) {
+      BaseAwareTemplateResolverStrategy batrs = (BaseAwareTemplateResolverStrategy) trc.trs;
       resourcebase = batrs.getTemplateResourceBase();
     }
 
-    String extension = tei.inferTemplateExtension(viewparams);
+    String extension = tei.inferTemplateExtension(trc.viewparams);
     InputStream is = null;
     String fullpath = null;
-    for (int i = 0; i < bases.size(); ++i) {
-      fullpath = resourcebase + bases.stringAt(i) + "." + extension;
-      if (tried != null) {
-        tried.add(fullpath);
+    for (int i = 0; i < trc.bases.size(); ++i) {
+      fullpath = resourcebase + trc.bases.stringAt(i) + "." + extension;
+      if (trc.tried != null) {
+        trc.tried.add(fullpath);
       }
       is = cachingiis.openStream(fullpath);
       if (is != null)
         break;
-      if (is == null && logfailure) {
+      if (is == null && trc.logfailure) {
 // This is not a real failure for other content types - see RSF-21        
 //        Logger.log.warn("Failed to load template from " + fullpath);
       }
     }
-    if (is == null) {
-      return null;
-    }
-
+    trc.is = is;
+  }
+  
+  public XMLViewTemplate parseTemplate(TemplateResolutionContext trc) {
+    if (trc.is == null) return null;
+    
     XMLViewTemplate template = null;
-    if (is == CachingInputStreamSource.UP_TO_DATE) {
-      template = (XMLViewTemplate) templates.get(fullpath);
+    if (trc.is == CachingInputStreamSource.UP_TO_DATE) {
+      template = (XMLViewTemplate) templates.get(trc.fullpath);
     }
     if (template == null) {
       List tpis = aggregator.getFilteredTPIs();
       try {
         // possibly the reason is it had a parse error last time, which may have
         // been corrected
-        if (is == CachingInputStreamSource.UP_TO_DATE) {
-          is = cachingiis.getNonCachingResolver().openStream(fullpath);
+        if (trc.is == CachingInputStreamSource.UP_TO_DATE) {
+          trc.is = cachingiis.getNonCachingResolver().openStream(trc.fullpath);
         }
         XMLViewTemplateParser parser = new XMLViewTemplateParser();
         parser.setTemplateParseInterceptors(tpis);
-        template = (XMLViewTemplate) parser.parse(is);
+        template = (XMLViewTemplate) parser.parse(trc.is);
         // there WILL be one slash in the path.
-        int lastslashpos = fullpath.lastIndexOf('/');
-        String resourcebaseext = fullpath.substring(1, lastslashpos + 1);
-        if (strs instanceof BaseAwareTemplateResolverStrategy) {
-          BaseAwareTemplateResolverStrategy batrs = (BaseAwareTemplateResolverStrategy) strs;
+        int lastslashpos = trc.fullpath.lastIndexOf('/');
+        String resourcebaseext = trc.fullpath.substring(1, lastslashpos + 1);
+        if (trc.trs instanceof BaseAwareTemplateResolverStrategy) {
+          BaseAwareTemplateResolverStrategy batrs = (BaseAwareTemplateResolverStrategy) trc.trs;
           String extresourcebase = batrs.getExternalURLBase();
           template.setExtResourceBase(extresourcebase);
         }
-        if (strs instanceof ForceContributingTRS) {
-          ForceContributingTRS fctrs = (ForceContributingTRS) strs;
+        if (trc.trs instanceof ForceContributingTRS) {
+          ForceContributingTRS fctrs = (ForceContributingTRS) trc.trs;
           if (fctrs.getMustContribute()) {
             template.mustcollectmap = template.collectmap;
           }
         }
         template.setRelativeResourceBase(resourcebaseext);
-        template.fullpath = fullpath;
-        template.isstatictemplate = strs.isStatic();
-        templates.put(fullpath, template);
+        template.fullpath = trc.fullpath;
+        template.isstatictemplate = trc.trs.isStatic();
+        templates.put(trc.fullpath, template);
       }
       catch (Exception e) {
         throw UniversalRuntimeException.accumulate(e,
-            "Error parsing view template file " + fullpath);
+            "Error parsing view template file " + trc.fullpath);
       }
     }
     return template;

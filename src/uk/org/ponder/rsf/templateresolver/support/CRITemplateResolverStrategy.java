@@ -1,8 +1,11 @@
 /*
  * Created on Apr 26, 2006
  */
-package uk.org.ponder.rsf.templateresolver;
+package uk.org.ponder.rsf.templateresolver.support;
 
+import uk.org.ponder.rsf.templateresolver.BaseAwareTemplateResolverStrategy;
+import uk.org.ponder.rsf.templateresolver.RootAwareTRS;
+import uk.org.ponder.rsf.templateresolver.TemplateResolverStrategy;
 import uk.org.ponder.rsf.viewstate.ContextURLProvider;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.stringutil.StringList;

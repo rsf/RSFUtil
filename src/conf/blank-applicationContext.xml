@@ -173,7 +173,7 @@ with a client redirect rather than an internal reinterpretation -->
   <!-- ***** CONTENT TYPES and RENDERING ***** -->
 
   <bean id="viewTemplateResolver"
-    class="uk.org.ponder.rsf.templateresolver.BasicTemplateResolver">
+    class="uk.org.ponder.rsf.templateresolver.support.BasicTemplateResolver">
     <property name="templateExtensionInferrer"
       ref="templateExtensionInferrer" />
     <property name="TPIAggregator" ref="TPIAggregator" />
@@ -193,7 +193,7 @@ with a client redirect rather than an internal reinterpretation -->
   -->
 
   <bean id="templateExtensionInferrer"
-    class="uk.org.ponder.rsf.templateresolver.ContentTypeAwareTEI">
+    class="uk.org.ponder.rsf.templateresolver.support.ContentTypeAwareTEI">
     <property name="contentTypeInfo" ref="contentTypeInfoProxy" />
   </bean>
 
@@ -232,7 +232,7 @@ with a client redirect rather than an internal reinterpretation -->
   </bean>
 
   <bean id="messageTemplateContributor"
-    class="uk.org.ponder.rsf.templateresolver.StaticTemplateResolverStrategy">
+    class="uk.org.ponder.rsf.templateresolver.support.StaticTemplateResolverStrategy">
     <property name="templateResourceBase"
       value="classpath:uk/org/ponder/rsf/builtin/components/" />
     <property name="templateNames" value="Messages" />
@@ -242,7 +242,7 @@ with a client redirect rather than an internal reinterpretation -->
   </bean>
 
   <bean id="rootTemplateContributorParent"
-    class="uk.org.ponder.rsf.templateresolver.StaticTemplateResolverStrategy"
+    class="uk.org.ponder.rsf.templateresolver.support.StaticTemplateResolverStrategy"
     abstract="true">
     <!-- TODO: why do we set CUP here if this is (probably) a local
       resolver? -->
@@ -258,7 +258,7 @@ with a client redirect rather than an internal reinterpretation -->
   </bean>
 
   <bean id="CRITemplateResolverStrategy"
-    class="uk.org.ponder.rsf.templateresolver.CRITemplateResolverStrategy"
+    class="uk.org.ponder.rsf.templateresolver.support.CRITemplateResolverStrategy"
     lazy-init="true" abstract="true">
     <property name="baseDirectory" ref="defaultTemplatePath" />
     <property name="consumerInfo" ref="consumerInfoProxy" />
