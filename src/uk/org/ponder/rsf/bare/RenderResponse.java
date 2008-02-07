@@ -3,9 +3,7 @@
  */
 package uk.org.ponder.rsf.bare;
 
-import uk.org.ponder.rsf.view.ViewRoot;
-
 public class RenderResponse extends RequestResponse {
-  public ViewRoot viewRoot;
+  public ViewWrapper viewWrapper;
   public String markup;
 }

@@ -5,12 +5,11 @@ package uk.org.ponder.rsf.test.converter;
 
 import uk.org.ponder.rsf.bare.ActionResponse;
 import uk.org.ponder.rsf.bare.RenderResponse;
+import uk.org.ponder.rsf.bare.ViewWrapper;
 import uk.org.ponder.rsf.bare.junit.PlainRSFTests;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIForm;
-import uk.org.ponder.rsf.flow.ARIResult;
-import uk.org.ponder.rsf.util.RSFUtil;
-import uk.org.ponder.rsf.viewstate.EntityCentredViewParameters;
+import uk.org.ponder.rsf.components.UIInput;
 
 // Test for composite Resulting View Bindings issue, reported in forums at
 // http://ponder.org.uk/rsf/posts/list/8.page
@@ -24,15 +23,28 @@ public class TestConverter extends PlainRSFTests {
   
   public void testResultingViewBindings() {
     RenderResponse response = getRequestLauncher().renderView();
+    ViewWrapper wrapper = response.viewWrapper;
     
-    UIForm dummyform = new UIForm();
-    RSFUtil.addResultingViewBinding(dummyform, "entity.ID", "idholder.id");
-    UICommand command = UICommand.make(dummyform, "mycommand", "idholder.act");
+    UIForm form = (UIForm) wrapper.queryComponent(new UIForm());
+    UICommand command = (UICommand) wrapper.queryComponent(new UICommand());
     
-    ActionResponse result = getRequestLauncher().submitForm(dummyform, command);
-    ARIResult ariresult = result.ARIResult;
+    DateHolder defaultHolder = new DateHolder();
     
-    assertTrue(ariresult.resultingView instanceof EntityCentredViewParameters);
-    EntityCentredViewParameters ecvp = (EntityCentredViewParameters) ariresult.resultingView;
+    ActionResponse result = getRequestLauncher().submitForm(form, command);
+    DateHolder dateHolder = (DateHolder) result.requestContext.locateBean("dateHolder");
+    
+    assertEquals(dateHolder.date, defaultHolder.date);
+    
+    String testDate = "2005-05-03"; 
+    
+    UIInput input = (UIInput) wrapper.queryComponent(new UIInput());
+    input.setValue(testDate);
+    
+    ActionResponse result2 = getRequestLauncher().submitForm(form, command);
+    DateHolder dateHolder2 = (DateHolder) result2.requestContext.locateBean("dateHolder");
+  
+    DateConverter converter = new DateConverter();
+    assertEquals(dateHolder2.date, converter.parse(testDate));
+    
   }
 }
