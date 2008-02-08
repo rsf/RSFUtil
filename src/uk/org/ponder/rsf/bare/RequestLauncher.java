@@ -116,9 +116,6 @@ public class RequestLauncher implements EarlyRequestParser {
    * **/
   public RenderResponse renderView(ViewParameters torender) {
     RenderResponse togo = new RenderResponse();
-    if (!singleshot) {
-      rsacbl.startRequest();
-    }
     try {
       BeanLocator context = rsacbl.getBeanLocator(); 
       context.locateBean("rootHandlerBean");
@@ -159,9 +156,7 @@ public class RequestLauncher implements EarlyRequestParser {
     setRequestType(EarlyRequestParser.ACTION_REQUEST);
 
     ActionResponse togo = new ActionResponse();
-    if (!singleshot) {
-      rsacbl.startRequest();
-    }
+
     try {
       rsacbl.getBeanLocator().locateBean("rootHandlerBean");
       togo.requestContext = rsacbl.getDeadBeanLocator();

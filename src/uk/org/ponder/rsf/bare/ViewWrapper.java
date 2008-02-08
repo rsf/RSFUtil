@@ -40,7 +40,7 @@ public class ViewWrapper {
     
     while (cci.hasMoreComponents()) {
       UIComponent test = cci.nextComponent();
-      if (exemplar.getClass().isAssignableFrom(test.getClass())) continue;
+      if (!exemplar.getClass().isAssignableFrom(test.getClass())) continue;
       if (exemplar.ID != null && !test.ID.equals(exemplar.ID)) continue;
       String fullID = exemplar.acquireFullID();
       if (fullID != null && !test.getFullID().equals(fullID)) continue;

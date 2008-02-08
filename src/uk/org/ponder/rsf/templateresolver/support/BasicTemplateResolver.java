@@ -172,13 +172,13 @@ public class BasicTemplateResolver implements TemplateResolver {
 
     String extension = tei.inferTemplateExtension(trc.viewparams);
     InputStream is = null;
-    String fullpath = null;
+    trc.fullpath = null;
     for (int i = 0; i < trc.bases.size(); ++i) {
-      fullpath = resourcebase + trc.bases.stringAt(i) + "." + extension;
+      trc.fullpath = resourcebase + trc.bases.stringAt(i) + "." + extension;
       if (trc.tried != null) {
-        trc.tried.add(fullpath);
+        trc.tried.add(trc.fullpath);
       }
-      is = cachingiis.openStream(fullpath);
+      is = cachingiis.openStream(trc.fullpath);
       if (is != null)
         break;
       if (is == null && trc.logfailure) {
