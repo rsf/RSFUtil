@@ -21,6 +21,10 @@ public class TestConverter extends PlainRSFTests {
     contributeConfigLocation("classpath:uk/org/ponder/rsf/test/converter/converter-application-context.xml");
   }
   
+  public boolean isSingleShot() {
+    return false;
+  }
+  
   public void testConverter() {
     RenderResponse response = getRequestLauncher().renderView();
     ViewWrapper wrapper = response.viewWrapper;

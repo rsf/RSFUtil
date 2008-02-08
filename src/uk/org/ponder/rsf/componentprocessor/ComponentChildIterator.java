@@ -20,6 +20,7 @@ public class ComponentChildIterator implements ComponentIterator {
   
   public ComponentChildIterator(UIComponent parent, SAXalizerMappingContext smc) {
     pending = parent;
+    this.smc = smc;
   }
 
   private ComponentIterator iteriseComponent(UIComponent parent) {
@@ -34,7 +35,7 @@ public class ComponentChildIterator implements ComponentIterator {
 
   private void consume() {
     pending = null;
-    while (pending != null && !itlist.isEmpty()) {
+    while (!itlist.isEmpty()) {
       ComponentIterator it = (ComponentIterator) itlist.get(itlist.size() - 1);
       if (it.hasMoreComponents()) {
         pending = it.nextComponent();
@@ -50,7 +51,7 @@ public class ComponentChildIterator implements ComponentIterator {
 
   public UIComponent nextComponent() {
     UIComponent togo = pending;
-    iteriseComponent(togo);
+    itlist.add(iteriseComponent(togo));
     
     consume();
     

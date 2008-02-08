@@ -20,4 +20,10 @@
   <bean id="templateResolverStrategy" 
     class="uk.org.ponder.rsf.templateresolver.support.EmptyTemplateResolverStrategy" />
 
+  <bean id="baseURLProvider"
+    class="uk.org.ponder.rsf.viewstate.support.StaticBaseURLProvider">
+    <property name="baseURL" value="/" />
+    <property name="resourceBaseURL" value="/" />
+  </bean>
+
 </beans>
