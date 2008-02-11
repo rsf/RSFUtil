@@ -4,14 +4,22 @@
 <beans>
 
   <bean class="uk.org.ponder.mapping.DataConverter">
-     <property name="targetPath" value="dateHolder.date" />
-     <property name="converter">
-       <bean class="uk.org.ponder.rsf.test.converter.DateConverter"/>
-     </property>
+    <property name="targetPath" value="dateHolder.date" />
+    <property name="converter">
+      <bean class="uk.org.ponder.rsf.test.converter.DateConverter" />
+    </property>
   </bean>
-  
+
+<!--  Test definition for RSF-57 invalid path match issue -->
+  <bean class="uk.org.ponder.mapping.DataConverter">
+    <property name="targetPath" value="Profile.*.dob" />
+    <property name="converter">
+      <bean class="uk.org.ponder.rsf.test.converter.ExplosiveConverter" />
+    </property>
+  </bean>
+
   <bean parent="requestAddressibleParent">
-    <property name="value" value="dateHolder"/>
+    <property name="value" value="dateHolder, removeIds, profileOtherWorksBL" />
   </bean>
-  
+
 </beans>
