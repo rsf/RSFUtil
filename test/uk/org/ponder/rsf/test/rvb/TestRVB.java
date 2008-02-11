@@ -11,8 +11,9 @@ import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.util.RSFUtil;
 import uk.org.ponder.rsf.viewstate.EntityCentredViewParameters;
 
-// Test for composite Resulting View Bindings issue, reported in forums at
-// http://ponder.org.uk/rsf/posts/list/8.page
+/** Test for composite Resulting View Bindings issue RSF-59, reported in forums at
+ * http://ponder.org.uk/rsf/posts/list/8.page
+ */
 
 public class TestRVB extends PlainRSFTests {
   
