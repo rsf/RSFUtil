@@ -11,8 +11,14 @@ import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 
-// Test for composite Resulting View Bindings issue, reported in forums at
-// http://ponder.org.uk/rsf/posts/list/8.page
+/** Test for DataConverter issue RSF-47, reported in forums at
+ *http://ponder.org.uk/rsf/posts/list/183.page
+ *
+ *<br/>This test case also demonstrates more advanced usage of RSF "full-cycle"
+ * tests. It performs 3 full request cycles, firstly one render cycle and then
+ * two action cycles, and also demonstrates use of ComponentQueries, modification
+ * and submission of a pure component tree.
+ */
 
 public class TestConverter extends PlainRSFTests {
   
@@ -26,6 +32,7 @@ public class TestConverter extends PlainRSFTests {
   }
   
   public void testConverter() {
+    // Fire an initial request to render the view from TestProducer.java
     RenderResponse response = getRequestLauncher().renderView();
     ViewWrapper wrapper = response.viewWrapper;
     
@@ -34,11 +41,16 @@ public class TestConverter extends PlainRSFTests {
     
     DateHolder defaultHolder = new DateHolder();
     
+    // Fire an action request to submit the form with no changes. The UIInput
+    // will be submitted with no changes, thus forming an "Inapplicable Value".
     ActionResponse result = getRequestLauncher().submitForm(form, command);
     DateHolder dateHolder = (DateHolder) result.requestContext.locateBean("dateHolder");
     
     assertEquals(dateHolder.date, defaultHolder.date);
     
+    // Now test the correct operation of the DataConverter (DateConverter) in
+    // parsing this simulated user input into the required Date object, in a 3rd
+    // request.
     String testDate = "2005-05-03"; 
     
     UIInput input = (UIInput) wrapper.queryComponent(new UIInput());
