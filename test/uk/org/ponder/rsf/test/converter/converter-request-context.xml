@@ -5,5 +5,12 @@
   <bean id="dateHolder" class="uk.org.ponder.rsf.test.converter.DateHolder"/>
   
   <bean class="uk.org.ponder.rsf.test.converter.TestProducer" />
+  <bean class="uk.org.ponder.rsf.test.converter.TestProducer2" />
+  
+  <bean id="removeIds" class="java.lang.String">
+    <constructor-arg value="3"/>
+  </bean>
+  
+  <bean id="profileOtherWorksBL" class="uk.org.ponder.rsf.test.converter.ProfileOtherWorksBL"/>
   
 </beans>

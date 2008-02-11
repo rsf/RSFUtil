@@ -11,6 +11,7 @@ import org.springframework.context.ApplicationContext;
 
 import uk.org.ponder.arrayutil.ArrayUtil;
 import uk.org.ponder.beanutil.BeanLocator;
+import uk.org.ponder.beanutil.WriteableBeanLocator;
 import uk.org.ponder.beanutil.support.ConcreteWBL;
 import uk.org.ponder.rsac.RSACBeanLocator;
 import uk.org.ponder.rsf.bare.junit.PlainRSFTests;
@@ -139,7 +140,8 @@ public class RequestLauncher implements EarlyRequestParser {
   public RenderResponse renderView(ViewParameters torender) {
     RenderResponse togo = new RenderResponse();
     try {
-      BeanLocator context = rsacbl.getBeanLocator(); 
+      WriteableBeanLocator context = rsacbl.getBeanLocator();
+      context.set("parsedViewParameters", torender);
       context.locateBean("rootHandlerBean");
       
       togo.requestContext = rsacbl.getDeadBeanLocator();

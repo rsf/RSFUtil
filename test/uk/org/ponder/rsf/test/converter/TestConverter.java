@@ -10,6 +10,7 @@ import uk.org.ponder.rsf.bare.junit.PlainRSFTests;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
+import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 
 /** Test for DataConverter issue RSF-47, reported in forums at
  *http://ponder.org.uk/rsf/posts/list/183.page
@@ -31,7 +32,7 @@ public class TestConverter extends PlainRSFTests {
     return false;
   }
   
-  public void testConverter() {
+  public void yestConverterInapplicable() {
     // Fire an initial request to render the view from TestProducer.java
     RenderResponse response = getRequestLauncher().renderView();
     ViewWrapper wrapper = response.viewWrapper;
@@ -61,6 +62,16 @@ public class TestConverter extends PlainRSFTests {
   
     DateConverter converter = new DateConverter();
     assertEquals(dateHolder2.date, converter.parse(testDate));
+  }
+  
+  /** Test for RSF-57. The condition is that the form should submit correctly without
+   * an attempt to trigger the "ExplosiveConverter".
+   */
+  public void testConverterPathMatch() {
+    RenderResponse response = getRequestLauncher().renderView(new SimpleViewParameters(TestProducer2.VIEW_ID));
+    ViewWrapper wrapper = response.viewWrapper;
     
+    UIForm form = (UIForm) wrapper.queryComponent(new UIForm());
+    getRequestLauncher().submitForm(form, null);
   }
 }
