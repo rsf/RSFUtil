@@ -12,13 +12,7 @@ import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 
-/** Test for DataConverter issue RSF-47, reported in forums at
- *http://ponder.org.uk/rsf/posts/list/183.page
- *
- *<br/>This test case also demonstrates more advanced usage of RSF "full-cycle"
- * tests. It performs 3 full request cycles, firstly one render cycle and then
- * two action cycles, and also demonstrates use of ComponentQueries, modification
- * and submission of a pure component tree.
+/** Test cases for DataConverter-related issues RSF-47 and RSF-57
  */
 
 public class TestConverter extends PlainRSFTests {
@@ -32,7 +26,16 @@ public class TestConverter extends PlainRSFTests {
     return false;
   }
   
-  public void yestConverterInapplicable() {
+  /** Test for DataConverter issue RSF-47, reported in forums at
+  * http://ponder.org.uk/rsf/posts/list/183.page
+  *
+  *<br/>This test case also demonstrates more advanced usage of RSF "full-cycle"
+  * tests. It performs 3 full request cycles, firstly one render cycle and then
+  * two action cycles, and also demonstrates use of ComponentQueries, modification
+  * and submission of a pure component tree.
+  */
+  
+  public void testConverterInapplicable() {
     // Fire an initial request to render the view from TestProducer.java
     RenderResponse response = getRequestLauncher().renderView();
     ViewWrapper wrapper = response.viewWrapper;
@@ -67,6 +70,8 @@ public class TestConverter extends PlainRSFTests {
   /** Test for RSF-57. The condition is that the form should submit correctly without
    * an attempt to trigger the "ExplosiveConverter".
    */
+  // TODO: construct tests for various other DataConverter matching edge cases - 
+  // type-based matches and those which expire incomplete etc.
   public void testConverterPathMatch() {
     RenderResponse response = getRequestLauncher().renderView(new SimpleViewParameters(TestProducer2.VIEW_ID));
     ViewWrapper wrapper = response.viewWrapper;
