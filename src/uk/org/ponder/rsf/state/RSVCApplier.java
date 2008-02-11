@@ -149,7 +149,7 @@ public class RSVCApplier {
           throw UniversalRuntimeException.accumulate(e, "Error traversing binding path " + sve.valuebinding);
         }
       }
-      if (reshapero != null) {
+      if (reshapero != null && dar.data != DataAlterationRequest.INAPPLICABLE_VALUE) {
         DARReshaper reshaper = ConverterConverter.toReshaper(reshapero);
         try {
           dar = reshaper.reshapeDAR(dar);

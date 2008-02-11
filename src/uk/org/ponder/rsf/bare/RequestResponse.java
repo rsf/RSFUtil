@@ -3,7 +3,7 @@
  */
 package uk.org.ponder.rsf.bare;
 
-import uk.org.ponder.beanutil.BeanLocator;
+import uk.org.ponder.beanutil.IterableBeanLocator;
 
 /** The base class for the response type of a "test invocation" of an RSF
  * request cycle. Includes only a field indicating the "final state" of the
@@ -14,5 +14,5 @@ import uk.org.ponder.beanutil.BeanLocator;
 
 public class RequestResponse {
   /** A BeanLocator holding the final state of the request context. **/
-  public BeanLocator requestContext;
+  public IterableBeanLocator requestContext;
 }

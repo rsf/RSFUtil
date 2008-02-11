@@ -4,10 +4,14 @@
 <beans>
 
   <bean class="uk.org.ponder.mapping.DataConverter">
-     <property name="targetPath" value="dateHolder.Date" />
+     <property name="targetPath" value="dateHolder.date" />
      <property name="converter">
        <bean class="uk.org.ponder.rsf.test.converter.DateConverter"/>
      </property>
+  </bean>
+  
+  <bean parent="requestAddressibleParent">
+    <property name="value" value="dateHolder"/>
   </bean>
   
 </beans>

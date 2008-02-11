@@ -4,16 +4,21 @@
 package uk.org.ponder.rsf.bare;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.springframework.context.ApplicationContext;
 
 import uk.org.ponder.arrayutil.ArrayUtil;
 import uk.org.ponder.beanutil.BeanLocator;
+import uk.org.ponder.beanutil.support.ConcreteWBL;
 import uk.org.ponder.rsac.RSACBeanLocator;
 import uk.org.ponder.rsf.bare.junit.PlainRSFTests;
 import uk.org.ponder.rsf.componentprocessor.BindingFixer;
+import uk.org.ponder.rsf.componentprocessor.ComponentChildIterator;
+import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UICommand;
+import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.components.UIParameterHolder;
@@ -44,6 +49,7 @@ public class RequestLauncher implements EarlyRequestParser {
   private String requestType;
   private RSACBeanLocator rsacbl;
   private ApplicationContext context;
+  private SAXalizerMappingContext smc;
 
   private boolean singleshot;
 
@@ -82,7 +88,7 @@ public class RequestLauncher implements EarlyRequestParser {
   public String getEnvironmentType() {
     return EarlyRequestParser.TEST_ENVIRONMENT;
   }
-
+  
   public void addParameter(String key, String value) {
     String[] values = (String[]) requestMap.get(key);
     if (values == null) {
@@ -92,15 +98,31 @@ public class RequestLauncher implements EarlyRequestParser {
       requestMap.put(key, ArrayUtil.append(values, value));
     }
   }
-
-  private void processAndAccrete(UIParameterHolder holder) {
+  
+  private void processAndAccrete(UIParameterHolder form, UICommand command) {
     BindingFixer fixer = (BindingFixer) context.getBean("bindingFixer");
 
-    fixer.processComponent(holder);
-
-    for (int i = 0; i < holder.parameters.size(); ++i) {
-      UIParameter param = holder.parameters.parameterAt(i);
-      addParameter(param.name, param.value);
+    ComponentChildIterator cci = new ComponentChildIterator(form, smc);
+    while (cci.hasMoreComponents()) {
+      UIComponent component = cci.nextComponent();
+      if (component instanceof UIParameterHolder) {
+        UIParameterHolder holder = (UIParameterHolder) component;
+        fixer.processComponent(holder);
+        
+        if (!(component instanceof UICommand) || component == command) {
+          for (int i = 0; i < holder.parameters.size(); ++i) {
+            UIParameter param = holder.parameters.parameterAt(i);
+            addParameter(param.name, param.value);
+          }          
+        }
+      }
+      if (component instanceof UIBound) {
+        UIBound bound = (UIBound) component;
+        if (bound.willinput) {
+          addParameter(bound.submittingname, bound.acquireValue().toString());
+          addParameter(bound.fossilizedbinding.name, bound.fossilizedbinding.value);
+        }
+      }
     }
   }
 
@@ -122,7 +144,7 @@ public class RequestLauncher implements EarlyRequestParser {
       
       togo.requestContext = rsacbl.getDeadBeanLocator();
       ViewRender viewRender = (ViewRender) context.locateBean("viewRender"); 
-      SAXalizerMappingContext smc = (SAXalizerMappingContext) context.locateBean("ELMappingContext");
+   
       togo.viewWrapper = new ViewWrapper(viewRender.getView().viewroot, smc);
       BareRootHandlerBean brhb = (BareRootHandlerBean) context.locateBean("rootHandlerBean");
       togo.markup = brhb.getMarkup();
@@ -148,11 +170,8 @@ public class RequestLauncher implements EarlyRequestParser {
    * context state after action processing.
    */
   public ActionResponse submitForm(UIForm form, UICommand command) {
-    processAndAccrete(form);
-
-    if (command != null) {
-      processAndAccrete(command);
-    }
+    processAndAccrete(form, command);
+    
     setRequestType(EarlyRequestParser.ACTION_REQUEST);
 
     ActionResponse togo = new ActionResponse();
@@ -164,7 +183,14 @@ public class RequestLauncher implements EarlyRequestParser {
     }
     finally {
       if (!singleshot) {
+        ConcreteWBL saved = new ConcreteWBL();
+        for (Iterator names = togo.requestContext.iterator(); names.hasNext();) {
+          String name = (String) names.next();
+          saved.set(name, togo.requestContext.locateBean(name));
+        }
+        // this will trash all request beans
         rsacbl.endRequest();
+        togo.requestContext = saved;
       }
     }
     return togo;
@@ -183,5 +209,6 @@ public class RequestLauncher implements EarlyRequestParser {
     pathInfo = "/" + TEST_VIEW;
     requestMap = new HashMap();
     requestType = EarlyRequestParser.RENDER_REQUEST;
+    smc = (SAXalizerMappingContext) context.getBean("ELMappingContext");
   }
 }
