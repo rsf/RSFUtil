@@ -6,7 +6,7 @@ package uk.org.ponder.rsf.test.converter;
 import uk.org.ponder.rsf.bare.ActionResponse;
 import uk.org.ponder.rsf.bare.RenderResponse;
 import uk.org.ponder.rsf.bare.ViewWrapper;
-import uk.org.ponder.rsf.bare.junit.PlainRSFTests;
+import uk.org.ponder.rsf.bare.junit.MultipleRSFTests;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
@@ -15,16 +15,13 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 /** Test cases for DataConverter-related issues RSF-47 and RSF-57
  */
 
-public class TestConverter extends PlainRSFTests {
+public class TestConverter extends MultipleRSFTests {
   
   public TestConverter() {
     contributeRequestConfigLocation("classpath:uk/org/ponder/rsf/test/converter/converter-request-context.xml");
     contributeConfigLocation("classpath:uk/org/ponder/rsf/test/converter/converter-application-context.xml");
   }
-  
-  public boolean isSingleShot() {
-    return false;
-  }
+
   
   /** Test for DataConverter issue RSF-47, reported in forums at
   * http://ponder.org.uk/rsf/posts/list/183.page
