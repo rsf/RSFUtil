@@ -5,7 +5,7 @@ package uk.org.ponder.rsf.test.diminish;
 
 public class DiminishValidator {
   public void setDiminisher(Diminisher diminisher) {
-    if (diminisher.int1.intValue() == 1) 
-      throw new IllegalArgumentException("Value of first integer must be 2");
+    if (diminisher.int1.intValue() != 0) 
+      throw new IllegalArgumentException("Value of first integer must be 0");
   }
 }

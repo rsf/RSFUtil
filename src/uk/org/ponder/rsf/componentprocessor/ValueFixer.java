@@ -116,11 +116,13 @@ public class ValueFixer implements ComponentProcessor {
           Logger.log.info("Error resolving EL reference " + stripbinding
               + " for component with full ID " + toprocess.getFullID(), e);
         }
-        if (flatvalue != null) {
+        // If it was cached, we want to propagate the old "oldvalue" to the next request
+        if (hadcached) {
+          modelvalue = sve.oldvalue;
+        }
+        else if (flatvalue != null) {
           modelvalue = flatvalue;
-          if (!hadcached) {
-            toprocess.updateValue(flatvalue);
-          }
+          toprocess.updateValue(flatvalue);
         }
       }
       else if (toprocess.resolver != null) {
