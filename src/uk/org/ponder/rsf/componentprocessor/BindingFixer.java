@@ -50,7 +50,7 @@ public class BindingFixer implements ComponentProcessor {
   private boolean isFixed(UICommand command) {
     if (command.parameters == null) return false;
     for (int i = 0; i < command.parameters.size(); ++ i) {
-      if (command.parameters.parameterAt(i).name.equals(SubmittedValueEntry.SUBMITTING_CONTROL)) {
+      if (SubmittedValueEntry.SUBMITTING_CONTROL.equals(command.parameters.parameterAt(i).name)) {
         return true;
       }
     }
