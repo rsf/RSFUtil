@@ -155,7 +155,7 @@ public class BasicHTMLComponentRenderer implements ComponentRenderer {
       }
       boolean ishtmlselect = trc.uselump.textEquals("<select ");
       if (select.selection instanceof UIBoundList && ishtmlselect) {
-        attrcopy.put("multiple", "true");
+        attrcopy.put("multiple", "multiple");
       }
       if (ishtmlselect) {
         // The HTML submitted value from a <select> actually corresponds
@@ -197,12 +197,12 @@ public class BasicHTMLComponentRenderer implements ComponentRenderer {
       UISelectChoice torender = (UISelectChoice) torendero;
       UISelect parent = (UISelect) view.getComponent(torender.parentFullID);
       String value = parent.optionlist.getValue()[torender.choiceindex];
-      // currently only peers with "input type="radio"".
+      // peers with <input type="radio"/> or <input type="checkbox"/>
       attrcopy.put("name", parent.selection.submittingname);
       attrcopy.put("value", value);
       attrcopy.remove("checked");
       if (parent.selected.contains(value)) {
-        attrcopy.put("checked", "true");
+        attrcopy.put("checked", "checked");
       }
       trc.replaceAttributes();
     }
