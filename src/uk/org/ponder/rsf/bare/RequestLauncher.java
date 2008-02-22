@@ -10,7 +10,6 @@ import java.util.Map;
 import org.springframework.context.ApplicationContext;
 
 import uk.org.ponder.arrayutil.ArrayUtil;
-import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.beanutil.WriteableBeanLocator;
 import uk.org.ponder.beanutil.support.ConcreteWBL;
 import uk.org.ponder.rsac.RSACBeanLocator;

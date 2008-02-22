@@ -3,7 +3,7 @@
  */
 package uk.org.ponder.rsf.componentprocessor;
 
-import uk.org.ponder.conversion.StaticLeafParser;
+import uk.org.ponder.conversion.GeneralLeafParser;
 import uk.org.ponder.htmlutil.HTMLUtil;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIInitBlock;
@@ -70,7 +70,7 @@ public class ViewParamsFixer implements ComponentProcessor {
 
   private String convertInitArgument(Object object) {
     // TODO: upgrade this to an implementation capable of rendering JSON
-    StaticLeafParser parser = StaticLeafParser.instance();
+    GeneralLeafParser parser = GeneralLeafParser.instance();
     if (parser.isLeafType(object.getClass())) {
       return parser.render(object);
     }

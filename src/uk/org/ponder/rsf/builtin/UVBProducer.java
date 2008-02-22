@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import uk.org.ponder.conversion.StaticLeafParser;
+import uk.org.ponder.conversion.GeneralLeafParser;
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.messageutil.TargettedMessageList;
@@ -35,12 +35,12 @@ public class UVBProducer implements ViewComponentProducer, ContentTypeReporter,
    */
   public static final ViewParameters PARAMS = new SimpleViewParameters(VIEW_ID);
 //  private BeanDestroyer beanDestroyer;
-  private StaticLeafParser leafparser;
+  private GeneralLeafParser leafparser;
   private UVBBean uvbbean;
   private TargettedMessageList tml;
   private MessageLocator messageLocator;
 
-  public void setLeafParser(StaticLeafParser leafparser) {
+  public void setLeafParser(GeneralLeafParser leafparser) {
     this.leafparser = leafparser;
   }
 

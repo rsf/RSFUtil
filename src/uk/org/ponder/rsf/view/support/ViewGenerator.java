@@ -7,11 +7,11 @@ import java.io.ByteArrayOutputStream;
 
 import org.apache.log4j.Level;
 
+import uk.org.ponder.conversion.SerializationProvider;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReceiver;
 import uk.org.ponder.rsf.producers.NullaryProducer;
 import uk.org.ponder.rsf.view.View;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
-import uk.org.ponder.saxalizer.XMLProvider;
 import uk.org.ponder.streamutil.write.StringPOS;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
@@ -28,7 +28,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
 public class ViewGenerator {
   private ViewParameters viewParamsProxy;
   private NavigationCaseReceiver navreceiver;
-  private XMLProvider xmlprovider;
+  private SerializationProvider xmlprovider;
   private NullaryProducer pageproducer;
 
   public void setViewParamsProxy(ViewParameters viewParameters) {
@@ -43,7 +43,7 @@ public class ViewGenerator {
     this.pageproducer = pageproducer;
   }
 
-  public void setXMLProvider(XMLProvider xmlprovider) {
+  public void setXMLProvider(SerializationProvider xmlprovider) {
     this.xmlprovider = xmlprovider;
   }
 
@@ -61,7 +61,7 @@ public class ViewGenerator {
       dumppos.println("View component dump:");
       try {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        xmlprovider.writeXML(view.viewroot, baos);
+        xmlprovider.writeObject(view.viewroot, baos);
         dumppos.println(new String(baos.toByteArray(), "UTF-8"));
         Logger.log.log(view.viewroot.debug ? Level.ERROR
             : Level.DEBUG, dumppos);

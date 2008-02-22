@@ -14,7 +14,6 @@ import uk.org.ponder.rsf.viewstate.CoreViewParamsCodec;
 import uk.org.ponder.rsf.viewstate.RawURLState;
 import uk.org.ponder.rsf.viewstate.ViewParamUtil;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
-import uk.org.ponder.rsf.viewstate.ViewParamsCodec;
 import uk.org.ponder.rsf.viewstate.ViewParamsMapInfo;
 import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.stringutil.StringUtil;

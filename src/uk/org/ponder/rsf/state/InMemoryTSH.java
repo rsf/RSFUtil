@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.Map;
 
 import uk.org.ponder.reflect.ReflectiveCache;
-import uk.org.ponder.rsac.GlobalBeanAccessor;
 import uk.org.ponder.util.Logger;
 
 /**

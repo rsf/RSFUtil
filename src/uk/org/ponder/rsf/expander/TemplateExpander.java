@@ -7,7 +7,7 @@ import java.util.Enumeration;
 
 import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.iterationutil.EnumerationConverter;
-import uk.org.ponder.mapping.DARApplier;
+import uk.org.ponder.mapping.support.DARApplier;
 import uk.org.ponder.reflect.DeepBeanCloner;
 import uk.org.ponder.rsf.components.ComponentList;
 import uk.org.ponder.rsf.components.ELReference;
@@ -24,8 +24,8 @@ import uk.org.ponder.rsf.components.UISwitch;
 import uk.org.ponder.rsf.uitype.UITypes;
 import uk.org.ponder.rsf.viewstate.EntityCentredViewParameters;
 import uk.org.ponder.saxalizer.AccessMethod;
-import uk.org.ponder.saxalizer.MethodAnalyser;
-import uk.org.ponder.saxalizer.SAXAccessMethod;
+import uk.org.ponder.saxalizer.support.MethodAnalyser;
+import uk.org.ponder.saxalizer.support.SAXAccessMethod;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 /**
