@@ -5,7 +5,7 @@ package uk.org.ponder.rsf.state.entity;
 
 import java.io.Serializable;
 
-import uk.org.ponder.conversion.StaticLeafParser;
+import uk.org.ponder.conversion.GeneralLeafParser;
 import uk.org.ponder.reflect.ReflectiveCache;
 import uk.org.ponder.saxalizer.SAXalizerMappingContext;
 import uk.org.ponder.util.ObjectFactory;
@@ -14,7 +14,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
 public class DefaultEntityMapper implements EntityMapper {
   private Class idclazz;
   private ReflectiveCache reflectivecache;
-  private StaticLeafParser parser;
+  private GeneralLeafParser parser;
   private Class entityclazz;
   private ObjectFactory objectFactory;
   

@@ -11,8 +11,8 @@ import uk.org.ponder.mapping.DARReshaper;
 import uk.org.ponder.mapping.DataAlterationRequest;
 import uk.org.ponder.rsf.state.entity.EntityNameInferrer;
 import uk.org.ponder.saxalizer.AccessMethod;
-import uk.org.ponder.saxalizer.MethodAnalyser;
 import uk.org.ponder.saxalizer.SAXalizerMappingContext;
+import uk.org.ponder.saxalizer.support.MethodAnalyser;
 
 /** A "DataAlterationRequest" reshaper that does the work of reprocessing
  * a DAR after decoding from request, from one that simply assigns object

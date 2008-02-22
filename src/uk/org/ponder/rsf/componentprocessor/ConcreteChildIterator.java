@@ -10,9 +10,9 @@ import java.util.Map;
 
 import uk.org.ponder.beanutil.IterableBeanLocator;
 import uk.org.ponder.rsf.components.UIComponent;
-import uk.org.ponder.saxalizer.MethodAnalyser;
-import uk.org.ponder.saxalizer.SAXAccessMethod;
 import uk.org.ponder.saxalizer.SAXalizerMappingContext;
+import uk.org.ponder.saxalizer.support.MethodAnalyser;
+import uk.org.ponder.saxalizer.support.SAXAccessMethod;
 
 /** Constructs an iteration over any children of an "composite component"
  * that are also components, by means of reflection.

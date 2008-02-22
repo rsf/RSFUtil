@@ -14,11 +14,11 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
+import uk.org.ponder.conversion.SerializationProvider;
 import uk.org.ponder.rsf.expander.TemplateExpander;
 import uk.org.ponder.rsf.view.ViewResolver;
 import uk.org.ponder.rsf.view.ViewRoot;
 import uk.org.ponder.rsf.viewstate.ViewParamsReceiver;
-import uk.org.ponder.saxalizer.XMLProvider;
 import uk.org.ponder.springutil.CachingInputStreamSource;
 import uk.org.ponder.stringutil.FilenameUtil;
 import uk.org.ponder.stringutil.StringList;
@@ -45,7 +45,7 @@ public class XMLViewResolver implements ViewResolver, ApplicationContextAware {
   private String extension = DEFAULT_EXTENSION;
   private List defaultviews = null;
   private TemplateExpander templateexpander;
-  private XMLProvider xmlprovider;
+  private SerializationProvider xmlprovider;
   private int cachesecs = NO_CACHE;
   private ViewParamsReceiver vpreceiver;
   private CachingInputStreamSource cachingiss;
@@ -86,7 +86,7 @@ public class XMLViewResolver implements ViewResolver, ApplicationContextAware {
     this.viewnames = viewnames;
   }
 
-  public void setXMLProvider(XMLProvider xmlprovider) {
+  public void setXMLProvider(SerializationProvider xmlprovider) {
     this.xmlprovider = xmlprovider;
   }
 
@@ -148,7 +148,7 @@ public class XMLViewResolver implements ViewResolver, ApplicationContextAware {
     InputStream is = cachingiss.openStream(fullpath);
     if (is != null && is != CachingInputStreamSource.UP_TO_DATE) {
       try {
-        ViewRoot viewroot = (ViewRoot) xmlprovider.readXML(ViewRoot.class, is);
+        ViewRoot viewroot = (ViewRoot) xmlprovider.readObject(ViewRoot.class, is);
         vpreceiver.setViewParamsExemplar(viewId, viewroot.viewParameters);
         if (viewroot.defaultview) {
           vpreceiver.setDefaultView(viewId);

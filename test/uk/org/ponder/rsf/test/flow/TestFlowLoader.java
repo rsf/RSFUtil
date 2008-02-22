@@ -7,8 +7,8 @@ import junit.framework.TestCase;
 
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
+import uk.org.ponder.conversion.SerializationProvider;
 import uk.org.ponder.rsf.components.UIBranchContainer;
-import uk.org.ponder.saxalizer.XMLProvider;
 
 public class TestFlowLoader extends TestCase {
   public void testLoadFlow() {
@@ -16,7 +16,7 @@ public class TestFlowLoader extends TestCase {
         "classpath:uk/org/ponder/rsf/test/minicontext.xml");
 
     UIBranchContainer root = (UIBranchContainer) fsxac.getBean("viewtree");
-    XMLProvider xmlp = (XMLProvider) fsxac.getBean("XMLProvider");
+    SerializationProvider xmlp = (SerializationProvider) fsxac.getBean("XMLProvider");
     System.out.println(xmlp.toString(root));
   }
   

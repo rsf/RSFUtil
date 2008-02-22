@@ -5,6 +5,8 @@ package uk.org.ponder.rsf.request;
 
 import java.io.Serializable;
 
+import uk.org.ponder.mapping.DataAlterationRequest;
+
 /**
  * Represents a submitted value as received from a user submission. For 
  * full coverage, we must know 
@@ -66,4 +68,10 @@ public class SubmittedValueEntry implements Serializable {
    * "unchanged value culling" and be definitely applied to the model.
    */
   public boolean mustapply = false;
+  
+  /** For non-leaf types, the encoding used to represent the new and old values
+   * ( {@link DataAlterationRequest#XML_ENCODING} 
+   * and {@link DataAlterationRequest#JSON_ENCODING} supported).
+   */
+  public String encoding;
 }

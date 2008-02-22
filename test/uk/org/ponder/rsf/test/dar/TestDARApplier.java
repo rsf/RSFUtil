@@ -5,9 +5,9 @@ package uk.org.ponder.rsf.test.dar;
 
 import uk.org.ponder.arrayutil.ArrayUtil;
 import uk.org.ponder.beanutil.WriteableBeanLocator;
-import uk.org.ponder.mapping.DARApplier;
 import uk.org.ponder.mapping.DAREnvironment;
 import uk.org.ponder.mapping.DataAlterationRequest;
+import uk.org.ponder.mapping.support.DARApplier;
 import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.bare.junit.PlainRSFTests;
 

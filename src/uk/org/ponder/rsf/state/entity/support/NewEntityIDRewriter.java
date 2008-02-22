@@ -5,9 +5,9 @@ package uk.org.ponder.rsf.state.entity.support;
 
 import uk.org.ponder.beanutil.entity.EntityID;
 import uk.org.ponder.beanutil.entity.EntityIDRewriter;
-import uk.org.ponder.saxalizer.MethodAnalyser;
-import uk.org.ponder.saxalizer.SAXAccessMethod;
 import uk.org.ponder.saxalizer.SAXalizerMappingContext;
+import uk.org.ponder.saxalizer.support.MethodAnalyser;
+import uk.org.ponder.saxalizer.support.SAXAccessMethod;
 
 public class NewEntityIDRewriter {
   

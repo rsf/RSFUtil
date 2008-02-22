@@ -7,8 +7,8 @@
   <bean id="reflectiveCache"
     class="uk.org.ponder.reflect.JDKReflectiveCache" />
 
-  <bean id="staticLeafParser"
-    class="uk.org.ponder.conversion.StaticLeafParser" />
+  <bean id="generalLeafParser"
+    class="uk.org.ponder.conversion.GeneralLeafParser" />
 
   <bean id="XMLDefaultInferrer"
     class="uk.org.ponder.saxalizer.mapping.DefaultMapperInferrer"
@@ -20,7 +20,7 @@
   <bean id="protoSaxalizerMappingContext"
     class="uk.org.ponder.saxalizer.SAXalizerMappingContext">
     <property name="reflectiveCache" ref="reflectiveCache" />
-    <property name="staticLeafParser" ref="staticLeafParser" />
+    <property name="generalLeafParser" ref="generalLeafParser" />
     <property name="defaultInferrer" ref="XMLDefaultInferrer" />
   </bean>
 
@@ -43,7 +43,7 @@
     class="uk.org.ponder.saxalizer.SAXalizerMappingContext">
     <property name="reflectiveCache" ref="reflectiveCache" />
     <property name="defaultInferrer" ref="ELDefaultInferrer" />
-    <property name="staticLeafParser" ref="staticLeafParser" />
+    <property name="generalLeafParser" ref="generalLeafParser" />
     <property name="indexedPropertyAccessor"
       ref="indexedPropertyAccessor" />
   </bean>
@@ -53,13 +53,13 @@
   </bean>
 
   <bean id="entityResolverStash"
-    class="uk.org.ponder.saxalizer.EntityResolverStash">
+    class="uk.org.ponder.saxalizer.support.EntityResolverStash">
     <property name="streamResolver">
       <ref bean="streamResolver" />
     </property>
     <property name="entityResolvers">
       <list>
-        <bean class="uk.org.ponder.saxalizer.LocalEntityResolver">
+        <bean class="uk.org.ponder.saxalizer.support.LocalEntityResolver">
           <property name="ID">
             <value>-//SPRING//DTD WEBFLOW//EN</value>
           </property>
@@ -72,7 +72,7 @@
   </bean>
 
   <bean id="mappableXMLProvider"
-    class="uk.org.ponder.saxalizer.SAXalXMLProvider">
+    class="uk.org.ponder.saxalizer.support.SAXalXMLProvider">
     <constructor-arg>
       <ref bean="protoSaxalizerMappingContext" />
     </constructor-arg>
@@ -103,12 +103,22 @@
 
   <bean id="vectorCapableParser"
     class="uk.org.ponder.conversion.VectorCapableParser">
-    <property name="scalarParser" ref="staticLeafParser" />
+    <property name="scalarParser" ref="generalLeafParser" />
     <property name="containerTypeRegistry" ref="containerTypeRegistry" />
   </bean>
 
-  <bean id="DARApplier" class="uk.org.ponder.mapping.DARApplier">
-    <property name="SAXalXMLProvider" ref="XMLProvider" />
+  <bean id="JSONProvider" class="uk.org.ponder.json.support.JSONProvider">
+    <property name="mappingContext" ref="ELMappingContext"/>
+  </bean>
+
+  <bean id="generalConverter" class="uk.org.ponder.conversion.GeneralConverter" >
+    <property name="XMLProvider" ref="XMLProvider"/>
+    <property name="JSONProvider" ref="JSONProvider"/>
+    <property name="leafParser" ref="generalLeafParser"/>
+  </bean>
+
+  <bean id="DARApplier" class="uk.org.ponder.mapping.support.DARApplier">
+    <property name="generalConverter" ref="generalConverter"/>
     <property name="mappingContext" ref="ELMappingContext" />
     <property name="reflectiveCache" ref="reflectiveCache" />
     <property name="vectorCapableParser" ref="vectorCapableParser" />
@@ -117,18 +127,6 @@
   <bean id="beanGuardProcessor"
     class="uk.org.ponder.rsf.state.guards.BeanGuardProcessor">
     <property name="beanModelAlterer" ref="DARApplier" />
-  </bean>
-
-  <!--  currently disused, RSAC has only simple property conversion support now -->
-  <bean id="RSACDARApplier" class="uk.org.ponder.mapping.DARApplier">
-    <property name="SAXalXMLProvider">
-      <ref local="XMLProvider" />
-    </property>
-    <property name="mappingContext">
-      <ref local="ELMappingContext" />
-    </property>
-    <property name="reflectiveCache" ref="reflectiveCache" />
-    <property name="springMode" value="true" />
   </bean>
 
   <bean id="deepBeanCloner"
@@ -211,7 +209,7 @@
     class="uk.org.ponder.springutil.BeanFactoryBeanLocator" />
 
   <bean id="dataConverterRegistry"
-    class="uk.org.ponder.mapping.DataConverterRegistry"
+    class="uk.org.ponder.mapping.support.DataConverterRegistry"
     init-method="init">
     <property name="beanLocator" ref="applicationContextBeanLocator" />
   </bean>
@@ -297,23 +295,17 @@
 
   <bean id="fossilizedConverter"
     class="uk.org.ponder.rsf.request.FossilizedConverter">
-    <property name="SAXalXMLProvider">
-      <ref bean="XMLProvider" />
-    </property>
+    <property name="generalConverter" ref="generalConverter"/>
   </bean>
 
   <bean id="messageRenderer"
     class="uk.org.ponder.rsf.renderer.MessageRenderer">
-    <property name="messageLocator">
-      <ref bean="messageLocator" />
-    </property>
+    <property name="messageLocator" ref="messageLocator"/>
   </bean>
 
   <bean id="bindingFixer"
     class="uk.org.ponder.rsf.componentprocessor.BindingFixer">
-    <property name="fossilizedConverter">
-      <ref bean="fossilizedConverter" />
-    </property>
+    <property name="fossilizedConverter" ref="fossilizedConverter"/>
   </bean>
 
   <bean id="messageFixer"

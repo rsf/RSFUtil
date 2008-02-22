@@ -9,14 +9,14 @@ import uk.org.ponder.beanutil.BeanPredicateModel;
 import uk.org.ponder.beanutil.CoreELReference;
 import uk.org.ponder.mapping.BeanInvalidationBracketer;
 import uk.org.ponder.mapping.BeanInvalidationModel;
-import uk.org.ponder.mapping.ConverterConverter;
 import uk.org.ponder.mapping.DAREnvironment;
 import uk.org.ponder.mapping.DARList;
 import uk.org.ponder.mapping.DARReshaper;
 import uk.org.ponder.mapping.DataAlterationRequest;
-import uk.org.ponder.mapping.DataConverterRegistry;
 import uk.org.ponder.mapping.ListBeanInvalidationModel;
 import uk.org.ponder.mapping.ShellInfo;
+import uk.org.ponder.mapping.support.ConverterConverter;
+import uk.org.ponder.mapping.support.DataConverterRegistry;
 import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.request.ActionTarget;
@@ -136,6 +136,7 @@ public class RSVCApplier {
       else {
         dar = new DataAlterationRequest(sve.valuebinding, newvalue);
       }
+      dar.encoding = sve.encoding;
       Object reshapero = null;
       if (sve.reshaperbinding != null) {
         reshapero = darapplier.getBeanValue(sve.reshaperbinding, rbl, addressibleBeanModel);

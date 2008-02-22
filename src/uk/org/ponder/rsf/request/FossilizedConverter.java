@@ -3,15 +3,17 @@
  */
 package uk.org.ponder.rsf.request;
 
-import uk.org.ponder.conversion.ConvertUtil;
+import uk.org.ponder.conversion.GeneralConverter;
+import uk.org.ponder.conversion.GeneralLeafParser;
+import uk.org.ponder.mapping.DataAlterationRequest;
 import uk.org.ponder.rsf.components.ELReference;
+import uk.org.ponder.rsf.components.UIBinding;
 import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIDeletionBinding;
 import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.uitype.UIType;
 import uk.org.ponder.rsf.uitype.UITypes;
-import uk.org.ponder.saxalizer.SAXalXMLProvider;
 
 /*
  * Manages the (to some extent RenderSystem dependent) process of converting
@@ -19,22 +21,34 @@ import uk.org.ponder.saxalizer.SAXalXMLProvider;
  * key/value pairs suitable for transit over HTTP.
  * 
  * <p>In case of an HTTP submission, these are encoded as key/value in the
- * request map (via hidden form fields) as follows: <br>key =
- * componentid-fossil, value=[i|o]uitype-name#{bean.member}oldvalue <br>Alternatively,
- * this SVE may represent a "fast EL" binding, without a component. In this
- * case, it has the form <br>key = [deletion|el]-binding, value =
- * [e|o]#{el.lvalue}rvalue, where rvalue may represent an EL rvalue, a
- * SAXLeafType or a Object. <br>The actual value submission is encoded in the
- * RenderSystem for UIInputBase, but is generally expected to simply follow <br>key =
- * componentid, value = newvalue.
+ * request map (via hidden form fields) as follows: 
+ * 
+ * <br>key = componentid-fossil, value=[i|o]uitype-name#{bean.member}oldvalue 
+ * 
+ * <br>Alternatively, this SVE may represent a "fast EL" binding, without a 
+ * component. In this case, it has the form
+ *  
+ * <br>key = [deletion|el]-binding, value = [e|p|x|j]#{el.lvalue}rvalue,
+ *  
+ * where rvalue may represent an EL rvalue (e), a LeafType(l) or 
+ * an Object (encoded in XML (x) or JSON (j)).
+ *  
+ * <br>The actual value submission is encoded in the
+ * RenderSystem for UIBound, but is generally expected to simply follow 
+ * 
+ * <br>key = componentid, value = newvalue.
  */
 
 public class FossilizedConverter {
   public static final char INPUT_COMPONENT = 'i';
   public static final char INPUT_COMPONENT_MUSTAPPLY = 'j';
   public static final char OUTPUT_COMPONENT = 'o';
+  
   public static final char EL_BINDING = 'e';
-  public static final char OBJECT_BINDING = 'o';
+  public static final char LEAF_VALUE = 'l';
+  public static final char XML_VALUE = 'x';
+  public static final char JSON_VALUE = 'j';
+
   /**
    * The suffix appended to the component fullID in order to derive the key for
    * its corresponding fossilized binding.
@@ -52,12 +66,13 @@ public class FossilizedConverter {
   public static final String ELBINDING_KEY = "el" + BINDING_SUFFIX;
   public static final String VIRTUAL_ELBINDING_KEY = "virtual-" + ELBINDING_KEY;
 
-  private SAXalXMLProvider xmlprovider;
-
   public static final String COMMAND_LINK_PARAMETERS = "command link parameters";
 
-  public void setSAXalXMLProvider(SAXalXMLProvider xmlprovider) {
-    this.xmlprovider = xmlprovider;
+
+  private GeneralConverter generalConverter;
+  
+  public void setGeneralConverter(GeneralConverter generalConverter) {
+    this.generalConverter = generalConverter;
   }
 
   /**
@@ -78,10 +93,13 @@ public class FossilizedConverter {
   /** Parse a "non-component binding" key/value pair * */
   public SubmittedValueEntry parseBinding(String key, String value) {
     SubmittedValueEntry togo = new SubmittedValueEntry();
-    togo.isEL = value.charAt(0) == EL_BINDING;
+    char type = value.charAt(0);
+    togo.isEL = type == EL_BINDING;
     int endcurly = findEndCurly(value);
     togo.valuebinding = value.substring(3, endcurly);
     togo.newvalue = value.substring(endcurly + 1);
+    togo.encoding = lookupEncoding(type);
+    
     if (key.equals(DELETION_KEY)) {
       togo.isdeletion = true;
       togo.newvalue = null;
@@ -113,10 +131,14 @@ public class FossilizedConverter {
     String oldvaluestring = value.substring(endcurly + 1);
 
     UIType uitype = UITypes.forName(uitypename);
+    if (uitype == null) {
+      throw new IllegalArgumentException("Corrupt fossil value " + 
+          value + " received without UIType");
+    }
     if (oldvaluestring.length() > 0) {
       Class uiclass = uitype == null ? null
           : uitype.getPlaceholder().getClass();
-      togo.oldvalue = ConvertUtil.parse(oldvaluestring, xmlprovider, uiclass);
+      togo.oldvalue = generalConverter.parse(oldvaluestring, uiclass, DataAlterationRequest.DEFAULT_ENCODING); 
     }
     else {
       // must ensure that we record the TYPE of oldvalue here for later use by
@@ -138,51 +160,66 @@ public class FossilizedConverter {
     return -1;
   }
 
-  public String computeBindingValue(String lvalue, Object rvalue) {
+  public String computeBindingValue(String lvalue, Object rvalue, String encoding) {
     if (rvalue instanceof ELReference) {
       ELReference elref = (ELReference) rvalue;
       return EL_BINDING + "#{" + lvalue + "}" + elref.value;
     }
     else {
       // The value type will be inferred on delivery, for Object bindings.
-      return OBJECT_BINDING + "#{" + lvalue + "}" + (rvalue == null ? ""
-          : ConvertUtil.render(rvalue, xmlprovider));
+      char encchar = convertEncoding(encoding);
+      return encchar + "#{" + lvalue + "}" 
+         + (rvalue == null ? GeneralLeafParser.NULL_STRING
+          : generalConverter.render(rvalue, encoding));
     }
   }
 
   public void computeDeletionBinding(UIDeletionBinding binding) {
     if (binding.deletetarget == null) {
       binding.name = DELETION_KEY;
-      binding.value = OBJECT_BINDING + "#{" + binding.deletebinding.value + "}";
+      binding.value = LEAF_VALUE + "#{" + binding.deletebinding.value + "}";
     }
     else {
       binding.name = VALUE_DELETION_KEY;
       binding.value = computeBindingValue(binding.deletebinding.value,
-          binding.deletetarget);
+          binding.deletetarget, binding.encoding);
     }
   }
 
   public void computeELBinding(UIELBinding binding) {
     binding.name = binding.virtual ? VIRTUAL_ELBINDING_KEY : ELBINDING_KEY;
     binding.value = computeBindingValue(binding.valuebinding.value,
-        binding.rvalue);
+        binding.rvalue, binding.encoding);
   }
 
+  private char convertEncoding(String encoding) {
+    if (DataAlterationRequest.JSON_ENCODING.equals(encoding)) return JSON_VALUE;
+    if (DataAlterationRequest.XML_ENCODING.equals(encoding)) return XML_VALUE;
+    else throw new IllegalArgumentException(
+        "Encoding " + encoding + " is not supported - supported values are XML and JSON");
+  }
+  
+  private String lookupEncoding(char encoding) {
+    if (encoding == XML_VALUE) return DataAlterationRequest.XML_ENCODING;
+    if (encoding == JSON_VALUE) return DataAlterationRequest.JSON_ENCODING;
+    else return null;
+  }
+  
   /**
    * Computes the fossilised binding parameter that needs to be added to forms
    * for which the supplied UIBound is a submitting control. The value of the
-   * bound component is one of the (three) UITypes, or else an unknown non-leaf
-   * type. This value will be serialized and added to the end of the binding.
+   * bound component is one of the (three) UITypes.
+   * This value will be serialized and added to the end of the binding.
    */
   // NB! UIType is hardwired to use the static StringArrayParser, to avoid a
   // wireup graph cycle of FossilizedConverter on the HTMLRenderSystem.
-  public UIParameter computeFossilizedBinding(UIBound togenerate,
+  public UIBinding computeFossilizedBinding(UIBound togenerate,
       Object modelvalue) {
     if (!togenerate.fossilize) {
       throw new IllegalArgumentException("Cannot compute fossilized binding "
           + "for non-fossilizing component with ID " + togenerate.getFullID());
     }
-    UIParameter togo = new UIParameter();
+    UIBinding togo = new UIBinding();
     togo.virtual = !togenerate.willinput;
     togo.name = togenerate.submittingname + FOSSIL_SUFFIX;
     String oldvaluestring = null;
@@ -197,16 +234,14 @@ public class FossilizedConverter {
     UIType type = UITypes.forObject(oldvalue);
 
     if (type != null) {
-      // don't try to write as a leaf type, since the the parser (above) will
-      // not have enough context to infer the type above.
-      oldvaluestring = xmlprovider.getMappingContext().saxleafparser
-          .render(oldvalue);
+      oldvaluestring = generalConverter.render(oldvalue, DataAlterationRequest.DEFAULT_ENCODING);
     }
     else {
-      oldvaluestring = xmlprovider.toString(oldvalue);
+      throw new IllegalArgumentException("Object of " + 
+          oldvalue.getClass() + " may not be bound since it is not of a UIType (String, String[] or Boolean)");
+      //oldvaluestring = xmlprovider.toString(oldvalue);
     }
-    String typestring = type == null ? ""
-        : type.getName();
+    String typestring = type == null ? "" : type.getName();
     togo.value = (togenerate.mustapply ? INPUT_COMPONENT_MUSTAPPLY
         : (togenerate.willinput ? INPUT_COMPONENT
             : OUTPUT_COMPONENT)) + typestring + "#{"
@@ -256,8 +291,7 @@ public class FossilizedConverter {
         // no attempt to catch the exceptions from the next two lines since they
         // all represent assertion errors.
         String[] newvalues = (String[]) sve.newvalue;
-        sve.newvalue = xmlprovider.getMappingContext().saxleafparser.parse(
-            requiredclass, newvalues[0]);
+        sve.newvalue = generalConverter.parse(newvalues[0], requiredclass, null);
         // The only non-erroneous case here is where newvalue is String[], and
         // oldvalue is some scalar type. Should new UITypes arise, this will
         // need to be reviewed.

@@ -10,6 +10,7 @@ import java.util.Map;
 import uk.org.ponder.arrayutil.ArrayUtil;
 import uk.org.ponder.rsf.components.ParameterList;
 import uk.org.ponder.rsf.components.UIBasicListMember;
+import uk.org.ponder.rsf.components.UIBinding;
 import uk.org.ponder.rsf.components.UIBoundList;
 import uk.org.ponder.rsf.components.UIBoundString;
 import uk.org.ponder.rsf.components.UIComponent;
@@ -91,7 +92,8 @@ public class RenderUtil {
 
   public static void dumpHiddenField(UIParameter todump, XMLWriter xmlw) {
     xmlw.writeRaw("<input type=\"hidden\" ");
-    XMLUtil.dumpAttribute(todump.virtual? "id" : "name", todump.name, xmlw);
+    boolean isvirtual = todump instanceof UIBinding && ((UIBinding)todump).virtual;
+    XMLUtil.dumpAttribute(isvirtual? "id" : "name", todump.name, xmlw);
     XMLUtil.dumpAttribute("value", todump.value, xmlw);
     xmlw.writeRaw(" />\n");
   }
