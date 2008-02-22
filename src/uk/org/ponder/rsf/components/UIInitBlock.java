@@ -33,7 +33,12 @@ public class UIInitBlock extends UIVerbatim {
     return make(parent, ID, functionname, new Object[] { argument });
   }
 
-  /** Construct a client-side initialisation block. Arguments may be of the types:
+  /** Construct a client-side initialisation block. 
+   * @param parent The parent container in which this init block is to be placed.
+   * @param ID The ID to be given to this block.
+   * @param functionname The client-side name of the function to be invoked when this block is encountered.
+   * @param arguments An array of arguments to be passed to the client-side function.
+   * Arguments may be of the types:
    * <ul>
    *   <li> Leaf types - these will be converted to String values by the standard conversion
    *   <li> UIComponents - these will be rendered as their own fullIDs.
