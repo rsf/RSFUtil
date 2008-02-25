@@ -121,6 +121,9 @@ public class RequestLauncher implements EarlyRequestParser {
         if (bound.willinput) {
           addParameter(bound.submittingname, bound.acquireValue().toString());
           addParameter(bound.fossilizedbinding.name, bound.fossilizedbinding.value);
+          if (bound.fossilizedshaper != null) {
+            addParameter(bound.fossilizedshaper.name, bound.fossilizedshaper.value);
+          }
         }
       }
     }

@@ -13,6 +13,7 @@ import uk.org.ponder.rsf.state.entity.EntityNameInferrer;
 import uk.org.ponder.saxalizer.AccessMethod;
 import uk.org.ponder.saxalizer.SAXalizerMappingContext;
 import uk.org.ponder.saxalizer.support.MethodAnalyser;
+import uk.org.ponder.util.Logger;
 
 /** A "DataAlterationRequest" reshaper that does the work of reprocessing
  * a DAR after decoding from request, from one that simply assigns object
@@ -65,6 +66,12 @@ public class IDDefunnellingReshaper implements DARReshaper {
       MethodAnalyser ma = mappingcontext.getAnalyser(lastentity.getClass());
       AccessMethod sam = ma.getAccessMethod(membername);
       String entityname = eni.getEntityName(sam.getDeclaredType());
+      if (entityname == null) {
+        String message = "ID Defunnelling reshaper could not infer entity name for entity of type "
+          + sam.getDeclaredType() + " - make sure to supply an EntityNameInferrer for this type";
+        Logger.log.warn(message);
+        throw new IllegalArgumentException(message);
+      }
       Object newentity = null;
       if (toshape.data != null) {
       //    data has already been conformed in type to "oldvalue" and so is at least scalar
