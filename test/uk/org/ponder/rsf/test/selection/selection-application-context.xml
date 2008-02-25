@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
+  "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+  <bean id="categories-all" class="uk.org.ponder.rsf.test.selection.CategoriesAll">
+    <property name="factory" ref="categoryFactory"/>
+  </bean>
+
+  <bean id="categoryFactory" class="uk.org.ponder.rsf.test.selection.CategoryFactory"/>
+
+  <bean id="category" parent="entityBeanLocatorParent">
+    <property name="entityClass" value="uk.org.ponder.rsf.test.selection.Category"/>
+    <property name="fetchMethod" value="categoryFactory.findCategory"/>
+  </bean>
+
+  <bean parent="requestAddressibleParent">
+     <property name="value" value="recipe, categories-all, category" />
+  </bean>
+    
+</beans>
