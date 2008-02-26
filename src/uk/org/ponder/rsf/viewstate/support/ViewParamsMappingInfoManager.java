@@ -69,7 +69,7 @@ public class ViewParamsMappingInfoManager {
     for (int i = 0; i < methodAnalyser.allgetters.length; ++i) {
       SAXAccessMethod method = methodAnalyser.allgetters[i];
       if (method.canGet() && method.canSet()
-          && mappingcontext.saxleafparser.isLeafType(method.getAccessedType())
+          && mappingcontext.generalLeafParser.isLeafType(method.getAccessedType())
           && method.getDeclaringClass() == methodAnalyser.targetclass
           && !method.tagname.equals("anchorField")) {
         cw.append("," + method.tagname);
@@ -207,7 +207,7 @@ public class ViewParamsMappingInfoManager {
     for (int i = 0; i < ma.allgetters.length; ++i) {
       SAXAccessMethod method = ma.allgetters[i];
       if (method.canGet() && method.canSet()
-          && mappingcontext.saxleafparser.isLeafType(method.getAccessedType())) {
+          && mappingcontext.generalLeafParser.isLeafType(method.getAccessedType())) {
         paths.add(PathUtil.composePathEncoded(pathroot, method.tagname));
         attnames.add(attrprefix + method.tagname);
       }

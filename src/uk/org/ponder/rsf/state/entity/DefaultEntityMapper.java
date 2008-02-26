@@ -32,7 +32,7 @@ public class DefaultEntityMapper implements EntityMapper {
   
   public void setMappingContext(SAXalizerMappingContext mappingcontext) {
     this.reflectivecache = mappingcontext.getReflectiveCache();
-    this.parser = mappingcontext.saxleafparser;
+    this.parser = mappingcontext.generalLeafParser;
   }
   public Object instantiate() {
     if (objectFactory == null) {
