@@ -94,9 +94,9 @@ public class RSFMappingLoader implements MappingLoader {
     
     context.classnamemanager.registerClass("view", ViewRoot.class);
     
-    context.saxleafparser.registerParser(ViewParameters.class, viewparamsleafparser);
-    context.saxleafparser.registerParser(AnyViewParameters.class, viewparamsleafparser);
-    context.saxleafparser.registerParser(ELReference.class, new ELReferenceParser());
+    context.generalLeafParser.registerParser(ViewParameters.class, viewparamsleafparser);
+    context.generalLeafParser.registerParser(AnyViewParameters.class, viewparamsleafparser);
+    context.generalLeafParser.registerParser(ELReference.class, new ELReferenceParser());
   }
 
   public void loadStandardMappings(MappableXMLProvider xmlprovider) {
