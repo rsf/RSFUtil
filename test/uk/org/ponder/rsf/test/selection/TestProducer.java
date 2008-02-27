@@ -13,8 +13,9 @@ import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
-public class TestProducer implements ViewComponentProducer {
+public class TestProducer implements ViewComponentProducer, ViewParamsReporter {
 
   public String getViewID() {
     return RequestLauncher.TEST_VIEW;
@@ -22,12 +23,18 @@ public class TestProducer implements ViewComponentProducer {
 
   public void fillComponents(UIContainer tofill, ViewParameters viewparams,
       ComponentChecker checker) {
+    CategoryViewParams vcp = (CategoryViewParams) viewparams;
     UIForm form = UIForm.make(tofill, "form");
     UISelect category = UISelect.make(form, "recipe-category");
     category.optionlist = UIOutputMany.make("#{categories-all}", "#{fieldGetter.id}");
     category.optionnames = UIOutputMany.make("#{categories-all}", "#{fieldGetter.name}");
-    category.selection = UIInput.make("recipe.category.id");
+    category.selection = UIInput.make("recipe.category.id", 
+        vcp.id == null? null : vcp.id.toString());
     category.selection.darreshaper = new ELReference("#{id-defunnel}");
+  }
+
+  public ViewParameters getViewParameters() {
+    return new CategoryViewParams();
   }
 
 }

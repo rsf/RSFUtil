@@ -25,8 +25,10 @@ import uk.org.ponder.rsf.components.UIParameterHolder;
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.renderer.ViewRender;
 import uk.org.ponder.rsf.request.EarlyRequestParser;
+import uk.org.ponder.rsf.viewstate.RawURLState;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.rsf.viewstate.ViewParamsCodec;
 import uk.org.ponder.saxalizer.SAXalizerMappingContext;
 
 /**
@@ -134,6 +136,14 @@ public class RequestLauncher implements EarlyRequestParser {
     return renderView(new SimpleViewParameters(TEST_VIEW));
   }
   
+  private void updateViewParameters(ViewParameters viewparams) {
+    ViewParamsCodec vpcodec = (ViewParamsCodec) context.getBean("viewParamsMapper");
+    RawURLState rus = vpcodec.renderViewParams(viewparams);
+    pathInfo = rus.pathinfo;
+    requestMap = rus.params;
+    //context.set("parsedViewParameters", torender);
+  }
+  
   /** Perform a rendering of the specified view 
    * @param torender The ViewParameters specifying the view to be rendered.
    * @return A {@link RenderResponse} record holding a summary of the final
@@ -143,7 +153,7 @@ public class RequestLauncher implements EarlyRequestParser {
     RenderResponse togo = new RenderResponse();
     try {
       WriteableBeanLocator context = rsacbl.getBeanLocator();
-      context.set("parsedViewParameters", torender);
+      updateViewParameters(torender);
       context.locateBean("rootHandlerBean");
       
       togo.requestContext = rsacbl.getDeadBeanLocator();
