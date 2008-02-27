@@ -4,18 +4,18 @@
 package uk.org.ponder.rsf.test.rvb;
 
 import uk.org.ponder.rsf.bare.ActionResponse;
-import uk.org.ponder.rsf.bare.junit.PlainRSFTests;
+import uk.org.ponder.rsf.bare.RenderResponse;
+import uk.org.ponder.rsf.bare.junit.MultipleRSFTests;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.flow.ARIResult;
-import uk.org.ponder.rsf.util.RSFUtil;
 import uk.org.ponder.rsf.viewstate.EntityCentredViewParameters;
 
 /** Test for composite Resulting View Bindings issue RSF-59, reported in forums at
  * http://ponder.org.uk/rsf/posts/list/8.page
  */
 
-public class TestRVB extends PlainRSFTests {
+public class TestRVB extends MultipleRSFTests {
   
   public TestRVB() {
     contributeRequestConfigLocation("classpath:uk/org/ponder/rsf/test/rvb/rvb-request-context.xml");
@@ -23,15 +23,18 @@ public class TestRVB extends PlainRSFTests {
   }
   
   public void testResultingViewBindings() {
-    UIForm dummyform = new UIForm();
-    RSFUtil.addResultingViewBinding(dummyform, "entity.ID", "idholder.id");
-    UICommand command = UICommand.make(dummyform, "mycommand", "idholder.act");
     
-    ActionResponse result = getRequestLauncher().submitForm(dummyform, command);
+    RenderResponse render = getRequestLauncher().renderView();
+    UIForm form = (UIForm) render.viewWrapper.queryComponent(new UIForm());
+    UICommand command = (UICommand) render.viewWrapper.queryComponent(new UICommand());
+    
+    ActionResponse result = getRequestLauncher().submitForm(form, command);
     ARIResult ariresult = result.ARIResult;
     
     assertTrue(ariresult.resultingView instanceof EntityCentredViewParameters);
     EntityCentredViewParameters ecvp = (EntityCentredViewParameters) ariresult.resultingView;
+    // If the test is successful, the id of the "freshly created entity" now appears
+    // in the outgoing view state.
     assertEquals(IDHolder.NEW_ID, ecvp.entity.ID);
   }
 }
