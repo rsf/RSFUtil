@@ -27,14 +27,16 @@ public class TestSelection extends MultipleRSFTests {
     all.setSize(1);
   }
   
-  public void testSelection() {
+  private void testSubmit(int initsize, Integer initselection, String userselection) {
     RequestLauncher launch1 = getRequestLauncher();
-    setCategorySize(launch1, 1);
-    RenderResponse response = launch1.renderView();
+    setCategorySize(launch1, initsize);
+    RenderResponse response = launch1.renderView(
+        new CategoryViewParams(RequestLauncher.TEST_VIEW, initselection));
+    
     UIForm form = (UIForm) response.viewWrapper.queryComponent(new UIForm());
     UISelect selection = (UISelect) response.viewWrapper.queryComponent(new UISelect());
     
-    selection.selection.updateValue("1");
+    selection.selection.updateValue(userselection);
     
     ActionResponse response2 = getRequestLauncher().submitForm(form, null);
     Recipe recipe = (Recipe) response2.requestContext.locateBean("recipe");
@@ -42,8 +44,20 @@ public class TestSelection extends MultipleRSFTests {
     assertNull("Request expected without error", 
         ((ViewParameters)response2.ARIResult.resultingView).errortoken);
     
-    assertEquals(recipe.category.id, "1");
-    assertNotNull(recipe.category.name);
-    
+    boolean differ = !(initselection == null && userselection == null)
+      && (initselection == null ^ userselection == null) 
+      || !userselection.equals(initselection.toString());
+    if (differ) {
+      assertEquals(recipe.category.id, userselection);
+      assertNotNull(recipe.category.name);
+    }
+    else {
+      assertNull(recipe);    
+    }
+  }
+  
+  public void testSelection() {
+    testSubmit(1, null, "1");
+    testSubmit(1, new Integer(1), "1");
     }
 }

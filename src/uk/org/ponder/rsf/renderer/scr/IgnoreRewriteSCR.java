@@ -7,9 +7,8 @@ import uk.org.ponder.rsf.renderer.ComponentRenderer;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.xml.XMLWriter;
 
-/** Default null SCR used on discovering an unrecognised SCR tag.
- * Minimal behaviour of writing the existing open tag, treating it as a 
- * trunk tag.
+/** Ignore SCR tag, which will cause the target tag and all children to
+ * be removed from rendered output.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  *
  */

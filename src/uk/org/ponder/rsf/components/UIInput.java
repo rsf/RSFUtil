@@ -50,10 +50,28 @@ public class UIInput extends UIBoundString {
   /**
    * A "bare" constructor suitable for the selection member of a single
    * selection control (UIInput);
+   * @param valuebinding An EL reference to which the bound value is to be associated
+   * @return The constructed UIInput control.
    */
   public static UIInput make(String valuebinding) {
     UIInput togo = new UIInput();
     togo.valuebinding = ELReference.make(valuebinding);
     return togo;
+  }
+  
+  /**
+   * @see #make(String)
+   * @param valuebinding An EL reference to which the bound value is to be associated
+   * @param initvalue An initial value for the control, to take priority over any bound
+   * value during the render cycle.
+   * @return The constructed UIInput control.
+   */
+  public static UIInput make(String valuebinding, String initvalue) {
+    UIInput togo = new UIInput();
+    togo.valuebinding = ELReference.make(valuebinding);
+    if (initvalue != null) {
+      togo.setValue(initvalue);
+    }
+    return togo;    
   }
 }
