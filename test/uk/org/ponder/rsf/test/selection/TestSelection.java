@@ -17,7 +17,6 @@ import uk.org.ponder.rsf.test.selection.params.CategoryViewParams;
 import uk.org.ponder.rsf.test.selection.params.MultipleViewParams;
 import uk.org.ponder.rsf.test.selection.producers.TestMultipleProducer;
 import uk.org.ponder.rsf.test.selection.producers.TestNullProducer;
-import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /**
  * Test for general operation of EL context, including fieldGetter, IDDefunnelingReshaper,
@@ -60,9 +59,8 @@ public class TestSelection extends MultipleRSFTests {
     ActionResponse response2 = getRequestLauncher().submitForm(form, null);
     Recipe recipe = (Recipe) response2.requestContext.locateBean("recipe");
 
-    assertNull("Request expected without error",
-        ((ViewParameters) response2.ARIResult.resultingView).errortoken);
-
+    assertNoActionError(response2);
+    
     if (userselection.equals(GeneralLeafParser.NULL_STRING)) {
       // if the user made the null selection, the effect will be to fetch the recipe,
       // but the nested category will remain null
@@ -83,6 +81,7 @@ public class TestSelection extends MultipleRSFTests {
       }
     }
   }
+
 
   private VectorCapableParser vcp;
 
@@ -113,6 +112,9 @@ public class TestSelection extends MultipleRSFTests {
     selection.selection.updateValue(userselection);
 
     ActionResponse response2 = getRequestLauncher().submitForm(form, null);
+    
+    assertNoActionError(response2);
+    
     IntBean intBean = (IntBean) response2.requestContext.locateBean("intBean");
 
     Integer[] converted = new Integer[userselection.length];
@@ -149,6 +151,8 @@ public class TestSelection extends MultipleRSFTests {
   }
 
   public void testMultiple() {
+    // test empty list with empty selection
+    testOneMultipleSelection(0, new Integer[] {}, new int [] {}, false);
     // unchanged list with null entry
     testOneMultipleSelection(3, new Integer[] { new Integer(1) , null}, new int[] {1, 2},
         false);

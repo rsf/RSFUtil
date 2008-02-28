@@ -5,7 +5,9 @@ package uk.org.ponder.rsf.bare.junit;
 
 import uk.org.ponder.beanutil.WriteableBeanLocator;
 import uk.org.ponder.rsac.test.AbstractRSACTests;
+import uk.org.ponder.rsf.bare.ActionResponse;
 import uk.org.ponder.rsf.bare.RequestLauncher;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 public class PlainRSFTests extends AbstractRSACTests {
 
@@ -42,7 +44,11 @@ public class PlainRSFTests extends AbstractRSACTests {
       return allocateRequestLauncher();
     }
   }
-  
+
+  protected void assertNoActionError(ActionResponse response) {
+    assertNull("Request expected without error",
+        ((ViewParameters) response.ARIResult.resultingView).errortoken);
+  }
 
   protected void onSetUp() throws Exception {
     super.onSetUp();
