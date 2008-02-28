@@ -26,4 +26,5 @@
     <property name="resourceBaseURL" value="/" />
   </bean>
 
+  <bean id="localeHolder" class="uk.org.ponder.localeutil.LocaleHolder" />
 </beans>

@@ -1,0 +1,25 @@
+/*
+ * Created on 8 Jan 2008
+ */
+package uk.org.ponder.rsf.test.render;
+
+import uk.org.ponder.rsf.bare.RenderResponse;
+import uk.org.ponder.rsf.bare.junit.MultipleRSFTests;
+
+/** Test for ID NPE RSF-71
+ */
+
+public class TestRender extends MultipleRSFTests {
+  
+  public TestRender() {
+    contributeRequestConfigLocation("classpath:uk/org/ponder/rsf/test/render/render-request-context.xml");
+    contributeConfigLocation("classpath:uk/org/ponder/rsf/test/render/render-application-context.xml");
+  }
+   
+  public void testRender() {
+    RenderResponse response = getRequestLauncher().renderView();
+    assertContains(response, "Test Message ID View");
+    assertContains(response, "</div>");
+    assertContains(response, "id=\"titleclosed\"");
+  }
+}

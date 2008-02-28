@@ -6,6 +6,7 @@ package uk.org.ponder.rsf.bare.junit;
 import uk.org.ponder.beanutil.WriteableBeanLocator;
 import uk.org.ponder.rsac.test.AbstractRSACTests;
 import uk.org.ponder.rsf.bare.ActionResponse;
+import uk.org.ponder.rsf.bare.RenderResponse;
 import uk.org.ponder.rsf.bare.RequestLauncher;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
@@ -50,6 +51,11 @@ public class PlainRSFTests extends AbstractRSACTests {
         ((ViewParameters) response.ARIResult.resultingView).errortoken);
   }
 
+  protected void assertContains(RenderResponse response, String expected) {
+    int index = response.markup.indexOf(expected);
+    assertTrue("Expected text " + expected + " not found", index != -1);
+  }
+  
   protected void onSetUp() throws Exception {
     super.onSetUp();
     if (isSingleShot()) {

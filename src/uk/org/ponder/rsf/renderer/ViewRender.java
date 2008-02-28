@@ -356,7 +356,7 @@ public class ViewRender {
           if (debugrender) {
             rendered.add(id);
           }
-          component = fetchComponent(basecontainer, id);
+          component = fetchComponent(basecontainer, id, lump);
         }
         // Form rendering is now subject to "fairly normal" branch rendering logic
         // That is, a UIContainer may now also be a leaf
@@ -395,10 +395,11 @@ public class ViewRender {
   }
 
   private UIComponent fetchComponent(UIContainer basecontainer,
-      String id) {
+      String id, XMLLump lump) {
     if (id.startsWith(XMLLump.MSG_PREFIX)) {
       String key = id.substring(XMLLump.MSG_PREFIX.length());
-      return messagerenderer.renderMessage(key);
+      return messagerenderer.renderMessage(basecontainer, 
+          (String) lump.attributemap.get("id"), key);
     }
     while (basecontainer != null) {
       UIComponent togo = basecontainer.getComponent(id);
