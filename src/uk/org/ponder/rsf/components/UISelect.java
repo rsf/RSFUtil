@@ -174,4 +174,14 @@ public class UISelect extends UIComponent implements FixableComponent {
     return this;
   }
   
+  /** Determine that this is a selection control of entity ids, as managed via an
+   * EntityNameInferrer (perhaps through an EntityBeanLocator) and should, 
+   * on submission, have the effect of assigning the entire managed entities 
+   * rather than the selected id itself.
+   */
+  public UISelect setIDDefunnel() {
+    selection.darreshaper = new ELReference("#{id-defunnel}");
+    return this;
+  }
+  
 }

@@ -1,7 +1,7 @@
 /*
  * Created on 27 Feb 2008
  */
-package uk.org.ponder.rsf.test.selection;
+package uk.org.ponder.rsf.test.selection.params;
 
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 
