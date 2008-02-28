@@ -105,6 +105,7 @@
     class="uk.org.ponder.conversion.VectorCapableParser">
     <property name="scalarParser" ref="generalLeafParser" />
     <property name="containerTypeRegistry" ref="containerTypeRegistry" />
+    <property name="reflectiveCache" ref="reflectiveCache"/>
   </bean>
 
   <bean id="JSONProvider" class="uk.org.ponder.json.support.JSONProvider">

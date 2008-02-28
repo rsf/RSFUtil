@@ -14,7 +14,17 @@
   </bean>
 
   <bean parent="requestAddressibleParent">
-     <property name="value" value="recipe, categories-all, category" />
+     <property name="value" value="recipe, categories-all, category, intBean" />
   </bean>
     
+  <bean class="uk.org.ponder.rsf.test.selection.producers.TestProducer" />
+  
+  <bean class="uk.org.ponder.rsf.test.selection.producers.TestNullProducer" >
+    <property name="categoryFactory" ref="categoryFactory"/>
+  </bean>
+    
+  <bean class="uk.org.ponder.rsf.test.selection.producers.TestMultipleProducer">
+    <property name="vectorCapableParser" ref="vectorCapableParser"/>
+  </bean>
+  
 </beans>

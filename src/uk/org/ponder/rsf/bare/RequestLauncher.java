@@ -91,6 +91,10 @@ public class RequestLauncher implements EarlyRequestParser {
     return EarlyRequestParser.TEST_ENVIRONMENT;
   }
   
+  public void setParameter(String key, String[] value) {
+    requestMap.put(key, value);
+  }
+  
   public void addParameter(String key, String value) {
     String[] values = (String[]) requestMap.get(key);
     if (values == null) {
@@ -121,7 +125,13 @@ public class RequestLauncher implements EarlyRequestParser {
       if (component instanceof UIBound) {
         UIBound bound = (UIBound) component;
         if (bound.willinput) {
-          addParameter(bound.submittingname, bound.acquireValue().toString());
+          Object value = bound.acquireValue();
+          if (value instanceof String[]) {
+            setParameter(bound.submittingname, (String[]) value);
+          }
+          else {
+            addParameter(bound.submittingname, value.toString());
+          }
           addParameter(bound.fossilizedbinding.name, bound.fossilizedbinding.value);
           if (bound.fossilizedshaper != null) {
             addParameter(bound.fossilizedshaper.name, bound.fossilizedshaper.value);

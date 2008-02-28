@@ -5,6 +5,5 @@
 
   <bean id="recipe" class="uk.org.ponder.rsf.test.selection.Recipe"/>
 
-  <bean class="uk.org.ponder.rsf.test.selection.TestProducer" />
-  
+  <bean id="intBean" class="uk.org.ponder.rsf.test.selection.IntBean"/>
 </beans>

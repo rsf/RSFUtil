@@ -108,12 +108,13 @@ public class RSVCApplier {
 
           UIType type = UITypes.forObject(sve.oldvalue);
           try {
-            // TODO: why did we need to hack the value flat like this - should
-            // have been taken care of by FixupNewValue in PostDecoder
-            Object flattened = darapplier.getFlattenedValue("", sve.newvalue,
+            // convert to common flat form (required for null encoding)
+            Object newflat = darapplier.getFlattenedValue("", sve.newvalue,
+                sve.oldvalue.getClass(), null);
+            Object oldflat = darapplier.getFlattenedValue("", sve.oldvalue, 
                 sve.oldvalue.getClass(), null);
             // cull the change from touching the model.
-            if (type.valueUnchanged(sve.oldvalue, flattened))
+            if (type.valueUnchanged(oldflat, newflat))
               unchangedValue = true;
           }
           catch (Exception e) {

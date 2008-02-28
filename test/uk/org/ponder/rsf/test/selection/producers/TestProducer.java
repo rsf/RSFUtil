@@ -1,7 +1,7 @@
 /*
  * Created on 8 Jan 2008
  */
-package uk.org.ponder.rsf.test.selection;
+package uk.org.ponder.rsf.test.selection.producers;
 
 import uk.org.ponder.rsf.bare.RequestLauncher;
 import uk.org.ponder.rsf.components.ELReference;
@@ -10,6 +10,7 @@ import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.components.UIOutputMany;
 import uk.org.ponder.rsf.components.UISelect;
+import uk.org.ponder.rsf.test.selection.params.CategoryViewParams;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
