@@ -6,8 +6,7 @@
      class="uk.org.ponder.rsf.request.EarlyRequestParser" abstract="true" >
   </bean>
 
-  <bean id="requestLocale" factory-bean="httpServletRequest"
-    factory-method="getLocale" />
+  <bean id="requestLocale" factory-bean="localeHolder" factory-method="getLocale" />
     
   <bean id="rootHandlerBean" 
      parent="rootHandlerBeanBase" class="uk.org.ponder.rsf.bare.BareRootHandlerBean"/>

@@ -6,6 +6,7 @@ package uk.org.ponder.rsf.renderer;
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.components.UIBranchContainer;
+import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.stringutil.StringList;
@@ -16,8 +17,9 @@ public class MessageRenderer {
     this.messagelocator = messagelocator;
   }
   
-  public UIMessage renderMessage(String key) {
-    UIMessage togo = UIMessage.make(key);
+  public UIMessage renderMessage(UIContainer basecontainer, String id, String key) {
+    // attach to base container so that full ID can be computed by default algorithm - RSF-71
+    UIMessage togo = UIMessage.make(basecontainer, id == null? "" : id, key);
     togo.setValue(messagelocator.getMessage(togo.messagekeys,
         togo.arguments));
     return togo;
