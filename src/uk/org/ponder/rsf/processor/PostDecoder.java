@@ -76,7 +76,8 @@ public class PostDecoder {
         .hasNext();) {
       String key = (String) keyit.next();
       String[] values = (String[]) normalizedrequest.get(key);
-      Logger.log.info("PostInit: key " + key + " value " + values[0]);
+      Logger.log.info("PostInit: key " + key + " value " + (values == null? 
+          "null" : (values.length == 0 ? "[]" : values[0])));
       if (fossilizedconverter.isNonComponentBinding(key)) {
         for (int i = 0; i < values.length; ++i) {
           // EL binding key is fixed, there may be many values
