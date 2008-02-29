@@ -19,8 +19,7 @@ public class UIBoundBoolean extends UIBound {
   }
 
   public void setValue(boolean value) {
-    this.value = value ? Boolean.TRUE
-        : Boolean.FALSE;
+    this.value = value ? Boolean.TRUE : Boolean.FALSE;
   }
 
   public UIBoundBoolean() {
@@ -47,7 +46,6 @@ public class UIBoundBoolean extends UIBound {
       String binding, Boolean initvalue) {
     UIBoundBoolean togo = new UIBoundBoolean();
     togo.valuebinding = ELReference.make(binding);
-    togo.fossilize = binding != null;
     if (initvalue != null) {
       togo.setValue(initvalue.booleanValue());
     }
@@ -85,8 +83,7 @@ public class UIBoundBoolean extends UIBound {
         : Boolean.FALSE);
   }
 
-  /** Suitable for a non-bound control such as in a GET form. If a binding
-   * is subsequently required, remember to set the <code>fossilize</code> flag.
+  /** Suitable for a non-bound control such as in a GET form. 
    *  @param parent The parent to which this component is to be added
    *  @param ID The (RSF) ID to be given to this component
    *  @return The constructed component, if it is required.
