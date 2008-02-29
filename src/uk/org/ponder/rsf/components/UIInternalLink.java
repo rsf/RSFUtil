@@ -14,7 +14,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  * The <code>target</code> field will be filled in by a fixup prior to
  * rendering.
  * <p>
- * Note that the ViewParameters object supplied as argument to the "make" methods
+ * Note that the {@link ViewParameters} object supplied as argument to the "make" methods
  * will be copied prior to being added.
  * 
  * @author Antranig Basman (amb26@ponder.org.uk)
@@ -22,6 +22,14 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
  */
 
 public class UIInternalLink extends UILink {
+  /**
+   * @param parent The parent container to which this link is to be added
+   * @param ID The (RSF) ID to be given to this linke
+   * @param linktext The text which is to be attached to this link (if left <code>null</code>, 
+   * the tag peering with this component may contain further markup in the template)
+   * @param viewparams The {@link ViewParameters} specifying the target view for this link. 
+   * @return The constructed internal link
+   */
   
   public static UIInternalLink make(UIContainer parent, String ID, 
       UIBoundString linktext, ViewParameters viewparams) {
@@ -33,6 +41,8 @@ public class UIInternalLink extends UILink {
     return togo;  
   }
   
+  /** {@see UIInternalLink#make(UIContainer, String, UIBoundString, ViewParameters) */
+  
   public static UIInternalLink make(UIContainer parent, String ID, String text,
       ViewParameters viewparams) {
     UIBoundString linktext = null;
@@ -43,6 +53,8 @@ public class UIInternalLink extends UILink {
     return make(parent, ID, linktext, viewparams);
   }
 
+  /** {@see UIInternalLink#make(UIContainer, String, UIBoundString, ViewParameters) */
+  
   public static UIInternalLink make(UIContainer parent, String ID,
       ViewParameters viewparams) {
     return make(parent, ID, (UIBoundString)null, viewparams);

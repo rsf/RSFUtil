@@ -2,7 +2,7 @@
  */
 package uk.org.ponder.rsf.components;
 
-/** A "placeholder" component (similar to UIReplicator) implementing a boolean
+/** A "placeholder" component (similar to {@link UIReplicator}) implementing a boolean
  * test. Based on whether two object values (the lvalue and the rvalue) compare
  * equal by means of Java Object.equals(), one of two genuine components specified
  * in a serialized "proto-tree" will be placed in the view tree prior to rendering.

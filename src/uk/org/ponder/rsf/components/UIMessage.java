@@ -3,8 +3,11 @@
  */
 package uk.org.ponder.rsf.components;
 
+import uk.org.ponder.messageutil.MessageLocator;
+
 /** An output-only component that encapsulates the location data for a
- * message as defined in a .properties file and resolved by a MessageLocator.
+ * message as defined in a .properties file and resolved by a 
+ * {@link MessageLocator}.
  * This reference will be resolved at fixup time by the MessageFixer.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  *

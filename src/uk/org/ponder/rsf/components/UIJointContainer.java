@@ -34,6 +34,12 @@ public class UIJointContainer extends UIBranchContainer {
     parent.addComponent(this);
   }
   
+  /**
+   * @see UIJointContainer#UIJointContainer(UIContainer, String, String)
+   * @param localID The localID, used to distinguish repeated replicates of this
+   * joint which occur in the same scope (in just the same way as plain branches)
+   */
+  
   public UIJointContainer(UIContainer parent, String ID, String jointID, String localID) {
     this.ID = ID;
     this.jointID = jointID;
@@ -41,6 +47,9 @@ public class UIJointContainer extends UIBranchContainer {
     parent.addComponent(this);
   }
 
+  /** @see UIJointContainer#UIJointContainer(UIContainer, String, String)
+   */
+  
   public UIJointContainer(UIContainer parent, String ID) {
     this(parent, ID, null);
   }

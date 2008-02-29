@@ -12,11 +12,6 @@ package uk.org.ponder.rsf.components;
  * render to give them their initial values, and on submission to apply the
  * input value to the model. <br>
  * Immediate descendents are UIInput(One) and UIInputMany, as well as UIOutput.
- * <br>
- * A bound value may well be the container for other bound values, or
- * annotations of other types. However, any containment hierarchy below this
- * level is invisible to IKAT, which hands off component subtrees to renderers
- * at anything below UIBranchContainer.
  * <p>
  * The most important and commonly set fields of UIBound are <code>value</code>
  * and <code>valuebinding</code>. The fields <code>willinput</code> and
