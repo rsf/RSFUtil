@@ -14,6 +14,7 @@ public class OpaqueBL implements WriteableBeanLocator {
   public OpaqueBL() {
     map.put("string", "string");
     map.put("stringarray", new String[] {"string1", "string2"});
+    map.put("inconvertible", new Inconvertible());
   }
   
   public Object locateBean(String name) {
