@@ -151,6 +151,9 @@ public class TestSelection extends MultipleRSFTests {
   }
 
   public void testMultiple() {
+    // test primitive list
+    testOneMultipleSelection(3, new Integer[] { new Integer(1) }, new int[] {0, 1},
+        true);
     // test empty list with empty selection
     testOneMultipleSelection(0, new Integer[] {}, new int [] {}, false);
     // unchanged list with null entry
