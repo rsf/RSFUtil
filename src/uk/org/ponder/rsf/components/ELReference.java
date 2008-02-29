@@ -19,6 +19,10 @@ public class ELReference {
   public ELReference(String value) {
     String stripped = BeanUtil.stripEL(value);
     this.value = stripped == null? value : stripped;
+    if ("".equals(value)) {
+      throw new IllegalArgumentException(
+          "Cannot issue an EL reference to an empty path. For an empty binding please either supply null, or else provide a non-empty String as path");
+    }
   }
   public String value;
   public static ELReference make(String value) {
