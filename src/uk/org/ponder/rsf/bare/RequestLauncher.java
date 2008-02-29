@@ -16,6 +16,7 @@ import uk.org.ponder.rsac.RSACBeanLocator;
 import uk.org.ponder.rsf.bare.junit.PlainRSFTests;
 import uk.org.ponder.rsf.componentprocessor.BindingFixer;
 import uk.org.ponder.rsf.componentprocessor.ComponentChildIterator;
+import uk.org.ponder.rsf.componentprocessor.ValueFixer;
 import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIComponent;
@@ -107,6 +108,7 @@ public class RequestLauncher implements EarlyRequestParser {
   
   private void processAndAccrete(UIParameterHolder form, UICommand command) {
     BindingFixer fixer = (BindingFixer) context.getBean("bindingFixer");
+    ValueFixer valueFixer = (ValueFixer) getRSACBeanLocator().getBeanLocator().locateBean("valueFixer");
 
     ComponentChildIterator cci = new ComponentChildIterator(form, smc);
     while (cci.hasMoreComponents()) {
@@ -124,6 +126,7 @@ public class RequestLauncher implements EarlyRequestParser {
       }
       if (component instanceof UIBound) {
         UIBound bound = (UIBound) component;
+        valueFixer.processComponent(bound);
         if (bound.willinput) {
           Object value = bound.acquireValue();
           if (value instanceof String[]) {

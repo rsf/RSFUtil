@@ -139,9 +139,6 @@ public class ErrorStateManager {
         }
         tm.targetid = rewritten;
       }
-      // We desire TMs stored between cycles are "trivially" serializable, any
-      // use of the actual exception object should be finished by action end.
-      tm.exception = null;
     }
   }
 
