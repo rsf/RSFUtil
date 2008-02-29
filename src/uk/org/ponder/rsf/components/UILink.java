@@ -5,8 +5,10 @@ package uk.org.ponder.rsf.components;
 
 /**
  * Peers with any tag/control in markup which is associated with a URL. In HTML,
- * for example, these controls are links(&lt;a&gt;), &lt;img&gt;, &lt;frame&gt;,
- * &lt;iframe&gt; and &lt;script&gt; tags. In the case the component simple
+ * for example, these controls are links(&lt;a&gt;), &lt;img&gt;, &lt;link&gt; 
+ * &lt;frame&gt;, &lt;iframe&gt;, &lt;script&gt;, &lt;style&gt;, &lt;input&gt;, 
+ * &lt;embed&gt;, &lt;object&gt; and &lt;applet&gt tags. 
+ * <br/> In the case the component is a simple
  * navigational link, operating this link is expected to give rise to an
  * idempotent ("render") request. In the case where the control accepts some
  * text (links), this may be supplied as the <code>linktext</code> field,
