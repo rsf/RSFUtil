@@ -33,9 +33,9 @@ public class UIComponent {
    * inter-component references within a view (for example to express any
    * EL dependencies).
    * <p>
-   * The structure of the ID forms colon-separated "triples", one for each
+   * The structure of the ID forms colon-separated pairs, one for each
    * container in the path, ending with the rsf:id of any leaf component, e.g.
-   * ID1-prefix:ID1-suffix:localID1:ID2-prefix:ID2-suffix:localID2:etc.
+   * ID1-prefix:local-ID1:ID2-prefix:localID2:etc.
    */
   public String getFullID() {
     if (fullID == null) {

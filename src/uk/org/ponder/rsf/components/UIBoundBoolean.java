@@ -29,6 +29,20 @@ public class UIBoundBoolean extends UIBound {
     willinput = true;
   }
 
+  /**
+   * Construct a new UIBoundBoolean component with the specified container as parent.
+   * 
+   * @param parent Parent container to which the component is to be added.
+   * @param ID (RSF) ID of this component.
+   * @param binding An EL expression to be used as the value binding for the
+   *          contained Boolean value. May be <code>null</code>.
+   * @param initvalue An initial value for the bound value. May be left
+   *          <code>null</code>. If neither this field nor
+   *          <code>binding</code> is set. the value present in the template
+   *          will be used.
+   * @return The constructed UIBoundBoolean component.
+   */
+  
   public static UIBoundBoolean make(UIContainer parent, String ID,
       String binding, Boolean initvalue) {
     UIBoundBoolean togo = new UIBoundBoolean();
@@ -42,28 +56,41 @@ public class UIBoundBoolean extends UIBound {
     return togo;
   }
 
+  /** @see #make(UIContainer, String, String, Boolean) **/
+  
   public static UIBoundBoolean make(UIBranchContainer parent,
       String ID, String binding, boolean initvalue) {
     return make(parent, ID, binding, initvalue? Boolean.TRUE : Boolean.FALSE);
   }
 
+  /** @see #make(UIContainer, String, String, Boolean) **/
+  
   public static UIBoundBoolean make(UIContainer parent, String ID,
       String binding) {
     return make(parent, ID, binding, null);
   }
 
+  /** @see #make(UIContainer, String, String, Boolean) **/
+  
   public static UIBoundBoolean make(UIContainer parent, String ID,
       Boolean initvalue) {
     return make(parent, ID, null, initvalue);
   }
 
+  /** @see #make(UIContainer, String, String, Boolean) **/
+  
   public static UIBoundBoolean make(UIContainer parent, String ID,
       boolean initvalue) {
     return make(parent, ID, null, initvalue ? Boolean.TRUE
         : Boolean.FALSE);
   }
 
-  /** Suitable for a non-bound control such as in a GET form */
+  /** Suitable for a non-bound control such as in a GET form. If a binding
+   * is subsequently required, remember to set the <code>fossilize</code> flag.
+   *  @param parent The parent to which this component is to be added
+   *  @param ID The (RSF) ID to be given to this component
+   *  @return The constructed component, if it is required.
+   **/
   public static UIBoundBoolean make(UIContainer parent, String ID) {
     return make(parent, ID, null, (Boolean) null);
   }

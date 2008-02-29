@@ -13,6 +13,13 @@ import uk.org.ponder.rsf.util.RSFUtil;
 import uk.org.ponder.rsf.util.SplitID;
 import uk.org.ponder.stringutil.CharWrap;
 
+/** The base class of all RSF components which may form containment in the
+ * component tree. Note that containment may occur in a rendered tag structure
+ * which is not reflected by this containment relation. 
+ * 
+ * @author Antranig Basman (amb26@ponder.org.uk)
+ */
+
 public abstract class UIContainer extends UIParameterHolder {
   /**
    * The localID allows clients to distinguish between multiple instantiations
@@ -144,6 +151,11 @@ public abstract class UIContainer extends UIParameterHolder {
     }
   }
 
+  /** Detach the specific component from its position as a child of this
+   * container.
+   * @param tomove The component to remove.
+   */
+  
   public void remove(UIComponent tomove) {
     SplitID split = new SplitID(tomove.ID);
     String childkey = split.prefix;
