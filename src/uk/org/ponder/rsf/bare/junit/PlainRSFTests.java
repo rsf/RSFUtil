@@ -45,7 +45,9 @@ public class PlainRSFTests extends AbstractRSACTests {
   protected RequestLauncher requestLauncher;
   
   private RequestLauncher allocateRequestLauncher() {
-    getRSACBeanLocator().startRequest();
+    if (!isSingleShot()) {
+      getRSACBeanLocator().startRequest();
+    }
     WriteableBeanLocator wbl = getRSACBeanLocator().getDeadBeanLocator();
     RequestLauncher togo = new RequestLauncher(applicationContext, getRSACBeanLocator(), isSingleShot());
     wbl.set("earlyRequestParser", togo);
