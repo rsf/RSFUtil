@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<mapperentry targetclass="uk.org.ponder.rsf.flow.jsfnav.NavigationRule">
+<mapperentry targetclass="uk.org.ponder.rsf.flow.jsfnav.support.NavigationRule">
   <taghandler xmlname="from-view-id" xml-form="attribute">
     <fieldname>fromViewId</fieldname>
   </taghandler>

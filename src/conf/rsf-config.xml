@@ -821,7 +821,7 @@
   </bean>
 
   <bean id="navigationCasePooler"
-    class="uk.org.ponder.rsf.flow.jsfnav.NavigationCasePooler">
+    class="uk.org.ponder.rsf.flow.jsfnav.support.NavigationCasePooler">
     <property name="reflectiveCache" ref="reflectiveCache" />
   </bean>
 
