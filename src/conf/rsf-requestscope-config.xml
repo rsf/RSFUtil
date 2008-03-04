@@ -15,7 +15,7 @@
     class="uk.org.ponder.beanutil.support.ObstinateTravellingMap"
     init-method="init" abstract="true">
     <property name="beanModelAlterer" ref="DARApplier" />
-    <property name="staticLeafParser" ref="staticLeafParser" />
+    <property name="generalLeafParser" ref="generalLeafParser" />
     <property name="seed" ref="ELTargetBeanLocator" />
   </bean>
 
