@@ -70,13 +70,14 @@ public class RSFUtil {
    * This will transfer a value from an EL path in the request context to a
    * particular path withing the outgoing ViewParameters state for the coming 
    * action cycle, assuming that it completes without error.
-   * 
    */
+  
   public static void addResultingViewBinding(UIParameterHolder holder, String viewParamsPath, String requestPath) {
     if (holder.parameters == null) {
       holder.parameters = new ParameterList();
     }
-    holder.parameters.add(new UIELBinding("ARIResult.resultingView."+viewParamsPath, 
+    ELReference vpp = new ELReference(viewParamsPath);
+    holder.parameters.add(new UIELBinding("ARIResult.resultingView."+vpp.value, 
         new ELReference(requestPath)));
   }
   

@@ -33,7 +33,7 @@ public class TestProducer implements ViewComponentProducer, NavigationCaseReport
     // to the outgoing ViewParameters state (which for convenience, points back at this
     // view) - #{entity.ID} is an EL path into the EntityCentredViewParameters which is 
     // the outgoing VP state reported from our navigationCases for this action cycle.
-    RSFUtil.addResultingViewBinding(form, "entity.ID", "idholder.id");
+    RSFUtil.addResultingViewBinding(form, "#{entity.ID}", "idholder.id");
     // Assigns the method binding "idholder.act" which invokes the IDHolder.act() method
     // as part of the submission. This triggers the id to appear at the path
     // "#{idholder.id}", in a similar way to a persistent save operation.
