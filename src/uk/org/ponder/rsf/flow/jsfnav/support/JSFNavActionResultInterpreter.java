@@ -1,7 +1,7 @@
 /*
  * Created on 10-Feb-2006
  */
-package uk.org.ponder.rsf.flow.jsfnav;
+package uk.org.ponder.rsf.flow.jsfnav.support;
 
 import java.util.List;
 import java.util.Map;
@@ -9,6 +9,7 @@ import java.util.Map;
 import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterpreter;
+import uk.org.ponder.rsf.flow.jsfnav.NavigationCase;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /** An ActionResultInterpreter implementing "JSF-style" navigation semantics.
@@ -39,22 +40,36 @@ public class JSFNavActionResultInterpreter implements ActionResultInterpreter {
     this.messages = messages;
   }
   
+  private static void matchCase(ARIResult togo, NavigationCase navcase) {
+    if (navcase.resultingView != null) {
+      togo.resultingView = navcase.resultingView.copy();
+    }
+    togo.propagateBeans = navcase.flowCondition;
+  }
+  
   private static void processCaseList(List caselist, ARIResult togo,
       Object result) {
     if (caselist != null) {
+      NavigationCase defaultcase = null;
       for (int j = 0; j < caselist.size(); ++j) {
         NavigationCase navcase = (NavigationCase) caselist.get(j);
-        // TODO: Fix up these rules wrt. specificity of overrides to agree
-        // more with JSF semantics
-        if (navcase.fromOutcome == null || navcase.fromOutcome.equals(result)) {
-          if (navcase.resultingView != null) {
-            togo.resultingView = navcase.resultingView.copy();
+        if (navcase.fromOutcome == null) {
+          if (defaultcase == null) {
+            defaultcase = navcase;
           }
-          togo.propagateBeans = navcase.flowCondition;
         }
+        else if (navcase.fromOutcome.equals(result)) {
+          matchCase(togo, navcase);
+          return;
+        }
+      }
+      if (defaultcase != null) {
+        matchCase(togo, defaultcase);
       }
     }
   }
+
+
 
   public ARIResult interpretActionResult(ViewParameters incoming, Object result) {
     ARIResult togo = new ARIResult();

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
+  "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+
+  <bean id="actionBean" class="uk.org.ponder.rsf.test.navigation.ActionBean" />
+  <bean class="uk.org.ponder.rsf.test.navigation.TestProducer" />
+  
+  <bean parent="requestAddressibleParent" >
+    <property name="value" value="actionBean"/>
+  </bean>
+  
+</beans>

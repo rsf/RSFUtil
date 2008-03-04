@@ -10,7 +10,7 @@ import uk.org.ponder.rsf.viewstate.AnyViewParameters;
  * Summarises a single "navigation case", a static rule mapping from the return
  * value of an RSF Action into the ViewParameters to be navigated to. Used by
  * the "JSF Navigation Style" ActionResultInterpreter,
- * {@link uk.org.ponder.rsf.flow.jsfnav.JSFNavActionResultInterpreter}.
+ * {@link uk.org.ponder.rsf.flow.jsfnav.support.JSFNavActionResultInterpreter}.
  * 
  * This has been extended from the JSF model to include a single extra field,
  * the "flow condition marker" which determines flow propagation state of parts

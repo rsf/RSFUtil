@@ -1,12 +1,13 @@
 /*
  * Created on 13-Feb-2006
  */
-package uk.org.ponder.rsf.flow.jsfnav;
+package uk.org.ponder.rsf.flow.jsfnav.support;
 
 import java.util.List;
 import java.util.Map;
 
 import uk.org.ponder.reflect.ReflectiveCache;
+import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReceiver;
 
 /** Maintains an application-wide pool of navigation cases reported by views. This
  * communicates with ViewProducers to receive any local definitions of NavigationCases

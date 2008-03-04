@@ -119,7 +119,7 @@ with a client redirect rather than an internal reinterpretation -->
       <property name="location" value="/WEB-INF/navigation-map.xml"/>
     -->
     <property name="objectType"
-      value="uk.org.ponder.rsf.flow.jsfnav.NavigationMap" />
+      value="uk.org.ponder.rsf.flow.jsfnav.support.NavigationMap" />
   </bean>
 
   <!-- This standard bean name is given a default implementation to always
@@ -133,7 +133,7 @@ with a client redirect rather than an internal reinterpretation -->
   </bean>
 
   <bean id="JSFNavigationARI"
-    class="uk.org.ponder.rsf.flow.jsfnav.JSFNavActionResultInterpreter">
+    class="uk.org.ponder.rsf.flow.jsfnav.support.JSFNavActionResultInterpreter">
     <property name="navigationMap" ref="JSFNavigationMap" />
     <property name="navigationCasePooler" ref="navigationCasePooler" />
     <property name="targettedMessageList" ref="targettedMessageListProxy"/>
