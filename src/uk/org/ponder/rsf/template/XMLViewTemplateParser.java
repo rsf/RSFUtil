@@ -235,9 +235,7 @@ public class XMLViewTemplateParser implements ViewTemplateParser {
     XMLLump finallump = newLump(parser);
 
     String closetext = attrs == 0 ? (isempty ? "/>"
-        : ">")
-        : (isempty ? "\"/>"
-            : "\">");
+        : ">") : (isempty ? "\"/>" : "\">");
     setLumpString(finallump, closetext);
     headlump.open_end = finallump;
 

@@ -642,6 +642,12 @@
     <property name="deepBeanCloner" ref="deepBeanCloner" />
     <property name="defaultExemplar" ref="viewParamsExemplar" />
   </bean>
+  
+  <bean id="viewInfoDistributor" class="uk.org.ponder.rsf.view.support.ViewInfoDistributor" >
+    <property name="viewParametersReceiver" ref="viewParamsRegistry" />
+    <property name="navigationCaseReceiver" ref="navigationCasePooler" />
+    <property name="contentTypeReceiver" ref="contentTypeInfoFactory" />
+  </bean>
 
   <bean id="lazarusRedirector"
     class="uk.org.ponder.rsf.request.LazarusRedirector">
@@ -681,6 +687,31 @@
   <bean id="URLRewriter"
     class="uk.org.ponder.rsf.viewstate.URLRewriter">
     <property name="viewStateHandler" ref="viewStateHandler" />
+  </bean>
+
+  <!-- *** Data Views *** -->
+
+  <bean id="dataViewHandler" class="uk.org.ponder.rsf.view.support.DataViewHandler">
+    <property name="contentTypeInfoProxy" ref="contentTypeInfoProxy"/>
+    <property name="generalConverter" ref="generalConverter"/>
+    <property name="responseProxy" ref="httpServletResponseProxy"/>
+  </bean>
+
+  <bean id="dataViewCollector" class="uk.org.ponder.rsf.view.support.DataViewCollector" 
+    init-method="init">
+    <property name="reflectiveCache" ref="reflectiveCache"/>
+    <property name="RSACBeanLocator" ref="RSACBeanLocator"/>
+    <property name="viewInfoDistributor" ref="viewInfoDistributor"/>
+  </bean>
+
+  <bean id="dataViewHandlerHook" class="uk.org.ponder.rsf.view.support.DataViewHandlerHook">
+    <property name="dataViewCollector" ref="dataViewCollector"/>
+    <property name="dataViewHandler" ref="dataViewHandler"/>
+    <property name="viewParametersProxy" ref="viewParametersProxy"/>
+  </bean>
+
+  <bean parent="handlerHookParent">
+    <property name="valueRef" value="dataViewHandlerHook"/>
   </bean>
 
   <!-- *** Standard framework SCR definitions *** -->

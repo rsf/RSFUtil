@@ -281,9 +281,7 @@ with a client redirect rather than an internal reinterpretation -->
         <ref bean="XMLViewResolver" />
       </list>
     </property>
-    <property name="viewParametersReceiver" ref="viewParamsRegistry" />
-    <property name="navigationCaseReceiver" ref="navigationCasePooler" />
-    <property name="contentTypeReceiver" ref="contentTypeInfoFactory" />
+    <property name="viewInfoDistributor" ref="viewInfoDistributor"/>
   </bean>
 
   <!-- Derive from this parent in order to enable automatic detection of

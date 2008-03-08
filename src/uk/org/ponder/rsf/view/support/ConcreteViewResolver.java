@@ -10,19 +10,10 @@ import java.util.Map;
 
 import uk.org.ponder.booleanutil.BooleanGetter;
 import uk.org.ponder.booleanutil.BooleanHolder;
-import uk.org.ponder.rsf.content.ContentTypeReceiver;
-import uk.org.ponder.rsf.content.ContentTypeReporter;
 import uk.org.ponder.rsf.flow.errors.SilentRedirectException;
-import uk.org.ponder.rsf.flow.jsfnav.DynamicNavigationCaseReporter;
-import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReceiver;
-import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.ComponentProducer;
-import uk.org.ponder.rsf.view.DefaultView;
 import uk.org.ponder.rsf.view.MappingViewResolver;
-import uk.org.ponder.rsf.view.ViewComponentProducer;
 import uk.org.ponder.rsf.view.ViewResolver;
-import uk.org.ponder.rsf.viewstate.ViewParamsReceiver;
-import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 /**
@@ -37,37 +28,21 @@ import uk.org.ponder.util.UniversalRuntimeException;
  * 
  */
 public class ConcreteViewResolver implements MappingViewResolver {
-  // This key is used to identify a producer that *might* produce components
-  // in all views. Upgrade this architecture once we think a little more about
-  // how we might actually want to locate view templates and component
-  // producers relative to views (view IDs or in general, ViewParams)
-  public static final String ALL_VIEW_PRODUCER = "  all views  ";
-
   private Map views = new HashMap();
 
   private List resolvers = new ArrayList();
   private BooleanGetter unknowniserror = new BooleanHolder(true);
-  private ViewParamsReceiver vpreceiver;
-  private NavigationCaseReceiver ncreceiver;
-  private ContentTypeReceiver ctreceiver;
   private AutoComponentProducerManager automanager;
+  private ViewInfoDistributor viewInfoDistributor;
+
+  public void setViewInfoDistributor(ViewInfoDistributor viewInfoDistributor) {
+    this.viewInfoDistributor = viewInfoDistributor;
+  }
 
   public void setUnknownViewIsError(BooleanGetter unknowniserror) {
     this.unknowniserror = unknowniserror;
   }
 
-  public void setViewParametersReceiver(ViewParamsReceiver vpreceiver) {
-    this.vpreceiver = vpreceiver;
-  }
-
-  public void setNavigationCaseReceiver(NavigationCaseReceiver ncreceiver) {
-    this.ncreceiver = ncreceiver;
-  }
-
-  public void setContentTypeReceiver(ContentTypeReceiver ctreceiver) {
-    this.ctreceiver = ctreceiver;
-  }
-  
   private List pendingviews = new ArrayList();
 
   // Apologies for this lack of abstraction. There is currently only one of
@@ -92,26 +67,7 @@ public class ConcreteViewResolver implements MappingViewResolver {
     for (int i = 0; i < pendingviews.size(); ++i) {
       ComponentProducer view = (ComponentProducer) pendingviews.get(i);
       // view.setMessageLocator(messagelocator);
-      String key = ALL_VIEW_PRODUCER;
-      if (view instanceof ViewComponentProducer) {
-        key = ((ViewComponentProducer) view).getViewID();
-        if (view instanceof ViewParamsReporter) {
-          ViewParamsReporter vpreporter = (ViewParamsReporter) view;
-          vpreceiver.setViewParamsExemplar(key, vpreporter.getViewParameters());
-        }
-        if (view instanceof DefaultView) {
-          vpreceiver.setDefaultView(key);
-        }
-        if (view instanceof NavigationCaseReporter
-            && !(view instanceof DynamicNavigationCaseReporter)) {
-          ncreceiver.receiveNavigationCases(key,
-              ((NavigationCaseReporter) view).reportNavigationCases());
-        }
-        if (view instanceof ContentTypeReporter) {
-          ctreceiver.setContentType(key, 
-              ((ContentTypeReporter)view).getContentType());
-        }
-      }
+      String key = viewInfoDistributor.distributeInfo(view);
       addView(key, view);
     }
     pendingviews.clear();
@@ -159,7 +115,7 @@ public class ConcreteViewResolver implements MappingViewResolver {
           "No ViewComponentProducer is registered for view " + viewid);
     }
     ArrayList togo = new ArrayList();
-    List allproducers = get(ALL_VIEW_PRODUCER);
+    List allproducers = get(ViewInfoDistributor.ALL_VIEW_PRODUCER);
     if (allproducers != null) {
       togo.addAll(allproducers);
     }
@@ -179,12 +135,6 @@ public class ConcreteViewResolver implements MappingViewResolver {
     for (int i = 0; i < producers.size(); ++i) {
       ComponentProducer producer = (ComponentProducer) producers.get(i);
       ComponentProducer ultimate = automanager.wrapProducer(producer);
-      if (ultimate instanceof DynamicNavigationCaseReporter
-          && ultimate instanceof ViewComponentProducer) {
-        ncreceiver.receiveNavigationCases(((ViewComponentProducer) ultimate)
-            .getViewID(), ((NavigationCaseReporter) ultimate)
-            .reportNavigationCases());
-      }
       producers.set(i, ultimate);
     }
   }
