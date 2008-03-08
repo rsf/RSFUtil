@@ -59,7 +59,7 @@ public class TestSelection extends MultipleRSFTests {
     ActionResponse response2 = getRequestLauncher().submitForm(form, null);
     Recipe recipe = (Recipe) response2.requestContext.locateBean("recipe");
 
-    assertNoActionError(response2);
+    assertActionError(response2, false);
     
     if (userselection.equals(GeneralLeafParser.NULL_STRING)) {
       // if the user made the null selection, the effect will be to fetch the recipe,
@@ -113,7 +113,7 @@ public class TestSelection extends MultipleRSFTests {
 
     ActionResponse response2 = getRequestLauncher().submitForm(form, null);
     
-    assertNoActionError(response2);
+    assertActionError(response2, false);
     
     IntBean intBean = (IntBean) response2.requestContext.locateBean("intBean");
 

@@ -9,6 +9,5 @@ package uk.org.ponder.rsf.view;
  *
  */
 
-public interface ViewComponentProducer extends ComponentProducer {
-  public String getViewID();
+public interface ViewComponentProducer extends ComponentProducer, ViewIDReporter {
 }

@@ -15,10 +15,12 @@ public class ContentTypeInfoRegistry {
   public static final String HTML = "HTML";
   public static final String HTML_FRAGMENT = "HTML-FRAGMENT";
   public static final String AJAX = "AJAX";
+  public static final String JSON = "JSON";
   public static final String XUL = "XUL";
   public static final String SVG = "SVG";
   public static final String RSS_0_91 = "RSS-0.91";
   public static final String RSS_2 = "RSS-2.0";
+  public static final String CUSTOM = "CUSTOM";
   public static final String REDIRECT = "REDIRECT";
   /** A default ContentTypeInfo entry for HTML content */
   
@@ -41,6 +43,11 @@ public class ContentTypeInfoRegistry {
         "application/xml; charset=UTF-8"
         );
 
+  public static final ContentTypeInfo JSON_CONTENTINFO = 
+    new ContentTypeInfo(JSON, "json",  "",
+        "application/json; charset=UTF-8"
+        );
+  
   public static final ContentTypeInfo XUL_CONTENTINFO = 
     new ContentTypeInfo(XUL, "xul",  "",
         "application/vnd.mozilla.xul+xml; charset=UTF-8"
@@ -64,6 +71,11 @@ public class ContentTypeInfoRegistry {
         ContentTypeInfo.ID_FULL , true
         );
   
+  public static final ContentTypeInfo CUSTOM_CONTENTINFO = 
+    new ContentTypeInfo(CUSTOM, "", "",
+        "");
+  
+  
   private static Map contentmap = new HashMap();
   
   public static void addContentTypeInfo(Map map, ContentTypeInfo toadd) {
@@ -78,6 +90,8 @@ public class ContentTypeInfoRegistry {
     addContentTypeInfo(contentmap, RSS_0_91_CONTENTINFO);
     addContentTypeInfo(contentmap, RSS_2_0_CONTENTINFO);
     addContentTypeInfo(contentmap, SVG_CONTENTINFO);
+    addContentTypeInfo(contentmap, JSON_CONTENTINFO);
+    addContentTypeInfo(contentmap, CUSTOM_CONTENTINFO);
   }
   
   public static Map getContentTypeInfoMap() {
