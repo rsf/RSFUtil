@@ -13,5 +13,10 @@ import uk.org.ponder.rsf.flow.ARIResult;
 
 public class ActionResponse extends RequestResponse {
 
+  /** The return, if any, from the action method, if any **/
+  public Object actionResult;
+  
+  /** The outgoing ARIResult record indicating the final action result **/
   public ARIResult ARIResult;
+  
 }

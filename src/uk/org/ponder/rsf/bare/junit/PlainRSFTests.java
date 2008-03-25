@@ -63,16 +63,34 @@ public class PlainRSFTests extends AbstractRSACTests {
     }
   }
 
+  private String errorString(boolean error) {
+    return "Request expected " + (error? "with":"without") + " error";
+  }
+  
   /** Assert whether the action cycle in question has completed without error
    * @param response The action cycle to be tested
    * @param error <code>true</code> if it is to be asserted there was an error,
    * or <code>false</code> if it is to be asserted there was none.
    */
   protected void assertActionError(ActionResponse response, boolean error) {
-    assertTrue("Request expected " + (error? "with":"without") + " error",
+    assertTrue(errorString(error),
         (((ViewParameters) response.ARIResult.resultingView).errortoken == null) ^ error);
   }
 
+  /** Assert whether the render cycle in question has completed without error
+   * @param response The render cycle to be tested
+   * @param error <code>true</code> if it is to be asserted there was an error,
+   * or <code>false</code> if it is to be asserted there was none.
+   */
+  protected void assertRenderError(RenderResponse response, boolean error) {
+    boolean wasError = false;
+    if (response.redirect instanceof ViewParameters) {
+      ViewParameters redirect = (ViewParameters) response.redirect;
+      wasError = redirect.errorredirect != null;
+    }
+    assertFalse(errorString(error), wasError ^ error);
+  }
+  
   /** Assert that the markup rendered from the render cycle in question contains the
    * supplied text.
    * @param response The render cycle which has concluded

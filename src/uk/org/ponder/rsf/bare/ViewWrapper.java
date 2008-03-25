@@ -10,6 +10,13 @@ import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.view.ViewRoot;
 import uk.org.ponder.saxalizer.SAXalizerMappingContext;
 
+/** Wraps a component tree returned from an RSF test or "bare" cycle. Allows
+ * easy querying for components through {@link #queryComponent(UIComponent)} methods,
+ * or else direct access to the component tree itselt through {@link #getViewRoot()}.
+ * 
+ * @author Antranig Basman (amb26@ponder.org.uk)
+ */
+
 public class ViewWrapper {
   
   private ViewRoot viewRoot;
@@ -20,7 +27,12 @@ public class ViewWrapper {
     this.smc = smc;
   }
   
-  
+ /** Query for a particular component within the tree, using a direct "query by
+  * example" based on the supplied component.
+  * @param query A component to be used as a query within the component tree. This
+  * will be matched on type, and if set, other fields such as ID or fullID.
+  * @return A matched component, if any, or else <code>null</code>
+  */  
   public UIComponent queryComponent(UIComponent query) {
     return queryComponent(new ComponentQuery(query));
   }
@@ -28,6 +40,8 @@ public class ViewWrapper {
   public UIComponent queryComponent(ComponentQuery query) {
     return queryComponent(viewRoot, query);
   }
+  
+  /** Returns the root of the entire wrapped component tree **/
   
   public UIBranchContainer getViewRoot() {
     return viewRoot;

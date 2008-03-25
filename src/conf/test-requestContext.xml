@@ -14,4 +14,8 @@
   <bean id="renderedMarkup" factory-bean="rootHandlerBean" factory-method="getMarkup" />
   
   <bean id="redirectTarget" factory-bean="rootHandlerBean" factory-method="getRedirectTarget" />
+  
+  <bean id="servletResponseFactory" class="uk.org.ponder.springutil.ServletResponseFactory" />
+  
+  <bean id="httpServletResponse" factory-bean="servletResponseFactory" factory-method="getHttpServletResponse" />
 </beans>

@@ -5,6 +5,7 @@ package uk.org.ponder.rsf.view.support;
 
 import uk.org.ponder.rsf.processor.HandlerHook;
 import uk.org.ponder.rsf.view.DataView;
+import uk.org.ponder.rsf.view.DataViewHandler;
 import uk.org.ponder.rsf.viewstate.AnyViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 

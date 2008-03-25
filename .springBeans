@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beansProjectDescription>
-	<configExtensions>
-		<configExtension>xml</configExtension>
-	</configExtensions>
+	<version>1</version>
+	<pluginVersion><![CDATA[2.0.3.v200802061800]]></pluginVersion>
+	<configSuffixes>
+		<configSuffix><![CDATA[xml]]></configSuffix>
+	</configSuffixes>
+	<enableImports><![CDATA[false]]></enableImports>
 	<configs>
 		<config>src/conf/blank-requestContext.xml</config>
 		<config>test/uk/org/ponder/rsf/test/dar/dar-request-context.xml</config>
@@ -11,10 +14,14 @@
 		<config>src/conf/test-requestContext.xml</config>
 		<config>src/conf/rsf-config.xml</config>
 		<config>src/conf/test-applicationContext.xml</config>
+		<config>test/uk/org/ponder/rsf/test/converter/converter-application-context.xml</config>
+		<config>test/uk/org/ponder/rsf/test/converter/converter-request-context.xml</config>
+		<config>test/uk/org/ponder/rsf/test/data/data-application-context.xml</config>
+		<config>test/uk/org/ponder/rsf/test/data/data-request-context.xml</config>
 	</configs>
 	<configSets>
 		<configSet>
-			<name>RSF Blank Closure</name>
+			<name><![CDATA[RSF Blank Closure]]></name>
 			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
 			<incomplete>false</incomplete>
 			<configs>
@@ -22,6 +29,25 @@
 				<config>src/conf/blank-requestContext.xml</config>
 				<config>src/conf/rsf-config.xml</config>
 				<config>src/conf/rsf-requestscope-config.xml</config>
+			</configs>
+		</configSet>
+		<configSet>
+			<name><![CDATA[Test Contexts]]></name>
+			<allowBeanDefinitionOverriding>true</allowBeanDefinitionOverriding>
+			<incomplete>false</incomplete>
+			<configs>
+				<config>/J-ServletUtil/src/conf/springutil-validators.xml</config>
+				<config>src/conf/blank-applicationContext.xml</config>
+				<config>src/conf/blank-requestContext.xml</config>
+				<config>src/conf/rsf-config.xml</config>
+				<config>src/conf/rsf-requestscope-config.xml</config>
+				<config>src/conf/test-applicationContext.xml</config>
+				<config>src/conf/test-requestContext.xml</config>
+				<config>test/uk/org/ponder/rsf/test/converter/converter-application-context.xml</config>
+				<config>test/uk/org/ponder/rsf/test/converter/converter-request-context.xml</config>
+				<config>test/uk/org/ponder/rsf/test/dar/dar-request-context.xml</config>
+				<config>test/uk/org/ponder/rsf/test/data/data-application-context.xml</config>
+				<config>test/uk/org/ponder/rsf/test/data/data-request-context.xml</config>
 			</configs>
 		</configSet>
 	</configSets>
