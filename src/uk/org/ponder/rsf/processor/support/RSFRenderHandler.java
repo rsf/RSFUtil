@@ -1,11 +1,11 @@
 /*
  * Created on Nov 20, 2005
  */
-package uk.org.ponder.rsf.processor;
+package uk.org.ponder.rsf.processor.support;
 
 import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.componentprocessor.ViewProcessor;
-import uk.org.ponder.rsf.preservation.StatePreservationManager;
+import uk.org.ponder.rsf.processor.RenderHandler;
 import uk.org.ponder.rsf.renderer.ViewRender;
 import uk.org.ponder.rsf.state.ErrorStateManager;
 import uk.org.ponder.rsf.view.View;
@@ -26,11 +26,10 @@ public class RSFRenderHandler implements RenderHandler {
   // all request-scope dependencies
   private ViewGenerator viewgenerator;
   private ErrorStateManager errorstatemanager;
-  private RunnableInvoker getwrapper;
   private ViewProcessor viewprocessor;
   private ViewParameters viewparams;
 
-  private StatePreservationManager presmanager;
+  private RunnableInvoker requestInvoker;
   private ViewRender viewrender;
   private TargettedMessageList targettedMessageList;
   private boolean enableDebugRendering;
@@ -47,8 +46,8 @@ public class RSFRenderHandler implements RenderHandler {
     this.errorstatemanager = errorstatemanager;
   }
 
-  public void setAlterationWrapper(RunnableInvoker getwrapper) {
-    this.getwrapper = getwrapper;
+  public void setRequestInvoker(RunnableInvoker requestInvoker) {
+    this.requestInvoker = requestInvoker;
   }
 
   public void setViewProcessor(ViewProcessor viewprocessor) {
@@ -57,10 +56,6 @@ public class RSFRenderHandler implements RenderHandler {
 
   public void setViewParameters(ViewParameters viewparams) {
     this.viewparams = viewparams;
-  }
-
-  public void setStatePreservationManager(StatePreservationManager presmanager) {
-    this.presmanager = presmanager;
   }
 
   public void setEnableDebugRendering(boolean enableDebugRendering) {
@@ -75,32 +70,20 @@ public class RSFRenderHandler implements RenderHandler {
   // returned view from the getwrapper escape into this member.
   private View view;
 
-  /**
-   * The beanlocator is passed in to allow the late location of the ViewRender
-   * bean which needs to occur in a controlled exception context.
-   */
+
   public void handle(PrintOutputStream pos) {
-    // *outside* alteration wrapper so that AW may be BeanFetchBracketed.
-    presmanager.scopeRestore();
-    getwrapper.invokeRunnable(new Runnable() {
+    requestInvoker.invokeRunnable(new Runnable() {
       public void run() {
-        if (viewparams.flowtoken != null) {
-          presmanager.restore(viewparams.flowtoken, viewparams.endflow != null);
-        }
         // this must now be AFTER restoration since the templateexpander may
         // access the model. Shucks!!
         view = viewgenerator.generateView();
-        // even a "read" from the model may want to cause a scope to be allocated.
-        // it will have to be the user's responsibility not to violate idempotency.
-        presmanager.scopePreserve();
         viewprocessor.setView(view);
         view = viewprocessor.getProcessedView();
       }
     });
     viewrender.setMessages(targettedMessageList);
     // TODO: globaltargetid detection has not been investigated for a while
-    viewrender
-          .setGlobalMessageTarget(errorstatemanager.errorstate.globaltargetid);
+    viewrender.setGlobalMessageTarget(errorstatemanager.errorstate.globaltargetid);
     viewrender.setView(view);
     viewrender.setDebugRender(enableDebugRendering && viewparams.debugrender != null);
     viewrender.render(pos);

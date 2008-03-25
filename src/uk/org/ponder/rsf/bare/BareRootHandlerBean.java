@@ -3,7 +3,7 @@
  */
 package uk.org.ponder.rsf.bare;
 
-import uk.org.ponder.rsf.processor.RootHandlerBeanBase;
+import uk.org.ponder.rsf.processor.support.RootHandlerBeanBase;
 import uk.org.ponder.rsf.viewstate.AnyViewParameters;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.streamutil.write.StringPOS;

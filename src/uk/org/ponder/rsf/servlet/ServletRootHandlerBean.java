@@ -9,7 +9,7 @@ import java.io.OutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import uk.org.ponder.rsf.processor.RootHandlerBeanBase;
+import uk.org.ponder.rsf.processor.support.RootHandlerBeanBase;
 import uk.org.ponder.rsf.renderer.RenderUtil;
 import uk.org.ponder.rsf.viewstate.AnyViewParameters;
 import uk.org.ponder.rsf.viewstate.NoViewParameters;

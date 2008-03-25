@@ -1,11 +1,12 @@
 /*
  * Created on 5 Jul 2006
  */
-package uk.org.ponder.rsf.processor;
+package uk.org.ponder.rsf.processor.support;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import uk.org.ponder.rsf.processor.FatalErrorHandler;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;

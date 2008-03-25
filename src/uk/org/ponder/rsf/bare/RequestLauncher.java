@@ -25,7 +25,7 @@ import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.components.UIParameterHolder;
 import uk.org.ponder.rsf.flow.ARIResult;
-import uk.org.ponder.rsf.processor.RSFActionHandler;
+import uk.org.ponder.rsf.processor.support.RSFActionHandler;
 import uk.org.ponder.rsf.renderer.ViewRender;
 import uk.org.ponder.rsf.request.EarlyRequestParser;
 import uk.org.ponder.rsf.viewstate.RawURLState;

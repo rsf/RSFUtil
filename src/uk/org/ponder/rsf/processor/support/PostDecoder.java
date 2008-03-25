@@ -1,7 +1,7 @@
 /*
  * Created on Nov 11, 2005
  */
-package uk.org.ponder.rsf.processor;
+package uk.org.ponder.rsf.processor.support;
 
 import java.util.HashMap;
 import java.util.Iterator;
