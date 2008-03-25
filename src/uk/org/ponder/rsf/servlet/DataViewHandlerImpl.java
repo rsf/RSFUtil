@@ -1,7 +1,7 @@
 /*
  * Created on 7 Mar 2008
  */
-package uk.org.ponder.rsf.view.support;
+package uk.org.ponder.rsf.servlet;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -14,11 +14,12 @@ import uk.org.ponder.mapping.DataAlterationRequest;
 import uk.org.ponder.rsf.content.ContentTypeInfo;
 import uk.org.ponder.rsf.content.ContentTypeInfoRegistry;
 import uk.org.ponder.rsf.view.DataView;
+import uk.org.ponder.rsf.view.DataViewHandler;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.streamutil.StreamCopyUtil;
 import uk.org.ponder.util.UniversalRuntimeException;
 
-public class DataViewHandler {
+public class DataViewHandlerImpl implements DataViewHandler {
   private HttpServletResponse responseProxy;
 
   private GeneralConverter generalConverter;

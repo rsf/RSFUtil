@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
+  "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+  <!-- The bean holding current logon details (scoped via logonScope in the
+    applicationContext.xml file -->
+  <bean id="logon" class="uk.org.ponder.rsf.test.data.beans.LogonBean" />
+
+  <!-- The bean processing the logon action - mediates between the LogonService
+    and the state-holding logon bean -->
+  <bean id="logonAction"
+    class="uk.org.ponder.rsf.test.data.beans.LogonActionBean">
+    <property name="logon" ref="logon" />
+    <property name="logonService" ref="logonService" />
+  </bean>
+
+  <!--  Begin definitions of ViewProducers -->
+
+  <!-- The producer for the logon view -->
+  <bean id="logonProducer"
+    class="uk.org.ponder.rsf.test.data.producers.LogonProducer">
+    <property name="logonBean" ref="logon" />
+    <property name="logoffProducer" ref="logoffProducer" />
+  </bean>
+  
+  <bean id="userDataView" class="uk.org.ponder.rsf.test.data.producers.UserDataView">
+    <property name="logonBean" ref="logon"/>
+  </bean>
+
+  <bean id="securityWrapper"
+    class="uk.org.ponder.rsf.test.data.impl.SecurityWrapper">
+    <property name="logonBean" ref="logon" />
+    <property name="viewParameters" ref="viewParameters" />
+  </bean>
+
+</beans>

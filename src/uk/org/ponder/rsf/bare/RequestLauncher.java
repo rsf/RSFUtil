@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.springframework.context.ApplicationContext;
+import org.springframework.mock.web.MockHttpServletResponse;
 
 import uk.org.ponder.arrayutil.ArrayUtil;
 import uk.org.ponder.beanutil.WriteableBeanLocator;
@@ -24,6 +25,7 @@ import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.components.UIParameterHolder;
 import uk.org.ponder.rsf.flow.ARIResult;
+import uk.org.ponder.rsf.processor.RSFActionHandler;
 import uk.org.ponder.rsf.renderer.ViewRender;
 import uk.org.ponder.rsf.request.EarlyRequestParser;
 import uk.org.ponder.rsf.viewstate.RawURLState;
@@ -31,6 +33,7 @@ import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsCodec;
 import uk.org.ponder.saxalizer.SAXalizerMappingContext;
+import uk.org.ponder.stringutil.StringGetter;
 
 /**
  * A point of control for a "standard" RSF request cycle in a test environment,
@@ -166,15 +169,27 @@ public class RequestLauncher implements EarlyRequestParser {
     RenderResponse togo = new RenderResponse();
     try {
       WriteableBeanLocator context = rsacbl.getBeanLocator();
+      
       updateViewParameters(torender);
       context.locateBean("rootHandlerBean");
       
       togo.requestContext = rsacbl.getDeadBeanLocator();
-      ViewRender viewRender = (ViewRender) context.locateBean("viewRender"); 
-   
-      togo.viewWrapper = new ViewWrapper(viewRender.getView().viewroot, smc);
+      ViewRender viewRender = (ViewRender) togo.requestContext.locateBean("viewRender");
+      if (viewRender != null && viewRender.getView() != null) {
+        togo.viewWrapper = new ViewWrapper(viewRender.getView().viewroot, smc);
+      }
       BareRootHandlerBean brhb = (BareRootHandlerBean) context.locateBean("rootHandlerBean");
-      togo.markup = brhb.getMarkup();
+      
+      StringGetter response = (StringGetter) context.locateBean("servletResponseFactory");
+      String directMarkup = response.get();
+      if (directMarkup.length() == 0) {
+        togo.markup = brhb.getMarkup();
+        togo.redirect = brhb.getRedirectTarget();
+      }
+      else {
+        togo.markup = directMarkup;
+      }
+      
     }
     finally {
       if (!singleshot) {
@@ -185,18 +200,29 @@ public class RequestLauncher implements EarlyRequestParser {
     
   }
   
+  /** @see #submitForm(ViewParameters, UIForm, UICommand)  
+   * The form is assumed to submit from the default test view */
+  public ActionResponse submitForm(UIForm form, UICommand command) {
+    return submitForm(null, form, command);
+  }
+  
   /**
    * Submit the supplied form, as if via the specified command, returning the
    * "final state" of the request context at cycle end (note that any disposable
    * beans will at this point be in the disposed condition).
    * 
+   * @param location The view from which the submitting form is to be submitted.
    * @param form A form to be submitted to form this test cycle's input.
    * @param command The form command which it is to appear the form was
    *            submitted by. This may be <code>null</code>
    * @return An {@link ActionResponse} record holding a summary of the final
    * context state after action processing.
    */
-  public ActionResponse submitForm(UIForm form, UICommand command) {
+  public ActionResponse submitForm(ViewParameters location, UIForm form, UICommand command) {
+    WriteableBeanLocator context = rsacbl.getBeanLocator();
+    if (location != null) {
+      updateViewParameters(location);
+    }
     processAndAccrete(form, command);
     
     setRequestType(EarlyRequestParser.ACTION_REQUEST);
@@ -204,9 +230,12 @@ public class RequestLauncher implements EarlyRequestParser {
     ActionResponse togo = new ActionResponse();
 
     try {
-      rsacbl.getBeanLocator().locateBean("rootHandlerBean");
+
+      context.locateBean("rootHandlerBean");
       togo.requestContext = rsacbl.getDeadBeanLocator();
       togo.ARIResult = (ARIResult) rsacbl.getBeanLocator().locateBean("ARIResultConcrete");
+      RSFActionHandler actionHandler = (RSFActionHandler) rsacbl.getBeanLocator().locateBean("actionHandler");
+      togo.actionResult = actionHandler.getActionResult();
     }
     finally {
       if (!singleshot) {

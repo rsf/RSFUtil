@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
+  "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+  <!-- The service which will check passwords -->
+  <bean id="logonService"
+    class="uk.org.ponder.rsf.test.data.impl.BasicLogonService" />
+
+  <!-- Define the bean roots from the request scope file that are accessible 
+    via incoming request URL -->
+  <bean parent="requestAddressibleParent">
+    <property name="value" value="logonAction, logon, destroyScope"/>
+  </bean>
+
+  <!-- Create a scope to preserve the logon bean (in the HTTP session for a
+    standalone app -->
+  <bean id="logonScope" parent="beanScopeParent">
+    <property name="copyPreservingBeans" value="logon" />
+    <property name="exclusive" value="true" />
+  </bean>
+
+  <bean id="logonGuard" parent="writeGuardParent">
+    <property name="guardedPath" value="logon" />
+    <property name="guardMethod" value="logonAction.logon" />
+  </bean>
+
+  <!-- A shared producer for the reusable logoff "component" -->
+  <bean id="logoffProducer"
+    class="uk.org.ponder.rsf.test.data.producers.LogoffProducer" />
+
+  <!-- Set up our wrapper to bracket RSF's model access cycle -->
+  <bean parent="alterationWrapperParent">
+    <property name="value">
+      <bean parent="RSACBridgeProxy">
+        <property name="targetBeanName" value="securityWrapper" />
+      </bean>
+    </property>
+  </bean>
+</beans>

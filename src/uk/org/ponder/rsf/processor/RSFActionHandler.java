@@ -114,6 +114,11 @@ public class RSFActionHandler implements ActionHandler, ErrorHandler {
     return ariresult;
   }
 
+  /** The raw action result, if any **/
+  public Object getActionResult() {
+    return actionresult;
+  }
+  
   public Object handleError(Object actionresult, Exception exception) {
     // an ARIResult is at the end-of-line - this is now unsupported though.
     if (actionresult != null && !(actionresult instanceof String))

@@ -1,10 +1,11 @@
-#Thu Feb 21 14:40:42 GMT 2008
+#Mon Mar 24 23:09:35 GMT 2008
 eclipse.preferences.version=1
 org.springframework.ide.eclipse.core.builders.enable.aopreferencemodelbuilder=false
 org.springframework.ide.eclipse.core.builders.enable.beansvalidator=true
 org.springframework.ide.eclipse.core.builders.enable.webflowvalidator=true
 org.springframework.ide.eclipse.core.enable.project.preferences=false
 org.springframework.ide.eclipse.core.validator.enable.org.springframework.ide.eclipse.beans.core.beansvalidator=true
+org.springframework.ide.eclipse.core.validator.enable.org.springframework.ide.eclipse.core.springvalidator=true
 org.springframework.ide.eclipse.core.validator.enable.org.springframework.ide.eclipse.webflow.core.validator=false
 org.springframework.ide.eclipse.core.validator.rule.enable.org.springframework.ide.eclipse.beans.core.beanAlias-org.springframework.ide.eclipse.beans.core.beansvalidator=true
 org.springframework.ide.eclipse.core.validator.rule.enable.org.springframework.ide.eclipse.beans.core.beanClass-org.springframework.ide.eclipse.beans.core.beansvalidator=true
@@ -18,6 +19,7 @@ org.springframework.ide.eclipse.core.validator.rule.enable.org.springframework.i
 org.springframework.ide.eclipse.core.validator.rule.enable.org.springframework.ide.eclipse.beans.core.methodOverride-org.springframework.ide.eclipse.beans.core.beansvalidator=true
 org.springframework.ide.eclipse.core.validator.rule.enable.org.springframework.ide.eclipse.beans.core.parsingProblems-org.springframework.ide.eclipse.beans.core.beansvalidator=true
 org.springframework.ide.eclipse.core.validator.rule.enable.org.springframework.ide.eclipse.beans.core.requiredProperty-org.springframework.ide.eclipse.beans.core.beansvalidator=false
+org.springframework.ide.eclipse.core.validator.rule.enable.org.springframework.ide.eclipse.core.springClasspath-org.springframework.ide.eclipse.core.springvalidator=true
 org.springframework.ide.eclipse.core.validator.rule.enable.org.springframework.ide.eclipse.webflow.core.validation.action-org.springframework.ide.eclipse.webflow.core.validator=false
 org.springframework.ide.eclipse.core.validator.rule.enable.org.springframework.ide.eclipse.webflow.core.validation.actionstate-org.springframework.ide.eclipse.webflow.core.validator=false
 org.springframework.ide.eclipse.core.validator.rule.enable.org.springframework.ide.eclipse.webflow.core.validation.attribute-org.springframework.ide.eclipse.webflow.core.validator=false

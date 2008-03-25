@@ -691,7 +691,7 @@
 
   <!-- *** Data Views *** -->
 
-  <bean id="dataViewHandler" class="uk.org.ponder.rsf.view.support.DataViewHandler">
+  <bean id="dataViewHandler" class="uk.org.ponder.rsf.servlet.DataViewHandlerImpl">
     <property name="contentTypeInfoProxy" ref="contentTypeInfoProxy"/>
     <property name="generalConverter" ref="generalConverter"/>
     <property name="responseProxy" ref="httpServletResponseProxy"/>
