@@ -39,7 +39,7 @@ with a client redirect rather than an internal reinterpretation -->
   </bean>
 
   <bean id="fatalErrorHandler"
-    class="uk.org.ponder.rsf.processor.DefaultFatalErrorHandler" />
+    class="uk.org.ponder.rsf.processor.support.DefaultFatalErrorHandler" />
 
   <bean id="multipartResolver"
     class="uk.org.ponder.springutil.BlankMultipartResolver">

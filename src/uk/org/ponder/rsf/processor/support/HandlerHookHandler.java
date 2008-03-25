@@ -1,9 +1,11 @@
 /*
  * Created on 15 Dec 2006
  */
-package uk.org.ponder.rsf.processor;
+package uk.org.ponder.rsf.processor.support;
 
 import java.util.List;
+
+import uk.org.ponder.rsf.processor.HandlerHook;
 
 /** Collected target of HandlerHooks within the request **/
 

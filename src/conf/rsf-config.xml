@@ -509,11 +509,21 @@
   </bean>
 
   <bean id="handlerHookHandler"
-    class="uk.org.ponder.rsf.processor.HandlerHookHandler" />
+    class="uk.org.ponder.rsf.processor.support.HandlerHookHandler" />
 
   <bean id="handlerHookParent"
     class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
     <property name="targetPath" value="handlerHookHandler.handlers" />
+  </bean>
+
+  <bean id="requestInvoker" class="uk.org.ponder.rsf.processor.support.RequestInvoker" >
+    <property name="alterationWrapper" ref="collectedAlterationWrapper" />
+    <property name="statePreservationManager">
+      <bean parent="RSACBridgeProxy">
+        <property name="targetBeanName" value="statePreservationManager"/>
+      </bean>
+    </property>
+    <property name="viewParametersProxy" ref="viewParametersProxy"/>
   </bean>
 
   <!-- *** Definitions for ViewParameters and URL handling *** -->
@@ -708,6 +718,8 @@
     <property name="dataViewCollector" ref="dataViewCollector"/>
     <property name="dataViewHandler" ref="dataViewHandler"/>
     <property name="viewParametersProxy" ref="viewParametersProxy"/>
+    <property name="requestInvoker" ref="requestInvoker"/>
+    <property name="requestTypeProxy" ref="requestTypeProxy"/>
   </bean>
 
   <bean parent="handlerHookParent">

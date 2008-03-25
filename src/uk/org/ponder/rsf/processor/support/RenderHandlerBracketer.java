@@ -1,7 +1,7 @@
 /*
  * Created on Aug 5, 2005
  */
-package uk.org.ponder.rsf.processor;
+package uk.org.ponder.rsf.processor.support;
 
 import java.net.MalformedURLException;
 
@@ -10,6 +10,7 @@ import uk.org.ponder.errorutil.CoreMessages;
 import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.rsf.flow.errors.SilentRedirectException;
 import uk.org.ponder.rsf.flow.errors.ViewExceptionStrategy;
+import uk.org.ponder.rsf.processor.RenderHandler;
 import uk.org.ponder.rsf.state.ErrorStateManager;
 import uk.org.ponder.rsf.viewstate.AnyViewParameters;
 import uk.org.ponder.rsf.viewstate.ErrorViewParameters;

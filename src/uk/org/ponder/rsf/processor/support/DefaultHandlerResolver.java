@@ -1,7 +1,10 @@
 /*
  * Created on 15-Dec-2005
  */
-package uk.org.ponder.rsf.processor;
+package uk.org.ponder.rsf.processor.support;
+
+import uk.org.ponder.rsf.processor.ActionHandler;
+import uk.org.ponder.rsf.processor.RenderHandler;
 
 /**
  * A request-scope bean performing default resolution of ActionHandler and

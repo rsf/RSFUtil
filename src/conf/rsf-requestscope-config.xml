@@ -66,7 +66,7 @@
     factory-method="getViewParameters" />
 
   <bean id="handlerResolver"
-    class="uk.org.ponder.rsf.processor.DefaultHandlerResolver">
+    class="uk.org.ponder.rsf.processor.support.DefaultHandlerResolver">
     <property name="renderHandler" ref="RSFRenderHandler" />
     <property name="actionHandler" ref="RSFActionHandler" />
   </bean>
@@ -161,7 +161,7 @@ to intercept bindings -->
     factory-method="getAdjustedViewParameters">
   </bean>
 
-  <bean id="postDecoder" class="uk.org.ponder.rsf.processor.PostDecoder"
+  <bean id="postDecoder" class="uk.org.ponder.rsf.processor.support.PostDecoder"
     init-method="init">
     <property name="renderSystemDecoder" ref="renderSystem" />
     <property name="requestMap" ref="requestMap" />
@@ -284,7 +284,7 @@ to intercept bindings -->
   </bean>
 
   <bean id="RSFActionHandler"
-    class="uk.org.ponder.rsf.processor.RSFActionHandler"
+    class="uk.org.ponder.rsf.processor.support.RSFActionHandler"
     lazy-init="true">
     <property name="errorStateManager" ref="errorStateManager" />
     <property name="ARIResolver" ref="ARIResolver" />
@@ -408,7 +408,7 @@ to intercept bindings -->
   </bean>
 
   <bean id="renderHandlerBracketer"
-    class="uk.org.ponder.rsf.processor.RenderHandlerBracketer"
+    class="uk.org.ponder.rsf.processor.support.RenderHandlerBracketer"
     lazy-init="true">
     <property name="errorStateManager" ref="errorStateManager" />
     <property name="viewExceptionStrategy"
@@ -421,14 +421,12 @@ to intercept bindings -->
   <!-- achieve two things here with laziness - renderHandler is not resolved in non-POST requests,
     and ALSO is not resolved until first use, to allow exception bracketing -->
   <bean id="RSFRenderHandler"
-    class="uk.org.ponder.rsf.processor.RSFRenderHandler"
+    class="uk.org.ponder.rsf.processor.support.RSFRenderHandler"
     lazy-init="true">
     <property name="errorStateManager" ref="errorStateManager" />
     <property name="viewParameters" ref="viewParameters" />
     <property name="viewGenerator" ref="viewGenerator" />
-    <property name="alterationWrapper" ref="collectedAlterationWrapper" />
-    <property name="statePreservationManager"
-      ref="statePreservationManager" />
+    <property name="requestInvoker" ref="requestInvoker" />
     <property name="viewProcessor" ref="viewProcessor" />
     <property name="viewRender" ref="viewRender" />
     <property name="targettedMessageList" ref="targettedMessageList" />
