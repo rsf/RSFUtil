@@ -168,6 +168,19 @@ with a client redirect rather than an internal reinterpretation -->
     <property name="value" ref="defaultViewExceptionStrategy"/>
     <property name="bindAfter" value="*"/>
   </bean>
+  
+  <bean id="RESTfulVESPredicate" class="org.springframework.beans.factory.config.BeanReferenceFactoryBean" >
+    <property name="targetBeanName" value="dataViewPredicate"/>
+  </bean>
+  
+  <bean id="RESTfulViewExceptionStrategy" class="uk.org.ponder.rsf.servlet.RESTfulViewExceptionStrategy" >
+    <property name="httpServletResponse" ref="httpServletResponseProxy"/>
+    <property name="viewParametersPredicate" ref="RESTfulVESPredicate"/>
+  </bean>
+  
+  <bean parent="viewExceptionStrategyParent">
+    <property name="valueRef" value="RESTfulViewExceptionStrategy"/>
+  </bean>
 
 
   <!-- ***** CONTENT TYPES and RENDERING ***** -->

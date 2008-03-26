@@ -69,7 +69,7 @@ public class TestData extends MultipleRSFTests {
     assertActionError(response2, false);
     
     RenderResponse render2 = getRequestLauncher().renderView((ViewParameters) response2.ARIResult.resultingView);
-    assertContains(render2, "userid: edwardl");
+    assertContains(render2, "\"userid\": \"Edward\"");
     
   }
 }

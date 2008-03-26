@@ -38,6 +38,10 @@ public class DataViewCollector implements ApplicationContextAware {
     this.reflectivecache = reflectivecache;
   }
   
+  public boolean hasView(String viewID) {
+    return viewMap.get(viewID) != null;
+  }
+  
   public DataView getView(String viewID) {
     Object got = viewMap.get(viewID);
     if (got instanceof String) {

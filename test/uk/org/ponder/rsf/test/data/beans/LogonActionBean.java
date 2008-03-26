@@ -25,19 +25,20 @@ public class LogonActionBean {
   
   public void logon() {
     boolean success = false;
+    String failmess = "Logon failed for user " + logon.name;
     try {
       success = logonservice.processLogon(logon);
     }
     catch (Exception e) {
       logonFailed();
-      throw UniversalRuntimeException.accumulate(e, "Logon failed for user " + logon.name);
+      throw UniversalRuntimeException.accumulate(e, failmess);
     }
     finally {
       logon.password = null;
     }
     if (!success) {
       logonFailed();
-      throw new SecurityException("Login failed for user " + logon.name);
+      throw new SecurityException(failmess);
     }
   }
 

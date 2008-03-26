@@ -7,7 +7,7 @@ import uk.org.ponder.rsf.components.ParameterList;
 import uk.org.ponder.rsf.content.ContentTypeInfo;
 import uk.org.ponder.rsf.processor.ActionHandler;
 import uk.org.ponder.rsf.processor.FatalErrorHandler;
-import uk.org.ponder.rsf.processor.HandlerHook;
+import uk.org.ponder.rsf.processor.RedirectingHandlerHook;
 import uk.org.ponder.rsf.request.EarlyRequestParser;
 import uk.org.ponder.rsf.request.LazarusRedirector;
 import uk.org.ponder.rsf.viewstate.AnyViewParameters;
@@ -25,7 +25,7 @@ public abstract class RootHandlerBeanBase {
   private FatalErrorHandler fatalErrorHandler;
   private RenderHandlerBracketer renderhandlerbracketer;
   private String requesttype;
-  private HandlerHook handlerhook;
+  private RedirectingHandlerHook handlerhook;
   private ActionHandler actionhandler;
   protected ContentTypeInfo contenttypeinfo;
   protected LazarusRedirector lazarusRedirector;
@@ -49,7 +49,7 @@ public abstract class RootHandlerBeanBase {
     this.fatalErrorHandler = fatalErrorHandler;
   }
   
-  public void setHandlerHook(HandlerHook handlerhook) {
+  public void setHandlerHook(RedirectingHandlerHook handlerhook) {
     this.handlerhook = handlerhook;
   }
 
@@ -70,13 +70,17 @@ public abstract class RootHandlerBeanBase {
   }
   
   public boolean handle() {
-    if (handlerhook == null || !handlerhook.handle()) {
+    AnyViewParameters redirect = handlerhook == null? null : handlerhook.handle();
+    if (redirect == null) {
       if (requesttype.equals(EarlyRequestParser.RENDER_REQUEST)) {
         handleGet();
       }
       else {
         handlePost();
       }
+    }
+    else {
+      issueRedirect(redirect, setupResponseWriter());
     }
     return true;
   }

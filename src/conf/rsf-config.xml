@@ -515,6 +515,11 @@
     class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
     <property name="targetPath" value="handlerHookHandler.handlers" />
   </bean>
+  
+  <bean id="redirectingHandlerHookParent"
+    class="uk.org.ponder.springutil.StaticTLAB" abstract="true">
+    <property name="targetPath" value="handlerHookHandler.redirectingHandlers" />
+  </bean>
 
   <bean id="requestInvoker" class="uk.org.ponder.rsf.processor.support.RequestInvoker" >
     <property name="alterationWrapper" ref="collectedAlterationWrapper" />
@@ -713,6 +718,10 @@
     <property name="RSACBeanLocator" ref="RSACBeanLocator"/>
     <property name="viewInfoDistributor" ref="viewInfoDistributor"/>
   </bean>
+  
+  <bean id="dataViewPredicate" class="uk.org.ponder.rsf.view.support.DataViewPredicate" >
+    <property name="dataViewCollector" ref="dataViewCollector"/>
+  </bean>
 
   <bean id="dataViewHandlerHook" class="uk.org.ponder.rsf.view.support.DataViewHandlerHook">
     <property name="dataViewCollector" ref="dataViewCollector"/>
@@ -720,9 +729,10 @@
     <property name="viewParametersProxy" ref="viewParametersProxy"/>
     <property name="requestInvoker" ref="requestInvoker"/>
     <property name="requestTypeProxy" ref="requestTypeProxy"/>
+    <property name="viewExceptionStrategy" ref="viewExceptionStrategyManager"/>
   </bean>
 
-  <bean parent="handlerHookParent">
+  <bean parent="redirectingHandlerHookParent">
     <property name="valueRef" value="dataViewHandlerHook"/>
   </bean>
 
