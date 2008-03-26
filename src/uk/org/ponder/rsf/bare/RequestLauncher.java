@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.springframework.context.ApplicationContext;
-import org.springframework.mock.web.MockHttpServletResponse;
 
 import uk.org.ponder.arrayutil.ArrayUtil;
 import uk.org.ponder.beanutil.WriteableBeanLocator;
@@ -184,12 +183,11 @@ public class RequestLauncher implements EarlyRequestParser {
       String directMarkup = response.get();
       if (directMarkup.length() == 0) {
         togo.markup = brhb.getMarkup();
-        togo.redirect = brhb.getRedirectTarget();
       }
       else {
         togo.markup = directMarkup;
       }
-      
+      togo.redirect = brhb.getRedirectTarget();      
     }
     finally {
       if (!singleshot) {

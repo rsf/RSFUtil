@@ -12,4 +12,5 @@ package uk.org.ponder.rsf.viewstate;
  */
 
 public class NoViewParameters extends SimpleViewParameters {
+  public static final NoViewParameters instance = new NoViewParameters();
 }
