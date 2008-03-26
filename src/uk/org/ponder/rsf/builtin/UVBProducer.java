@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import uk.org.ponder.conversion.GeneralLeafParser;
+import uk.org.ponder.json.support.JSONProvider;
 import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.messageutil.TargettedMessageList;
@@ -35,13 +35,13 @@ public class UVBProducer implements ViewComponentProducer, ContentTypeReporter,
    */
   public static final ViewParameters PARAMS = new SimpleViewParameters(VIEW_ID);
 //  private BeanDestroyer beanDestroyer;
-  private GeneralLeafParser leafparser;
+  private JSONProvider jsonProducer;
   private UVBBean uvbbean;
   private TargettedMessageList tml;
   private MessageLocator messageLocator;
-
-  public void setLeafParser(GeneralLeafParser leafparser) {
-    this.leafparser = leafparser;
+  
+  public void setJsonProducer(JSONProvider jsonproducer) {
+      this.jsonProducer = jsonproducer;
   }
 
   public void setMessageLocator(MessageLocator messageLocator) {
@@ -70,8 +70,7 @@ public class UVBProducer implements ViewComponentProducer, ContentTypeReporter,
       for (int i = 0; i < uvbbean.paths.length; ++i) {
         String path = uvbbean.paths[i];
         Object bean = uvbbean.values[i];
-        UIOutput out = UIOutput.make(tofill, ":" + i, bean == null? "" : leafparser
-            .render(bean));
+        UIOutput out = UIOutput.make(tofill, ":" + i, bean == null? "" : jsonProducer.toString(bean));
         out.decorators = new DecoratorList(new UIIDStrategyDecorator(path));
       }
     }
