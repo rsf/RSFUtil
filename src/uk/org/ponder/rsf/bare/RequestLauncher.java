@@ -27,6 +27,8 @@ import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.processor.support.RSFActionHandler;
 import uk.org.ponder.rsf.renderer.ViewRender;
 import uk.org.ponder.rsf.request.EarlyRequestParser;
+import uk.org.ponder.rsf.util.RSFUtil;
+import uk.org.ponder.rsf.view.ViewRoot;
 import uk.org.ponder.rsf.viewstate.RawURLState;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
@@ -108,7 +110,13 @@ public class RequestLauncher implements EarlyRequestParser {
     }
   }
   
+  private boolean isFixed(UIComponent component) {
+    ViewRoot root = RSFUtil.findViewRoot(component);
+    return root == null? false : root.isFixed;
+  }
+  
   private void processAndAccrete(UIParameterHolder form, UICommand command) {
+    boolean isFixed = isFixed(form);
     BindingFixer fixer = (BindingFixer) context.getBean("bindingFixer");
     ValueFixer valueFixer = (ValueFixer) getRSACBeanLocator().getBeanLocator().locateBean("valueFixer");
 
@@ -128,7 +136,9 @@ public class RequestLauncher implements EarlyRequestParser {
       }
       if (component instanceof UIBound) {
         UIBound bound = (UIBound) component;
-        valueFixer.processComponent(bound);
+        if (!isFixed) {
+          valueFixer.processComponent(bound);
+        }
         if (bound.willinput) {
           Object value = bound.acquireValue();
           if (value instanceof String[]) {

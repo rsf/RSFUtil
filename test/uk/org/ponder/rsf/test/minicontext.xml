@@ -4,7 +4,7 @@
 <beans>
   <bean id="reflectiveCache" class="uk.org.ponder.reflect.JDKReflectiveCache" />
 
-  <bean id="staticLeafParser" class="uk.org.ponder.conversion.StaticLeafParser" />
+  <bean id="generalLeafParser" class="uk.org.ponder.conversion.GeneralLeafParser" />
 
   <bean id="XMLDefaultInferrer"
     class="uk.org.ponder.saxalizer.mapping.DefaultMapperInferrer"
@@ -16,7 +16,7 @@
   <bean id="protoSaxalizerMappingContext"
     class="uk.org.ponder.saxalizer.SAXalizerMappingContext">
     <property name="reflectiveCache" ref="reflectiveCache" />
-    <property name="staticLeafParser" ref="staticLeafParser" />
+    <property name="generalLeafParser" ref="generalLeafParser" />
     <property name="defaultInferrer" ref="XMLDefaultInferrer" />
   </bean>
 
@@ -25,13 +25,13 @@
   </bean>
 
   <bean id="entityResolverStash"
-    class="uk.org.ponder.saxalizer.EntityResolverStash">
+    class="uk.org.ponder.saxalizer.support.EntityResolverStash">
     <property name="streamResolver">
       <ref bean="streamResolver" />
     </property>
     <property name="entityResolvers">
       <list>
-        <bean class="uk.org.ponder.saxalizer.LocalEntityResolver">
+        <bean class="uk.org.ponder.saxalizer.support.LocalEntityResolver">
           <property name="ID">
             <value>-//SPRING//DTD WEBFLOW//EN</value>
           </property>
@@ -44,7 +44,7 @@
   </bean>
 
   <bean id="mappableXMLProvider"
-    class="uk.org.ponder.saxalizer.SAXalXMLProvider">
+    class="uk.org.ponder.saxalizer.support.SAXalXMLProvider">
     <constructor-arg>
       <ref bean="protoSaxalizerMappingContext" />
     </constructor-arg>
@@ -67,7 +67,7 @@
   </bean>
 
   <bean id="indexedPropertyAccessor"
-    class="uk.org.ponder.beanutil.IndexedPropertyAccessor">
+    class="uk.org.ponder.beanutil.support.IndexedPropertyAccessor">
     <property name="containerTypeRegistry" ref="containerTypeRegistry" />
   </bean>
 
@@ -82,7 +82,7 @@
     class="uk.org.ponder.saxalizer.SAXalizerMappingContext">
     <property name="reflectiveCache" ref="reflectiveCache" />
     <property name="defaultInferrer" ref="ELDefaultInferrer" />
-    <property name="staticLeafParser" ref="staticLeafParser" />
+    <property name="generalLeafParser" ref="generalLeafParser" />
     <property name="indexedPropertyAccessor"
       ref="indexedPropertyAccessor" />
   </bean>
@@ -100,11 +100,11 @@
 
   <bean id="vectorCapableParser"
     class="uk.org.ponder.conversion.VectorCapableParser">
-    <property name="scalarParser" ref="staticLeafParser" />
+    <property name="scalarParser" ref="generalLeafParser" />
     <property name="containerTypeRegistry" ref="containerTypeRegistry" />
   </bean>
 
-  <bean id="DARApplier" class="uk.org.ponder.mapping.DARApplier">
+  <bean id="DARApplier" class="uk.org.ponder.mapping.support.DARApplier">
     <property name="SAXalXMLProvider" ref="XMLProvider" />
     <property name="mappingContext" ref="ELMappingContext" />
     <property name="reflectiveCache" ref="reflectiveCache" />
