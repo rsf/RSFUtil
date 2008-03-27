@@ -11,7 +11,7 @@ import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.util.Constants;
 
-/** Test for ID NPE RSF-71
+/** Test for encoding of null values, NavigationCase fallback rules and other RSF EL oddities
  */
 
 

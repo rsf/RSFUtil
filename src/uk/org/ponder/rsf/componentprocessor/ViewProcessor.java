@@ -55,7 +55,10 @@ public class ViewProcessor {
   }
 
   public View getProcessedView() {
-    performFixup();
+    if (!view.viewroot.isFixed) {
+      performFixup();
+      view.viewroot.isFixed = true;
+    }
     return view;
   }
   

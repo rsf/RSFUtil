@@ -127,9 +127,8 @@ public class ValueFixer implements ComponentProcessor {
       }
       else if (toprocess.resolver != null) {
         Object oldvalue = toprocess.acquireValue();
-        // Unclear about this branch - we apply resolvers in the tree to values
-        // which we already find there? Surely the value must already be adequately
-        // flat!
+        // User may have directly supplied raw value + resolver, for example
+        // MessageKeys. Note that this function of ValueFixer is non-idempotent.
         BeanResolver resolver = computeResolver(toprocess, root);
         Object flatvalue = alterer.getFlattenedValue(null, oldvalue, oldvalue
             .getClass(), resolver);

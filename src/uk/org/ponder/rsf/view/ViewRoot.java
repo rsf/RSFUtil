@@ -25,4 +25,7 @@ public class ViewRoot extends UIBranchContainer {
    * be dumped to the logger as XML just before rendering.
    */
   public boolean debug = false;
+  
+  /** Has the fixup cycle already been performed on this view **/
+  public boolean isFixed = false;
 }

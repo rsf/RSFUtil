@@ -3,7 +3,7 @@
  */
 package uk.org.ponder.rsf.componentprocessor;
 
-import uk.org.ponder.conversion.GeneralLeafParser;
+import uk.org.ponder.conversion.SerializationProvider;
 import uk.org.ponder.htmlutil.HTMLUtil;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIInitBlock;
@@ -21,6 +21,11 @@ public class ViewParamsFixer implements ComponentProcessor {
   private ViewStateHandler viewstatehandler;
   private InternalURLRewriter inturlrewriter;
   private ViewParamsInterceptor environmentalInterceptor;
+  private SerializationProvider JSONProvider;
+
+  public void setJSONProvider(SerializationProvider provider) {
+    JSONProvider = provider;
+  }
 
   public void setEnvironmentalInterceptor(
       ViewParamsInterceptor environmentalInterceptor) {
@@ -69,11 +74,6 @@ public class ViewParamsFixer implements ComponentProcessor {
   }
 
   private String convertInitArgument(Object object) {
-    // TODO: upgrade this to an implementation capable of rendering JSON
-    GeneralLeafParser parser = GeneralLeafParser.instance();
-    if (parser.isLeafType(object.getClass())) {
-      return parser.render(object);
-    }
     if (object instanceof UIComponent) {
       return ((UIComponent) object).getFullID();
     }
@@ -94,8 +94,8 @@ public class ViewParamsFixer implements ComponentProcessor {
     if (object instanceof RawViewParameters) {
       return ((RawViewParameters) object).URL;
     }
-    throw new IllegalArgumentException(
-        "Cannot render init block argument of unrecognised "
-            + object.getClass());
+    
+    return JSONProvider.toString(object);
+  
   }
 }
