@@ -1,7 +1,7 @@
 /*
  * Created on Nov 12, 2005
  */
-package uk.org.ponder.rsf.state;
+package uk.org.ponder.rsf.state.support;
 
 import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.beanutil.BeanModelAlterer;
@@ -22,12 +22,19 @@ import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.request.ActionTarget;
 import uk.org.ponder.rsf.request.RequestSubmittedValueCache;
 import uk.org.ponder.rsf.request.SubmittedValueEntry;
+import uk.org.ponder.rsf.state.VersionCheckPolicy;
 import uk.org.ponder.rsf.state.guards.BeanGuardProcessor;
 import uk.org.ponder.rsf.uitype.UIType;
 import uk.org.ponder.rsf.uitype.UITypes;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.RunnableInvoker;
 import uk.org.ponder.util.UniversalRuntimeException;
+
+/** Coordinates the resolution and application of the {@link RequestSubmittedValueCache}
+ * to the bean model. 
+ * 
+ * @author Antranig Basman (antranig@caret.cam.ac.uk)
+ */
 
 public class RSVCApplier {
   private VersionCheckPolicy versioncheckpolicy;

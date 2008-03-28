@@ -1,13 +1,14 @@
 /*
  * Created on 22 Jul 2006
  */
-package uk.org.ponder.rsf.state.scope;
+package uk.org.ponder.rsf.state.scope.support;
 
 import java.util.Map;
 
 import org.springframework.beans.factory.BeanNameAware;
 
 import uk.org.ponder.rsf.state.TokenStateHolder;
+import uk.org.ponder.rsf.state.scope.BeanDestroyer;
 import uk.org.ponder.stringutil.StringList;
 
 /** Manages a set of beans within a named scope. The beans will be 

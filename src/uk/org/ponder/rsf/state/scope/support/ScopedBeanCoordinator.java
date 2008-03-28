@@ -1,7 +1,7 @@
 /*
  * Created on 22 Jul 2006
  */
-package uk.org.ponder.rsf.state.scope;
+package uk.org.ponder.rsf.state.scope.support;
 
 import java.util.Map;
 
@@ -17,6 +17,7 @@ import uk.org.ponder.rsf.preservation.ExactBeanCopyPreservationStrategy;
 import uk.org.ponder.rsf.preservation.GenericBeanCopyPreservationStrategy;
 import uk.org.ponder.rsf.preservation.TSHPreservationStrategy;
 import uk.org.ponder.rsf.request.EarlyRequestParser;
+import uk.org.ponder.rsf.state.scope.BeanDestroyer;
 import uk.org.ponder.stringutil.StringGetter;
 import uk.org.ponder.stringutil.StringList;
 

@@ -7,7 +7,7 @@ import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.componentprocessor.ViewProcessor;
 import uk.org.ponder.rsf.processor.RenderHandler;
 import uk.org.ponder.rsf.renderer.ViewRender;
-import uk.org.ponder.rsf.state.ErrorStateManager;
+import uk.org.ponder.rsf.state.support.ErrorStateManager;
 import uk.org.ponder.rsf.view.View;
 import uk.org.ponder.rsf.view.support.ViewGenerator;
 import uk.org.ponder.rsf.viewstate.ViewParameters;

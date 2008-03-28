@@ -1,12 +1,13 @@
 /*
  * Created on Aug 5, 2005
  */
-package uk.org.ponder.rsf.state;
+package uk.org.ponder.rsf.state.support;
 
 import java.util.Date;
 import java.util.Map;
 
 import uk.org.ponder.reflect.ReflectiveCache;
+import uk.org.ponder.rsf.state.TokenStateHolder;
 import uk.org.ponder.util.Logger;
 
 /**

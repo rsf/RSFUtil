@@ -1,13 +1,12 @@
 /*
  * Created on Nov 23, 2004
  */
-package uk.org.ponder.rsf.state;
+package uk.org.ponder.rsf.state.support;
 
 import uk.org.ponder.hashutil.EighteenIDGenerator;
-import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.request.RequestSubmittedValueCache;
-import uk.org.ponder.rsf.request.SubmittedValueEntry;
+import uk.org.ponder.rsf.state.TokenStateHolder;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.Logger;
 
@@ -52,6 +51,11 @@ public class ErrorStateManager {
   private ViewParameters viewparams;
   private TargettedMessageList messages;
   private String outgoingToken;
+  private TMLFixer messageProcessor;
+
+  public void setTMLFixer(TMLFixer messageProcessor) {
+    this.messageProcessor = messageProcessor;
+  }
 
   public void setTargettedMessageList(TargettedMessageList tml) {
     this.messages = tml;
@@ -108,40 +112,6 @@ public class ErrorStateManager {
     return errorstate.tokenID;
   }
 
-  // Convert errors which are currently referring to bean paths back onto
-  // their fields as specified in RSVC. Called at the END of a POST cycle.
-  private void fixupMessages(TargettedMessageList tml,
-      RequestSubmittedValueCache rsvc) {
-    if (outgoingToken == null) {
-      return; // Do not fix up if the errors were not from this cycle
-    }
-    for (int i = 0; i < tml.size(); ++i) {
-      TargettedMessage tm = tml.messageAt(i);
-      if (!tm.targetid.equals(TargettedMessage.TARGET_NONE)) {
-        // Target ID refers to bean path. We need somewhat more flexible
-        // rules for locating a component ID, which is defined as something
-        // which follows "message-for". These IDs may actually be "synthetic",
-        // at a particular level of containment, in that they refer to a
-        // specially
-        // instantiated genuine component which has the same ID.
-        SubmittedValueEntry sve = rsvc.byPath(tm.targetid);
-        String rewritten = TargettedMessage.TARGET_NONE;
-        if (sve == null || sve.componentid == null) {
-          // TODO: We want to trace EL reference chains BACKWARDS to figure
-          // "ultimate source" of erroneous data. For now we will default to
-          // TARGET_NONE
-          Logger.log.warn("Message queued for non-component path "
-              + tm.targetid);
-        }
-        else {
-          rewritten = sve.componentid;
-
-        }
-        tm.targetid = rewritten;
-      }
-    }
-  }
-
   /**
    * Signal that all errors for this request cycle have been accumulated into
    * the current ese. It will now be cached in the tokenrequeststate for
@@ -161,7 +131,10 @@ public class ErrorStateManager {
       // the errors arose from this cycle, and hence must be referred to
       // by SVEs from this cycle. If it is a GET cycle, rsvc will be empty,
       // but then all errors will have global target.
-      fixupMessages(messages, requestrsvc);
+      if (outgoingToken != null) {
+         // Do not fix up if the errors were not from this cycle
+        messageProcessor.fixupMessages(messages, requestrsvc);
+      }
 
       errorstate.globaltargetid = globaltargetid;
       if (messages.isError()) {

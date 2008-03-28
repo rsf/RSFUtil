@@ -1,7 +1,7 @@
 /*
  * Created on 22 Jul 2006
  */
-package uk.org.ponder.rsf.state.scope;
+package uk.org.ponder.rsf.state.scope.support;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;

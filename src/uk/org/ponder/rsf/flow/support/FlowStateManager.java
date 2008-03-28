@@ -5,7 +5,7 @@ package uk.org.ponder.rsf.flow.support;
 
 import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.preservation.StatePreservationManager;
-import uk.org.ponder.rsf.state.ErrorStateManager;
+import uk.org.ponder.rsf.state.support.ErrorStateManager;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /** Manages adjustment of ARIResult fields and scopes to take account of

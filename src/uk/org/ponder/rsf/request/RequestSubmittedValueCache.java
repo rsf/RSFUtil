@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
@@ -33,8 +34,17 @@ public class RequestSubmittedValueCache implements Serializable {
   public SubmittedValueEntry byPath(String beanpath) {
     return (SubmittedValueEntry) pathmap.get(beanpath);
   }
-  private HashMap idmap = new HashMap();
-  private HashMap pathmap = new HashMap();
+  private Map idmap = new HashMap();
+  private Map pathmap = new HashMap();
+  private Map upstream;
+  
+  public void setUpstreamMap(Map upstream) {
+    this.upstream = upstream;
+  }
+  
+  public SubmittedValueEntry getUpstreamComponent(String writepath) {
+    return (SubmittedValueEntry) upstream.get(writepath);
+  }
   /** The list of entries, in order of application.
    */
   private List entries = new ArrayList();

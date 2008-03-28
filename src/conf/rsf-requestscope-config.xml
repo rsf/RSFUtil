@@ -179,13 +179,13 @@ to intercept bindings -->
     factory-method="getRequestRSVC" lazy-init="true" />
 
   <bean id="versionCheckPolicy"
-    class="uk.org.ponder.rsf.state.NullVersionCheckPolicy" />
+    class="uk.org.ponder.rsf.state.support.NullVersionCheckPolicy" />
 
 
   <bean id="beanInvalidationModel"
     class="uk.org.ponder.mapping.ListBeanInvalidationModel" />
 
-  <bean id="RSVCApplier" class="uk.org.ponder.rsf.state.RSVCApplier">
+  <bean id="RSVCApplier" class="uk.org.ponder.rsf.state.support.RSVCApplier">
     <property name="versionCheckPolicy" ref="versionCheckPolicy" />
     <property name="rootBeanLocator" ref="ELTargetBeanLocator" />
     <property name="beanModelAlterer" ref="DARApplier" />
@@ -206,15 +206,22 @@ to intercept bindings -->
   <bean id="targettedMessageList"
     class="uk.org.ponder.messageutil.TargettedMessageList" />
 
+  <bean id="messageProcessorManager" class="uk.org.ponder.rsf.state.support.MessageProcessorManager" />
+
+  <bean id="TMLFixer" class="uk.org.ponder.rsf.state.support.TMLFixer" >
+    <property name="messageProcessorManager" ref="messageProcessorManager"/>
+  </bean>
+
   <!--  requires input of requestRSVC in order to fix up errors at the
     end of a cycle -->
   <bean id="errorStateManager"
-    class="uk.org.ponder.rsf.state.ErrorStateManager"
+    class="uk.org.ponder.rsf.state.support.ErrorStateManager"
     init-method="init">
     <property name="TSHolder" ref="bandgapStateHolder" />
     <property name="viewParameters" ref="viewParameters" />
     <property name="requestRSVC" ref="requestRSVC" />
     <property name="targettedMessageList" ref="targettedMessageList" />
+    <property name="TMLFixer" ref="TMLFixer"/>
   </bean>
 
   <bean id="statePreservationManager"
@@ -310,7 +317,7 @@ to intercept bindings -->
 
   <!-- A useful "EL-target" bean to allow scopes to be destroyed via EL -->
   <bean id="destroyScope"
-    class="uk.org.ponder.rsf.state.scope.ScopedBeanDestroyer" />
+    class="uk.org.ponder.rsf.state.scope.support.ScopedBeanDestroyer" />
 
   <bean id="destroyedScopeMap" class="java.util.HashMap" />
 
