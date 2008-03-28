@@ -82,13 +82,13 @@
       <id>sgithens</id>
       <name>Steven Githens</name>
       <email>sgithens@caret.cam.ac.uk</email>
-      <url>http://www.caret.cam.ac.uk/contact/people/</url>
+      <url>http://githens.org/</url>
       <organization>CARET</organization>
       <organizationUrl>http://www.caret.cam.ac.uk/</organizationUrl>
       <roles>
         <role>Developer</role>
       </roles>
-      <timezone>-5</timezone>
+      <timezone>-6</timezone>
     </developer>
   </developers>
 
@@ -201,6 +201,18 @@
         <filtering>false</filtering>
       </resource>
     </resources>
+    <testSourceDirectory>test</testSourceDirectory>
+    <testResources>
+      <testResource>
+        <directory>test/</directory>
+        <includes>
+          <include>**/*.xml</include>
+          <include>**/*.html</include>
+          <include>**/*.dtd</include>
+        </includes>
+        <filtering>false</filtering>
+      </testResource>
+    </testResources>
   </build>
 
 </project>
