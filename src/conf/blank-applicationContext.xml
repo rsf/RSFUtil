@@ -427,7 +427,7 @@ with a client redirect rather than an internal reinterpretation -->
     class="uk.org.ponder.stringutil.StringList" />
 
   <bean id="scopedBeanCoordinator"
-    class="uk.org.ponder.rsf.state.scope.ScopedBeanCoordinator">
+    class="uk.org.ponder.rsf.state.scope.support.ScopedBeanCoordinator">
     <property name="beanModelAlterer" ref="DARApplier" />
     <property name="destroyedScopeMap" ref="destroyedScopeMapProxy" />
     <property name="requestTypeProxy" ref="requestTypeProxy" />
@@ -443,7 +443,7 @@ with a client redirect rather than an internal reinterpretation -->
   </bean>
 
   <bean id="inMemoryLockGetter"
-    class="uk.org.ponder.rsf.state.InMemoryLockGetter">
+    class="uk.org.ponder.rsf.state.support.InMemoryLockGetter">
   </bean>
 
   <bean id="flowTokenStateHolder"
@@ -467,7 +467,7 @@ with a client redirect rather than an internal reinterpretation -->
   </bean>
 
   <bean id="flowTokenStateHolder-memory"
-    class="uk.org.ponder.rsf.state.InMemoryTSH">
+    class="uk.org.ponder.rsf.state.support.InMemoryTSH">
     <property name="reflectiveCache" ref="reflectiveCache"/>
     <property name="expirySeconds">
       <!-- deliberately short time for testing - all flows will expire after 
@@ -480,7 +480,7 @@ with a client redirect rather than an internal reinterpretation -->
     through about 1 client request - error messages, end flow messages,
     data in transit to client storage -->
   <bean id="bandgapStateHolder-memory"
-    class="uk.org.ponder.rsf.state.InMemoryTSH">
+    class="uk.org.ponder.rsf.state.support.InMemoryTSH">
     <property name="reflectiveCache" ref="reflectiveCache"/>
     <property name="expirySeconds">
       <!-- deliberately short time for testing - all errors will expire after 

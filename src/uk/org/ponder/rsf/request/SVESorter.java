@@ -4,8 +4,10 @@
 package uk.org.ponder.rsf.request;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import uk.org.ponder.beanutil.PathUtil;
 
@@ -15,6 +17,7 @@ import uk.org.ponder.beanutil.PathUtil;
  * is a write to a path equal or higher to it in the bean hierarchy. Writes
  * to the same path will currently be scheduled arbitrarily.
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
+ * @author Andrew Thorton (andrew@three-tuns.net)
  *
  */
 public class SVESorter {
@@ -37,10 +40,11 @@ public class SVESorter {
 //fast EL:          {resource.a8394.permission} value {permissionbean}    NODE 2
 //edge FROM 2 -> 1
 //hah. fast EL is actually SLOW!
-  RequestSubmittedValueCache rsvc;
-  ELDependencyMap elmap = new ELDependencyMap();
-  HashSet emitted = new HashSet();
-  ArrayList output = new ArrayList();
+  private RequestSubmittedValueCache rsvc;
+  private ELDependencyMap elmap = new ELDependencyMap();
+  private HashSet emitted = new HashSet();
+  private ArrayList output = new ArrayList();
+  private Map upstream = new HashMap();
 
   public SVESorter(RequestSubmittedValueCache tosort) {
     this.rsvc = tosort;
@@ -48,7 +52,7 @@ public class SVESorter {
     for (int i = 0; i < rsvc.getEntries(); ++i) {
       SubmittedValueEntry entry = rsvc.entryAt(i);
       elmap.recordWrite(entry.valuebinding, entry);
-      if (entry.newvalue instanceof String) {
+      if (entry.newvalue instanceof String && entry.isEL) {
         String readel = (String) entry.newvalue;
         if (readel != null) {
           elmap.recordRead(readel, entry);
@@ -57,12 +61,41 @@ public class SVESorter {
     }
   }
 
+  public SubmittedValueEntry getUpstreamComponent(String writepath) {
+    List writers = elmap.getReaders(writepath);
+    
+    if (writers == null) return null;
+
+    for (int i = 0; i < writers.size(); ++ i) {
+      SubmittedValueEntry reader = (SubmittedValueEntry) writers.get(i);
+      if (reader.componentid != null) return reader;
+      String readpath = elmap.getReadPath(reader);
+      while (readpath != null) {
+        SubmittedValueEntry sve = getUpstreamComponent(readpath);
+        if (sve != null) return sve;
+        readpath = PathUtil.getToTailPath(readpath);
+      }
+    }
+
+    return null;
+  }
+  
+  public Map getUpstreamMap() {
+    return upstream;
+  }
+  
   public List getSortedRSVC() {
 
     for (int i = 0; i < rsvc.getEntries(); ++i) {
       SubmittedValueEntry entry = rsvc.entryAt(i);
       if (!emitted.contains(entry)) {
         attemptEvaluate(entry);
+      }
+      
+      String writepath = elmap.getWritePath(entry);
+      SubmittedValueEntry upstream = getUpstreamComponent(writepath);
+      if (upstream != null) {
+        this.upstream.put(writepath, upstream);
       }
     }
     return output;

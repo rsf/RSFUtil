@@ -141,6 +141,7 @@ public class PostDecoder {
         for (int i = 0; i < sorted.size(); ++i) {
           requestrsvc.addEntry((SubmittedValueEntry) sorted.get(i));
         }
+        requestrsvc.setUpstreamMap(sorter.getUpstreamMap());
       }
     }
     return requestrsvc;

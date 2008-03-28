@@ -11,7 +11,7 @@ import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.rsf.flow.errors.SilentRedirectException;
 import uk.org.ponder.rsf.flow.errors.ViewExceptionStrategy;
 import uk.org.ponder.rsf.processor.RenderHandler;
-import uk.org.ponder.rsf.state.ErrorStateManager;
+import uk.org.ponder.rsf.state.support.ErrorStateManager;
 import uk.org.ponder.rsf.viewstate.AnyViewParameters;
 import uk.org.ponder.rsf.viewstate.ErrorViewParameters;
 import uk.org.ponder.rsf.viewstate.RedirectViewParameters;

@@ -25,9 +25,11 @@ public class ELDependencyMap {
   public static final String WRITE = "write";
   public static final String READ = "read";
   
+  // Map of String (EL) to list of SVE
   private HashMap writemap = new HashMap();
   private HashMap readmap = new HashMap();
   
+  // Map of SVE to String (EL)
   private HashMap mapread = new HashMap();
   public HashMap mapwrite = new HashMap();
   

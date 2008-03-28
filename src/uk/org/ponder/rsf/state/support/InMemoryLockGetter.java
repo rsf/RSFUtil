@@ -1,10 +1,12 @@
 /*
  * Created on 15-Jan-2006
  */
-package uk.org.ponder.rsf.state;
+package uk.org.ponder.rsf.state.support;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import uk.org.ponder.rsf.state.LockGetter;
 
 /**
  * An application scope bean designed as a FlowLockGetter suitable for a

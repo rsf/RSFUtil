@@ -19,7 +19,7 @@ import uk.org.ponder.rsf.request.EarlyRequestParser;
 import uk.org.ponder.rsf.request.FossilizedConverter;
 import uk.org.ponder.rsf.request.RequestSubmittedValueCache;
 import uk.org.ponder.rsf.request.SubmittedValueEntry;
-import uk.org.ponder.rsf.state.ErrorStateManager;
+import uk.org.ponder.rsf.state.support.ErrorStateManager;
 import uk.org.ponder.rsf.uitype.UITypes;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;

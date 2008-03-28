@@ -319,6 +319,7 @@
     <property name="viewStateHandler" ref="viewStateHandler" />
     <property name="internalURLRewriter" ref="internalURLRewriter" />
     <property name="environmentalInterceptor" ref="environmentalViewParamsInterceptorManager"/>
+    <property name="JSONProvider" ref="JSONProvider"/>
   </bean>
 
   <bean id="requestAddressibleParent"
@@ -845,7 +846,7 @@
   </bean>
 
   <bean id="beanScopeParent"
-    class="uk.org.ponder.rsf.state.scope.ScopedBeanManager"
+    class="uk.org.ponder.rsf.state.scope.support.ScopedBeanManager"
     abstract="true">
     <property name="tokenStateHolder" ref="flowTokenStateHolder" />
     <property name="destroyedScopeMap" ref="destroyedScopeMapProxy" />

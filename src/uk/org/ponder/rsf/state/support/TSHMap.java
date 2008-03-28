@@ -1,9 +1,10 @@
 /*
  * Created on 15 Jul 2007
  */
-package uk.org.ponder.rsf.state;
+package uk.org.ponder.rsf.state.support;
 
 
+import uk.org.ponder.rsf.state.TokenStateHolder;
 import uk.org.ponder.util.ObstinateMap;
 
 /** An adaptor from the RSF "TokenStateHolder" interface for those who would
