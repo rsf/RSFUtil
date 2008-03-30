@@ -37,6 +37,14 @@ public class ViewWrapper {
     return queryComponent(new ComponentQuery(query));
   }
   
+  /** Query for a particular component within the tree, with a particular ID
+   * @see #queryComponent(UIComponent)
+   */  
+   public UIComponent queryComponent(UIComponent query, String ID) {
+     query.ID = ID;
+     return queryComponent(new ComponentQuery(query));
+   }
+  
   public UIComponent queryComponent(ComponentQuery query) {
     return queryComponent(viewRoot, query);
   }

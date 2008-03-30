@@ -27,7 +27,10 @@ public class MessageProcessorManager implements MessageProcessor {
   }
   
   public String processMessage(TargettedMessage message, String target) {
-    List list = new ArrayList(messageProcessorList);
+    List list = new ArrayList();
+    if (messageProcessorList != null) {
+      list.addAll(messageProcessorList);
+    }
     for (Iterator mit = messageProcessorMap.keySet().iterator(); mit.hasNext(); ) {
       String key = (String) mit.next();
       if (message.targetid.startsWith(key)) {
