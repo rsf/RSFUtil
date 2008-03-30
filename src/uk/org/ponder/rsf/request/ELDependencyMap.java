@@ -52,6 +52,10 @@ public class ELDependencyMap {
   
   public void recordWrite(String upstring, SubmittedValueEntry sve) {
     recordMap(writemap, upstring, sve);
+    String up2 = PathUtil.getToTailPath(upstring);
+    if (up2 != null) {
+      recordMap(writemap, up2, sve);
+    }
     mapwrite.put(sve, upstring);
   }
   

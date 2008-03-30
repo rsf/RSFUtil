@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import uk.org.ponder.arrayutil.MapUtil;
 import uk.org.ponder.beanutil.PathUtil;
 
 /** Applies a topological sorting to a collection of SubmittedValueEntry
@@ -45,6 +46,7 @@ public class SVESorter {
   private HashSet emitted = new HashSet();
   private ArrayList output = new ArrayList();
   private Map upstream = new HashMap();
+  private Map downstream = new HashMap();
 
   public SVESorter(RequestSubmittedValueCache tosort) {
     this.rsvc = tosort;
@@ -60,16 +62,16 @@ public class SVESorter {
       }
     }
   }
-
+// for a given EL write path, any initial component submission which gave rise to it
   public SubmittedValueEntry getUpstreamComponent(String writepath) {
-    List writers = elmap.getReaders(writepath);
+    List writers = elmap.getWriters(writepath);
     
     if (writers == null) return null;
 
     for (int i = 0; i < writers.size(); ++ i) {
-      SubmittedValueEntry reader = (SubmittedValueEntry) writers.get(i);
-      if (reader.componentid != null) return reader;
-      String readpath = elmap.getReadPath(reader);
+      SubmittedValueEntry writer = (SubmittedValueEntry) writers.get(i);
+      if (writer.componentid != null) return writer;
+      String readpath = elmap.getReadPath(writer);
       while (readpath != null) {
         SubmittedValueEntry sve = getUpstreamComponent(readpath);
         if (sve != null) return sve;
@@ -84,18 +86,29 @@ public class SVESorter {
     return upstream;
   }
   
+  public Map getDownstreamMap() {
+    return downstream;
+  }
+  
   public List getSortedRSVC() {
-
     for (int i = 0; i < rsvc.getEntries(); ++i) {
       SubmittedValueEntry entry = rsvc.entryAt(i);
-      if (!emitted.contains(entry)) {
-        attemptEvaluate(entry);
-      }
-      
       String writepath = elmap.getWritePath(entry);
       SubmittedValueEntry upstream = getUpstreamComponent(writepath);
       if (upstream != null) {
         this.upstream.put(writepath, upstream);
+        // NB, this is not sufficient to record dependencies amongst pure EL, but is
+        // good enough for DateTransit for now.
+        // If a given 
+        MapUtil.putMultiMap(downstream, upstream.valuebinding, writepath);
+      }
+    
+    }
+    
+    for (int i = 0; i < rsvc.getEntries(); ++i) {
+      SubmittedValueEntry entry = rsvc.entryAt(i);
+      if (!emitted.contains(entry)) {
+        attemptEvaluate(entry);
       }
     }
     return output;

@@ -37,14 +37,24 @@ public class RequestSubmittedValueCache implements Serializable {
   private Map idmap = new HashMap();
   private Map pathmap = new HashMap();
   private Map upstream;
+  private Map downstream;
   
   public void setUpstreamMap(Map upstream) {
     this.upstream = upstream;
   }
   
+  public void setDownstreamMap(Map downstream) {
+    this.downstream = downstream;
+  }
+  
   public SubmittedValueEntry getUpstreamComponent(String writepath) {
     return (SubmittedValueEntry) upstream.get(writepath);
   }
+  // A map of String to list of Strings
+  public Map getDownstreamMap() {
+    return downstream;
+  }
+  
   /** The list of entries, in order of application.
    */
   private List entries = new ArrayList();
@@ -61,4 +71,5 @@ public class RequestSubmittedValueCache implements Serializable {
     }
     return togo;
   }
+
 }

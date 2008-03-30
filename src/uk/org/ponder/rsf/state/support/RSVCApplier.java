@@ -3,6 +3,8 @@
  */
 package uk.org.ponder.rsf.state.support;
 
+import java.util.Map;
+
 import uk.org.ponder.beanutil.BeanLocator;
 import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.beanutil.BeanPredicateModel;
@@ -83,12 +85,12 @@ public class RSVCApplier {
     this.dataConverterRegistry = dataConverterRegistry;
   }
   
-  public void applyAlterations(DARList toapply) {
+  public void applyAlterations(DARList toapply, Map writeDepends) {
     try {
       BeanInvalidationBracketer bib = getBracketer();
       darapplier.applyAlterations(rbl, toapply, 
           new DAREnvironment(targettedMessageList, bib, addressibleBeanModel, 
-              dataConverterRegistry));
+              dataConverterRegistry, writeDepends));
     }
     finally {
       beanGuardProcessor.processPostGuards(bim, targettedMessageList, rbl);
@@ -173,7 +175,7 @@ public class RSVCApplier {
       toapply.add(dar);
 
     }
-    applyAlterations(toapply);
+    applyAlterations(toapply, rsvc.getDownstreamMap());
   }
 
   public BeanInvalidationBracketer getBracketer() {
