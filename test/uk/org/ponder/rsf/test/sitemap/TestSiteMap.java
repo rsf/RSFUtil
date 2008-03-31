@@ -10,6 +10,10 @@ import uk.org.ponder.rsf.viewstate.EntityCentredViewParameters;
 import uk.org.ponder.rsf.viewstate.support.BasicViewParametersParser;
 
 public class TestSiteMap extends PlainRSFTests {
+  public TestSiteMap() {
+    contributeConfigLocation("classpath:uk/org/ponder/rsf/test/sitemap/sitemap-context.xml");
+  }
+  
   public void testParseECVP() {
     BasicViewParametersParser bvpp = (BasicViewParametersParser) applicationContext.getBean("viewParametersParser");
     HashMap attrmap = new HashMap();
