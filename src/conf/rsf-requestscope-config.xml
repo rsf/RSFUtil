@@ -450,6 +450,6 @@ to intercept bindings -->
     <property name="UVBBean" ref="UVBBean" />
     <property name="targettedMessageList" ref="targettedMessageList" />
     <property name="messageLocator" ref="messageLocator" />
-    <property name="jsonProducer" ref="JSONProvider" />
+    <property name="JSONProvider" ref="JSONProvider" />
   </bean>
 </beans>

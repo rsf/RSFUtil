@@ -68,14 +68,13 @@ public class ViewParamsFixer implements ComponentProcessor {
       for (int i = 0; i < toprocess.arguments.length; ++i) {
         rendered[i] = convertInitArgument(toprocess.arguments[i]);
       }
-      toprocess.markup = HTMLUtil.emitJavascriptCall(toprocess.functionname,
-          rendered);
+      toprocess.markup = HTMLUtil.emitJavascriptCall(toprocess.functionname, rendered, false);
     }
   }
 
   private String convertInitArgument(Object object) {
     if (object instanceof UIComponent) {
-      return ((UIComponent) object).getFullID();
+      object = ((UIComponent) object).getFullID();
     }
     if (object instanceof AnyViewParameters) {
       AnyViewParameters viewparams = (AnyViewParameters) object;
@@ -87,9 +86,11 @@ public class ViewParamsFixer implements ComponentProcessor {
         }
       }
       if (viewparams instanceof ViewParameters) {
-        return viewstatehandler.getFullURL((ViewParameters) viewparams);
+        object = viewstatehandler.getFullURL((ViewParameters) viewparams);
       }
-      object = viewparams;
+      else {
+        object = viewparams;
+      }
     }
     if (object instanceof RawViewParameters) {
       return ((RawViewParameters) object).URL;

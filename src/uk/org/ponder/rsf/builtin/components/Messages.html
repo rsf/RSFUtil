@@ -5,12 +5,24 @@
 </head>
 <body>
 Previous text:
-<div rsf:id="rsf-messages:" style="color: red; font-weight: bold; display:inline" >
-<ul style="margin:0px; display:inline">  
-  <li rsf:id="message:" style="display:inline">Message for user here</li>
-  <div />
-  <li rsf:id="message:" style="display:inline">Message for user here</li>
-</ul>
+<div rsf:id="rsf-messages:" style="display:inline" >
+  <div rsf:id="error-messages:" style="color: red; font-weight: bold; display:inline">
+    <ul>
+      <li rsf:id="message:">Error message for user here</li>
+    </ul>
+  </div>
+
+  <div rsf:id="info-messages:" style="color: green; font-weight: bold; display:inline">
+    <ul>
+      <li rsf:id="message:">Info message for user here</li>
+    </ul>
+  </div>
+  
+  <div rsf:id="confirm-messages:" style="color: blue; font-weight: bold; display:inline">
+    <ul>
+      <li rsf:id="message:">Confirm message for user here</li>
+    </ul>
+  </div>
 </div>
 </body>
 </html>
