@@ -235,7 +235,7 @@ public class RSFActionHandler implements ActionHandler, ErrorHandler {
       if (messages.size() != 0) {
         // messages on a POST cycle are DEFINITELY from our cycle
         errortoken = errorstatemanager.allocateOutgoingToken();
-        TargettedMessage general = TargettedMessageList.findGeneralError(messages);
+        TargettedMessage general = messages.findGeneralError();
         if (general != null) {
           general.args[0] = errortoken;
         }

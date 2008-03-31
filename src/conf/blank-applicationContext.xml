@@ -27,6 +27,11 @@
     class="uk.org.ponder.springutil.BooleanFactory">
     <property name="value" value="false" />
   </bean>
+  
+  <bean id="RSF-productionMode"
+    class="uk.org.ponder.springutil.BooleanFactory">
+    <property name="value" value="false" />
+  </bean>
 
 <!-- Set to <code>true</code> to handle an initial request with a null path
 with a client redirect rather than an internal reinterpretation -->
