@@ -104,8 +104,18 @@
     <property name="containerTypeRegistry" ref="containerTypeRegistry" />
   </bean>
 
+  <bean id="JSONProvider" class="uk.org.ponder.json.support.JSONProvider">
+    <property name="mappingContext" ref="ELMappingContext"/>
+  </bean>
+
+  <bean id="generalConverter" class="uk.org.ponder.conversion.GeneralConverter" >
+    <property name="XMLProvider" ref="XMLProvider"/>
+    <property name="JSONProvider" ref="JSONProvider"/>
+    <property name="leafParser" ref="generalLeafParser"/>
+  </bean>
+
   <bean id="DARApplier" class="uk.org.ponder.mapping.support.DARApplier">
-    <property name="SAXalXMLProvider" ref="XMLProvider" />
+    <property name="generalConverter" ref="generalConverter"/>
     <property name="mappingContext" ref="ELMappingContext" />
     <property name="reflectiveCache" ref="reflectiveCache" />
     <property name="vectorCapableParser" ref="vectorCapableParser" />

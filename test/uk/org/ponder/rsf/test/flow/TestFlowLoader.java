@@ -17,7 +17,8 @@ public class TestFlowLoader extends TestCase {
 
     UIBranchContainer root = (UIBranchContainer) fsxac.getBean("viewtree");
     SerializationProvider xmlp = (SerializationProvider) fsxac.getBean("XMLProvider");
-    System.out.println(xmlp.toString(root));
+    String tree = xmlp.toString(root);
+    assertNotNull(tree);
   }
   
   
