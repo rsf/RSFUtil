@@ -34,24 +34,19 @@ public class UVBProducer implements ViewComponentProducer, ContentTypeReporter,
    * convenience. 
    */
   public static final ViewParameters PARAMS = new SimpleViewParameters(VIEW_ID);
-//  private BeanDestroyer beanDestroyer;
-  private JSONProvider jsonProducer;
+  private JSONProvider jsonProvider;
   private UVBBean uvbbean;
   private TargettedMessageList tml;
   private MessageLocator messageLocator;
   
-  public void setJsonProducer(JSONProvider jsonproducer) {
-      this.jsonProducer = jsonproducer;
+  public void setJSONProvider(JSONProvider jsonProvider) {
+    this.jsonProvider = jsonProvider;
   }
 
   public void setMessageLocator(MessageLocator messageLocator) {
     this.messageLocator = messageLocator;
   }
-/**
-  public void setBeanDestroyer(BeanDestroyer beanDestroyer) {
-    this.beanDestroyer = beanDestroyer;
-  }
-**/
+
   public String getViewID() {
     return VIEW_ID;
   }
@@ -70,7 +65,7 @@ public class UVBProducer implements ViewComponentProducer, ContentTypeReporter,
       for (int i = 0; i < uvbbean.paths.length; ++i) {
         String path = uvbbean.paths[i];
         Object bean = uvbbean.values[i];
-        UIOutput out = UIOutput.make(tofill, ":" + i, bean == null? "" : jsonProducer.toString(bean));
+        UIOutput out = UIOutput.make(tofill, ":" + i, bean == null? "" : jsonProvider.toString(bean));
         out.decorators = new DecoratorList(new UIIDStrategyDecorator(path));
       }
     }
@@ -87,7 +82,6 @@ public class UVBProducer implements ViewComponentProducer, ContentTypeReporter,
       out.decorators = new DecoratorList(new UIFreeAttributeDecorator(attrmap));
       out.decorators.add(UIIDStrategyDecorator.ID_FULL);
     }
-//    beanDestroyer.destroy();
   }
 
   public String getContentType() {
