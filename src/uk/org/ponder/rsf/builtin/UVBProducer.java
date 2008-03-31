@@ -65,7 +65,7 @@ public class UVBProducer implements ViewComponentProducer, ContentTypeReporter,
       for (int i = 0; i < uvbbean.paths.length; ++i) {
         String path = uvbbean.paths[i];
         Object bean = uvbbean.values[i];
-        UIOutput out = UIOutput.make(tofill, ":" + i, bean == null? "" : jsonProvider.toString(bean));
+        UIOutput out = UIOutput.make(tofill, ":" + i, jsonProvider.toString(bean));
         out.decorators = new DecoratorList(new UIIDStrategyDecorator(path));
       }
     }
@@ -77,8 +77,7 @@ public class UVBProducer implements ViewComponentProducer, ContentTypeReporter,
       Map attrmap = new HashMap();
       attrmap.put("target", message.targetid);
       attrmap.put("severity",
-          message.severity == TargettedMessage.SEVERITY_ERROR ? "error"
-              : "info");
+          message.severity == TargettedMessage.SEVERITY_ERROR ? "error" : "info");
       out.decorators = new DecoratorList(new UIFreeAttributeDecorator(attrmap));
       out.decorators.add(UIIDStrategyDecorator.ID_FULL);
     }
