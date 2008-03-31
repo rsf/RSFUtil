@@ -1,7 +1,7 @@
 /*
  * Created on Nov 15, 2005
  */
-package uk.org.ponder.rsf.renderer;
+package uk.org.ponder.rsf.renderer.message;
 
 import java.util.HashMap;
 

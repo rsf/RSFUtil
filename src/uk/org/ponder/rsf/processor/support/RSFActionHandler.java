@@ -12,7 +12,6 @@ import uk.org.ponder.rsf.flow.ARIResult;
 import uk.org.ponder.rsf.flow.ActionResultInterceptor;
 import uk.org.ponder.rsf.flow.ActionResultInterpreter;
 import uk.org.ponder.rsf.flow.errors.ActionErrorStrategy;
-import uk.org.ponder.rsf.flow.errors.ActionErrorStrategyManager;
 import uk.org.ponder.rsf.flow.support.FlowStateManager;
 import uk.org.ponder.rsf.preservation.StatePreservationManager;
 import uk.org.ponder.rsf.processor.ActionHandler;
@@ -236,7 +235,7 @@ public class RSFActionHandler implements ActionHandler, ErrorHandler {
       if (messages.size() != 0) {
         // messages on a POST cycle are DEFINITELY from our cycle
         errortoken = errorstatemanager.allocateOutgoingToken();
-        TargettedMessage general = ActionErrorStrategyManager.findGeneralError(messages);
+        TargettedMessage general = TargettedMessageList.findGeneralError(messages);
         if (general != null) {
           general.args[0] = errortoken;
         }
