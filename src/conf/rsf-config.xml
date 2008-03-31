@@ -300,7 +300,7 @@
   </bean>
 
   <bean id="messageRenderer"
-    class="uk.org.ponder.rsf.renderer.MessageRenderer">
+    class="uk.org.ponder.rsf.renderer.message.MessageRenderer">
     <property name="messageLocator" ref="messageLocator"/>
   </bean>
 

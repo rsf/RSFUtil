@@ -67,21 +67,13 @@ public class ActionErrorStrategyManager implements ActionErrorStrategy {
     if (exception != null && code == null) {
       // Logger.log.warn("Error invoking action", exception);
       if (!messages.isError()) {
-        if (findGeneralError(messages) == null) {
+        if (messages.findGeneralError() == null) {
         messages.addMessage(new TargettedMessage(
             CoreMessages.GENERAL_ACTION_ERROR, new Object[] { "token-placeholder" }, exception));
         }
       }
       throw UniversalRuntimeException.accumulate(exception,
           "Error invoking action");
-    }
-    return null;
-  }
-
-  public static TargettedMessage findGeneralError(TargettedMessageList messages) {
-    for (int i = 0; i < messages.size(); ++ i) {
-      TargettedMessage message = messages.messageAt(i); 
-      if (CoreMessages.GENERAL_ACTION_ERROR.equals(message.message)) return message;
     }
     return null;
   }
