@@ -17,6 +17,7 @@ import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.content.ContentTypeInfo;
 import uk.org.ponder.rsf.renderer.decorator.DecoratorManager;
+import uk.org.ponder.rsf.renderer.message.MessageFlyweight;
 import uk.org.ponder.rsf.renderer.message.MessageRenderer;
 import uk.org.ponder.rsf.renderer.message.MessageTargetMap;
 import uk.org.ponder.rsf.renderer.message.MessageTargetter;
@@ -56,6 +57,7 @@ public class ViewRender {
   private Map branchmap;
   private XMLLumpMMap collected = new XMLLumpMMap();
 
+  private MessageFlyweight messageFlyweight;
   private XMLLump messagelump;
 
   private TargettedMessageList messagelist;
@@ -152,12 +154,11 @@ public class ViewRender {
   public void render(PrintOutputStream pos) {
     IDassigner = new IDAssigner(debugrender ? ContentTypeInfo.ID_FORCE
         : contenttypeinfo.IDStrategy);
-    UIBranchContainer messagecomponent = UIBranchContainer.make(view.viewroot,
-        MessageTargetter.RSF_MESSAGES);
+    messageFlyweight = new MessageFlyweight(view.viewroot);
     branchmap = BranchResolver.resolveBranches(globalmap, view.viewroot,
         roott.rootlump);
-    view.viewroot.remove(messagecomponent);
-    messagelump = (XMLLump) branchmap.get(messagecomponent);
+    view.viewroot.remove(messageFlyweight.rsfMessages);
+    messagelump = (XMLLump) branchmap.get(messageFlyweight.rsfMessages);
     collectContributions();
     messagetargets = MessageTargetter.targetMessages(branchmap, view,
         messagelist, globalmessagetarget);
@@ -342,9 +343,9 @@ public class ViewRender {
                 .warn("No message template is configured (containing branch with rsf id rsf-messages:)");
           }
           else {
-            UIBranchContainer messagebranch = messagerenderer
-                .renderMessageList(messages);
-            renderContainer(messagebranch, messagelump);
+            messagerenderer
+                .renderMessageList(messageFlyweight, messages);
+            renderContainer(messageFlyweight.rsfMessages, messagelump);
           }
         }
         XMLLump closelump = lump.close_tag;
