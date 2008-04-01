@@ -57,7 +57,8 @@ public class MessageRenderer {
    * different branches.
    */
   
-  public UIBranchContainer renderMessageList(TargettedMessageList messageList) {
+  public UIBranchContainer renderMessageList(MessageFlyweight flyweight, 
+       TargettedMessageList messageList) {
     UIBranchContainer togo = new UIBranchContainer();
     Map severityMap = condenseList(messageList);
     renderSeverityMessages(togo, severityMap, TargettedMessage.SEVERITY_ERROR, "error-messages:");
