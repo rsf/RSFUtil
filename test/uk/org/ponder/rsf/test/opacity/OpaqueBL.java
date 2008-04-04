@@ -14,6 +14,7 @@ public class OpaqueBL implements WriteableBeanLocator {
   public OpaqueBL() {
     map.put("string", "string");
     map.put("stringarray", new String[] {"string1", "string2"});
+    map.put("nullarray", new String[] {null, "string"});
     map.put("inconvertible", new Inconvertible());
   }
   
@@ -30,7 +31,7 @@ public class OpaqueBL implements WriteableBeanLocator {
       String[] setarr = (String[]) toset;
       for (int i = 0; i < setarr.length; ++ i) {
         if (setarr[i] == null) {
-          throw new IllegalArgumentException("Array containing null elements has been applied");
+          throw new IllegalArgumentException("Array containing null elements has been applied msg=invalid.data");
         }
       }
     }
