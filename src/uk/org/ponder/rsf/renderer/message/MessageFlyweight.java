@@ -30,8 +30,14 @@ public class MessageFlyweight {
   }
   
   public void detachAll() {
+    rsfMessages.updateFullID(null);
+    
     rsfMessages.remove(errorMessages);
     rsfMessages.remove(infoMessages);
     rsfMessages.remove(confirmMessages);
+
+    errorMessages.updateFullID(null);
+    infoMessages.updateFullID(null);
+    confirmMessages.updateFullID(null);
   }
 }

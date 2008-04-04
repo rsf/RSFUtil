@@ -302,8 +302,13 @@
   <bean id="messageRenderer"
     class="uk.org.ponder.rsf.renderer.message.MessageRenderer">
     <property name="messageLocator" ref="messageLocator"/>
-    <property name="productionMode" ref="RSF-productionMode"/>
   </bean>
+
+  <bean id="messageProcessorParent" class="uk.org.ponder.springutil.StaticTLAB" abstract="true" >
+    <property name="targetPath" value="messageProcessorList.list"/>
+  </bean>
+
+  <bean id="messageProcessorList" class="uk.org.ponder.springutil.ListFactory"/>
 
   <bean id="bindingFixer"
     class="uk.org.ponder.rsf.componentprocessor.BindingFixer">

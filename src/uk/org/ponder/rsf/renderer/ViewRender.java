@@ -154,11 +154,14 @@ public class ViewRender {
   public void render(PrintOutputStream pos) {
     IDassigner = new IDAssigner(debugrender ? ContentTypeInfo.ID_FORCE
         : contenttypeinfo.IDStrategy);
+    // Add and remove the flyweight immediately around "resolveBranches" - instances of it
+    // will be dynamically "invented" around the tree wherever there are messages
     messageFlyweight = new MessageFlyweight(view.viewroot);
     branchmap = BranchResolver.resolveBranches(globalmap, view.viewroot,
         roott.rootlump);
-    view.viewroot.remove(messageFlyweight.rsfMessages);
+    view.viewroot.remove(messageFlyweight.rsfMessages);    
     messagelump = (XMLLump) branchmap.get(messageFlyweight.rsfMessages);
+    
     collectContributions();
     messagetargets = MessageTargetter.targetMessages(branchmap, view,
         messagelist, globalmessagetarget);
@@ -343,9 +346,10 @@ public class ViewRender {
                 .warn("No message template is configured (containing branch with rsf id rsf-messages:)");
           }
           else {
-            messagerenderer
-                .renderMessageList(messageFlyweight, messages);
+            basecontainer.addComponent(messageFlyweight.rsfMessages);
+            messagerenderer.renderMessageList(basecontainer, messageFlyweight, messages);
             renderContainer(messageFlyweight.rsfMessages, messagelump);
+            basecontainer.remove(messageFlyweight.rsfMessages);
           }
         }
         XMLLump closelump = lump.close_tag;

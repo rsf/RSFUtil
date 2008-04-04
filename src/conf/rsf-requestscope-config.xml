@@ -206,7 +206,9 @@ to intercept bindings -->
   <bean id="targettedMessageList"
     class="uk.org.ponder.messageutil.TargettedMessageList" />
 
-  <bean id="messageProcessorManager" class="uk.org.ponder.rsf.state.support.MessageProcessorManager" />
+  <bean id="messageProcessorManager" class="uk.org.ponder.rsf.state.support.MessageProcessorManager">
+    <property name="messageProcessorList" ref="messageProcessorList"/>
+  </bean>
 
   <bean id="TMLFixer" class="uk.org.ponder.rsf.state.support.TMLFixer" >
     <property name="messageProcessorManager" ref="messageProcessorManager"/>

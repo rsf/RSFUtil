@@ -50,6 +50,18 @@ with a client redirect rather than an internal reinterpretation -->
     class="uk.org.ponder.springutil.BlankMultipartResolver">
   </bean>
 
+  <bean id="exceptionMessageDelimiter" class="java.lang.String">
+    <constructor-arg value="msg="/>
+  </bean>
+
+  <bean parent="messageProcessorParent">
+    <property name="value" ref="exceptionMessageProcessor"/>
+  </bean>
+
+  <bean id="exceptionMessageProcessor" class="uk.org.ponder.rsf.state.support.ExceptionMessageProcessor" >
+    <property name="messageDelimiter" ref="exceptionMessageDelimiter"/>
+  </bean>
+
   <!-- **** VIEWPARAMETERS and URL HANDLING **** -->
 
   <bean id="viewParamsExemplar"

@@ -16,106 +16,98 @@ import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
-import uk.org.ponder.util.UniversalRuntimeException;
 
-/** Renders {@link TargettedMessage} and {@link TargettedMessageList} items into 
- * RSF component trees. 
+/**
+ * Renders {@link TargettedMessage} and {@link TargettedMessageList} items into RSF
+ * component trees.
  * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  */
 
 public class MessageRenderer {
   private MessageLocator messagelocator;
+
   public void setMessageLocator(MessageLocator messagelocator) {
     this.messagelocator = messagelocator;
   }
 
-  private boolean productionMode;
-  
-  public void setProductionMode(boolean productionMode) {
-    this.productionMode = productionMode;
-  }
-  
-  
-  /** Render a template message into an "ad hoc" UIMessage component **/
+  /** Render a template message into an "ad hoc" UIMessage component * */
   public UIMessage renderMessage(UIContainer basecontainer, String id, String key) {
-    // attach to base container so that full ID can be computed by default algorithm - RSF-71
-    UIMessage togo = UIMessage.make(basecontainer, id == null? "" : id, key);
-    
-    String message = messagelocator.getMessage(togo.messagekeys,
-        togo.arguments);
+    // attach to base container so that full ID can be computed by default algorithm -
+    // RSF-71
+    UIMessage togo = UIMessage.make(basecontainer, id == null ? ""
+        : id, key);
+
+    String message = messagelocator.getMessage(togo.messagekeys, togo.arguments);
     if (message == null) {
       message = MessageUtil.renderDefaultMessage(key);
     }
     togo.setValue(message);
     return togo;
   }
-  
-  /** Renders a {@link TargettedMessageList} into a structured form in the components tree,
-   * in such a way as it will peer with the builtin/Messages.html template file or a 
-   * user-contributed replacement. Messages of different severities are separated into
-   * different branches.
-   */
-  
-  public UIBranchContainer renderMessageList(MessageFlyweight flyweight, 
-       TargettedMessageList messageList) {
-    UIBranchContainer togo = new UIBranchContainer();
-    Map severityMap = condenseList(messageList);
-    renderSeverityMessages(togo, severityMap, TargettedMessage.SEVERITY_ERROR, "error-messages:");
-    renderSeverityMessages(togo, severityMap, TargettedMessage.SEVERITY_INFO, "info-messages:");
-    renderSeverityMessages(togo, severityMap, TargettedMessage.SEVERITY_CONFIRM, "confirm-messages:");
-    return togo;
-  }
-  
+
   private Map condenseList(TargettedMessageList messagelist) {
-   Map togo = new HashMap();
-   boolean hasGeneral = messagelist.findGeneralError() != null;
-    
-    for (int i = 0; i < messagelist.size(); ++ i) {
+    Map togo = new HashMap();
+    boolean doneGeneral = false;
+
+    for (int i = 0; i < messagelist.size(); ++i) {
       TargettedMessage message = messagelist.messageAt(i);
-      boolean placeholder = message.message == CoreMessages.RAW_EXCEPTION_PLACEHOLDER;
-      
-      if (placeholder && message.exception != null) {
-        message.message = UniversalRuntimeException.unwrapException(message.exception).getMessage();
-      }
-      String resolved = message.resolve(messagelocator);
-      if (resolved == null && message.isError()) {
-        if (productionMode && placeholder) {
-          if (!hasGeneral ) {
-            // if in production mode, and the message arose through raw exception conversion,
-            // convert it to at most one instance of G_A_E
-            message = new TargettedMessage(CoreMessages.GENERAL_ACTION_ERROR);
-            hasGeneral = true;
-          }
-          else {
-            message = null;
-          }
+      boolean isGeneral = CoreMessages.GENERAL_ACTION_ERROR.equals(message.acquireMessageCode());
+      if (isGeneral) {
+        if (doneGeneral) {
+          message = null;
+        }
+        else {
+          doneGeneral = true;
         }
       }
+     
       if (message != null) {
         MapUtil.putMultiMap(togo, new Integer(message.severity), message);
       }
     }
     return togo;
   }
-  
-  
-  private void renderSeverityMessages(UIBranchContainer tofill, Map severityMap, int severity, String branchId) {
-    renderMessages(tofill, (List) severityMap.get(new Integer(severity)), branchId);
+
+  /**
+   * Renders a {@link TargettedMessageList} into a structured form in the components tree,
+   * in such a way as it will peer with the builtin/Messages.html template file or a
+   * user-contributed replacement. Messages of different severities are separated into
+   * different branches.
+   */
+
+  public void renderMessageList(UIContainer basecontainer, MessageFlyweight flyweight,
+      TargettedMessageList messageList) {
+    flyweight.detachAll();
+    
+    Map severityMap = condenseList(messageList);
+    renderSeverityMessages(flyweight, flyweight.errorMessages, severityMap,
+        TargettedMessage.SEVERITY_ERROR);
+    renderSeverityMessages(flyweight, flyweight.infoMessages, severityMap,
+        TargettedMessage.SEVERITY_INFO);
+    renderSeverityMessages(flyweight, flyweight.confirmMessages, severityMap,
+        TargettedMessage.SEVERITY_CONFIRM);
+    
   }
 
+  private void renderSeverityMessages(MessageFlyweight flyweight,
+      UIBranchContainer member, Map severityMap, int severity) {
+    renderMessages(flyweight, member, (List) severityMap.get(new Integer(severity)));
+  }
 
-  public void renderMessages(UIBranchContainer tofill, List messagelist, String branchId) {
-    if (messagelist == null || messagelist.size() == 0) return;
-    UIBranchContainer togo = UIBranchContainer.make(tofill, branchId);
-    
-    for (int i = 0; i < messagelist.size(); ++ i) {
+  public void renderMessages(MessageFlyweight flyweight, UIBranchContainer member,
+      List messagelist) {
+    if (messagelist == null || messagelist.size() == 0)
+      return;
+    flyweight.rsfMessages.addComponent(member);
+
+    for (int i = 0; i < messagelist.size(); ++i) {
       TargettedMessage message = (TargettedMessage) messagelist.get(i);
       String resolved = message.resolve(messagelocator);
       if (resolved == null) {
         resolved = MessageUtil.renderDefaultMessage(message.messagecodes[0]);
       }
-      UIOutput.make(togo, "message:" , resolved);
+      UIOutput.make(member, "message:", resolved);
     }
   }
 }

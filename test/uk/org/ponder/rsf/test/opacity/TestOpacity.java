@@ -6,6 +6,7 @@ package uk.org.ponder.rsf.test.opacity;
 import java.util.Arrays;
 
 import uk.org.ponder.beanutil.BeanLocator;
+import uk.org.ponder.errorutil.CoreMessages;
 import uk.org.ponder.messageutil.TargettedMessage;
 import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.bare.ActionResponse;
@@ -88,16 +89,30 @@ public class TestOpacity extends MultipleRSFTests {
     return null;
   }
 
+  public void testNullMessage() {
+    // Test not only that null values can be correctly encoded in the request,
+    // but also raw exception conversion with "msg="
+    String[] valnulls = new String[] {null, "value"};
+    TargettedMessageList list1 = testSubmit(valnulls, "general", true, false);
+    
+    assertEquals(1, list1.size());
+    TargettedMessage message1 = list1.messageAt(0);
+    assertEquals(1, message1.messagecodes.length);
+    assertEquals("invalid.data", message1.messagecodes[0]);
+  }
+  
   public void testOpacity() {
+
     String[] values = new String[] { "value1", "value2" };
     testSubmit(values, "general");
     
-
     String wrongEL = "el.expression";
     TargettedMessageList list = testSubmit(wrongEL, "inconvertible.producer", true, false);
     assertEquals(1, list.size());
     TargettedMessage message = list.messageAt(0);
     assertTrue(message.exception.getMessage().indexOf(wrongEL) != -1);
+    assertEquals(1, message.messagecodes.length);
+    assertEquals(CoreMessages.GENERAL_ACTION_ERROR, message.messagecodes[0]);
 
     testSubmit("el.expression", "inconvertible");
 

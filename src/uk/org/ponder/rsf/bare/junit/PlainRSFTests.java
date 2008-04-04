@@ -73,8 +73,8 @@ public class PlainRSFTests extends AbstractRSACTests {
    * or <code>false</code> if it is to be asserted there was none.
    */
   protected void assertActionError(ActionResponse response, boolean error) {
-    assertTrue(errorString(error),
-        (((ViewParameters) response.ARIResult.resultingView).errortoken == null) ^ error);
+    TargettedMessageList tml = (TargettedMessageList) response.requestContext.locateBean("targettedMessageList");
+    assertTrue(errorString(error), !tml.isError() ^ error);
   }
 
   /** Assert whether the render cycle in question has completed without error
