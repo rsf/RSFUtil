@@ -35,6 +35,7 @@ import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsCodec;
 import uk.org.ponder.saxalizer.SAXalizerMappingContext;
 import uk.org.ponder.stringutil.StringGetter;
+import uk.org.ponder.util.Logger;
 
 /**
  * A point of control for a "standard" RSF request cycle in a test environment,
@@ -244,6 +245,9 @@ public class RequestLauncher implements EarlyRequestParser {
       togo.ARIResult = (ARIResult) rsacbl.getBeanLocator().locateBean("ARIResultConcrete");
       RSFActionHandler actionHandler = (RSFActionHandler) rsacbl.getBeanLocator().locateBean("actionHandler");
       togo.actionResult = actionHandler.getActionResult();
+    }
+    catch (Exception e) {
+      Logger.log.warn("Error submitting request", e);
     }
     finally {
       if (!singleshot) {
