@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public class DynamicStreamEarlyRequestParser implements EarlyRequestParser {
 
-	private String pathInfo;
+	private String[] pathInfo;
 	
 	private Map requestMap = null;
 	
@@ -28,10 +28,9 @@ public class DynamicStreamEarlyRequestParser implements EarlyRequestParser {
     }
 
     /*
-     * This INCLUDES an initial slash but no final slash,
-     * e.g. "/thingy/foobar"
+     * An array of pathinfo segments
      */
-    public void setPathInfo(String pathInfo) {
+    public void setPathInfo(String[] pathInfo) {
     	this.pathInfo = pathInfo;
     }
     
@@ -39,7 +38,7 @@ public class DynamicStreamEarlyRequestParser implements EarlyRequestParser {
      * This INCLUDES an initial slash but no final slash,
      * e.g. "/thingy/foobar"
      */
-    public String getPathInfo() {
+    public String[] getPathInfo() {
       return pathInfo;
     }
 

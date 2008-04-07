@@ -24,5 +24,5 @@ public interface ViewIDInferrer {
    * Corresponds to the value of the request scope bean <code>requestMap</code>
    * @return The inferred view ID.
    */
-  public String inferViewID(String pathinfo, Map requestmap);
+  public String inferViewID(String[] pathinfo, Map requestmap);
 }

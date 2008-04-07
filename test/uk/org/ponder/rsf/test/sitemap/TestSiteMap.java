@@ -18,7 +18,7 @@ public class TestSiteMap extends PlainRSFTests {
     BasicViewParametersParser bvpp = (BasicViewParametersParser) applicationContext.getBean("viewParametersParser");
     HashMap attrmap = new HashMap();
     attrmap.put("flowtoken", "ec38f0");
-    EntityCentredViewParameters ecvp = (EntityCentredViewParameters) bvpp.parse("/recipe/3652/", attrmap);
+    EntityCentredViewParameters ecvp = (EntityCentredViewParameters) bvpp.parse(new String[] {"recipe", "3652"}, attrmap);
     System.out.println("ECVP for entity " + ecvp.entity.ID + " of type " + ecvp.entity.entityname);
   }
 

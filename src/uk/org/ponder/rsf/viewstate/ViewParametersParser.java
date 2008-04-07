@@ -21,5 +21,5 @@ import java.util.Map;
  *
  */
 public interface ViewParametersParser {
-  public ViewParameters parse(String pathinfo, Map requestmap);
+  public ViewParameters parse(String[] pathinfo, Map requestmap);
 }

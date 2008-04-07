@@ -54,17 +54,17 @@ public class BasicViewParametersParser implements ViewParametersParser {
     this.defaultViewParams = defaultViewParams;
   }
   
-  public ViewParameters parse(String pathinfo, Map requestmap) {
+  public ViewParameters parse(String[] pathinfo, Map requestmap) {
    return parse(pathinfo, requestmap, false); 
   }
   
-  public ViewParameters parse(String pathinfo, Map requestmap, boolean intercept) {
+  public ViewParameters parse(String[] pathinfo, Map requestmap, boolean intercept) {
     // JSF memorial comment:
     // restoreView is the very first of the ViewHandler methods to be called for
     // each request, and it is guaranteed to be called. We take this opportunity
     // to stash away a parsed parameter object corresponding to our original
     // request.
-    if (implicitNullRedirect && (pathinfo.equals("") || pathinfo.equals("/") )) {
+    if (implicitNullRedirect && pathinfo.length == 0 ) {
       return (ViewParameters) defaultViewParams.get().copy();
     }
     else {

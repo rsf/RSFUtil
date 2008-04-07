@@ -12,13 +12,13 @@ import java.util.Map;
 
 public class StaticEarlyRequestParser implements EarlyRequestParser {
   private Map multipartMap;
-  private String pathInfo;
+  private String[] pathInfo;
   private Map requestMap;
   private String requestType;
   private String environmentType;
   private Locale locale;
 
-  public StaticEarlyRequestParser(Map multipartMap, String pathInfo,
+  public StaticEarlyRequestParser(Map multipartMap, String[] pathInfo,
       Map requestMap, String requestType, String environmentType, Locale locale) {
     this.multipartMap = multipartMap;
     this.pathInfo = pathInfo;
@@ -31,7 +31,7 @@ public class StaticEarlyRequestParser implements EarlyRequestParser {
     return multipartMap;
   }
 
-  public String getPathInfo() {
+  public String[] getPathInfo() {
     return pathInfo;
   }
 

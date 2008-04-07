@@ -108,7 +108,7 @@ public class ViewParamUtil {
   
   public static String toHTTPRequest(RawURLState rawstate) {
     CharWrap togo = new CharWrap();
-    togo.append(rawstate.pathinfo);
+    togo.append(URLUtil.toPathInfo(rawstate.pathinfo));
     boolean isfirst = true;
     for (Iterator keyit = rawstate.params.keySet().iterator(); keyit.hasNext();) {
       String attrname = (String) keyit.next();
@@ -144,7 +144,8 @@ public class ViewParamUtil {
     if (qpos != -1) {
       URLUtil.paramsToMap(reducedURL.substring(qpos + 1), params);
     }
-    return parser.parse(pathinfo, params); 
+    String[] paths = URLUtil.splitPathInfo(pathinfo);
+    return parser.parse(paths, params); 
   }
 
   

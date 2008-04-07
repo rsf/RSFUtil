@@ -15,8 +15,7 @@ import uk.org.ponder.rsf.viewstate.RawURLState;
 import uk.org.ponder.rsf.viewstate.ViewParamUtil;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsMapInfo;
-import uk.org.ponder.stringutil.CharWrap;
-import uk.org.ponder.stringutil.StringUtil;
+import uk.org.ponder.stringutil.StringList;
 
 /**
  * Framework class performing the function of parsing and rendering
@@ -81,16 +80,15 @@ public class ViewParamsMapper implements CoreViewParamsCodec {
    *            leading slash (/).
    */
   public void parseViewParameters(ViewParameters target, Map params,
-      String pathinfo, Map unusedParams) {
+      String[] pathinfo, Map unusedParams) {
     ConcreteViewParamsMapInfo mapinfo = vpmim.getMappingInfo(target);
     DARList toapply = new DARList();
     
     if (pathinfo != null) {
-      String[] segments = StringUtil.split(pathinfo, '/', false);
       for (int i = 0; i < mapinfo.trunkpaths.length; ++i) {
         // An extra segment will be produced for the initial /
-        int reqindex = i + 1;
-        if (reqindex < segments.length) {
+        int reqindex = i;
+        if (reqindex < pathinfo.length) {
           // look for surrogate attributes first
           Object segment = params.get(ViewParamUtil.getAttrIndex(i, true));
           // only apply low priority if we are at an endpoint
@@ -98,7 +96,7 @@ public class ViewParamsMapper implements CoreViewParamsCodec {
             segment = params.get(ViewParamUtil.getAttrIndex(i, false));
           }
           if (segment == null) {
-            segment = segments[reqindex];
+            segment = pathinfo[reqindex];
           }
           
           toapply.add(new DataAlterationRequest(mapinfo.trunkpaths[i], segment));
@@ -121,8 +119,8 @@ public class ViewParamsMapper implements CoreViewParamsCodec {
     bma.applyAlterations(target, toapply, null);
   }
 
-  public String toPathInfo(ViewParameters toconvert) {
-    CharWrap togo = new CharWrap();
+  public String[] toPathInfo(ViewParameters toconvert) {
+    StringList togo = new StringList();
     ConcreteViewParamsMapInfo mapinfo = vpmim.getMappingInfo(toconvert);
     boolean nullstarted = false;
     for (int i = 0; i < mapinfo.trunkpaths.length; ++i) {
@@ -137,13 +135,13 @@ public class ViewParamsMapper implements CoreViewParamsCodec {
                   + " at trunk position " + i
                   + " follows previous missing value");
         }
-        togo.append('/').append(attrval);
+        togo.add(attrval);
       }
       else {
         nullstarted = true;
       }
     }
-    return togo.toString();
+    return togo.toStringArray();
   }
 
   /**

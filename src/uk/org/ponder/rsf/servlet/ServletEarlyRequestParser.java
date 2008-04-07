@@ -13,6 +13,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.MultipartResolver;
 
 import uk.org.ponder.rsf.request.EarlyRequestParser;
+import uk.org.ponder.stringutil.URLUtil;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
 
@@ -72,13 +73,12 @@ public class ServletEarlyRequestParser implements EarlyRequestParser {
   }
 
   /**
-   * The pathinfo as returned from the request. This INCLUDES an initial slash
-   * but no final slash.
+   * An array of pathinfo segments as returned from the request
    */
-  public String getPathInfo() {
+  public String[] getPathInfo() {
     String pathinfo = request.getPathInfo();
-    return pathinfo == null ? "/"
-        : pathinfo;
+    if (pathinfo == null) pathinfo = "/";
+    return URLUtil.splitPathInfo(pathinfo);
   }
 
   /**

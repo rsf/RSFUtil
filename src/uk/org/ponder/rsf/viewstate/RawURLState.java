@@ -12,7 +12,7 @@ import java.util.Map;
  */
 
 public class RawURLState {
-  public RawURLState(Map params, String pathinfo) {
+  public RawURLState(Map params, String[] pathinfo) {
     this.params = params;
     this.pathinfo = pathinfo;
   }
@@ -20,7 +20,7 @@ public class RawURLState {
   /** The "pathinfo" segment of the URL, which starts with a leading slash (/). 
    * This may be null for parsing, but must be set for rendering.
    */
-  public String pathinfo;
+  public String[] pathinfo;
   /** The (equivalent) request parameter map, a map of String to String[]. 
    * This must be set.*/
   public Map params;
