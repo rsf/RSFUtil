@@ -7,5 +7,9 @@
     <setmethod>addComponent</setmethod>
     <getmethod>flattenChildren</getmethod>
   </taghandler>
+  <taghandler xmlname="parameter*">
+    <fieldname>parameters</fieldname>
+    <javaclass>uk.org.ponder.rsf.components.UIParameter</javaclass>
+  </taghandler>  
   <defaultible>true</defaultible>
 </mapperentry>
