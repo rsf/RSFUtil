@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.rsf.renderer.message;
 
+import java.util.Iterator;
 import java.util.Map;
 
 import uk.org.ponder.messageutil.TargettedMessage;
@@ -13,7 +14,6 @@ import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.template.XMLLumpList;
 import uk.org.ponder.rsf.util.RSFUtil;
-import uk.org.ponder.rsf.util.SplitID;
 import uk.org.ponder.rsf.view.View;
 import uk.org.ponder.stringutil.CharWrap;
 import uk.org.ponder.util.Logger;
@@ -31,12 +31,34 @@ public class MessageTargetter {
       this.container = container;
     }
 
-    public void checkTarget(String ID) {
-      XMLLumpList forlumps = container.downmap.headsForID(ID);
-      if (forlumps != null && forlumps.size() > 0) {
-        bestfor = forlumps.lumpAt(0);
+    private void testID(String tofind, XMLLump peer, String id) {
+      if (tofind.startsWith(id)) {
+        XMLLumpList forlumps = peer.downmap.headsForID(id);
+        if (forlumps != null && forlumps.size() > 0) {
+          bestfor = forlumps.lumpAt(0);
+        }
       }
     }
+    
+    // For a given targetid (a concrete full target) find any message-for specification
+    // in the template which matches it as a prefix - the message-for will be tried
+    // either against the full target id directly, or it will also be qualified with 
+    // the surrounding branch id (more specific match)
+    public void findTarget(XMLLump peer, UIComponent container, String targetid) {
+      String tofind =  XMLLump.FORID_PREFIX + targetid;
+      for (Iterator it = peer.downmap.iterator(); it.hasNext(); ) {
+        String id = (String) it.next();
+        testID(tofind, peer, id);
+        if (id.startsWith(XMLLump.FORID_PREFIX)) {
+          String fullID = container.getFullID();
+          if (fullID.endsWith(":")) {
+            testID(tofind, peer, XMLLump.FORID_PREFIX + container.getFullID() + 
+            id.substring(XMLLump.FORID_PREFIX.length()));
+          }
+        }
+      }
+    }
+    
   }
 
   /**
@@ -77,26 +99,10 @@ public class MessageTargetter {
       }
       best.bestfor = DEAD_LETTERS;
       UIComponent target = view.getComponent(targetid);
-      if (targetid != null) {
-        int colpos = targetid.lastIndexOf(':');
-        if (colpos != -1) {
-          targetid = targetid.substring(colpos + 1);
-        }
-      }
-      // TODO: what if action has, despite errors, insisted on redirecting to
-      // a DIFFERENT view?
-      if (target == null) {
-        // remove this spurious warning for now. "globaltarget" system was
-        // intended to at least identify the right form in the view by means
-        // of the submitting control, but needs review. In the meantime, there
-        // is now the "DEAD_LETTER" last-ditch system for final delivery.
-//        Logger.log.warn("Warning: Message " + message.acquireMessageCode()
-//            + " queued for nonexistent component ID " + message.targetid);
-      }
-      else {
-        SplitID split = new SplitID(targetid);
-        boolean hassuffix = split.suffix != null;
+
+      if (target != null) {
         ComponentList rootpath = RSFUtil.getRootPath(target);
+        // Start at the template base, and match increasingly specific 
         for (int j = 0; j < rootpath.size() - 1; ++j) {
           if (globalrootpath != null && j == globalrootpath.size() - 2) {
             // if we are at the branch level of the "submitting control" (which
@@ -105,20 +111,12 @@ public class MessageTargetter {
             // messages targetted at it globally.
             UIContainer globalbranch = (UIContainer) globalrootpath.get(j);
             XMLLump peer = (XMLLump) branchmap.get(globalbranch);
-            best.setContainer(peer);
-            String search0 = XMLLump.FORID_PREFIX + targetid;
-            best.checkTarget(search0);
+            best.findTarget(peer, globalbranch, targetid);
           }
+
           UIContainer branch = (UIContainer) rootpath.get(j);
           XMLLump peer = (XMLLump) branchmap.get(branch);
-          best.setContainer(peer);
-          best.checkTarget(XMLLump.FORID_PREFIX);
-          String search1 = XMLLump.FORID_PREFIX + split.prefix;
-          best.checkTarget(search1);
-          if (hassuffix) {
-            String search2 = XMLLump.FORID_PREFIX + targetid;
-            best.checkTarget(search2);
-          }
+          best.findTarget(peer, branch, targetid);
         }
       }
       if (best.bestfor != null) {
