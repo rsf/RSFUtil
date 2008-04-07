@@ -31,8 +31,8 @@ public class MessageTargetter {
       this.container = container;
     }
 
-    private void testID(String tofind, XMLLump peer, String id) {
-      if (tofind.startsWith(id)) {
+    private void testID(String tofind, XMLLump peer, String stringid, String id) {
+      if (tofind.startsWith(stringid)) {
         XMLLumpList forlumps = peer.downmap.headsForID(id);
         if (forlumps != null && forlumps.size() > 0) {
           bestfor = forlumps.lumpAt(0);
@@ -48,12 +48,12 @@ public class MessageTargetter {
       String tofind =  XMLLump.FORID_PREFIX + targetid;
       for (Iterator it = peer.downmap.iterator(); it.hasNext(); ) {
         String id = (String) it.next();
-        testID(tofind, peer, id);
+        testID(tofind, peer, id, id);
         if (id.startsWith(XMLLump.FORID_PREFIX)) {
           String fullID = container.getFullID();
           if (fullID.endsWith(":")) {
             testID(tofind, peer, XMLLump.FORID_PREFIX + container.getFullID() + 
-            id.substring(XMLLump.FORID_PREFIX.length()));
+            id.substring(XMLLump.FORID_PREFIX.length()), id);
           }
         }
       }
@@ -116,7 +116,9 @@ public class MessageTargetter {
 
           UIContainer branch = (UIContainer) rootpath.get(j);
           XMLLump peer = (XMLLump) branchmap.get(branch);
-          best.findTarget(peer, branch, targetid);
+          if (peer != null) {
+            best.findTarget(peer, branch, targetid);
+          }
         }
       }
       if (best.bestfor != null) {
