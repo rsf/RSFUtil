@@ -8,7 +8,6 @@ import java.util.Map;
 import uk.org.ponder.rsf.viewstate.StaticViewIDInferrer;
 import uk.org.ponder.rsf.viewstate.ViewParamUtil;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
-import uk.org.ponder.stringutil.StringUtil;
 
 /** The RSF default ViewIDInferrer which adopts a fixed strategy of inferring
  * the View ID from a request environment.
@@ -21,16 +20,14 @@ public class BasicViewIDInferrer implements StaticViewIDInferrer {
 
   private String viewIDspec = "@0";
   
-  public String inferViewID(String pathinfo, Map requestmap) {
+  public String inferViewID(String[] paths, Map requestmap) {
     if (viewIDspec.startsWith(ViewParameters.TRUNK_PARSE_PREFIX)) {
       int index = Integer.parseInt(viewIDspec.substring(ViewParameters.TRUNK_PARSE_PREFIX.length()));
       Object high0 = requestmap.get(ViewParamUtil.getAttrIndex(index, true));
       if (high0 != null) {
         return high0 instanceof String? (String)high0 : ((String[]) high0)[0];
       }
-      String[] segments = StringUtil.split(pathinfo, '/', false);
-      boolean slash0 = pathinfo.length() > 0 && pathinfo.charAt(0) == '/';
-      return segments[index + (slash0? 1 : 0)];
+      return index < paths.length? paths[index] : "";
     }
     else {
       Object attr = requestmap.get(viewIDspec);

@@ -51,7 +51,7 @@ public class RequestLauncher implements EarlyRequestParser {
   public static final String TEST_VIEW = "test";
 
   private Map multipartMap;
-  private String pathInfo;
+  private String[] pathInfo;
   private Map requestMap;
   private String requestType;
   private RSACBeanLocator rsacbl;
@@ -68,11 +68,11 @@ public class RequestLauncher implements EarlyRequestParser {
     this.multipartMap = multipartMap;
   }
 
-  public String getPathInfo() {
+  public String[] getPathInfo() {
     return pathInfo;
   }
 
-  public void setPathInfo(String pathInfo) {
+  public void setPathInfo(String[] pathInfo) {
     this.pathInfo = pathInfo;
   }
 
@@ -270,7 +270,7 @@ public class RequestLauncher implements EarlyRequestParser {
     this.context = context;
     this.singleshot = singleshot;
     multipartMap = new HashMap();
-    pathInfo = "/" + TEST_VIEW;
+    pathInfo = new String[] {TEST_VIEW};
     requestMap = new HashMap();
     requestType = EarlyRequestParser.RENDER_REQUEST;
     smc = (SAXalizerMappingContext) context.getBean("ELMappingContext");

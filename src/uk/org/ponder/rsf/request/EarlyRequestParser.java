@@ -42,10 +42,9 @@ public interface EarlyRequestParser {
   /** The parameter map from the request */
   public Map getRequestMap();
 
-  /** The pathinfo as returned from the request. This INCLUDES an initial
-   * slash but no final slash.
+  /** An array of pathinfo segments, which were delimited by the character /
    */
-  public String getPathInfo();
+  public String[] getPathInfo();
 
   /**
    * A factory method for a String encoding the nature of the current request
