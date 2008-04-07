@@ -32,6 +32,9 @@ public class ExceptionMessageProcessor implements MessageProcessor {
         && message.messagecodes[0].equals(CoreMessages.RAW_EXCEPTION_PLACEHOLDER) 
         && message.exception != null) {
       String emess = UniversalRuntimeException.unwrapException(message.exception).getMessage();
+      if (emess == null) {
+        emess = "";
+      }
       int delimpos = emess.indexOf(messageDelimiter);
       if (delimpos == -1) {
         handleRawException(message);
