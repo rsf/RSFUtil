@@ -9,10 +9,12 @@ import uk.org.ponder.beanutil.BeanResolver;
 import uk.org.ponder.mapping.ShellInfo;
 import uk.org.ponder.mapping.support.ConverterConverter;
 import uk.org.ponder.mapping.support.DataConverterRegistry;
+import uk.org.ponder.messageutil.MessageLocator;
 import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.UIBound;
 import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIForm;
+import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.request.EarlyRequestParser;
@@ -37,9 +39,13 @@ public class ValueFixer implements ComponentProcessor {
   private BeanLocator beanlocator;
   private BeanModelAlterer alterer;
   private RequestSubmittedValueCache rsvc;
-  // private ErrorStateManager errorStateManager;
   private boolean renderfossilized;
   private DataConverterRegistry dataConverterRegistry;
+  private MessageLocator messagelocator;
+
+  public void setMessageLocator(MessageLocator messagelocator) {
+    this.messagelocator = messagelocator;
+  }
 
   public void setBeanLocator(BeanLocator beanlocator) {
     this.beanlocator = beanlocator;
@@ -83,6 +89,20 @@ public class ValueFixer implements ComponentProcessor {
   }
 
   public void processComponent(UIComponent toprocesso) {
+    if (toprocesso instanceof UIMessage) {
+      UIMessage toprocess = (UIMessage) toprocesso;
+      if (toprocess.arguments != null) {
+        for (int i = 0; i < toprocess.arguments.length; ++ i) {
+          if (toprocess.arguments[i] instanceof ELReference) {
+            ELReference elref = (ELReference) toprocess.arguments[i];
+            String flatvalue = (String) alterer.getFlattenedValue(elref.value, beanlocator, String.class, null);
+            toprocess.arguments[i] = flatvalue;
+          }
+        }
+        toprocess.setValue(messagelocator.getMessage(toprocess.messagekeys,
+            toprocess.arguments));
+      }
+    }
     if (toprocesso instanceof UIBound) {
       UIBound toprocess = (UIBound) toprocesso;
       // If there is a value in the SVE, return it to the control.

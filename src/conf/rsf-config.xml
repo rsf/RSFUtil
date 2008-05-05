@@ -315,11 +315,6 @@
     <property name="fossilizedConverter" ref="fossilizedConverter"/>
   </bean>
 
-  <bean id="messageFixer"
-    class="uk.org.ponder.rsf.componentprocessor.MessageFixer">
-    <property name="messageLocator" ref="messageLocator" />
-  </bean>
-
   <bean id="viewParamsFixer"
     class="uk.org.ponder.rsf.componentprocessor.ViewParamsFixer">
     <property name="viewStateHandler" ref="viewStateHandler" />

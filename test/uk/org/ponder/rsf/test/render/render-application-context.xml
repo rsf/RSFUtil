@@ -12,4 +12,8 @@
   <bean id="messageSource" parent="messageSourceParent">
     <property name="basename" value="classpath:uk/org/ponder/rsf/test/render/messages" />
   </bean>
+  
+  <bean id="testString" class="java.lang.String">
+    <constructor-arg value="Referenced value"/>
+  </bean>
 </beans>
