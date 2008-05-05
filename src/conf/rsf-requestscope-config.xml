@@ -390,6 +390,7 @@ to intercept bindings -->
     <property name="renderFossilizedForms" ref="renderFossilizedForms" />
     <property name="formModel" ref="formModel" />
     <property name="dataConverterRegistry" ref="dataConverterRegistry" />
+    <property name="messageLocator" ref="messageLocator"/>
   </bean>
 
   <!-- End "fixer" beans" -->
@@ -409,7 +410,6 @@ to intercept bindings -->
         <ref bean="containmentFormFixer" />
         <ref bean="formFixer" />
         <ref bean="viewParamsFixer" />
-        <ref bean="messageFixer" />
         <ref bean="bindingFixer" />
         <ref bean="valueFixer" />
       </list>
