@@ -116,7 +116,8 @@ public class ValueFixer implements ComponentProcessor {
           Logger.log.info("Error resolving EL reference " + stripbinding
               + " for component with full ID " + toprocess.getFullID(), e);
         }
-        // If it was cached, we want to propagate the old "oldvalue" to the next request
+        // If it was cached, we want to propagate the old "oldvalue" to the next
+        // request
         if (hadcached) {
           modelvalue = sve.oldvalue;
         }
@@ -168,6 +169,16 @@ public class ValueFixer implements ComponentProcessor {
         ELReference ref = (ELReference) toprocess.markup;
         toprocess.markup = alterer.getBeanValue(ref.value, beanlocator, null);
       }
+      if (toprocess.resolver != null) {
+        // User may have directly supplied raw value + resolver, for example
+        // MessageKeys. Note that this function of ValueFixer is non-idempotent.
+        BeanResolver resolver = computeResolver(toprocess, beanlocator);
+        Object flatvalue = alterer.getFlattenedValue(null, toprocess.markup, toprocess.markup
+            .getClass(), resolver);
+        if (flatvalue != null) {
+          toprocess.markup = flatvalue;
+        }
+      }
     }
   }
 
@@ -179,13 +190,25 @@ public class ValueFixer implements ComponentProcessor {
    * encoded things like DateParsers to be used first class, although we REALLY
    * expect users to make transit beans.
    */
-  private BeanResolver computeResolver(UIBound toprocess, Object root) {
-    Object renderer = toprocess.resolver;
+  private BeanResolver computeResolver(UIComponent toprocess, Object root) {
+    Object renderer = toprocess instanceof UIBound ? ((UIBound) toprocess).resolver
+        : ((UIVerbatim) toprocess).resolver;
+    ELReference valuebinding = null;
+    UIBound bound = null;
+    if (toprocess instanceof UIBound) {
+      bound = (UIBound) toprocess;
+      valuebinding = bound.valuebinding;
+    }
+    else {
+      UIVerbatim toprocessv = (UIVerbatim) toprocess;
+      if (toprocessv.markup instanceof ELReference) {
+        valuebinding = (ELReference) toprocessv.markup;
+      }
+    }
 
     if (renderer == null) {
-      if (toprocess.valuebinding != null) {
-        ShellInfo shells = alterer.fetchShells(toprocess.valuebinding.value,
-            root, false);
+      if (valuebinding != null) {
+        ShellInfo shells = alterer.fetchShells(valuebinding.value, root, false);
 
         renderer = dataConverterRegistry.fetchConverter(shells);
       }
@@ -194,8 +217,8 @@ public class ValueFixer implements ComponentProcessor {
     if (renderer instanceof ELReference) {
       renderer = alterer.getBeanValue(((ELReference) renderer).value,
           beanlocator, null);
-      if (toprocess.darreshaper == null) {
-        toprocess.darreshaper = (ELReference) toprocess.resolver;
+      if (bound != null && bound.darreshaper == null) {
+        bound.darreshaper = (ELReference) bound.resolver;
       }
     }
     if (renderer == null)

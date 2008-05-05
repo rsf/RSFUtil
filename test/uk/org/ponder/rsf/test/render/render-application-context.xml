@@ -8,4 +8,8 @@
     <property name="baseDirectory" value="" />
     <property name="templateResourceBase" value="classpath:uk/org/ponder/rsf/test/render/" />
   </bean>
+  
+  <bean id="messageSource" parent="messageSourceParent">
+    <property name="basename" value="classpath:uk/org/ponder/rsf/test/render/messages" />
+  </bean>
 </beans>

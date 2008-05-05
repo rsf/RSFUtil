@@ -16,6 +16,12 @@ public class UIVerbatim extends UIComponent {
    */
   public Object markup;
   
+  /** A reference to an object, or an object that can be converted to, a 
+   * LeafRenderer or BeanResolver that can render the value above 
+   * to and from a String representation.
+   */
+  public Object resolver;
+  
   /** Construct a new UIVerbatim control, rendering raw unescaped markup to the client 
    *
    * @param parent The parent container to which the new control is to be attached.
@@ -33,5 +39,15 @@ public class UIVerbatim extends UIComponent {
     
     parent.addComponent(togo);
     return togo;
+  }
+  
+  /** Indicate that the "markup" field for this control is to be interpreted
+   * as a message key, to be looked up to a piece of markup in the associated
+   * message bundle.
+   */
+  
+  public UIVerbatim setMessageKey() {
+    this.resolver = new ELReference("#{messageLocator}");
+    return this;
   }
 }

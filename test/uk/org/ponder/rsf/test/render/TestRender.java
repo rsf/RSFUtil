@@ -6,7 +6,7 @@ package uk.org.ponder.rsf.test.render;
 import uk.org.ponder.rsf.bare.RenderResponse;
 import uk.org.ponder.rsf.bare.junit.MultipleRSFTests;
 
-/** Test for ID NPE RSF-71
+/** Test for ID NPE RSF-71, Verbatim RSF-85
  */
 
 public class TestRender extends MultipleRSFTests {
@@ -21,5 +21,6 @@ public class TestRender extends MultipleRSFTests {
     assertContains(response, "Test Message ID View");
     assertContains(response, "</div>");
     assertContains(response, "id=\"titleclosed\"");
+    assertContains(response, "<i style=\"color");
   }
 }
