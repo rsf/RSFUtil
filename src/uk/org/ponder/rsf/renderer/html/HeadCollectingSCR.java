@@ -8,11 +8,10 @@ import java.util.Set;
 
 import uk.org.ponder.rsf.renderer.ComponentRenderer;
 import uk.org.ponder.rsf.renderer.RenderUtil;
+import uk.org.ponder.rsf.renderer.TagRenderContext;
 import uk.org.ponder.rsf.renderer.scr.CollectingSCR;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.template.XMLLumpList;
-import uk.org.ponder.streamutil.write.PrintOutputStream;
-import uk.org.ponder.xml.XMLWriter;
 
 /**
  * A basic collector of &lt;head&gt; material for HTML pages. Will emit all
@@ -39,10 +38,11 @@ public class HeadCollectingSCR implements CollectingSCR {
     this.urlRewriteSCR = urlRewriteSCR;
   }
 
-  public int render(XMLLump lump, XMLLumpList collected, XMLWriter xmlw) {
-    PrintOutputStream pos = xmlw.getInternalWriter();
-    RenderUtil.dumpTillLump(lump.parent.lumps, lump.lumpindex,
-        lump.open_end.lumpindex + 1, pos);
+  public int render(XMLLumpList collected, TagRenderContext trc) {
+    if (!trc.iselide) {
+      RenderUtil.dumpTillLump(trc.uselump.parent.lumps, trc.uselump.lumpindex,
+        trc.uselump.open_end.lumpindex + 1, trc.pos);
+    }
     Set used = new HashSet();
     for (int i = 0; i < collected.size(); ++i) {
       XMLLump collump = collected.lumpAt(i);
@@ -61,13 +61,18 @@ public class HeadCollectingSCR implements CollectingSCR {
             used.add(rewritten);
         }
       }
-      // TODO: equivalent of TagRenderContext for SCRs
-      urlRewriteSCR.render(collump, xmlw);
+      TagRenderContext temptrc = 
+        new TagRenderContext(trc.attrcopy, collump, collump.open_end, collump.close_tag, 
+            trc.pos, trc.xmlw, collump.lumpindex, false);
+      urlRewriteSCR.render(temptrc);
       RenderUtil.dumpTillLump(collump.parent.lumps,
-          collump.open_end.lumpindex + 1, collump.close_tag.lumpindex + 1, pos);
-      pos.println();
+          collump.open_end.lumpindex + 1, collump.close_tag.lumpindex + 1, trc.pos);
+      trc.pos.println();
     }
-    return ComponentRenderer.NESTING_TAG;
+    if (trc.iselide) {
+      trc.dumpTemplateBody();
+    }
+    return trc.iselide? ComponentRenderer.LEAF_TAG : ComponentRenderer.NESTING_TAG;
   }
 
 }

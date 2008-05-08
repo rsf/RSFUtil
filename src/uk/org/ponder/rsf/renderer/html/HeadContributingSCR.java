@@ -3,10 +3,10 @@
  */
 package uk.org.ponder.rsf.renderer.html;
 
+import uk.org.ponder.rsf.renderer.TagRenderContext;
 import uk.org.ponder.rsf.renderer.scr.NullRewriteSCR;
 import uk.org.ponder.rsf.renderer.scr.StaticComponentRenderer;
 import uk.org.ponder.rsf.template.XMLLump;
-import uk.org.ponder.xml.XMLWriter;
 
 /** Annotates a piece of "head matter" in a multi-file template set that
  * needs to be "collected" into the HTML &lt;head&gt; of the final
@@ -24,7 +24,7 @@ public class HeadContributingSCR implements StaticComponentRenderer {
     return CONTRIBUTE_NAME;
   }
 
-  public int render(XMLLump lump, XMLWriter xmlw) {
-    return NullRewriteSCR.instance.render(lump, xmlw);
+  public int render(TagRenderContext trc) {
+    return NullRewriteSCR.instance.render(trc);
   }
 }
