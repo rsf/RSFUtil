@@ -9,14 +9,12 @@ import java.util.Map;
 import uk.org.ponder.htmlutil.HTMLConstants;
 import uk.org.ponder.rsf.renderer.ComponentRenderer;
 import uk.org.ponder.rsf.renderer.RenderUtil;
+import uk.org.ponder.rsf.renderer.TagRenderContext;
 import uk.org.ponder.rsf.renderer.scr.BasicSCR;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.view.BasedViewTemplate;
 import uk.org.ponder.rsf.viewstate.ContextURLProvider;
 import uk.org.ponder.rsf.viewstate.URLRewriter;
-import uk.org.ponder.streamutil.write.PrintOutputStream;
-import uk.org.ponder.xml.XMLUtil;
-import uk.org.ponder.xml.XMLWriter;
 
 /** Performs a URL-rewrite for a template-relative
  * "resource" URL (e.g. image or CSS) as found in a template.
@@ -101,30 +99,21 @@ public class URLRewriteSCR implements BasicSCR {
     return attrcopy;
   }
   
-  public int render(XMLLump lump, XMLWriter xmlw) {
-    PrintOutputStream pos = xmlw.getInternalWriter();
-    Map newattrs = null;
-    XMLLump close = lump.close_tag;
-    XMLLump endopen = lump.open_end;
-    newattrs = rewriteURLs(lump, newattrs);
+  public int render(TagRenderContext trc) {
+    Map newattrs = rewriteURLs(trc.uselump, trc.attrcopy);
    
-    xmlw.writeRaw(lump.parent.buffer, lump.start, lump.length);
+    trc.openTag();
     if (newattrs == null) {
-      RenderUtil.dumpTillLump(lump.parent.lumps, lump.lumpindex + 1, endopen.lumpindex + 1, pos);
+      if (!trc.iselide) {
+        RenderUtil.dumpTillLump(trc.uselump.parent.lumps, 
+          trc.uselump.lumpindex + 1, trc.endopen.lumpindex + 1, trc.pos);
+      }
     }
     else {
       newattrs.remove(XMLLump.ID_ATTRIBUTE);
-      XMLUtil.dumpAttributes(newattrs, xmlw);
-      if (endopen == close) {
-        pos.print("/>");
+      trc.replaceAttributesOpen();
       }
-      else {
-        pos.print(">");
-//        RenderUtil.dumpTillLump(lumps, endopen.lumpindex + 1,
-//            close.lumpindex + 1, pos);
-      }
-    }
-    return ComponentRenderer.NESTING_TAG;
+    return trc.iselide? ComponentRenderer.LEAF_TAG : ComponentRenderer.NESTING_TAG;
   }
 
 }

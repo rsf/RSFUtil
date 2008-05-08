@@ -41,6 +41,12 @@ public class TagRenderContext {
     this.iselide = iselide;
   }
 
+  public void openTag() {
+    if (!iselide) {
+      pos.write(uselump.parent.buffer, uselump.start, uselump.length);
+    }
+  }
+  
   public void closeTag() {
     if (!iselide) {
       pos.print("</");
@@ -86,7 +92,6 @@ public class TagRenderContext {
     if (!iselide) {
       XMLUtil.dumpAttributes(attrcopy, xmlw);
     }
-
     dumpTemplateBody();
   }
 

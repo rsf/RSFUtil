@@ -9,11 +9,10 @@ import java.util.Iterator;
 
 import uk.org.ponder.rsf.renderer.ComponentRenderer;
 import uk.org.ponder.rsf.renderer.RenderUtil;
+import uk.org.ponder.rsf.renderer.TagRenderContext;
 import uk.org.ponder.rsf.template.XMLLump;
-import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.xml.NameValue;
 import uk.org.ponder.xml.XMLUtil;
-import uk.org.ponder.xml.XMLWriter;
 
 /** Class encapsulating a "static" (i.e. independent of any producer
  * components) rewriting operation on a tag, which is "flat" - that is, 
@@ -74,38 +73,32 @@ public class FlatSCR implements BasicSCR {
     return values.iterator();
   }
  
-  public int render(XMLLump lump, XMLWriter xmlw) {
-    PrintOutputStream pos = xmlw.getInternalWriter();
+  public int render(TagRenderContext trc) {
     
-    //XMLLump lump = lumps[lumpindex];
-    XMLLump close = lump.close_tag;
-    XMLLump endopen = lump.open_end;
     if (tag != null) {
-      pos.print("<").print(tag).print(" ");
+      trc.pos.print("<").print(tag).print(" ");
     }
     else {
-      pos.write(lump.parent.buffer, lump.start, lump.length);
+      trc.pos.write(trc.uselump.parent.buffer, trc.uselump.start, trc.uselump.length);
     }
-    HashMap newattrs = new HashMap();
-    newattrs.putAll(lump.attributemap);
-    newattrs.putAll(attributemap);
-    newattrs.remove(XMLLump.ID_ATTRIBUTE);
-    XMLUtil.dumpAttributes(newattrs, xmlw);
-    if (endopen == close && body == null) {
-      pos.print("/>");
+    trc.attrcopy.putAll(attributemap);
+    trc.attrcopy.remove(XMLLump.ID_ATTRIBUTE);
+    XMLUtil.dumpAttributes(trc.attrcopy, trc.xmlw);
+    if (trc.isEmpty() && body == null) {
+      trc.pos.print("/>");
     }
     else {
-      pos.print(">");
+      trc.pos.print(">");
       if (tag_type == ComponentRenderer.LEAF_TAG) {
         if (body != null && body_strategy.equals(REPLACE_BODY)) {
-          pos.print(body);
-          pos.write(close.parent.buffer, close.start, close.length);
+          trc.pos.print(body);
+          trc.pos.write(trc.close.parent.buffer, trc.close.start, trc.close.length);
         }
         else {
           if (body != null) { 
-            pos.print(body);
-            RenderUtil.dumpTillLump(lump.parent.lumps, endopen.lumpindex + 1,
-            close.lumpindex + 1, pos);
+            trc.pos.print(body);
+            RenderUtil.dumpTillLump(trc.uselump.parent.lumps, trc.endopen.lumpindex + 1,
+             trc.close.lumpindex + 1, trc.pos);
           }
         } // end if complete body replacement
       } // end if leaf tag

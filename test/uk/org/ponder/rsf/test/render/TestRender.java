@@ -23,5 +23,6 @@ public class TestRender extends MultipleRSFTests {
     assertContains(response, "id=\"titleclosed\"");
     assertContains(response, "<i style=\"color");
     assertContains(response, "Referenced value");
+    assertContains(response, "Remanent text");
   }
 }

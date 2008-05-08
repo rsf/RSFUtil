@@ -4,8 +4,7 @@
 package uk.org.ponder.rsf.renderer.scr;
 
 import uk.org.ponder.rsf.renderer.ComponentRenderer;
-import uk.org.ponder.rsf.template.XMLLump;
-import uk.org.ponder.xml.XMLWriter;
+import uk.org.ponder.rsf.renderer.TagRenderContext;
 
 /** Ignore SCR tag, which will cause the target tag and all children to
  * be removed from rendered output.
@@ -21,7 +20,7 @@ public class IgnoreRewriteSCR implements BasicSCR {
     return "ignore";
   }
 
-  public int render(XMLLump lump, XMLWriter xmlw) {
+  public int render(TagRenderContext trc) {
     return ComponentRenderer.LEAF_TAG;
   }
 

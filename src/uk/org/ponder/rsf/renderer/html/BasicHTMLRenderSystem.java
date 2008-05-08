@@ -105,13 +105,26 @@ public class BasicHTMLRenderSystem implements RenderSystem {
     XMLLump payload = payloadlist == null ? null
         : payloadlist.lumpAt(0);
 
+    boolean iselide = lump.rsfID.startsWith(XMLLump.ELISION_PREFIX);
+    
+    XMLLump endopen = outerendopen;
+    XMLLump close = outerclose;
+    XMLLump uselump = lump;
+    
+    HashMap attrcopy = new HashMap();
+    attrcopy.putAll(uselump.attributemap);
+    attrcopy.remove(XMLLump.ID_ATTRIBUTE);
+    
+    TagRenderContext rendercontext = new TagRenderContext(attrcopy, uselump,
+        endopen, close, rsc.pos, rsc.xmlw, nextpos, iselide);
+    
     // if there is no peer component, it might still be a static resource holder
     // that needs URLs rewriting.
     // we assume there is no payload component here, since there is no producer
     // ID that might govern selection. So we use "outer" indices.
     if (torendero == null) {
-      if (lump.rsfID.startsWith(XMLLump.SCR_PREFIX)) {
-        String scrname = lump.rsfID.substring(XMLLump.SCR_PREFIX.length());
+      if (lump.rsfID.indexOf(XMLLump.SCR_PREFIX) == (iselide? 1 : 0)) {
+        String scrname = lump.rsfID.substring(XMLLump.SCR_PREFIX.length() + (iselide? 1 : 0));
         StaticComponentRenderer scr = scrc.getSCR(scrname);
         if (scr == null) {
           Logger.log
@@ -119,7 +132,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
                   + scrname + " at lump " + lump.toString());
           scr = NullRewriteSCR.instance;
         }
-        int tagtype = RenderUtil.renderSCR(scr, lump, rsc.xmlw, rsc.collecteds);
+        int tagtype = RenderUtil.renderSCR(scr, rsc.collecteds, rendercontext);
         nextpos = tagtype == ComponentRenderer.LEAF_TAG ? outerclose.lumpindex + 1
             : outerendopen.lumpindex + 1;
       }
@@ -133,9 +146,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
     else {
       // else there IS a component and we are going to render it. First make
       // sure we render any preamble.
-      XMLLump endopen = outerendopen;
-      XMLLump close = outerclose;
-      XMLLump uselump = lump;
+
       if (payload != null) {
         endopen = payload.open_end;
         close = payload.close_tag;
@@ -144,18 +155,12 @@ public class BasicHTMLRenderSystem implements RenderSystem {
         lumpindex = payload.lumpindex;
       }
 
-      HashMap attrcopy = new HashMap();
-      attrcopy.putAll(uselump.attributemap);
       rsc.IDassigner.adjustForID(attrcopy, torendero);
       decoratormanager.decorate(torendero.decorators, uselump.getTag(),
           attrcopy);
-      boolean iselide = lump.rsfID.startsWith(XMLLump.ELISION_PREFIX);
-      TagRenderContext rendercontext = new TagRenderContext(attrcopy, uselump,
-          endopen, close, rsc.pos, rsc.xmlw, nextpos, iselide);
+
       // ALWAYS dump the tag name, this can never be rewritten. (probably?!)
-      if (!iselide) {
-        rsc.pos.write(uselump.parent.buffer, uselump.start, uselump.length);
-      }
+      rendercontext.openTag();
 
       if (torendero instanceof UIBasicListMember) {
         torendero = RenderUtil.resolveListMember(rsc.view,

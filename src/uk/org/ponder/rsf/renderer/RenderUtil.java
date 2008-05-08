@@ -174,10 +174,10 @@ public class RenderUtil {
     return null;
   }
 
-  public static int renderSCR(StaticComponentRenderer scr, XMLLump lump,
-      XMLWriter xmlw, XMLLumpMMap collecteds) {
+  public static int renderSCR(StaticComponentRenderer scr, XMLLumpMMap collecteds,
+      TagRenderContext trc) {
     if (scr instanceof BasicSCR) {
-      return ((BasicSCR) scr).render(lump, xmlw);
+      return ((BasicSCR) scr).render(trc);
     }
     else {
       CollectingSCR collector = (CollectingSCR) scr;
@@ -189,7 +189,7 @@ public class RenderUtil {
           collected.addAll(thiscollect);
         }
       }
-      return collector.render(lump, collected, xmlw);
+      return collector.render(collected, trc);
     }
   }
 
@@ -201,7 +201,5 @@ public class RenderUtil {
     Collections.sort(sames, XMLLumpComparator.instance());
     return sames.get(0) == lump;
   }
-  
-  
   
 }

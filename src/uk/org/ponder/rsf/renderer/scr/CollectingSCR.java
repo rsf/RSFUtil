@@ -3,9 +3,9 @@
  */
 package uk.org.ponder.rsf.renderer.scr;
 
+import uk.org.ponder.rsf.renderer.TagRenderContext;
 import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.template.XMLLumpList;
-import uk.org.ponder.xml.XMLWriter;
 
 /** A static component renderer that can incorporate markup "collected" from
  * elsewhere in the template tree. 
@@ -23,5 +23,5 @@ public interface CollectingSCR extends StaticComponentRenderer {
    * @param collected The list of XMLLump items corresponding to the collected
    * markup that should be incorporated into the rendering of the peering tag.
    */
-  public int render(XMLLump lump, XMLLumpList collected, XMLWriter xmlw);
+  public int render(XMLLumpList collected, TagRenderContext trc);
 }
