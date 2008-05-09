@@ -99,9 +99,9 @@ public class ValueFixer implements ComponentProcessor {
             toprocess.arguments[i] = flatvalue;
           }
         }
-        toprocess.setValue(messagelocator.getMessage(toprocess.messagekeys,
-            toprocess.arguments));
       }
+      toprocess.setValue(messagelocator.getMessage(toprocess.messagekeys,
+              toprocess.arguments));
     }
     if (toprocesso instanceof UIBound) {
       UIBound toprocess = (UIBound) toprocesso;
