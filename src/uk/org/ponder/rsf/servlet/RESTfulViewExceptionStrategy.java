@@ -13,6 +13,7 @@ import uk.org.ponder.rsf.viewstate.AnyViewParameters;
 import uk.org.ponder.rsf.viewstate.NoViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParametersPredicate;
+import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.UniversalRuntimeException;
 
 public class RESTfulViewExceptionStrategy implements ViewExceptionStrategy {
@@ -33,9 +34,11 @@ public class RESTfulViewExceptionStrategy implements ViewExceptionStrategy {
     if (viewParametersPredicate.accept(viewparams)) {
       try {
         if (e instanceof SecurityException || e instanceof PermissionException) {
+          Logger.log.info("Sending HTTP status 401 for exception ", e);
           httpServletResponse.sendError(401, e.getLocalizedMessage());
         }
         else {
+          Logger.log.info("Sending HTTP status 500 for exception ", e);
           httpServletResponse.sendError(500, e.getLocalizedMessage());
         }
         try { // Jetty will refuse to allow access to Writer after sendError 
