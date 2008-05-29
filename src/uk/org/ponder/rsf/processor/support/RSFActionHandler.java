@@ -224,9 +224,11 @@ public class RSFActionHandler implements ActionHandler, ErrorHandler {
       if (ariresult == null || ariresult.resultingView == null
           || e instanceof IllegalStateException) {
         ariresult = new ARIResult();
-        ariresult.propagateBeans = ARIResult.FLOW_END;
+        ariresult.propagateBeans 
+          = viewparams.flowtoken == null? ARIResult.FLOW_END : ARIResult.PROPAGATE;
 
         ViewParameters defaultparameters = viewparams.copyBase();
+        defaultparameters.flowtoken = viewparams.flowtoken;
         ariresult.resultingView = defaultparameters;
       }
     }
