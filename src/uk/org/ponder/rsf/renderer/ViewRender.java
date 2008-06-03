@@ -57,6 +57,8 @@ public class ViewRender {
   private Map branchmap;
   private XMLLumpMMap collected = new XMLLumpMMap();
 
+  private Map rewritemap = new HashMap();
+  
   private MessageFlyweight messageFlyweight;
   private XMLLump messagelump;
 
@@ -158,7 +160,7 @@ public class ViewRender {
     // will be dynamically "invented" around the tree wherever there are messages
     messageFlyweight = new MessageFlyweight(view.viewroot);
     branchmap = BranchResolver.resolveBranches(globalmap, view.viewroot,
-        roott.rootlump);
+        roott.rootlump, rewritemap);
     view.viewroot.remove(messageFlyweight.rsfMessages);    
     messagelump = (XMLLump) branchmap.get(messageFlyweight.rsfMessages);
     

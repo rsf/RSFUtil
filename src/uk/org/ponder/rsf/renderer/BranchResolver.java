@@ -4,6 +4,7 @@
 package uk.org.ponder.rsf.renderer;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.log4j.Level;
@@ -31,19 +32,22 @@ public class BranchResolver {
   private HashMap branchmap = new HashMap();
 
   private XMLLumpMMap globalmap;
+  
+  private Map rewritemap;
 
   private static class BestMatch {
     public XMLLump bestlump;
     public int deficit = Integer.MAX_VALUE;
   }
 
-  public BranchResolver(XMLLumpMMap globalmap) {
+  public BranchResolver(XMLLumpMMap globalmap, Map rewritemap) {
     this.globalmap = globalmap;
+    this.rewritemap = rewritemap;
   }
 
   /** Returns a map of UIBranchContainer to XMLLump */
   public static Map resolveBranches(XMLLumpMMap globalmap,
-      UIBranchContainer basecontainer, XMLLump parentlump) {
+      UIBranchContainer basecontainer, XMLLump parentlump, Map rewritemap) {
     boolean debug = false;
     Level oldlevel = null;
     if (basecontainer instanceof ViewRoot) {
@@ -54,7 +58,7 @@ public class BranchResolver {
       Logger.log.setLevel(Level.DEBUG);
     }
     try {
-      BranchResolver resolver = new BranchResolver(globalmap);
+      BranchResolver resolver = new BranchResolver(globalmap, rewritemap);
       resolver.branchmap.put(basecontainer, parentlump);
       resolver.resolveRecurse(basecontainer, parentlump);
       return resolver.branchmap;
@@ -88,6 +92,22 @@ public class BranchResolver {
         if (resolved != null) {
           branchmap.put(branch, resolved);
           resolveRecurse(branch, resolved);
+        }
+      }
+      
+      UIComponent component = flatchildren[i];
+      
+    }
+    for (Iterator downit = parentlump.downmap.iterator(); downit.hasNext();) {
+      String id = (String) downit.next();
+      if (!SplitID.isSplit(id)) {
+        XMLLumpList lumps = parentlump.downmap.headsForID(id);
+        for (int i = 0; i < lumps.size(); ++ i) {
+          XMLLump lump = lumps.lumpAt(i);
+          String lumpid = (String) lump.attributemap.get("id");
+          if (lump.rsfID != null) {
+            UIComponent  
+          }
         }
       }
     }

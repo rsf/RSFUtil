@@ -24,6 +24,7 @@ import uk.org.ponder.rsf.template.XMLLump;
 import uk.org.ponder.rsf.template.XMLLumpComparator;
 import uk.org.ponder.rsf.template.XMLLumpList;
 import uk.org.ponder.rsf.template.XMLLumpMMap;
+import uk.org.ponder.rsf.template.XMLViewTemplate;
 import uk.org.ponder.rsf.view.View;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.stringutil.CharWrap;
@@ -149,6 +150,10 @@ public class RenderUtil {
 
   }
 
+  public static String rewriteKey(XMLViewTemplate template, String id) {
+    return template.fullpath + id;
+  }
+  
   public static UIComponent resolveListMember(View view, UIBasicListMember torendero) {
     UIComponent parent = view.getComponent(torendero.parentFullID);
     UIBoundList boundlist = parent instanceof UISelect? ((UISelect) parent).optionnames : (UIBoundList)parent;
