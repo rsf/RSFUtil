@@ -3,6 +3,8 @@
  */
 package uk.org.ponder.rsf.renderer;
 
+import java.util.Map;
+
 import uk.org.ponder.rsf.template.XMLLumpMMap;
 import uk.org.ponder.rsf.view.View;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
@@ -32,16 +34,18 @@ public class RenderSystemContext {
   * a value to outgoing XML <code>id</code> attributes.*/
   public IDAssigner IDassigner;
   public XMLLumpMMap collecteds;
+  public Map idrewritemap;
 
   public RenderSystemContext(boolean debugrender, View view,
-      PrintOutputStream pos, XMLWriter xmlw, IDAssigner dassigner,
-      XMLLumpMMap collecteds) {
+      PrintOutputStream pos, XMLWriter xmlw, IDAssigner IDassigner,
+      XMLLumpMMap collecteds, Map idrewritemap) {
     this.debugrender = debugrender;
     this.view = view;
     this.pos = pos;
     this.xmlw = xmlw;
-    IDassigner = dassigner;
+    this.IDassigner = IDassigner;
     this.collecteds = collecteds;
+    this.idrewritemap = idrewritemap;
   }
 
 }

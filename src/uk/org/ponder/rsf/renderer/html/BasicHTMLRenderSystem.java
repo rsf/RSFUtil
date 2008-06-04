@@ -39,6 +39,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
   private StaticRendererCollection scrc;
   private DecoratorManager decoratormanager;
   private ComponentRenderer componentRenderer;
+  private IDRelationRewriter idRelationRewriter = new IDRelationRewriter();
 
   public void setComponentRenderer(ComponentRenderer componentRenderer) {
     this.componentRenderer = componentRenderer;
@@ -117,6 +118,8 @@ public class BasicHTMLRenderSystem implements RenderSystem {
     
     TagRenderContext rendercontext = new TagRenderContext(attrcopy, uselump,
         endopen, close, rsc.pos, rsc.xmlw, nextpos, iselide);
+    
+    idRelationRewriter.rewrite(rsc.idrewritemap, rendercontext);
     
     // if there is no peer component, it might still be a static resource holder
     // that needs URLs rewriting.

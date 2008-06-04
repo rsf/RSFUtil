@@ -5,15 +5,18 @@ package uk.org.ponder.rsf.renderer;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import uk.org.ponder.arrayutil.ArrayUtil;
+import uk.org.ponder.arrayutil.ListUtil;
 import uk.org.ponder.rsf.components.ParameterList;
 import uk.org.ponder.rsf.components.UIBasicListMember;
 import uk.org.ponder.rsf.components.UIBinding;
 import uk.org.ponder.rsf.components.UIBoundList;
 import uk.org.ponder.rsf.components.UIBoundString;
 import uk.org.ponder.rsf.components.UIComponent;
+import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.renderer.scr.BasicSCR;
@@ -150,8 +153,19 @@ public class RenderUtil {
 
   }
 
-  public static String rewriteKey(XMLViewTemplate template, String id) {
+  public static String getRewriteKey(XMLViewTemplate template, String id) {
     return template.fullpath + id;
+  }
+  
+  public static UIComponent fetchComponent(UIContainer basecontainer,
+      String id) {
+    while (basecontainer != null) {
+      UIComponent togo = basecontainer.getComponent(id);
+      if (togo != null)
+        return togo;
+      basecontainer = basecontainer.parent;
+    }
+    return null;
   }
   
   public static UIComponent resolveListMember(View view, UIBasicListMember torendero) {
@@ -205,6 +219,17 @@ public class RenderUtil {
     sames.addAll(parent.downmap.headsForID(lookname));
     Collections.sort(sames, XMLLumpComparator.instance());
     return sames.get(0) == lump;
+  }
+
+  static List fetchComponents(UIContainer basecontainer, String id) {
+    Object togo = null;
+    while (basecontainer != null) {
+      togo = basecontainer.getComponents(id);
+      if (togo != null)
+        break;
+      basecontainer = basecontainer.parent;
+    }
+    return togo == null? null : (togo instanceof List? (List)togo : ListUtil.instance(togo));
   }
   
 }

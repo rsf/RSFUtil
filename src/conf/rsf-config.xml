@@ -378,6 +378,12 @@
 
   <bean parent="templateParseInterceptorParent">
     <property name="value">
+      <bean class="uk.org.ponder.rsf.renderer.html.IDRelationRewriter" />
+    </property>
+  </bean>
+
+  <bean parent="templateParseInterceptorParent">
+    <property name="value">
       <bean class="uk.org.ponder.rsf.renderer.html.FormRelabellingTPI" />
     </property>
   </bean>

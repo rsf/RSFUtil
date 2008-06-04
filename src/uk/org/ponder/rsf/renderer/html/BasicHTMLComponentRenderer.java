@@ -122,7 +122,7 @@ public class BasicHTMLComponentRenderer implements ComponentRenderer {
         }
         else {
           String value = ((UIBoundString) torender).getValue();
-          if (trc.uselump.textEquals("<textarea ")) {
+          if (trc.uselump.isTag("textarea")) {
             if (UITypes.isPlaceholder(value) && torender.willinput) {
               // FORCE a blank value for input components if nothing from
               // model, if input was intended.
@@ -130,7 +130,7 @@ public class BasicHTMLComponentRenderer implements ComponentRenderer {
             }
             trc.rewriteLeaf(value);
           }
-          else if (trc.uselump.textEquals("<input ")) {
+          else if (trc.uselump.isTag("input")) {
             if (torender.willinput || !UITypes.isPlaceholder(value)) {
               attrcopy.put("value", value);
             }
@@ -153,7 +153,7 @@ public class BasicHTMLComponentRenderer implements ComponentRenderer {
         // TODO: This is an irregularity, should probably remove for 0.8
         attrcopy.put("id", select.selection.getFullID());
       }
-      boolean ishtmlselect = trc.uselump.textEquals("<select ");
+      boolean ishtmlselect = trc.uselump.isTag("select");
       if (select.selection instanceof UIBoundList && ishtmlselect) {
         attrcopy.put("multiple", "multiple");
       }

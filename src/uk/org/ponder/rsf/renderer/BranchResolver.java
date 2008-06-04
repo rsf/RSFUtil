@@ -91,11 +91,14 @@ public class BranchResolver {
         }
         if (resolved != null) {
           branchmap.put(branch, resolved);
+          String id = (String) resolved.attributemap.get("id");
+          if (id != null) {
+            rewritemap.put(RenderUtil.getRewriteKey(parentlump.parent, id), branch.getFullID());
+          }
+
           resolveRecurse(branch, resolved);
         }
       }
-      
-      UIComponent component = flatchildren[i];
       
     }
     for (Iterator downit = parentlump.downmap.iterator(); downit.hasNext();) {
@@ -106,7 +109,8 @@ public class BranchResolver {
           XMLLump lump = lumps.lumpAt(i);
           String lumpid = (String) lump.attributemap.get("id");
           if (lump.rsfID != null) {
-            UIComponent  
+            UIComponent resolved = RenderUtil.fetchComponent(basecontainer, lump.rsfID);
+            rewritemap.put(RenderUtil.getRewriteKey(parentlump.parent, lumpid), resolved.getFullID());
           }
         }
       }
