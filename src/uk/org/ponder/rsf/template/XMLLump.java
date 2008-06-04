@@ -81,6 +81,11 @@ public class XMLLump {
     endmap.put(ID, lump);
   }
   
+  public boolean isTag(String tag) {
+    return parent.buffer[start] == '<' && parent.buffer[start + length - 1] == ' '
+       && ArrayUtil.equals(tag, parent.buffer, start + 1, length - 2);
+  }
+  
   public boolean textEquals(String tocheck) {
     return ArrayUtil.equals(tocheck, parent.buffer, start, length);
   }

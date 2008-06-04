@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import uk.org.ponder.arrayutil.ListUtil;
 import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIComponent;
@@ -57,7 +56,7 @@ public class ViewRender {
   private Map branchmap;
   private XMLLumpMMap collected = new XMLLumpMMap();
 
-  private Map rewritemap = new HashMap();
+  private Map idrewritemap = new HashMap();
   
   private MessageFlyweight messageFlyweight;
   private XMLLump messagelump;
@@ -160,7 +159,7 @@ public class ViewRender {
     // will be dynamically "invented" around the tree wherever there are messages
     messageFlyweight = new MessageFlyweight(view.viewroot);
     branchmap = BranchResolver.resolveBranches(globalmap, view.viewroot,
-        roott.rootlump, rewritemap);
+        roott.rootlump, idrewritemap);
     view.viewroot.remove(messageFlyweight.rsfMessages);    
     messagelump = (XMLLump) branchmap.get(messageFlyweight.rsfMessages);
     
@@ -173,7 +172,7 @@ public class ViewRender {
     this.pos = pos;
     this.xmlw = new XMLWriter(pos);
     rsc = new RenderSystemContext(debugrender, view, pos, xmlw, IDassigner,
-        collected);
+        collected, idrewritemap);
     rendereddeadletters = false;
     if (debugrender) {
       debugGlobalTargets();
@@ -232,7 +231,7 @@ public class ViewRender {
         // at this component, and process them in order, looking them up in
         // the forward map, which must ALSO be here.
         String prefix = SplitID.getPrefix(id); 
-        List children = fetchComponents(basecontainer, prefix);
+        List children = RenderUtil.fetchComponents(basecontainer, prefix);
         // these are all children with the same prefix, which will be rendered
         // synchronously.
         if (children != null) {
@@ -411,24 +410,7 @@ public class ViewRender {
       return messagerenderer.renderMessage(basecontainer, 
           (String) lump.attributemap.get("id"), key);
     }
-    while (basecontainer != null) {
-      UIComponent togo = basecontainer.getComponent(id);
-      if (togo != null)
-        return togo;
-      basecontainer = basecontainer.parent;
-    }
-    return null;
-  }
-
-  private static List fetchComponents(UIContainer basecontainer, String id) {
-    Object togo = null;
-    while (basecontainer != null) {
-      togo = basecontainer.getComponents(id);
-      if (togo != null)
-        break;
-      basecontainer = basecontainer.parent;
-    }
-    return togo == null? null : (togo instanceof List? (List)togo : ListUtil.instance(togo));
+    return RenderUtil.fetchComponent(basecontainer, id);
   }
 
   private XMLLump findChild(XMLLump sourcescope, UIComponent child) {
