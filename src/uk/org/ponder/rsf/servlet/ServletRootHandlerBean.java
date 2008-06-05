@@ -77,7 +77,7 @@ public class ServletRootHandlerBean extends RootHandlerBeanBase {
   public static PrintOutputStream setupResponseWriter(HttpServletRequest request, 
        HttpServletResponse response, String contenttype) {
     try {
-      response.setContentType(contenttype);
+      //response.setContentType(contenttype);
       // response.setContentType("application/xhtml+xml; charset=UTF-8");
 
       ServletResponseWriter srw = new ServletResponseWriter(response);
@@ -95,7 +95,7 @@ public class ServletRootHandlerBean extends RootHandlerBeanBase {
       }
 
       String responseencoding = response.getCharacterEncoding();
-      response.setHeader("Accept", acceptHeader);
+      //response.setHeader("Accept", acceptHeader);
       return pos;
     }
     catch (Exception ioe) {
