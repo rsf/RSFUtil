@@ -9,6 +9,8 @@ import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
+import uk.org.ponder.rsf.components.UIOutputMany;
+import uk.org.ponder.rsf.components.UISelect;
 import uk.org.ponder.rsf.components.UIVerbatim;
 import uk.org.ponder.rsf.view.ComponentChecker;
 import uk.org.ponder.rsf.view.ViewComponentProducer;
@@ -31,5 +33,11 @@ public class TestProducer implements ViewComponentProducer {
       UIBranchContainer branch = UIBranchContainer.make(tofill, "row:");
       UIOutput.make(branch, "target");
     }
+    String[] choices = {"1", "2", "3", "4", "5"};
+    UISelect select = UISelect.make(tofill, "select-1", choices, choices, "2", false);
+    select.groupnames = UIOutputMany.make(new String[] {null, "", "A", "A"});
+    
+    UISelect select2 = UISelect.make(tofill, "select-2", choices, choices, "2", false);
+    select2.groupnames = UIOutputMany.make(new String[] {"B", "B", "B", "B", "B"});
   }
 }

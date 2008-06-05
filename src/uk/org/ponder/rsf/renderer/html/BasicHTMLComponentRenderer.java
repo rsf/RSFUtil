@@ -33,6 +33,7 @@ import uk.org.ponder.rsf.view.View;
 import uk.org.ponder.streamutil.StreamCopyUtil;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.stringutil.StringList;
+import uk.org.ponder.stringutil.StringUtil;
 import uk.org.ponder.util.Constants;
 import uk.org.ponder.xml.XMLUtil;
 import uk.org.ponder.xml.XMLWriter;
@@ -166,11 +167,25 @@ public class BasicHTMLComponentRenderer implements ComponentRenderer {
       }
       XMLUtil.dumpAttributes(attrcopy, xmlw);
       if (ishtmlselect) {
-        pos.print(">");
+        pos.print(">\n");
         String[] values = select.optionlist.getValue();
         String[] names = select.optionnames == null ? values
             : select.optionnames.getValue();
-        for (int i = 0; i < names.length; ++i) {
+        String[] groups = select.groupnames == null? null : select.groupnames.getValue();
+        String lastgroup = "";
+        for (int i = 0; i < values.length; ++i) {
+          String thisgroup = groups == null? null: i < groups.length? groups[i] : null;
+          if (thisgroup == null) thisgroup = "";
+          boolean change = !thisgroup.equals(lastgroup);
+          if (change) {
+            if (!lastgroup.equals("")) {
+              pos.println("</optgroup>");
+            }
+            if (!thisgroup.equals("")) {
+              pos.println("<optgroup label=\"" + thisgroup + "\">");
+            }
+          }
+          
           pos.print("<option value=\"");
           String value = values[i];
           if (value == null)
@@ -182,6 +197,10 @@ public class BasicHTMLComponentRenderer implements ComponentRenderer {
           pos.print("\">");
           xmlw.write(names[i]);
           pos.print("</option>\n");
+          lastgroup = thisgroup;
+        }
+        if (!lastgroup.equals("")) {
+          pos.println("</optgroup>");
         }
         trc.closeTag();
       }

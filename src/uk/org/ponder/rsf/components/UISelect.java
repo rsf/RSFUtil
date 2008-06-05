@@ -36,6 +36,11 @@ public class UISelect extends UIComponent implements FixableComponent {
    */
   public StringSet selected;
 
+  /** An (optional) component representing any grouping to be applied to the 
+   * optionlist/optionnames elements.
+   */
+  public UIBoundList groupnames;
+  
   /** Creates a selection control without a value binding, either 
    * non-submitting, or suitable for use in a GET form */
   public static UISelect make(UIContainer tofill, String ID, String[] values,
