@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import uk.org.ponder.reflect.ReflectiveCache;
+import uk.org.ponder.rsf.viewstate.AnyViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.UniversalRuntimeException;
 
@@ -21,7 +22,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
 
 public class ContentTypeInfoFactory implements ContentTypeReceiver, ContentTypeReporter, ContentTypeResolver {
   private List resolvers;
-  private ViewParameters viewparamsproxy;
+  private AnyViewParameters viewparamsproxy;
   private Map typeinfomap;
 
   private Map viewmap;
@@ -34,7 +35,7 @@ public class ContentTypeInfoFactory implements ContentTypeReceiver, ContentTypeR
     this.typeinfomap = typeinfomap;
   }
 
-  public void setViewParameters(ViewParameters viewparamsproxy) {
+  public void setViewParameters(AnyViewParameters viewparamsproxy) {
     this.viewparamsproxy = viewparamsproxy;
   }
 
@@ -58,8 +59,14 @@ public class ContentTypeInfoFactory implements ContentTypeReceiver, ContentTypeR
   }
   
   public String getContentType() {
-    ViewParameters viewparams = (ViewParameters) viewparamsproxy.get();
-    return resolveContentType(viewparams);
+    // For an intercepted view, we may already be in an "exterior" view
+    AnyViewParameters viewparams = viewparamsproxy.get();
+    if (!(viewparams instanceof ViewParameters)) {
+      return ContentTypeInfoRegistry.REDIRECT;
+    }
+    else {
+      return resolveContentType((ViewParameters) viewparams);
+    }
   }
 
   public ContentTypeInfo getContentTypeInfo() {

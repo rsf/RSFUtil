@@ -23,6 +23,8 @@ import uk.org.ponder.xml.XMLWriter;
 public class DefaultFatalErrorHandler implements FatalErrorHandler {
   private Class[] propagated;
 
+  public static final String ERROR_STRING = "Fatal internal error handling request: ";
+  
   /** Set a list of exception classes which will cause no action to be
    * performed by the fatal handler.
    */
@@ -37,7 +39,7 @@ public class DefaultFatalErrorHandler implements FatalErrorHandler {
     Logger.log.fatal("Completely fatal error populating view root", t);
 
     pos.println("<html><head><title>Internal Error</title></head></body><pre>");
-    pos.println("Fatal internal error handling request: ");
+    pos.println(ERROR_STRING);
     StringWriter todump = new StringWriter();
     t.printStackTrace(new PrintWriter(todump));
     XMLWriter xml = new XMLWriter(pos);

@@ -420,7 +420,7 @@
   <bean id="contentTypeInfoFactory"
     class="uk.org.ponder.rsf.content.ContentTypeInfoFactory">
     <property name="contentTypeInfoMap" ref="contentTypeInfoMap" />
-    <property name="viewParameters" ref="viewParametersProxy" />
+    <property name="viewParameters" ref="anyViewParametersProxy" />
     <property name="reflectiveCache" ref="reflectiveCache" />
   </bean>
 
@@ -565,6 +565,13 @@
     <!-- Enough information to find the get() method -->
     <property name="targetClass"
       value="uk.org.ponder.rsf.viewstate.ViewParameters" />
+  </bean>
+  
+  <bean id="anyViewParametersProxy" parent="RSACBridgePeaProxy">
+    <property name="targetBeanName" value="viewParameters" />
+    <!-- Enough information to find the get() method -->
+    <property name="targetClass"
+      value="uk.org.ponder.rsf.viewstate.AnyViewParameters" />
   </bean>
 
   <bean id="parsedViewParametersProxy" parent="RSACBridgePeaProxy">
@@ -734,7 +741,7 @@
   <bean id="dataViewHandlerHook" class="uk.org.ponder.rsf.view.support.DataViewHandlerHook">
     <property name="dataViewCollector" ref="dataViewCollector"/>
     <property name="dataViewHandler" ref="dataViewHandler"/>
-    <property name="viewParametersProxy" ref="viewParametersProxy"/>
+    <property name="viewParametersProxy" ref="anyViewParametersProxy"/>
     <property name="requestInvoker" ref="requestInvoker"/>
     <property name="requestTypeProxy" ref="requestTypeProxy"/>
     <property name="viewExceptionStrategy" ref="viewExceptionStrategyManager"/>

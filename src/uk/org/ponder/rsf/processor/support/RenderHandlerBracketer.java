@@ -57,27 +57,24 @@ public class RenderHandlerBracketer {
     this.renderhandler = renderhandler;
   }
 
-  /**
-   * The beanlocator is passed in to allow the late location of the
-   * GetHandlerImpl bean which needs to occur in a controlled exception context.
-   */
   public AnyViewParameters handle(PrintOutputStream pos) {
     AnyViewParameters incoming = null;
     boolean iserrorredirect = false;
-    try {
-      incoming = anyviewparams.get();
-      // An AnyViewParameters is CERTAINLY a redirect, issued by an interceptor
-      if (!(anyviewparams instanceof ViewParameters)) {
-        return anyviewparams;
+    incoming = anyviewparams.get();
+    // An AnyViewParameters is CERTAINLY a redirect, issued by an interceptor
+    if (!(anyviewparams instanceof ViewParameters)) {
+      return anyviewparams;
+    }
+    if (anyviewparams instanceof RedirectViewParameters) {
+      return ((RedirectViewParameters)anyviewparams).target;
       }
-      if (anyviewparams instanceof RedirectViewParameters) {
-        return ((RedirectViewParameters)anyviewparams).target;
-        }
-      ViewParameters viewparams = (ViewParameters) incoming;
-      iserrorredirect = viewparams.errorredirect != null;
-      // YES, reach into the original request! somewhat bad...
-      viewparams.errorredirect = null;
-
+    ViewParameters viewparams = (ViewParameters) incoming;
+    iserrorredirect = viewparams.errorredirect != null;
+    // YES, reach into the original request! somewhat bad...
+    viewparams.errorredirect = null;
+    
+    try {
+      
       if (viewparams instanceof ErrorViewParameters) {
         throw UniversalRuntimeException.accumulate(new MalformedURLException(),
             "Request for bad view with ID " + viewparams.viewID + " ");
