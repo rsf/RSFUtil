@@ -7,6 +7,7 @@ import uk.org.ponder.hashutil.EighteenIDGenerator;
 import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.request.RequestSubmittedValueCache;
 import uk.org.ponder.rsf.state.TokenStateHolder;
+import uk.org.ponder.rsf.viewstate.AnyViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.util.Logger;
 
@@ -48,7 +49,7 @@ public class ErrorStateManager {
   private TokenStateHolder errortsholder;
   // for a GET request this will be set, but empty.
   private RequestSubmittedValueCache requestrsvc;
-  private ViewParameters viewparams;
+  private AnyViewParameters anyviewparams;
   private TargettedMessageList messages;
   private String outgoingToken;
   private TMLFixer messageProcessor;
@@ -69,11 +70,14 @@ public class ErrorStateManager {
     this.errortsholder = errortsholder;
   }
 
-  public void setViewParameters(ViewParameters viewparams) {
-    this.viewparams = viewparams;
+  public void setViewParameters(AnyViewParameters anyviewparams) {
+    this.anyviewparams = anyviewparams;
   }
 
   public void init() {
+    if (!(anyviewparams instanceof ViewParameters)) return;
+    ViewParameters viewparams = (ViewParameters) anyviewparams;
+    
     if (viewparams.errortoken != null) {
       Object storederrorstateo = errortsholder
           .getTokenState(viewparams.errortoken);
@@ -105,6 +109,11 @@ public class ErrorStateManager {
   }
 
   public String allocateOutgoingToken() {
+    if (!(anyviewparams instanceof ViewParameters)) {
+      throw new IllegalStateException("Cannot allocate outgoing token for non-internal view");
+    }
+    ViewParameters viewparams = (ViewParameters) anyviewparams;
+    
     if (outgoingToken == null) {
       outgoingToken = errorstate.tokenID = viewparams.errortoken == null ? allocateToken()
           : viewparams.errortoken;

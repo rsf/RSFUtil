@@ -215,10 +215,9 @@ to intercept bindings -->
   </bean>
 
   <!--  requires input of requestRSVC in order to fix up errors at the
-    end of a cycle. Lazy-init to avoid discovering nonViewParameters from bracketer -->
+    end of a cycle.-->
   <bean id="errorStateManager"
-    class="uk.org.ponder.rsf.state.support.ErrorStateManager"
-    init-method="init" lazy-init="true">
+    class="uk.org.ponder.rsf.state.support.ErrorStateManager" init-method="init">
     <property name="TSHolder" ref="bandgapStateHolder" />
     <property name="viewParameters" ref="viewParameters" />
     <property name="requestRSVC" ref="requestRSVC" />
