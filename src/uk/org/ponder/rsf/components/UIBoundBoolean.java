@@ -56,7 +56,7 @@ public class UIBoundBoolean extends UIBound {
 
   /** @see #make(UIContainer, String, String, Boolean) **/
   
-  public static UIBoundBoolean make(UIBranchContainer parent,
+  public static UIBoundBoolean make(UIContainer parent,
       String ID, String binding, boolean initvalue) {
     return make(parent, ID, binding, initvalue? Boolean.TRUE : Boolean.FALSE);
   }
