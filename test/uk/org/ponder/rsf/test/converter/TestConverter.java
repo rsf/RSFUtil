@@ -13,7 +13,7 @@ import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 
-/** Test cases for DataConverter-related issues RSF-47 and RSF-57
+/** Test cases for DataConverter-related issues RSF-47, RSF-57 and RSF-82
  */
 
 public class TestConverter extends MultipleRSFTests {
