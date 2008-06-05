@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.rsf.renderer.html;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -61,8 +62,10 @@ public class HeadCollectingSCR implements CollectingSCR {
             used.add(rewritten);
         }
       }
-      TagRenderContext temptrc = 
-        new TagRenderContext(trc.attrcopy, collump, collump.open_end, collump.close_tag, 
+      HashMap attrcopy = new HashMap();
+      attrcopy.putAll(collump.attributemap); 
+      TagRenderContext temptrc =  
+        new TagRenderContext(attrcopy, collump, collump.open_end, collump.close_tag, 
             trc.pos, trc.xmlw, collump.lumpindex, false);
       urlRewriteSCR.render(temptrc);
       RenderUtil.dumpTillLump(collump.parent.lumps,
