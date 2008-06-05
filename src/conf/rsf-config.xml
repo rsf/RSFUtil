@@ -212,7 +212,7 @@
   <bean id="dataConverterRegistry"
     class="uk.org.ponder.mapping.support.DataConverterRegistry"
     init-method="init">
-    <property name="beanLocator" ref="applicationContextBeanLocator" />
+    <property name="ELEvaluator" ref="ELEvaluatorProxy" />
   </bean>
 
   <bean id="dataConverterTLAB"

@@ -17,9 +17,16 @@
       <bean class="uk.org.ponder.rsf.test.converter.ExplosiveConverter" />
     </property>
   </bean>
+  
+  <bean class="uk.org.ponder.mapping.DataConverter">
+    <property name="targetPath" value="stringHolder.string" />
+    <property name="converterEL" value="booleanConverter.effectiveValue"/>
+  </bean>
+
+  <bean id="booleanConverter" class="uk.org.ponder.rsf.test.converter.BooleanConverterFactory"/>
 
   <bean parent="requestAddressibleParent">
-    <property name="value" value="dateHolder, removeIds, profileOtherWorksBL" />
+    <property name="value" value="dateHolder, removeIds, profileOtherWorksBL, stringHolder" />
   </bean>
 
 </beans>
