@@ -74,7 +74,6 @@ public class RenderHandlerBracketer {
     viewparams.errorredirect = null;
     
     try {
-      
       if (viewparams instanceof ErrorViewParameters) {
         throw UniversalRuntimeException.accumulate(new MalformedURLException(),
             "Request for bad view with ID " + viewparams.viewID + " ");
