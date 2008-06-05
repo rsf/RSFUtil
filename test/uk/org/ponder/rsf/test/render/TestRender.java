@@ -6,7 +6,7 @@ package uk.org.ponder.rsf.test.render;
 import uk.org.ponder.rsf.bare.RenderResponse;
 import uk.org.ponder.rsf.bare.junit.MultipleRSFTests;
 
-/** Test for ID NPE RSF-71, Verbatim RSF-85, UIMessage RSF-73
+/** Test for ID NPE RSF-71, Verbatim RSF-85, UIMessage RSF-73, Relation target RSF-77
  */
 
 public class TestRender extends MultipleRSFTests {
