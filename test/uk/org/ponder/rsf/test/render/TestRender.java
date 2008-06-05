@@ -24,5 +24,7 @@ public class TestRender extends MultipleRSFTests {
     assertContains(response, "<i style=\"color");
     assertContains(response, "Referenced value");
     assertContains(response, "Remanent text");
+    
+    assertContains(response, "for=\"row::target\"");
   }
 }

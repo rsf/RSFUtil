@@ -93,7 +93,7 @@ public class BranchResolver {
           branchmap.put(branch, resolved);
           String id = (String) resolved.attributemap.get("id");
           if (id != null) {
-            rewritemap.put(RenderUtil.getRewriteKey(parentlump.parent, id), branch.getFullID());
+            rewritemap.put(RenderUtil.getRewriteKey(parentlump.parent, basecontainer, id), branch.getFullID());
           }
 
           resolveRecurse(branch, resolved);
@@ -108,9 +108,11 @@ public class BranchResolver {
         for (int i = 0; i < lumps.size(); ++ i) {
           XMLLump lump = lumps.lumpAt(i);
           String lumpid = (String) lump.attributemap.get("id");
-          if (lump.rsfID != null) {
+          if (lumpid != null && lump.rsfID != null) {
             UIComponent resolved = RenderUtil.fetchComponent(basecontainer, lump.rsfID);
-            rewritemap.put(RenderUtil.getRewriteKey(parentlump.parent, lumpid), resolved.getFullID());
+            if (resolved != null) {
+              rewritemap.put(RenderUtil.getRewriteKey(parentlump.parent, basecontainer, lumpid), resolved.getFullID());
+            }
           }
         }
       }
