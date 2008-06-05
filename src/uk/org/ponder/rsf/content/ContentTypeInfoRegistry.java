@@ -74,7 +74,10 @@ public class ContentTypeInfoRegistry {
   public static final ContentTypeInfo CUSTOM_CONTENTINFO = 
     new ContentTypeInfo(CUSTOM, "", "",
         "");
-  
+
+  public static final ContentTypeInfo REDIRECT_CONTENTINFO = 
+    new ContentTypeInfo(REDIRECT, "", "",
+        "");
   
   private static Map contentmap = new HashMap();
   
@@ -92,6 +95,7 @@ public class ContentTypeInfoRegistry {
     addContentTypeInfo(contentmap, SVG_CONTENTINFO);
     addContentTypeInfo(contentmap, JSON_CONTENTINFO);
     addContentTypeInfo(contentmap, CUSTOM_CONTENTINFO);
+    addContentTypeInfo(contentmap, REDIRECT_CONTENTINFO);
   }
   
   public static Map getContentTypeInfoMap() {

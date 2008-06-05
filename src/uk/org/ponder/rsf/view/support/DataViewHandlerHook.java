@@ -18,7 +18,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
 public class DataViewHandlerHook implements RedirectingHandlerHook {
 
   private DataViewCollector dataViewCollector;
-  private ViewParameters viewParametersProxy;
+  private AnyViewParameters viewParametersProxy;
   private DataViewHandler dataViewHandler;
   private StringGetter requestType;
   private RunnableInvoker requestInvoker;
@@ -36,7 +36,7 @@ public class DataViewHandlerHook implements RedirectingHandlerHook {
     this.dataViewCollector = dataViewCollector;
   }
 
-  public void setViewParametersProxy(ViewParameters viewParametersProxy) {
+  public void setViewParametersProxy(AnyViewParameters viewParametersProxy) {
     this.viewParametersProxy = viewParametersProxy;
   }
 

@@ -100,7 +100,7 @@
       ref="renderHandlerBracketer" />
     <property name="actionHandler" ref="actionHandler" />
     <property name="handlerHook" ref="handlerHookHandler" />
-    <property name="contentTypeInfo" ref="contentTypeInfo" />
+    <property name="contentTypeInfo" ref="contentTypeInfoProxy" />
     <property name="fatalErrorHandler" ref="fatalErrorHandler" />
     <property name="lazarusRedirector" ref="lazarusRedirector" />
   </bean>
@@ -215,10 +215,10 @@ to intercept bindings -->
   </bean>
 
   <!--  requires input of requestRSVC in order to fix up errors at the
-    end of a cycle -->
+    end of a cycle. Lazy-init to avoid discovering nonViewParameters from bracketer -->
   <bean id="errorStateManager"
     class="uk.org.ponder.rsf.state.support.ErrorStateManager"
-    init-method="init">
+    init-method="init" lazy-init="true">
     <property name="TSHolder" ref="bandgapStateHolder" />
     <property name="viewParameters" ref="viewParameters" />
     <property name="requestRSVC" ref="requestRSVC" />

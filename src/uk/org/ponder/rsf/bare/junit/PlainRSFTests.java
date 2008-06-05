@@ -10,6 +10,7 @@ import uk.org.ponder.rsf.bare.ActionResponse;
 import uk.org.ponder.rsf.bare.RenderResponse;
 import uk.org.ponder.rsf.bare.RequestLauncher;
 import uk.org.ponder.rsf.bare.RequestResponse;
+import uk.org.ponder.rsf.processor.support.DefaultFatalErrorHandler;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
 /** A base class for a "full-cycle" testing environment for an RSF application. It exposes
@@ -87,6 +88,11 @@ public class PlainRSFTests extends AbstractRSACTests {
     if (response.redirect instanceof ViewParameters) {
       ViewParameters redirect = (ViewParameters) response.redirect;
       wasError = redirect.errorredirect != null;
+    }
+    if (response.markup != null) {
+      if (response.markup.indexOf(DefaultFatalErrorHandler.ERROR_STRING) != -1) {
+        wasError = true;        
+      }
     }
     assertFalse(errorString(error), wasError ^ error);
   }
