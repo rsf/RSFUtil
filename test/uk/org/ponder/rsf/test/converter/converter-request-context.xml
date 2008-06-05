@@ -4,8 +4,11 @@
 <beans>
   <bean id="dateHolder" class="uk.org.ponder.rsf.test.converter.DateHolder"/>
   
+  <bean id="stringHolder" class="uk.org.ponder.rsf.test.converter.StringHolder" />
+  
   <bean class="uk.org.ponder.rsf.test.converter.TestProducer" />
   <bean class="uk.org.ponder.rsf.test.converter.TestProducer2" />
+  <bean class="uk.org.ponder.rsf.test.converter.TestProducer3" />
   
   <bean id="removeIds" class="java.lang.String">
     <constructor-arg value="3"/>

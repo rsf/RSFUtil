@@ -7,6 +7,7 @@ import uk.org.ponder.rsf.bare.ActionResponse;
 import uk.org.ponder.rsf.bare.RenderResponse;
 import uk.org.ponder.rsf.bare.ViewWrapper;
 import uk.org.ponder.rsf.bare.junit.MultipleRSFTests;
+import uk.org.ponder.rsf.components.UIBoundBoolean;
 import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
@@ -22,6 +23,25 @@ public class TestConverter extends MultipleRSFTests {
     contributeConfigLocation("classpath:uk/org/ponder/rsf/test/converter/converter-application-context.xml");
   }
 
+  
+  public void testBooleanLOR() {
+    RenderResponse response = getRequestLauncher().renderView(new SimpleViewParameters(TestProducer3.VIEW_ID));
+    ViewWrapper wrapper = response.viewWrapper;
+    
+    UIForm form = (UIForm) wrapper.queryComponent(new UIForm());
+    ActionResponse response2 = getRequestLauncher().submitForm(form, null);
+    StringHolder holder = (StringHolder) response2.requestContext.locateBean("stringHolder");
+    assertEquals("effectiveValue", holder.string);
+    
+    UIBoundBoolean check = (UIBoundBoolean) wrapper.queryComponent(new UIBoundBoolean());
+    check.setValue(false);
+
+    ActionResponse response3 = getRequestLauncher().submitForm(form, null);
+    StringHolder holder2 = (StringHolder) response3.requestContext.locateBean("stringHolder");
+    assertNull(holder2.string);
+    
+  }
+  
   
   /** Test for DataConverter issue RSF-47, reported in forums at
   * http://ponder.org.uk/rsf/posts/list/183.page
@@ -74,6 +94,9 @@ public class TestConverter extends MultipleRSFTests {
     ViewWrapper wrapper = response.viewWrapper;
     
     UIForm form = (UIForm) wrapper.queryComponent(new UIForm());
-    getRequestLauncher().submitForm(form, null);
+    ActionResponse response2 = getRequestLauncher().submitForm(form, null);
+    assertActionError(response2, false);
   }
+
+  
 }
