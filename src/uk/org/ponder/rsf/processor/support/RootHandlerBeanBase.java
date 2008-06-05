@@ -7,12 +7,14 @@ import uk.org.ponder.rsf.components.ParameterList;
 import uk.org.ponder.rsf.content.ContentTypeInfo;
 import uk.org.ponder.rsf.processor.ActionHandler;
 import uk.org.ponder.rsf.processor.FatalErrorHandler;
+import uk.org.ponder.rsf.processor.ForcibleException;
 import uk.org.ponder.rsf.processor.RedirectingHandlerHook;
 import uk.org.ponder.rsf.request.EarlyRequestParser;
 import uk.org.ponder.rsf.request.LazarusRedirector;
 import uk.org.ponder.rsf.viewstate.AnyViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewStateHandler;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
+import uk.org.ponder.util.UniversalRuntimeException;
 
 /** Abstracts the common functionality of RootHandlerBeans across the different
  * environments - operating the overall request cycle, distinguishing between
@@ -88,6 +90,8 @@ public abstract class RootHandlerBeanBase {
   private void handleGet() {
     PrintOutputStream pos = setupResponseWriter();
     AnyViewParameters redirect = null;
+   
+    Throwable rethrow = null;
     try {
       redirect = renderhandlerbracketer.handle(pos);
 
@@ -96,11 +100,20 @@ public abstract class RootHandlerBeanBase {
       }
     }
     catch (Throwable t) {
-      DefaultFatalErrorHandler.handleFatalErrorStrategy(fatalErrorHandler, t,
+      String strategy = 
+        DefaultFatalErrorHandler.handleFatalErrorStrategy(fatalErrorHandler, t,
           pos);
+      if (strategy.equals(FatalErrorHandler.HANDLE_EXCEPTION_UPSTAIRS)) {
+        rethrow = t;
+      }
     }
     finally {
-      if (redirect == null) {
+      if (rethrow != null) {
+        UniversalRuntimeException tothrow = UniversalRuntimeException.accumulate(rethrow, "Error handling request");
+        tothrow.setCategory(ForcibleException.class);
+        throw (tothrow);
+      }
+      if (redirect == null) { 
         pos.close();
       }
     }

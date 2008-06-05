@@ -100,7 +100,7 @@
       ref="renderHandlerBracketer" />
     <property name="actionHandler" ref="actionHandler" />
     <property name="handlerHook" ref="handlerHookHandler" />
-    <property name="contentTypeInfo" ref="contentTypeInfoProxy" />
+    <property name="contentTypeInfo" ref="contentTypeInfo" />
     <property name="fatalErrorHandler" ref="fatalErrorHandler" />
     <property name="lazarusRedirector" ref="lazarusRedirector" />
   </bean>
