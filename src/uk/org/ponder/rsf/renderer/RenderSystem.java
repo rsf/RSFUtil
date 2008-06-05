@@ -4,6 +4,7 @@
 package uk.org.ponder.rsf.renderer;
 
 import uk.org.ponder.rsf.components.UIComponent;
+import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.renderer.decorator.DecoratorManager;
 import uk.org.ponder.rsf.renderer.scr.StaticRendererCollection;
 import uk.org.ponder.rsf.request.RenderSystemDecoder;
@@ -27,7 +28,7 @@ public interface RenderSystem extends RenderSystemDecoder {
    * the tag appears within the template requiring rewrite.
    * @return The render index that the renderer has moved along to.
    */
-  public int renderComponent(RenderSystemContext rsc, UIComponent torender, XMLLump lump);
+  public int renderComponent(RenderSystemContext rsc, UIContainer context, UIComponent torender, XMLLump lump);
 
   public void setComponentRenderer(ComponentRenderer componentRenderer);
   

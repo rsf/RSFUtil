@@ -6,7 +6,7 @@ package uk.org.ponder.rsf.renderer.html;
 import java.util.Map;
 
 import uk.org.ponder.htmlutil.HTMLConstants;
-import uk.org.ponder.rsf.components.UIComponent;
+import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.renderer.RenderUtil;
 import uk.org.ponder.rsf.renderer.TagRenderContext;
 import uk.org.ponder.rsf.template.TemplateParseInterceptor;
@@ -31,12 +31,12 @@ public class IDRelationRewriter implements TemplateParseInterceptor {
     return null;
   }
 
-  public void rewrite(Map rewritemap, TagRenderContext trc, UIComponent component) {
+  public void rewrite(Map rewritemap, TagRenderContext trc, UIContainer context) {
     String attr = getRelationAttr(trc.uselump);
     String val = (String) trc.attrcopy.get(attr);
     if (val != null) {
       String rewritten = (String) rewritemap.get(
-          RenderUtil.getRewriteKey(trc.uselump.parent, component.parent, val));
+          RenderUtil.getRewriteKey(trc.uselump.parent, context, val));
       if (rewritten != null) {
         trc.attrcopy.put(attr, rewritten);
       }

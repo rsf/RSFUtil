@@ -8,6 +8,7 @@ import java.util.Map;
 
 import uk.org.ponder.rsf.components.UIBasicListMember;
 import uk.org.ponder.rsf.components.UIComponent;
+import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.renderer.ComponentRenderer;
 import uk.org.ponder.rsf.renderer.RenderSystem;
 import uk.org.ponder.rsf.renderer.RenderSystemContext;
@@ -92,7 +93,8 @@ public class BasicHTMLRenderSystem implements RenderSystem {
   
   // This method is almost entirely dialect-invariant - awaiting final
   // factorisation of RenderSystem
-  public int renderComponent(RenderSystemContext rsc, UIComponent torendero, XMLLump lump) {
+  public int renderComponent(RenderSystemContext rsc, UIContainer context, UIComponent torendero, 
+      XMLLump lump) {
     int lumpindex = lump.lumpindex;
     XMLLump[] lumps = lump.parent.lumps;
     int nextpos = -1;
@@ -119,7 +121,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
     TagRenderContext rendercontext = new TagRenderContext(attrcopy, uselump,
         endopen, close, rsc.pos, rsc.xmlw, nextpos, iselide);
     
-    idRelationRewriter.rewrite(rsc.idrewritemap, rendercontext, torendero);
+    idRelationRewriter.rewrite(rsc.idrewritemap, rendercontext, context);
     
     // if there is no peer component, it might still be a static resource holder
     // that needs URLs rewriting.

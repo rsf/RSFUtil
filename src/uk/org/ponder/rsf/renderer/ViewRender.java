@@ -189,7 +189,7 @@ public class ViewRender {
       dumpBranchHead((UIBranchContainer) child, targetlump);
     }
     else {
-      renderer.renderComponent(rsc, child, targetlump);
+      renderer.renderComponent(rsc, child.parent, child, targetlump);
     }
     renderRecurse(child, targetlump, firstchild);
   }
@@ -271,7 +271,7 @@ public class ViewRender {
                         + baselump.toString());
                 continue;
               }
-              int renderend = renderer.renderComponent(rsc, child, targetlump);
+              int renderend = renderer.renderComponent(rsc, basecontainer, child, targetlump);
               boolean wasopentag = tl.lumps[renderend].nestingdepth >= targetlump.nestingdepth;
               UIContainer newbase = child instanceof UIContainer? (UIContainer) child : basecontainer;
               if (wasopentag) {
@@ -375,7 +375,7 @@ public class ViewRender {
         }
         else {
           // if we find a leaf component, render it.
-          renderindex = renderer.renderComponent(rsc, component, lump);   
+          renderindex = renderer.renderComponent(rsc, basecontainer, component, lump);   
         }
       } // end if unrepeatable component.
       if (renderindex == tl.lumps.length) {
