@@ -119,7 +119,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
     TagRenderContext rendercontext = new TagRenderContext(attrcopy, uselump,
         endopen, close, rsc.pos, rsc.xmlw, nextpos, iselide);
     
-    idRelationRewriter.rewrite(rsc.idrewritemap, rendercontext);
+    idRelationRewriter.rewrite(rsc.idrewritemap, rendercontext, torendero);
     
     // if there is no peer component, it might still be a static resource holder
     // that needs URLs rewriting.

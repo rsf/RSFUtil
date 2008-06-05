@@ -153,8 +153,8 @@ public class RenderUtil {
 
   }
 
-  public static String getRewriteKey(XMLViewTemplate template, String id) {
-    return template.fullpath + id;
+  public static String getRewriteKey(XMLViewTemplate template, UIContainer parent, String id) {
+    return template.fullpath + parent.getFullID() + id;
   }
   
   public static UIComponent fetchComponent(UIContainer basecontainer,
