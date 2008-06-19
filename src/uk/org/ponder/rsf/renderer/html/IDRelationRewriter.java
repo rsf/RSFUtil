@@ -50,7 +50,7 @@ public class IDRelationRewriter implements TemplateParseInterceptor {
     // every rsf:id tag.
     if ((attributes.containsKey("for") || attributes.containsKey("headers"))
         && !attributes.containsKey(XMLLump.ID_ATTRIBUTE)) {
-      attributes.put(XMLLump.ID_ATTRIBUTE, "null");
+      attributes.put(XMLLump.ID_ATTRIBUTE, XMLLump.SCR_PREFIX + "null");
     }
   }
 

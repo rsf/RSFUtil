@@ -19,17 +19,21 @@ public class TestRender extends MultipleRSFTests {
    
   public void testRender() {
     RenderResponse response = getRequestLauncher().renderView();
+    assertRenderError(response, false);
+    
     assertContains(response, "Test Message ID View");
     assertContains(response, "</div>");
     assertContains(response, "id=\"titleclosed\"");
     assertContains(response, "<i style=\"color");
     assertContains(response, "Referenced value");
     assertContains(response, "Remanent text");
-    
+    // For RSF-77
     assertContains(response, "for=\"row::target\"");
     assertContains(response, "for=\"row:1:target\"");
-    
+    // For RSF-108
     assertContains(response, "<optgroup label=\"A\">");
     assertContains(response, "<optgroup label=\"B\">");
+    // For RSF-111
+    assertContains(response, "for=\"target2\"");
   }
 }
