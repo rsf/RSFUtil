@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.springframework.beans.factory.BeanNameAware;
 
@@ -129,14 +130,15 @@ public class BeanCopyPreservationStrategy implements TSHPreservationStrategy,
       return 0;
     }
     else {
-      for (Iterator keyit = beans.keySet().iterator(); keyit.hasNext();) {
-        String beanname = (String) keyit.next();
-        Object bean = beans.get(beanname);
+      for (Iterator entryit = beans.entrySet().iterator(); entryit.hasNext();) {
+        Map.Entry entry = (Entry) entryit.next();
+        String beanname = (String) entry.getKey();
+        Object bean = entry.getValue();
         ClassLoader beanloader = bean.getClass().getClassLoader();
         if (classLoaderInternal && !ourLoaders.contains(beanloader)) {
           Logger.log.warn("Bean " + bean +" with name " + beanname + 
               " from unrecognized ClassLoader " + beanloader.getClass().getName() +"@" + System.identityHashCode(beanloader) + " was destroyed from preservation");
-          beans.remove(beanname);
+          entryit.remove();
         }
         else {
           TargettedMessageList messages = ThreadErrorState.getErrorState().messages;
