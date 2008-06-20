@@ -3,6 +3,7 @@
  */
 package uk.org.ponder.rsf.components;
 
+import uk.org.ponder.rsf.util.RSFUtil;
 import uk.org.ponder.stringutil.StringSet;
 
 /**
@@ -57,6 +58,7 @@ public class UISelect extends UIComponent implements FixableComponent {
     }
     togo.selection.willinput = willinput;
     tofill.addComponent(togo);
+    RSFUtil.updateChildIDs(togo);
     return togo;
   }
 
@@ -65,8 +67,10 @@ public class UISelect extends UIComponent implements FixableComponent {
     UISelect togo = new UISelect();
     togo.ID = ID;
     tofill.addComponent(togo);
+    RSFUtil.updateChildIDs(togo);
     return togo;
   }
+  
 // TODO: perhaps split this as a "postConstruct()" and "postFixup()" 
 // method. Will we actually ever have complex components?
   public void fixupComponent() {
@@ -99,6 +103,7 @@ public class UISelect extends UIComponent implements FixableComponent {
     togo.ID = ID;
     togo.optionlist = togo.optionnames = UIOutputMany.make(options);
     tofill.addComponent(togo);
+    RSFUtil.updateChildIDs(togo);
     return togo;
   }
 

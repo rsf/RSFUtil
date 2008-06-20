@@ -7,6 +7,7 @@ import uk.org.ponder.rsf.bare.RequestLauncher;
 import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
+import uk.org.ponder.rsf.components.UIInitBlock;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UIOutputMany;
@@ -39,5 +40,8 @@ public class TestProducer implements ViewComponentProducer {
     
     UISelect select2 = UISelect.make(tofill, "select-2", choices, choices, "2", false);
     select2.groupnames = UIOutputMany.make(new String[] {"B", "B", "B", "B", "B"});
+    
+    UIInitBlock.make(tofill, "init-block", "init-select", 
+        new Object[] {select2.selection.getFullID()});
   }
 }
