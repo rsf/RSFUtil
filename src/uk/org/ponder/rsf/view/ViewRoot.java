@@ -5,10 +5,10 @@ package uk.org.ponder.rsf.view;
 
 import java.util.List;
 
-import uk.org.ponder.rsf.components.UIBranchContainer;
+import uk.org.ponder.rsf.components.UIViewRoot;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 
-public class ViewRoot extends UIBranchContainer {
+public class ViewRoot extends UIViewRoot {
   public static final String VIEWROOT_ID = "  viewroot  ";
   
   public ViewRoot() {

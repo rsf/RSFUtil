@@ -14,6 +14,7 @@ import uk.org.ponder.rsf.components.UIComponent;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.decorators.UIBoundDecorator;
 import uk.org.ponder.rsf.components.decorators.UIDecorator;
+import uk.org.ponder.rsf.util.RSFUtil;
 import uk.org.ponder.rsf.view.View;
 import uk.org.ponder.rsf.view.ViewReceiver;
 import uk.org.ponder.saxalizer.SAXalizerMappingContext;
@@ -141,7 +142,8 @@ public class ViewProcessor {
       ConcreteChildIterator children = new ConcreteChildIterator(thischild, mappingcontext);
       for (Iterator childit = children.iterator(); childit.hasNext(); ) {
         String childname = (String) childit.next();
-        appendComponent((UIBound) children.locateBean(childname), thischild.getFullID() + "-" + childname);
+        appendComponent((UIBound) children.locateBean(childname), 
+            RSFUtil.computeClusteredID(thischild, childname));
       }
       if (thischild.decorators != null) {
         for (int j = 0; j < thischild.decorators.size(); ++ j) {

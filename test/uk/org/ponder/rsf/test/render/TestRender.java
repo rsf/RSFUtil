@@ -7,7 +7,7 @@ import uk.org.ponder.rsf.bare.RenderResponse;
 import uk.org.ponder.rsf.bare.junit.MultipleRSFTests;
 
 /** Test for ID NPE RSF-71, Verbatim RSF-85, UIMessage RSF-73, 
- * Relation target RSF-77, UISelect grouping RSF-108
+ * Relation target RSF-77, UISelect grouping RSF-108, cluster ID computation RSF-65
  */
 
 public class TestRender extends MultipleRSFTests {
@@ -35,5 +35,7 @@ public class TestRender extends MultipleRSFTests {
     assertContains(response, "<optgroup label=\"B\">");
     // For RSF-111
     assertContains(response, "for=\"target2\"");
+    // For RSF-65
+    assertContains(response, "select-2-selection");
   }
 }

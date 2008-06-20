@@ -3,6 +3,10 @@
  */
 package uk.org.ponder.rsf.util;
 
+import java.util.Iterator;
+
+import uk.org.ponder.rsac.GlobalBeanAccessor;
+import uk.org.ponder.rsf.componentprocessor.ConcreteChildIterator;
 import uk.org.ponder.rsf.components.ComponentList;
 import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.ParameterList;
@@ -14,8 +18,11 @@ import uk.org.ponder.rsf.components.UIELBinding;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIParameter;
 import uk.org.ponder.rsf.components.UIParameterHolder;
+import uk.org.ponder.rsf.components.UIViewRoot;
 import uk.org.ponder.rsf.view.ViewRoot;
+import uk.org.ponder.saxalizer.SAXalizerMappingContext;
 import uk.org.ponder.util.AssertionException;
+import uk.org.ponder.util.Logger;
 
 /**
  * Low-level utilities for working on RSF component trees.
@@ -124,15 +131,60 @@ public class RSFUtil {
     else {
       move = (UIContainer) tocompute;
     }
+    if (move == null) {
+      throw new IllegalArgumentException(
+          "Cannot compute full ID of unattached component with ID " + tocompute.ID 
+          + " of " + tocompute.getClass());
+    }
     while (move.parent != null) { // ignore the top-level viewroot Branch
       if (!move.noID) {
         togo.insert(0, getFullIDSegment(move.ID, move.localID));
       }
       move = move.parent;
     }
+    if (!(move instanceof UIViewRoot)) {
+      Logger.log.warn("Component with id " + tocompute.ID + " of " + tocompute.getClass() 
+          + " has been requested fullID before being properly placed into a view tree. " +
+          		"Resulting id will probably be invalid ");
+    }
     return togo.toString();
   }
 
+  public static String computeClusteredID(UIComponent base, String childname) {
+    return base.getFullID() + "-" + childname;
+  }
+  
+  /** Compute all the IDs of derived components of a "cluster" component such as a
+   * UISelect.
+   */
+  
+  public static void updateChildIDs(UIComponent toupdate) {
+    if (isAttached(toupdate)) {
+      SAXalizerMappingContext smc = (SAXalizerMappingContext) 
+      GlobalBeanAccessor.getBean("ELMappingContext");
+      ConcreteChildIterator children = new ConcreteChildIterator(toupdate, smc);
+      for (Iterator childit = children.iterator(); childit.hasNext(); ) {
+        String childname = (String) childit.next();
+        UIComponent child = (UIComponent) children.locateBean(childname);
+        if (child != null) {
+          String childID = computeClusteredID(toupdate, childname);
+          child.updateFullID(childID);
+        }
+      }
+    }
+  }
+  
+  /** Returns <code>true</code> if this component is properly attached to a view tree
+   * (that is, it is descended from a ViewRoot).
+   */
+  public static boolean isAttached(UIComponent totest) {
+    while (totest != null) {
+      if (totest instanceof UIViewRoot) return true;
+      totest = totest.parent;
+    }
+    return false;
+  }
+  
   public static String reportPath(UIComponent branch) {
     String path = branch.getFullID();
     return path.equals("") ? "component tree root"
