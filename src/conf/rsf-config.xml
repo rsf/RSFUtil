@@ -665,12 +665,19 @@
     <property name="bindAfter" value="*" />
   </bean>
 
+  <bean id="viewParamsValidator" class="uk.org.ponder.rsf.viewstate.support.ViewParamsValidator" >
+    <property name="beanModelAlterer" ref="DARApplier"/>
+    <property name="VPMappingInfoManager" ref="viewParamsMappingInfoManager"/>
+    <property name="productionMode" ref="RSF-productionMode"/>
+  </bean>
+
   <bean id="viewParamsRegistry"
     class="uk.org.ponder.rsf.viewstate.support.ViewParamsRegistryImpl"
     init-method="init">
     <property name="reflectiveCache" ref="reflectiveCache" />
     <property name="deepBeanCloner" ref="deepBeanCloner" />
     <property name="defaultExemplar" ref="viewParamsExemplar" />
+    <property name="viewParamsValidator" ref="viewParamsValidator"/>
   </bean>
   
   <bean id="viewInfoDistributor" class="uk.org.ponder.rsf.view.support.ViewInfoDistributor" >
