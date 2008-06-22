@@ -128,11 +128,22 @@ public abstract class UIContainer extends UIParameterHolder {
   /** Add a component as a new child of this container */
 
   public void addComponent(UIComponent toadd) {
+    if (toadd.parent != null) {
+      throw new IllegalArgumentException("Cannot add " + toadd.debugString() + 
+          " as a child of " + debugString() + " since component is already attached to the tree."
+          + "\n   Please detach it first using the remove method.");
+    }
     toadd.parent = this;
 
     SplitID split = new SplitID(toadd.ID);
     String childkey = split.prefix;
     if (toadd.ID != null && split.suffix == null) {
+      if (childmap.get(childkey) != null) {
+        throw new IllegalArgumentException("Cannot add leaf " + toadd.debugString()
+            + " as a child of " + debugString() 
+            + " since it would displace an existing child of the same name. "
+            + "\n   Please remove the existing component first.");
+      }
       childmap.put(childkey, toadd);
     }
     else {

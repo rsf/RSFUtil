@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
+  "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+  <!-- Control the location of the html templates (default: content/templates/) -->
+  <bean id="templateResolverStrategy" parent="CRITemplateResolverStrategy">
+    <property name="baseDirectory" value="" />
+    <property name="templateResourceBase" value="classpath:uk/org/ponder/rsf/test/badtree/" />
+  </bean>
+  
+  <bean id="fatalErrorHandler" class="uk.org.ponder.rsf.test.badtree.RecordingFatalErrorHandler" >
+  </bean>
+  
+  <bean class="uk.org.ponder.rsf.test.badtree.TestProducer" />
+  <bean class="uk.org.ponder.rsf.test.badtree.TestProducer2" />
+    
+</beans>
