@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
+  "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+
+  <bean id="RSF-productionMode"
+    class="uk.org.ponder.springutil.BooleanFactory">
+    <property name="value" value="true" />
+  </bean>
+
+  <bean class="uk.org.ponder.rsf.test.badparams.TestProducer" />
+   
+  <bean parent="viewParamsRegistrarParent">
+    <property name="viewID" value="test2"/>
+    <property name="viewParamsClass" value="uk.org.ponder.rsf.test.badparams.BadParams2"/>
+  </bean>
+  
+</beans>

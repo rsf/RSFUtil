@@ -4,6 +4,7 @@
 package uk.org.ponder.rsf.viewstate.support;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import uk.org.ponder.reflect.DeepBeanCloner;
@@ -28,24 +29,37 @@ public class ViewParamsRegistryImpl implements ViewParamsReceiver, ViewParamsRep
   // A single-threaded hashmap to be used during startup.
   private Map pendingmap = new HashMap();
 
+  private ViewParamsValidator viewParamsValidator;
+  
   private String defaultview;
+
+  private DeepBeanCloner beancloner;
+  
   // Called from ConcreteViewResolver.init(), i.e. "somewhat late"
   public void setDefaultView(String viewid) {
     defaultview = viewid;
   }
-  
-  private DeepBeanCloner beancloner;
+
+  public void setViewParamsValidator(ViewParamsValidator viewParamsValidator) {
+    this.viewParamsValidator = viewParamsValidator;
+  }
+
   public void setDeepBeanCloner(DeepBeanCloner beancloner) {
     this.beancloner = beancloner;
   }
  
+  public void setReflectiveCache(ReflectiveCache reflectivecache) {
+    exemplarmap = reflectivecache.getConcurrentMap(1);
+  }
+  
   public void init() {
     exemplarmap.putAll(pendingmap);
     pendingmap = null;
-  }
-  
-  public void setReflectiveCache(ReflectiveCache reflectivecache) {
-    exemplarmap = reflectivecache.getConcurrentMap(1);
+    for (Iterator keyit = exemplarmap.keySet().iterator(); keyit.hasNext();) {
+      String viewID = (String) keyit.next();
+      ViewParameters vpexemplar = (ViewParameters) exemplarmap.get(viewID);
+      viewParamsValidator.validate(viewID, vpexemplar);
+    }
   }
   
   /**
@@ -94,6 +108,7 @@ public class ViewParamsRegistryImpl implements ViewParamsReceiver, ViewParamsRep
       (exemplarmap == null ? pendingmap
           : exemplarmap).put(viewid, vpexemplar);
     }
+    viewParamsValidator.validate(viewid, vpexemplar);
   }
   
   public ViewParameters getViewParameters() {
