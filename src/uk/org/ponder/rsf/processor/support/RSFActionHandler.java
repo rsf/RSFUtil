@@ -21,6 +21,7 @@ import uk.org.ponder.rsf.state.support.ErrorStateManager;
 import uk.org.ponder.rsf.state.support.RSVCApplier;
 import uk.org.ponder.rsf.viewstate.AnyViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.transaction.CancellationException;
 import uk.org.ponder.util.Logger;
 import uk.org.ponder.util.RunnableInvoker;
 import uk.org.ponder.util.UniversalRuntimeException;
@@ -206,6 +207,12 @@ public class RSFActionHandler implements ActionHandler, ErrorHandler {
             ariresult = ari.interpretActionResult(viewparams, actionresult);
           }
           arinterceptor.interceptActionResult(ariresult, viewparams, actionresult);
+          // Should we run right to the end of the block without an explicit exception
+          // propagating, make sure that one does so in order to cancel any transactional
+          // blocks.
+          if (messages.isError()) {
+            throw new CancellationException();
+          }
         }
       });
       presmanager.scopePreserve();
