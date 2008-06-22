@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
+  "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+  <bean parent="requestAddressibleParent">
+     <property name="value" value="canceller" />
+  </bean>
+  
+    <bean parent="alterationWrapperParent">
+    <property name="value">
+      <bean parent="RSACBridgeProxy">
+        <property name="targetBeanName" value="requestWrapper" />
+      </bean>
+    </property>
+  </bean>
+  
+  <bean class="uk.org.ponder.rsf.test.cancellation.TestProducer" />
+  
+</beans>

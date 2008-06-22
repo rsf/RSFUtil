@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" 
+  "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+  <bean id="canceller" class="uk.org.ponder.rsf.test.cancellation.Canceller">
+  <property name="targettedMessageList" ref="targettedMessageList"/>
+  </bean>
+  
+  <bean id="requestWrapper" class="uk.org.ponder.rsf.test.cancellation.RequestWrapper">
+  </bean>
+  
+</beans>
