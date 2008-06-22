@@ -81,4 +81,10 @@ public class UIComponent {
     decorators.add(decorator);
     return this;
   }
+  
+  /** Returns a short String to aid with identifying this component for debug purposes **/
+  
+  public String debugString() {
+    return "component with ID " + ID + " of " + getClass();
+  }
 }
