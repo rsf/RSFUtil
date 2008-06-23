@@ -3,6 +3,9 @@
  */
 package uk.org.ponder.rsf.state.guards.support;
 
+import uk.org.ponder.messageutil.TargettedMessage;
+import uk.org.ponder.messageutil.TargettedMessageException;
+
 
 public class RequiredValueGuard {
   private String code = "value.required";
@@ -13,7 +16,7 @@ public class RequiredValueGuard {
 
   public void setValue(Object obj) {
     if (obj == null || obj.equals("")) {
-      throw new IllegalArgumentException(code);
+      throw new TargettedMessageException(new TargettedMessage(code));
     }
   }
 
