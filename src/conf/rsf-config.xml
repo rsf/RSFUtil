@@ -37,6 +37,7 @@
     init-method="init">
     <property name="containerTypeRegistry" ref="containerTypeRegistry" />
     <property name="depluralize" value="false" />
+    <property name="inferAddMethods" value="false"/>
   </bean>
 
   <bean id="ELMappingContext"
