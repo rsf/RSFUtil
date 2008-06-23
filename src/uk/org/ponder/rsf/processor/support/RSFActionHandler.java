@@ -224,7 +224,9 @@ public class RSFActionHandler implements ActionHandler, ErrorHandler {
       errorstatemanager.globaltargetid = submitting;
     }
     catch (Throwable e) { // avoid masking errors from the finally block
-      Logger.log.warn("Error invoking action", e);
+      if (!(e instanceof CancellationException)) {
+        Logger.log.warn("Error invoking action", e);
+      }
       // ThreadErrorState.addError(new TargettedMessage(
       // CoreMessages.GENERAL_ACTION_ERROR));
       // Detect failure to fill out arires properly.

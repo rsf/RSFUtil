@@ -186,6 +186,7 @@ public abstract class UIContainer extends UIParameterHolder {
         RSFUtil.failRemove(tomove);
     }
     tomove.updateFullID(null); // remove cached ID
+    tomove.parent = null;
   }
 
 }
