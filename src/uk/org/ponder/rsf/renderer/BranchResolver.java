@@ -21,8 +21,8 @@ import uk.org.ponder.rsf.view.ViewRoot;
 import uk.org.ponder.util.Logger;
 
 /**
- * Performs a first "light" pass of the template and component tree to resolve
- * references by UIBranchContainer components to the correct tag targets.
+ * Performs a first "light" pass of the template and component tree to resolve references
+ * by UIBranchContainer components to the correct tag targets.
  * 
  * @author Antranig Basman (antranig@caret.cam.ac.uk)
  * 
@@ -32,7 +32,7 @@ public class BranchResolver {
   private HashMap branchmap = new HashMap();
 
   private XMLLumpMMap globalmap;
-  
+
   private Map rewritemap;
 
   private static class BestMatch {
@@ -78,8 +78,8 @@ public class BranchResolver {
         // ups! Do not resolve here if does not actually occur in parentlump.
         XMLLump resolved = resolveCall(parentlump, branch);
         if (Logger.log.isDebugEnabled()) {
-          Logger.log.debug("Resolving call for component "
-              + branch.getClass().getName() + " fullID " + branch.getFullID());
+          Logger.log.debug("Resolving call for component " + branch.getClass().getName()
+              + " fullID " + branch.getFullID());
           if (resolved == null) {
             Logger.log.debug("No target found!");
           }
@@ -93,25 +93,30 @@ public class BranchResolver {
           branchmap.put(branch, resolved);
           String id = (String) resolved.attributemap.get("id");
           if (id != null) {
-            rewritemap.put(RenderUtil.getRewriteKey(parentlump.parent, basecontainer, id), branch.getFullID());
+            rewritemap.put(
+                RenderUtil.getRewriteKey(parentlump.parent, basecontainer, id), branch
+                    .getFullID());
           }
 
           resolveRecurse(branch, resolved);
         }
       }
-      
+
     }
-    for (Iterator downit = parentlump.downmap.iterator(); downit.hasNext();) {
-      String id = (String) downit.next();
-      if (!SplitID.isSplit(id)) {
-        XMLLumpList lumps = parentlump.downmap.headsForID(id);
-        for (int i = 0; i < lumps.size(); ++ i) {
-          XMLLump lump = lumps.lumpAt(i);
-          String lumpid = (String) lump.attributemap.get("id");
-          if (lumpid != null && lump.rsfID != null) {
-            UIComponent resolved = RenderUtil.fetchComponent(basecontainer, lump.rsfID);
-            if (resolved != null) {
-              rewritemap.put(RenderUtil.getRewriteKey(parentlump.parent, basecontainer, lumpid), resolved.getFullID());
+    if (parentlump.downmap != null) {
+      for (Iterator downit = parentlump.downmap.iterator(); downit.hasNext();) {
+        String id = (String) downit.next();
+        if (!SplitID.isSplit(id)) {
+          XMLLumpList lumps = parentlump.downmap.headsForID(id);
+          for (int i = 0; i < lumps.size(); ++i) {
+            XMLLump lump = lumps.lumpAt(i);
+            String lumpid = (String) lump.attributemap.get("id");
+            if (lumpid != null && lump.rsfID != null) {
+              UIComponent resolved = RenderUtil.fetchComponent(basecontainer, lump.rsfID);
+              if (resolved != null) {
+                rewritemap.put(RenderUtil.getRewriteKey(parentlump.parent, basecontainer,
+                    lumpid), resolved.getFullID());
+              }
             }
           }
         }
@@ -119,7 +124,8 @@ public class BranchResolver {
     }
   }
 
-  private void resolveInScope(String searchID, String defprefix, BestMatch bestmatch, XMLLumpMMap scope, UIContainer child) {
+  private void resolveInScope(String searchID, String defprefix, BestMatch bestmatch,
+      XMLLumpMMap scope, UIContainer child) {
     XMLLumpList scopelumps = scope.headsForID(searchID);
     passDeficit(bestmatch, child, scopelumps);
     if (bestmatch.deficit == 0)
@@ -129,7 +135,7 @@ public class BranchResolver {
       passDeficit(bestmatch, child, scopedeflumps);
     }
   }
-  
+
   private XMLLump resolveCall(XMLLump sourcescope, UIContainer child) {
     String searchID = child instanceof UIJointContainer ? ((UIJointContainer) child).jointID
         : child.ID;
@@ -149,7 +155,8 @@ public class BranchResolver {
     if (child instanceof UIBranchContainer) {
       if (sourcescope.parent.isstatictemplate) {
         // make sure we can resolve local (intra-template) branches in the static case
-        resolveInScope(searchID, defprefix, bestmatch, sourcescope.parent.globalmap, child);
+        resolveInScope(searchID, defprefix, bestmatch, sourcescope.parent.globalmap,
+            child);
       }
       resolveInScope(searchID, defprefix, bestmatch, globalmap, child);
     }
@@ -157,8 +164,7 @@ public class BranchResolver {
 
   }
 
-  private void passDeficit(BestMatch bestmatch, UIContainer container,
-      XMLLumpList tocheck) {
+  private void passDeficit(BestMatch bestmatch, UIContainer container, XMLLumpList tocheck) {
     if (tocheck == null)
       return;
     for (int i = 0; i < tocheck.size(); ++i) {
@@ -211,14 +217,14 @@ public class BranchResolver {
       }
       deficit += penalty;
     }
-    deficit += (lump.downmap == null? 0 : lump.downmap.numConcretes()) - children.length;
+    deficit += (lump.downmap == null ? 0
+        : lump.downmap.numConcretes()) - children.length;
     // think about also penalising "unficit" - children appearing in template
     // that are NOT ISSUED by producer. This is a balance between resolution
     // cost here (extra hashmap) and cost of searching for each template child
     // later. There may also be some layout issues.
     if (Logger.log.isDebugEnabled()) {
-      Logger.log.debug("Call to " + lump.toDebugString() + " deficit "
-          + deficit);
+      Logger.log.debug("Call to " + lump.toDebugString() + " deficit " + deficit);
     }
     return deficit;
   }
