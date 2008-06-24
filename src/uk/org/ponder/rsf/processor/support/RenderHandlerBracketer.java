@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import uk.org.ponder.errorutil.ConfigurationException;
 import uk.org.ponder.errorutil.CoreMessages;
 import uk.org.ponder.messageutil.TargettedMessage;
+import uk.org.ponder.messageutil.TargettedMessageException;
 import uk.org.ponder.rsf.flow.errors.SilentRedirectException;
 import uk.org.ponder.rsf.flow.errors.ViewExceptionStrategy;
 import uk.org.ponder.rsf.processor.RenderHandler;
@@ -101,8 +102,7 @@ public class RenderHandlerBracketer {
       Exception e, boolean iserrorredirect) {
     UniversalRuntimeException invest = UniversalRuntimeException.accumulate(e);
     Throwable target = invest.getTargetException();
-    boolean issilent = target != null
-        && target instanceof SilentRedirectException;
+    boolean issilent = target instanceof SilentRedirectException;
     if (!issilent) {
       Logger.log.warn("Exception rendering view: ", e);
     }
@@ -133,8 +133,18 @@ public class RenderHandlerBracketer {
       outgoing.errortoken = tokenid;
       outgoing.errorredirect = "1";
       Logger.log.warn("Error creating view tree - token " + tokenid);
-      TargettedMessage newerror = new TargettedMessage(
-          CoreMessages.GENERAL_SHOW_ERROR, new Object[] { tokenid });
+      TargettedMessage newerror;
+      Object[] args =  new Object[] { tokenid };
+      if (e instanceof TargettedMessageException) {
+        newerror = ((TargettedMessageException)e).getTargettedMessage();
+        if (newerror.args == null) {
+          newerror.args = args;
+        }
+      }
+      else {
+        newerror = new TargettedMessage(
+          CoreMessages.GENERAL_SHOW_ERROR, args);
+      }
       errorstatemanager.getTargettedMessageList().addMessage(newerror);
     }
 
