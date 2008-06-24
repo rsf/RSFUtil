@@ -77,6 +77,11 @@ public class RSFUtil {
    * This will transfer a value from an EL path in the request context to a
    * particular path withing the outgoing ViewParameters state for the coming 
    * action cycle, assuming that it completes without error.
+   * @param holder The control whose submission is to include the required binding.
+   * @param viewParamsPath The path within the outgoing ViewParameters state for the
+   * navigation which is to receive the deferred value.
+   * @param requestPath The path within the "final state" of the request context at the
+   * end of the cycle from which the deferred value is to be read.
    */
   
   public static void addResultingViewBinding(UIParameterHolder holder, String viewParamsPath, String requestPath) {
@@ -88,6 +93,20 @@ public class RSFUtil {
         new ELReference(requestPath)));
   }
   
+  /** Adds a "literal" resulting view binding to the supplied control. Rather than reading
+   * a path in the final request context as in {@link #addResultingViewBinding(UIParameterHolder, String, String)}, 
+   * this supplies a constant, literal value into the outgoing state.
+   * @param holder The control whose submission is to include the required binding.
+   * @param viewParamsPath The path within the outgoing ViewParameters state for the
+   * navigation which is to receive the deferred value.
+   * @param value The value to be applied to the outgoing ViewParameters path.
+   */ 
+  public static void addResultingViewBinding(UIParameterHolder holder, String viewParamsPath, Object value) {
+    if (holder.parameters == null) {
+      holder.parameters = new ParameterList();
+    }
+    holder.parameters.add(new UIELBinding("ARIResult.resultingView."+viewParamsPath, value));
+  }
   /**
    * Adds a binding to the supplied parameter list that will assign the EL
    * expression <code>source</code> to <code>transit</code> and then
