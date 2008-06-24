@@ -170,6 +170,19 @@ public class RequestLauncher implements EarlyRequestParser {
     //context.set("parsedViewParameters", torender);
   }
   
+  private void endRequest(RequestResponse togo) {
+    if (!singleshot) {
+      ConcreteWBL saved = new ConcreteWBL();
+      for (Iterator names = togo.requestContext.iterator(); names.hasNext();) {
+        String name = (String) names.next();
+        saved.set(name, togo.requestContext.locateBean(name));
+      }
+      // this will trash all request beans
+      rsacbl.endRequest();
+      togo.requestContext = saved;
+    }
+  }
+  
   /** Perform a rendering of the specified view 
    * @param torender The ViewParameters specifying the view to be rendered.
    * @return A {@link RenderResponse} record holding a summary of the final
@@ -201,9 +214,7 @@ public class RequestLauncher implements EarlyRequestParser {
       togo.redirect = brhb.getRedirectTarget();      
     }
     finally {
-      if (!singleshot) {
-        rsacbl.endRequest();
-      }
+      endRequest(togo);
     }
     return togo;
     
@@ -250,16 +261,7 @@ public class RequestLauncher implements EarlyRequestParser {
       Logger.log.warn("Error submitting request", e);
     }
     finally {
-      if (!singleshot) {
-        ConcreteWBL saved = new ConcreteWBL();
-        for (Iterator names = togo.requestContext.iterator(); names.hasNext();) {
-          String name = (String) names.next();
-          saved.set(name, togo.requestContext.locateBean(name));
-        }
-        // this will trash all request beans
-        rsacbl.endRequest();
-        togo.requestContext = saved;
-      }
+      endRequest(togo);
     }
     return togo;
   }
