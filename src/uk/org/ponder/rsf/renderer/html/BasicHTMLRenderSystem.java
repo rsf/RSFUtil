@@ -153,9 +153,9 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       // sure we render any preamble.
 
       if (payload != null) {
-        endopen = payload.open_end;
-        close = payload.close_tag;
-        uselump = payload;
+        rendercontext.endopen = payload.open_end;
+        rendercontext.close = payload.close_tag;
+        rendercontext.uselump = payload;
         RenderUtil.dumpTillLump(lumps, lumpindex, payload.lumpindex, rsc.pos);
         lumpindex = payload.lumpindex;
       }
@@ -184,8 +184,8 @@ public class BasicHTMLRenderSystem implements RenderSystem {
       if (payload != null) {
         // the default case is initialised to tag close
         if (rendercontext.nextpos == nextpos) {
-          RenderUtil.dumpTillLump(lumps, close.lumpindex + 1,
-            outerclose.lumpindex + 1, rsc.pos);
+          RenderUtil.dumpTillLump(lumps, rendercontext.close.lumpindex + 1,
+              outerclose.lumpindex + 1, rsc.pos);
         }
       }
       nextpos = rendercontext.nextpos;

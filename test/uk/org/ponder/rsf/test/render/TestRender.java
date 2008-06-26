@@ -37,5 +37,7 @@ public class TestRender extends MultipleRSFTests {
     assertContains(response, "for=\"target2\"");
     // For RSF-65
     assertContains(response, "select-2-selection");
+    // For RSF-115
+    assertContains(response, "<span > <a  href=\"http://place\">Link Text</a> </span>");
   }
 }
