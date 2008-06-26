@@ -8,6 +8,7 @@ import uk.org.ponder.rsf.components.ELReference;
 import uk.org.ponder.rsf.components.UIBranchContainer;
 import uk.org.ponder.rsf.components.UIContainer;
 import uk.org.ponder.rsf.components.UIInitBlock;
+import uk.org.ponder.rsf.components.UILink;
 import uk.org.ponder.rsf.components.UIMessage;
 import uk.org.ponder.rsf.components.UIOutput;
 import uk.org.ponder.rsf.components.UIOutputMany;
@@ -43,5 +44,7 @@ public class TestProducer implements ViewComponentProducer {
     
     UIInitBlock.make(tofill, "init-block", "init-select", 
         new Object[] {select2.selection.getFullID()});
+    
+    UILink.make(tofill, "outer-thing", "Link Text", "http://place");
   }
 }
