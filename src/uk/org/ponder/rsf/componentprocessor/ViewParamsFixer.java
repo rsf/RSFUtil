@@ -93,7 +93,7 @@ public class ViewParamsFixer implements ComponentProcessor {
       }
     }
     if (object instanceof RawViewParameters) {
-      return ((RawViewParameters) object).URL;
+      object = ((RawViewParameters) object).URL;
     }
     
     return JSONProvider.toString(object);
