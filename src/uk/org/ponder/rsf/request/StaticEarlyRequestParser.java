@@ -15,15 +15,18 @@ public class StaticEarlyRequestParser implements EarlyRequestParser {
   private String[] pathInfo;
   private Map requestMap;
   private String requestType;
+  private String requestMethod;
   private String environmentType;
   private Locale locale;
 
   public StaticEarlyRequestParser(Map multipartMap, String[] pathInfo,
-      Map requestMap, String requestType, String environmentType, Locale locale) {
+      Map requestMap, String requestType, String requestMethod, 
+      String environmentType, Locale locale) {
     this.multipartMap = multipartMap;
     this.pathInfo = pathInfo;
     this.requestMap = requestMap;
     this.requestType = requestType;
+    this.requestMethod = requestMethod;
     this.locale = locale;
   }
 
@@ -51,6 +54,10 @@ public class StaticEarlyRequestParser implements EarlyRequestParser {
   // SWF, which obliges us to factor this off "early".
   public Locale getLocale() {
     return locale;
+  }
+
+  public String getRequestMethod() {
+    return requestMethod;
   }
   
 }

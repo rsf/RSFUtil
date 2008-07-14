@@ -44,7 +44,8 @@ public class LazarusRedirector {
     Map params = viewParamsMapper.renderViewParamAttributes(target);
     String[] pathinfo = viewParamsMapper.toPathInfo(target);
     StaticEarlyRequestParser serp = new StaticEarlyRequestParser(null,
-        pathinfo, params, EarlyRequestParser.RENDER_REQUEST, environmentType, localegetter.get());
+        pathinfo, params, EarlyRequestParser.RENDER_REQUEST, "", 
+        environmentType, localegetter.get());
     Map newmap = new HashMap();
     newmap.put("earlyRequestParser", serp);
     lazarusListReceiver.queueRunnable(lazarusListReceiver.getLazarusRunnable(

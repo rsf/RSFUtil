@@ -443,6 +443,10 @@
   <bean id="requestTypeProxy" parent="RSACStringBridge">
     <property name="targetBeanName" value="requestType" />
   </bean>
+  
+  <bean id="requestMethodProxy" parent="RSACStringBridge">
+    <property name="targetBeanName" value="requestMethod" />
+  </bean>
 
   <bean id="renderSystemResolver"
     class="uk.org.ponder.rsf.renderer.RenderSystemResolver">
@@ -733,6 +737,8 @@
     <property name="contentTypeInfoProxy" ref="contentTypeInfoProxy"/>
     <property name="generalConverter" ref="generalConverter"/>
     <property name="responseProxy" ref="httpServletResponseProxy"/>
+    <property name="requestProxy" ref="httpServletRequestProxy"/>
+    <property name="JSONProvider" ref="JSONProvider"/>
   </bean>
 
   <bean id="dataViewCollector" class="uk.org.ponder.rsf.view.support.DataViewCollector" 

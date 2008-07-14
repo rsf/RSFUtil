@@ -6,6 +6,7 @@ package uk.org.ponder.rsf.view.support;
 import uk.org.ponder.rsf.flow.errors.ViewExceptionStrategy;
 import uk.org.ponder.rsf.processor.RedirectingHandlerHook;
 import uk.org.ponder.rsf.request.EarlyRequestParser;
+import uk.org.ponder.rsf.view.DataInputHandler;
 import uk.org.ponder.rsf.view.DataView;
 import uk.org.ponder.rsf.view.DataViewHandler;
 import uk.org.ponder.rsf.viewstate.AnyViewParameters;
@@ -62,6 +63,15 @@ public class DataViewHandlerHook implements RedirectingHandlerHook {
             public void run() {
               DataView view = dataViewCollector.getView(viewparams.viewID);
               dataViewHandler.handleView(view, viewparams);
+            }
+          });
+          return NoViewParameters.instance;
+        }
+        else {
+          requestInvoker.invokeRunnable(new Runnable() {
+            public void run() {
+              DataInputHandler handler = dataViewCollector.getHandler(viewparams.viewID);
+              dataViewHandler.handleInput(handler, viewparams);
             }
           });
           return NoViewParameters.instance;

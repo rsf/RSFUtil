@@ -55,6 +55,12 @@
   <bean id="requestType" factory-bean="earlyRequestParser"
     factory-method="getRequestType" />
 
+  <!-- Instantiation of this bean will fail in environments where it
+  cannot be supported -->
+  <bean id="requestMethod" factory-bean="earlyRequestParser" 
+    factory-method="getRequestMethod" />
+ 
+
   <bean id="requestEnvironmentType" factory-bean="earlyRequestParser"
     factory-method="getEnvironmentType" />
 

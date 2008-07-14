@@ -61,6 +61,8 @@ public class RequestLauncher implements EarlyRequestParser {
 
   private boolean singleshot;
 
+  private String requestMethod;
+
   public Map getMultipartMap() {
     return multipartMap;
   }
@@ -89,6 +91,14 @@ public class RequestLauncher implements EarlyRequestParser {
     return requestType;
   }
 
+  public String getRequestMethod() {
+    return requestMethod;
+  }
+  
+  public void setRequestMethod(String requestMethod) {
+    this.requestMethod = requestMethod;
+  }
+  
   public void setRequestType(String requestType) {
     this.requestType = requestType;
   }
@@ -281,4 +291,5 @@ public class RequestLauncher implements EarlyRequestParser {
     requestType = EarlyRequestParser.RENDER_REQUEST;
     smc = (SAXalizerMappingContext) context.getBean("ELMappingContext");
   }
+
 }
