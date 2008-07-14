@@ -64,8 +64,14 @@ public class ServletEarlyRequestParser implements EarlyRequestParser {
     }
   }
 
+  private boolean suppressParameters() {
+    String contentType = request.getContentType(); 
+    boolean isAjax = contentType != null && contentType.startsWith("application/json");
+    return isAjax;
+  }
+  
   public Map getRequestMap() {
-    return request.getParameterMap();
+    return suppressParameters()? new HashMap() : request.getParameterMap();
   }
 
   public Map getMultipartMap() {
@@ -90,6 +96,10 @@ public class ServletEarlyRequestParser implements EarlyRequestParser {
     String requesttype = request.getMethod().equals("GET") ? EarlyRequestParser.RENDER_REQUEST
         : EarlyRequestParser.ACTION_REQUEST;
     return requesttype;
+  }
+  
+  public String getRequestMethod() {
+    return request.getMethod();
   }
 
   public String getEnvironmentType() {

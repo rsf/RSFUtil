@@ -62,6 +62,10 @@ public class DynamicStreamEarlyRequestParser implements EarlyRequestParser {
     public String getEnvironmentType() {
       return null;
     }
+
+    public String getRequestMethod() {
+      return "";
+    }
   
 }
 

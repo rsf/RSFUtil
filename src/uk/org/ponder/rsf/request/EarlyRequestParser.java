@@ -52,6 +52,13 @@ public interface EarlyRequestParser {
    */
   public String getRequestType();
 
+  /**
+   * A factory method returning any HTTP method in effect for this request.
+   * In environments where this is not applicable, will return the empty
+   * String.
+   */
+  public String getRequestMethod();
+  
   /** Returns a (possibly empty) Map of parameter names to Spring MultipartFile 
    * for the current request */
   
