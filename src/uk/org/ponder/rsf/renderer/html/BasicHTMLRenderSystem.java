@@ -115,7 +115,7 @@ public class BasicHTMLRenderSystem implements RenderSystem {
     XMLLump uselump = lump;
     
     HashMap attrcopy = new HashMap();
-    attrcopy.putAll(uselump.attributemap);
+    attrcopy.putAll((payload == null? uselump : payload).attributemap);
     attrcopy.remove(XMLLump.ID_ATTRIBUTE);
     
     TagRenderContext rendercontext = new TagRenderContext(attrcopy, uselump,

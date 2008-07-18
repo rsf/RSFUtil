@@ -46,5 +46,11 @@ public class TestProducer implements ViewComponentProducer {
         new Object[] {select2.selection.getFullID()});
     
     UILink.make(tofill, "outer-thing", "Link Text", "http://place");
+    
+    // RSF-115 extension test
+    UIOutput.make(tofill, "outer-input");
+    for (int i = 1; i <= 3; ++ i) {
+      UIOutput.make(tofill, "outer-list:", "component " + i);
+    }
   }
 }
