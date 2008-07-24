@@ -14,11 +14,18 @@ import uk.org.ponder.rsf.renderer.TagRenderContext;
  */
 
 public class NullRewriteSCR implements BasicSCR {
-  
+  public static final String NAME = "null";
+	
   public static final BasicSCR instance = new NullRewriteSCR();
   
+  private String name = NAME;
+  
+  public void setName(String name) {
+    this.name = name;
+  }
+  
   public String getName() {
-    return "null";
+    return name;
   }
 
   public int render(TagRenderContext trc) {
