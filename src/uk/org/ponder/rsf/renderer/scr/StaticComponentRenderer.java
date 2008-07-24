@@ -13,5 +13,5 @@ public interface StaticComponentRenderer {
    * <code>rsf:id="scr=name"</code>
    */
   public String getName();
- 
+  
 }

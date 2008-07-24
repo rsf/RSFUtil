@@ -33,7 +33,9 @@ public class EntityCentredViewParameters extends ViewParameters {
     this(viewid, entity, null);
   }
   
-  public EntityCentredViewParameters() {}
+  public EntityCentredViewParameters() {
+    this.entity = new EntityID();
+  }
   
   public EntityID entity;
   public String mode;
