@@ -70,6 +70,8 @@ public class BasicHTMLComponentRenderer implements ComponentRenderer {
     URLRewriteSCR urlrewriter = (URLRewriteSCR) scrc.getSCR(URLRewriteSCR.NAME);
     urlrewriter.rewriteURLs(trc.uselump, attrcopy);
     
+    String tagname = trc.uselump.getTag();
+    
     if (torendero instanceof UIBound) {
       UIBound torender = (UIBound) torendero;
 
@@ -267,6 +269,11 @@ public class BasicHTMLComponentRenderer implements ComponentRenderer {
       trc.rewriteLeaf(text);
     }
     else if (torendero instanceof UIForm) {
+      if (!"form".equals(tagname)) {
+        throw new IllegalArgumentException(
+            "UIForm peered with unrecognised tag " + tagname
+                + " (only <form> is supported for HTML)");
+      }
       UIForm torender = (UIForm) torendero;
       attrcopy.put("method", 
           torender.type.equals(EarlyRequestParser.RENDER_REQUEST)?
