@@ -15,7 +15,12 @@
     <property name="basename" value="WEB-INF/messages/messages" />
     <property name="cacheSeconds" value="10" />
     <property name="fallbackToSystemLocale" value="false"/>
+    <property name="parentMessageSource" ref="builtinMessageSource"/>
   </bean> 
+
+  <bean id="builtinMessageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+    <property name="basename" value="uk/org/ponder/rsf/builtin/messages/messages"/>
+  </bean>
 
   <bean id="messageLocator"
     class="uk.org.ponder.springutil.SpringMessageLocator">
