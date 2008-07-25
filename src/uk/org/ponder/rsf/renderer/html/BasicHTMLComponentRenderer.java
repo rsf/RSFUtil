@@ -65,13 +65,13 @@ public class BasicHTMLComponentRenderer implements ComponentRenderer {
     XMLLump[] lumps = trc.uselump.parent.lumps;
     int lumpindex = trc.uselump.lumpindex;
     PrintOutputStream pos = trc.pos;
+    
+    String tagname = trc.uselump.getTag();
 
     // Make an early and general attempt to rewrite side-URLs
     URLRewriteSCR urlrewriter = (URLRewriteSCR) scrc.getSCR(URLRewriteSCR.NAME);
     urlrewriter.rewriteURLs(trc.uselump, attrcopy);
-    
-    String tagname = trc.uselump.getTag();
-    
+        
     if (torendero instanceof UIBound) {
       UIBound torender = (UIBound) torendero;
 
@@ -124,7 +124,7 @@ public class BasicHTMLComponentRenderer implements ComponentRenderer {
         }
         else {
           String value = ((UIBoundString) torender).getValue();
-          if (trc.uselump.isTag("textarea")) {
+          if ("textarea".equals(tagname)) {
             if (UITypes.isPlaceholder(value) && torender.willinput) {
               // FORCE a blank value for input components if nothing from
               // model, if input was intended.
@@ -132,7 +132,7 @@ public class BasicHTMLComponentRenderer implements ComponentRenderer {
             }
             trc.rewriteLeaf(value);
           }
-          else if (trc.uselump.isTag("input")) {
+          else if ("input".equals(tagname)) {
             if (torender.willinput || !UITypes.isPlaceholder(value)) {
               attrcopy.put("value", value);
             }
@@ -261,7 +261,7 @@ public class BasicHTMLComponentRenderer implements ComponentRenderer {
       attrcopy.put("name", FossilizedConverter.COMMAND_LINK_PARAMETERS + value);
       String text = torender.commandtext == null ? null
           : torender.commandtext.getValue();
-      boolean isbutton = trc.uselump.textEquals("<button ");
+      boolean isbutton = "button".equals(tagname);
       if (text != null && !isbutton) {
         attrcopy.put("value", torender.commandtext.getValue());
         text = null;
