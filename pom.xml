@@ -39,13 +39,13 @@
   
   <scm>
     <connection>
-      scm:svn:https://saffron.caret.cam.ac.uk/svn/projects/trunk/RSFUtil/
+      scm:svn:https://source.caret.cam.ac.uk/rsf/projects/trunk/RSFUtil/
     </connection>
     <developerConnection>
-      scm:svn:https://saffron.caret.cam.ac.uk/svn/projects/trunk/RSFUtil/
+      scm:svn:https://source.caret.cam.ac.uk/rsf/projects/trunk/RSFUtil/
     </developerConnection>
     <url>
-      https://saffron.caret.cam.ac.uk/svn/projects/trunk/RSFUtil/
+      https://source.caret.cam.ac.uk/rsf/projects/trunk/RSFUtil/
     </url>
   </scm>
 
