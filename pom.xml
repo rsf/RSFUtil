@@ -14,8 +14,8 @@
   <name>J-RSFUtil</name>
   <groupId>uk.org.ponder.rsfutil</groupId>
   <properties>
-    <rsfutil.version>0.7.3</rsfutil.version>
-    <jservletutil.version>1.2.3</jservletutil.version>
+    <rsfutil.version>0.7.4-SNAPSHOT</rsfutil.version>
+    <jservletutil.version>1.2.4-SNAPSHOT</jservletutil.version>
   </properties>
   <organization>
     <name>CARET, University of Cambridge</name>
