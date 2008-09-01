@@ -73,6 +73,7 @@ public class EntityBeanLocatorImpl implements EntityBeanLocator {
     // rather than its ID
     Object togo = sebl.bma.invokeBeanMethod(PathUtil.composePath(sebl.removeEL, '\'' + beanname + '\''),
         beanlocator);
+    delivered.remove(beanname);
     if (togo == null) return false;
     if (togo instanceof Boolean) {
       return ((Boolean)togo).booleanValue();
