@@ -6,6 +6,7 @@ package uk.org.ponder.rsf.processor.support;
 import java.util.Map;
 
 import uk.org.ponder.messageutil.TargettedMessage;
+import uk.org.ponder.messageutil.TargettedMessageException;
 import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsf.flow.ARIResolver;
 import uk.org.ponder.rsf.flow.ARIResult;
@@ -225,7 +226,14 @@ public class RSFActionHandler implements ActionHandler, ErrorHandler {
     }
     catch (Throwable e) { // avoid masking errors from the finally block
       if (!(e instanceof CancellationException)) {
-        Logger.log.warn("Error invoking action", e);
+        Throwable e2 = UniversalRuntimeException.unwrapException(e);
+        if (e2 instanceof TargettedMessageException) {
+          Logger.log.info("Targetted error invoking action: " 
+              + ((TargettedMessageException)e2).getTargettedMessage().message);
+        }
+        else {
+          Logger.log.warn("Error invoking action", e);
+        }
       }
       // ThreadErrorState.addError(new TargettedMessage(
       // CoreMessages.GENERAL_ACTION_ERROR));
