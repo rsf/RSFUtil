@@ -3,6 +3,8 @@
  */
 package uk.org.ponder.rsf.bare.junit;
 
+import org.springframework.mock.web.MockHttpServletResponse;
+
 import uk.org.ponder.beanutil.WriteableBeanLocator;
 import uk.org.ponder.messageutil.TargettedMessageList;
 import uk.org.ponder.rsac.test.AbstractRSACTests;
@@ -92,6 +94,14 @@ public class PlainRSFTests extends AbstractRSACTests {
     if (response.markup != null) {
       if (response.markup.indexOf(DefaultFatalErrorHandler.ERROR_STRING) != -1) {
         wasError = true;        
+      }
+    }
+    
+    MockHttpServletResponse mockresponse = (MockHttpServletResponse) response.requestContext.locateBean("httpServletResponse");
+    if (mockresponse != null) {
+      int status = mockresponse.getStatus();
+      if (status >= 400 && status < 600) {
+        wasError = true;
       }
     }
     assertFalse(errorString(error), wasError ^ error);
