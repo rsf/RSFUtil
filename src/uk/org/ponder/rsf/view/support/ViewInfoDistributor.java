@@ -10,6 +10,7 @@ import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReceiver;
 import uk.org.ponder.rsf.flow.jsfnav.NavigationCaseReporter;
 import uk.org.ponder.rsf.view.DefaultView;
 import uk.org.ponder.rsf.view.ViewIDReporter;
+import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsReceiver;
 import uk.org.ponder.rsf.viewstate.ViewParamsReporter;
 
@@ -57,7 +58,12 @@ public class ViewInfoDistributor {
     }
     if (match(view, ViewParamsReporter.class, exceptions)) {
       ViewParamsReporter vpreporter = (ViewParamsReporter) view;
-      vpreceiver.setViewParamsExemplar(key, vpreporter.getViewParameters());
+      ViewParameters viewparams = vpreporter.getViewParameters();
+      if (viewparams == null) {
+        throw new IllegalArgumentException("Error in view " + view + " with id " + key 
+            + ": getViewParameters has returned null - this must return a concrete ViewParameters exemplar");
+      }
+      vpreceiver.setViewParamsExemplar(key, viewparams);
     }
     if (match(view, DefaultView.class, exceptions)) {
       vpreceiver.setDefaultView(key);
