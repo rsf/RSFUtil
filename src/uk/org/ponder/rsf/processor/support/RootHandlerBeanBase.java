@@ -12,6 +12,7 @@ import uk.org.ponder.rsf.processor.RedirectingHandlerHook;
 import uk.org.ponder.rsf.request.EarlyRequestParser;
 import uk.org.ponder.rsf.request.LazarusRedirector;
 import uk.org.ponder.rsf.viewstate.AnyViewParameters;
+import uk.org.ponder.rsf.viewstate.NoViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewStateHandler;
 import uk.org.ponder.streamutil.write.PrintOutputStream;
 import uk.org.ponder.util.UniversalRuntimeException;
@@ -81,7 +82,7 @@ public abstract class RootHandlerBeanBase {
         handlePost();
       }
     }
-    else {
+    else if (!(redirect instanceof NoViewParameters)) {
       issueRedirect(redirect, setupResponseWriter());
     }
     return true;
