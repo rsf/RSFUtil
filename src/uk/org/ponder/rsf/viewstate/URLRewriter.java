@@ -31,8 +31,7 @@ public class URLRewriter {
   }
   
   public String rewriteContextURL(String path) {
-    return viewstatehandler.encodeResourceURL(path
-          .substring(CONTEXT_PREFIX.length()));
+    return viewstatehandler.encodeResourceURL(path.substring(CONTEXT_PREFIX.length()));
   }
   
   /**

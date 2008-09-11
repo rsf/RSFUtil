@@ -88,7 +88,7 @@ public abstract class ViewParameters implements AnyViewParameters {
    * no-args method bothers you.
    */
   public ViewParameters copyBase(DeepBeanCloner cloner) {
-    return (ViewParameters) cloner.cloneBean(this, cloneexceptions);
+    return (ViewParameters) cloner.cloneBean(this, cloneexceptions, true);
   }
 
   /**

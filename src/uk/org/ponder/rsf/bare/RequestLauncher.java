@@ -224,7 +224,10 @@ public class RequestLauncher implements EarlyRequestParser {
       togo.redirect = brhb.getRedirectTarget();      
     }
     finally {
-      endRequest(togo);
+      try {
+        endRequest(togo);
+      }
+      catch (Throwable t) {} // finally blocks must NEVER throw
     }
     return togo;
     

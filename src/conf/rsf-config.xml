@@ -45,8 +45,7 @@
     <property name="reflectiveCache" ref="reflectiveCache" />
     <property name="defaultInferrer" ref="ELDefaultInferrer" />
     <property name="generalLeafParser" ref="generalLeafParser" />
-    <property name="indexedPropertyAccessor"
-      ref="indexedPropertyAccessor" />
+    <property name="indexedPropertyAccessor" ref="indexedPropertyAccessor" />
   </bean>
 
   <bean id="streamResolver"
@@ -218,10 +217,8 @@
 
   <bean id="dataConverterTLAB"
     class="uk.org.ponder.springutil.ByClassTLAB">
-    <property name="targetClass"
-      value="uk.org.ponder.mapping.DataConverter" />
-    <property name="targetPath"
-      value="dataConverterRegistry.converters" />
+    <property name="targetClass" value="uk.org.ponder.mapping.DataConverter" />
+    <property name="targetPath"  value="dataConverterRegistry.converters" />
   </bean>
 
   <bean parent="actionResultInterceptorParent">
@@ -293,6 +290,7 @@
   <bean id="RSFMappingLoader"
     class="uk.org.ponder.rsf.mappings.RSFMappingLoader">
     <property name="viewParamsLeafParser" ref="viewParamsLeafParser" />
+    <property name="rawViewParamsLeafParser" ref="rawViewParamsLeafParser"/>
   </bean>
 
   <bean id="fossilizedConverter"
@@ -320,6 +318,7 @@
     class="uk.org.ponder.rsf.componentprocessor.ViewParamsFixer">
     <property name="viewStateHandler" ref="viewStateHandler" />
     <property name="internalURLRewriter" ref="internalURLRewriter" />
+    <property name="URLRewriter" ref="URLRewriter" />
     <property name="environmentalInterceptor" ref="environmentalViewParamsInterceptorManager"/>
     <property name="JSONProvider" ref="JSONProvider"/>
   </bean>
@@ -713,10 +712,28 @@
     <property name="proxyTargetClass" value="true" />
   </bean>
 
+ <!--  Similar cyclic reference at startup -->
+  <bean id="rawViewParamsLeafParser"
+    class="org.springframework.aop.framework.ProxyFactoryBean">
+    <property name="targetSource">
+      <bean
+        class="org.springframework.aop.target.LazyInitTargetSource">
+        <property name="targetBeanName">
+          <idref local="rawViewParamsLeafParserTarget" />
+        </property>
+      </bean>
+    </property>
+    <property name="proxyTargetClass" value="true" />
+  </bean>
+
   <bean id="viewParamsLeafParserTarget"
     class="uk.org.ponder.rsf.viewstate.support.ViewParamsLeafParser">
     <property name="viewParamsCodec" ref="viewParamsCodec" />
     <property name="viewParametersParser" ref="viewParametersParser" />
+  </bean>
+  
+  <bean id="rawViewParamsLeafParserTarget" class="uk.org.ponder.rsf.viewstate.support.RawViewParamsLeafParser" >
+    <property name="URLRewriter" ref="URLRewriter"/>
   </bean>
   <!-- 
     <bean id="viewStateHandlerProxy" parent="RSACBridgeProxy">
