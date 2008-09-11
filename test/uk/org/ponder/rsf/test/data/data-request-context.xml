@@ -26,6 +26,9 @@
   <bean id="userDataView" class="uk.org.ponder.rsf.test.data.producers.UserDataView">
     <property name="logonBean" ref="logon"/>
   </bean>
+  
+  <bean id="paramsDataView" class="uk.org.ponder.rsf.test.data.producers.ParamsDataView">
+  </bean>
 
   <bean id="securityWrapper"
     class="uk.org.ponder.rsf.test.data.impl.SecurityWrapper">

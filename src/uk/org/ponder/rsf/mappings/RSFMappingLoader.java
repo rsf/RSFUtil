@@ -34,8 +34,10 @@ import uk.org.ponder.rsf.flow.errors.StaticActionErrorStrategy;
 import uk.org.ponder.rsf.view.ViewRoot;
 import uk.org.ponder.rsf.viewstate.AnyViewParameters;
 import uk.org.ponder.rsf.viewstate.EntityCentredViewParameters;
+import uk.org.ponder.rsf.viewstate.RawViewParameters;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
+import uk.org.ponder.rsf.viewstate.support.RawViewParamsLeafParser;
 import uk.org.ponder.rsf.viewstate.support.ViewParamsLeafParser;
 import uk.org.ponder.saxalizer.SAXalizerMappingContext;
 import uk.org.ponder.saxalizer.mapping.ContainerTypeRegistry;
@@ -60,13 +62,17 @@ public class RSFMappingLoader implements MappingLoader {
     UIVerbatim.class
   };
   private ViewParamsLeafParser viewparamsleafparser;
-  
+  private RawViewParamsLeafParser rawViewParamsLeafParser;
+
+  public void setRawViewParamsLeafParser(RawViewParamsLeafParser rawViewParamsLeafParser) {
+    this.rawViewParamsLeafParser = rawViewParamsLeafParser;
+  }
+
   // do this in a somewhat ad hoc way, since leafparsers do not currently
   // advertise their parsed types.
   public void setViewParamsLeafParser(ViewParamsLeafParser viewparamsleafparser) {
     this.viewparamsleafparser = viewparamsleafparser;
   }
-  
 
   public void registerContainerTypes(ContainerTypeRegistry ctr) {
   }
@@ -95,7 +101,7 @@ public class RSFMappingLoader implements MappingLoader {
     context.classnamemanager.registerClass("view", ViewRoot.class);
     
     context.generalLeafParser.registerParser(ViewParameters.class, viewparamsleafparser);
-    context.generalLeafParser.registerParser(AnyViewParameters.class, viewparamsleafparser);
+    context.generalLeafParser.registerParser(RawViewParameters.class, rawViewParamsLeafParser);
     context.generalLeafParser.registerParser(ELReference.class, new ELReferenceParser());
   }
 

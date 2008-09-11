@@ -13,6 +13,7 @@ import uk.org.ponder.rsf.uitype.UITypes;
 import uk.org.ponder.rsf.viewstate.AnyViewParameters;
 import uk.org.ponder.rsf.viewstate.InternalURLRewriter;
 import uk.org.ponder.rsf.viewstate.RawViewParameters;
+import uk.org.ponder.rsf.viewstate.URLRewriter;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParamsInterceptor;
 import uk.org.ponder.rsf.viewstate.ViewStateHandler;
@@ -22,6 +23,7 @@ public class ViewParamsFixer implements ComponentProcessor {
   private InternalURLRewriter inturlrewriter;
   private ViewParamsInterceptor environmentalInterceptor;
   private SerializationProvider JSONProvider;
+  private URLRewriter rewriter;
 
   public void setJSONProvider(SerializationProvider provider) {
     JSONProvider = provider;
@@ -38,6 +40,10 @@ public class ViewParamsFixer implements ComponentProcessor {
 
   public void setInternalURLRewriter(InternalURLRewriter inturlrewriter) {
     this.inturlrewriter = inturlrewriter;
+  }
+  
+  public void setURLRewriter(URLRewriter rewriter) {
+    this.rewriter = rewriter;
   }
 
   public void processComponent(UIComponent toprocesso) {
@@ -93,7 +99,8 @@ public class ViewParamsFixer implements ComponentProcessor {
       }
     }
     if (object instanceof RawViewParameters) {
-      object = ((RawViewParameters) object).URL;
+      String url = ((RawViewParameters) object).URL;
+      object = rewriter.rewriteResourceURL(url, "");
     }
     
     return JSONProvider.toString(object);

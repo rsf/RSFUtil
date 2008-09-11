@@ -11,6 +11,7 @@ import uk.org.ponder.rsf.components.UICommand;
 import uk.org.ponder.rsf.components.UIForm;
 import uk.org.ponder.rsf.components.UIInput;
 import uk.org.ponder.rsf.test.data.producers.LogonProducer;
+import uk.org.ponder.rsf.test.data.producers.ParamsDataView;
 import uk.org.ponder.rsf.test.data.producers.UserDataView;
 import uk.org.ponder.rsf.viewstate.SimpleViewParameters;
 import uk.org.ponder.rsf.viewstate.ViewParameters;
@@ -72,4 +73,12 @@ public class TestData extends MultipleRSFTests {
     assertContains(render2, "\"userid\": \"Edward\"");
     
   }
+  
+  public void testParams() {
+    RenderResponse render = getRequestLauncher().renderView(new SimpleViewParameters(ParamsDataView.VIEW_ID));
+    assertRenderError(render, false);
+    assertContains(render, "\"contextView\": \"\\/templates\\/images\\/image.jpg");
+    assertContains(render, "\"selfView\": \"\\/paramdata\"");
+  }
+  
 }
