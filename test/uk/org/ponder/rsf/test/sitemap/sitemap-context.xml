@@ -3,7 +3,7 @@
   "http://www.springframework.org/dtd/spring-beans.dtd">
   
 <beans>
-  <bean id="sitemap" parent="siteMapParent">
+  <bean id="siteMap" parent="siteMapParent">
     <property name="location">
       <value>classpath:uk/org/ponder/rsf/test/sitemap/sitemap.xml</value>
     </property>
