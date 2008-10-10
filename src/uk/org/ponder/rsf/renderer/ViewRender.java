@@ -272,7 +272,7 @@ public class ViewRender {
                 continue;
               }
               int renderend = renderer.renderComponent(rsc, basecontainer, child, targetlump);
-              boolean wasopentag = tl.lumps[renderend].nestingdepth >= targetlump.nestingdepth;
+              boolean wasopentag = renderend < tl.lumps.length && tl.lumps[renderend].nestingdepth >= targetlump.nestingdepth;
               UIContainer newbase = child instanceof UIContainer? (UIContainer) child : basecontainer;
               if (wasopentag) {
                 renderRecurse(newbase, targetlump, tl.lumps[renderend]);
