@@ -192,7 +192,7 @@
       </resource>
       <resource>
         <directory>src/</directory>
-        <targetPath>/</targetPath>
+        <targetPath>.</targetPath>
         <includes>
           <include>**/*.xml</include>
           <include>**/*.html</include>
