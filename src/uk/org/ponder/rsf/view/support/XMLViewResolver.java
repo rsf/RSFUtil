@@ -37,7 +37,7 @@ import uk.org.ponder.util.UniversalRuntimeException;
 public class XMLViewResolver implements ViewResolver, ApplicationContextAware {
   public static final int NO_CACHE = -1;
   public static final String DEFAULT_EXTENSION = ".xml";
-  public static final String BASEPATH_DEFAULT = new String("");
+  public static final String BASEPATH_DEFAULT = "";
   private StringList viewnames;
   private String basepath = BASEPATH_DEFAULT;
   private ResourceLoader resourceloader;
