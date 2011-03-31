@@ -6,6 +6,7 @@ package uk.org.ponder.rsf.viewstate.support;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import uk.org.ponder.beanutil.BeanModelAlterer;
 import uk.org.ponder.mapping.DARList;
@@ -103,9 +104,10 @@ public class ViewParamsMapper implements CoreViewParamsCodec {
         }
       }
     }
-    for (Iterator keyit = params.keySet().iterator(); keyit.hasNext();) {
-      String attr = (String) keyit.next();
-      Object valueo = params.get(attr);
+    for (Iterator entryit = params.entrySet().iterator(); entryit.hasNext();) {
+      Entry entry = (Entry) entryit.next();
+      String attr = (String) entry.getKey();
+      Object valueo = entry.getValue();
       String path = mapinfo.attributeToPath(attr);
       if (path != null) {
         if (valueo != null) {

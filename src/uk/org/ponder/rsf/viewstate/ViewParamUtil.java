@@ -6,6 +6,7 @@ package uk.org.ponder.rsf.viewstate;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import uk.org.ponder.reflect.DeepBeanCloner;
 import uk.org.ponder.rsac.GlobalBeanAccessor;
@@ -80,9 +81,10 @@ public class ViewParamUtil {
   
   public static ParameterList mapToParamList(Map toconvert) {
     ParameterList togo = new ParameterList();
-    for (Iterator keyit = toconvert.keySet().iterator(); keyit.hasNext();) {
-      String key = (String) keyit.next();
-      Object value = toconvert.get(key);
+    for (Iterator entryit = toconvert.entrySet().iterator(); entryit.hasNext();) {
+      Entry entry = (Entry) entryit.next();
+      String key = (String) entry.getKey();
+      Object value = entry.getValue();
       if (value instanceof String) {
         togo.add(new UIParameter(key, (String) value));
       }
