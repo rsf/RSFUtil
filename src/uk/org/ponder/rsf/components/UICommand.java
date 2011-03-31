@@ -59,7 +59,6 @@ public class UICommand extends UIParameterHolder {
   public static UICommand make(UIContainer parent, String ID,
       UIBoundString commandtext, String methodbinding) {
     UICommand togo = new UICommand();
-    togo.commandtext = new UIOutput();
     togo.commandtext = commandtext;
     togo.ID = ID;
     togo.methodbinding = ELReference.make(methodbinding);
