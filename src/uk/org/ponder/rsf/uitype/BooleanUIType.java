@@ -5,7 +5,7 @@ package uk.org.ponder.rsf.uitype;
 
 public class BooleanUIType implements UIType {
   public static final BooleanUIType instance = new BooleanUIType();
-  public Boolean PLACEHOLDER = new Boolean(false);
+  public Boolean PLACEHOLDER = Boolean.FALSE;
   public Object getPlaceholder() {
     return PLACEHOLDER;
   }
