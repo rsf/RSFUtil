@@ -38,15 +38,9 @@
   </repositories>
   
   <scm>
-    <connection>
-      scm:svn:https://source.caret.cam.ac.uk/rsf/projects/trunk/RSFUtil/
-    </connection>
-    <developerConnection>
-      scm:svn:https://source.caret.cam.ac.uk/rsf/projects/trunk/RSFUtil/
-    </developerConnection>
-    <url>
-      https://source.caret.cam.ac.uk/rsf/projects/trunk/RSFUtil/
-    </url>
+    <connection>scm:git:git://github.com/rsf/RSFUtil.git</connection>
+    <developerConnection> scm:git:git://github.com/rsf/RSFUtil.git</developerConnection>
+    <url>https://github.com/rsf/RSFUtil.git</url>
   </scm>
 
   <!-- project developers -->
