@@ -5,7 +5,8 @@ package uk.org.ponder.rsf.uitype;
 
 public class StringUIType implements UIType {
   public static final StringUIType instance = new StringUIType();
-  public String PLACEHOLDER = new String("");
+  public String PLACEHOLDER = "";
+
   public Object getPlaceholder() {
     return PLACEHOLDER;
   }

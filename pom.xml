@@ -38,16 +38,29 @@
   </repositories>
   
   <scm>
-    <connection>
-      scm:svn:https://source.caret.cam.ac.uk/rsf/projects/trunk/RSFUtil/
-    </connection>
-    <developerConnection>
-      scm:svn:https://source.caret.cam.ac.uk/rsf/projects/trunk/RSFUtil/
-    </developerConnection>
-    <url>
-      https://source.caret.cam.ac.uk/rsf/projects/trunk/RSFUtil/
-    </url>
+    <connection>scm:git:git://github.com/rsf/RSFUtil.git</connection>
+    <developerConnection> scm:git:git://github.com/rsf/RSFUtil.git</developerConnection>
+    <url>https://github.com/rsf/RSFUtil.git</url>
   </scm>
+
+  <distributionManagement>
+    <downloadUrl>http://source.sakaiproject.org/maven2/</downloadUrl>
+    <snapshotRepository>
+      <uniqueVersion>false</uniqueVersion>
+      <id>sakai-maven-snapshots-scp</id>
+      <name>Sakai snapshot Repo</name>
+      <url>scp://source.sakaiproject.org/var/www/html/maven2-snapshots</url>
+      <layout>default</layout>
+    </snapshotRepository>
+    <repository>
+      <uniqueVersion>false</uniqueVersion>
+      <id>sakai-maven2-scp</id>
+      <name>Sakai maven2 repository</name>
+      <url>scp://source.sakaiproject.org/var/www/html/maven2</url>
+      <layout>default</layout>
+    </repository>
+  </distributionManagement>
+
 
   <!-- project developers -->
   <developers>
@@ -145,8 +158,8 @@
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
-      <artifactId>spring-mock</artifactId>
-      <version>2.0.6</version>
+      <artifactId>spring-test</artifactId>
+      <version>2.5.4</version>
       <type>jar</type>
       <scope>provided</scope>
     </dependency>
@@ -216,5 +229,5 @@
       </testResource>
     </testResources>
   </build>
-
 </project>
+

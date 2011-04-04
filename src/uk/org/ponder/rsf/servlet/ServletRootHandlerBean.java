@@ -93,7 +93,7 @@ public class ServletRootHandlerBean extends RootHandlerBeanBase {
         acceptHeader += ",text/html";
       }
 
-      String responseencoding = response.getCharacterEncoding();
+
       response.setHeader("Accept", acceptHeader);
       return pos;
     }
