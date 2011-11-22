@@ -50,14 +50,14 @@
       <uniqueVersion>false</uniqueVersion>
       <id>sakai-maven-snapshots-scp</id>
       <name>Sakai snapshot Repo</name>
-      <url>scp://source.sakaiproject.org/var/www/html/maven2-snapshots</url>
+      <url>scpexe://source.sakaiproject.org/var/www/html/maven2-snapshots</url>
       <layout>default</layout>
     </snapshotRepository>
     <repository>
       <uniqueVersion>false</uniqueVersion>
       <id>sakai-maven2-scp</id>
       <name>Sakai maven2 repository</name>
-      <url>scp://source.sakaiproject.org/var/www/html/maven2</url>
+      <url>scpexe://source.sakaiproject.org/var/www/html/maven2</url>
       <layout>default</layout>
     </repository>
   </distributionManagement>
@@ -229,6 +229,14 @@
         <filtering>false</filtering>
       </testResource>
     </testResources>
+    <extensions>
+        <!-- Enable the use of external ssh for deploys -->
+           <extension>
+           <groupId>org.apache.maven.wagon</groupId>
+           <artifactId>wagon-ssh-external</artifactId>
+           <version>2.0</version>
+           </extension>
+    </extensions>
   </build>
 </project>
 
