@@ -18,7 +18,17 @@
     <property name="parentMessageSource" ref="builtinMessageSource"/>
   </bean> 
 
-  <bean id="builtinMessageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+  <!-- This applies an unusual hack in order to function correctly with Spring 3.x.
+   With this version, the implementation of "application listeners" has altered, and the 
+   "application listener turns loader" strategy that we used in order to load TLABPostProcessorLoader
+   no longer works - the new Spring 3.x strategy does not actually LOAD THE CONCRETE BEAN until the
+   first application event actually arrives, which unfortunately is "onRefresh", far too late in the cycle.
+   However, this RSF framework standard bean is unavoidable in every configuration, and being a messageSource
+   is loaded by Spring at the right point in its lifecycle (see implementation in Spring's
+   AbstractApplicationContext.java -->
+
+  <bean id="builtinMessageSource" class="org.springframework.context.support.ResourceBundleMessageSource" 
+        depends-on="TLABPostProcessorLoader">
     <property name="basename" value="uk/org/ponder/rsf/builtin/messages/messages"/>
   </bean>
 
