@@ -28,11 +28,13 @@
   <version>0.8.0-SNAPSHOT</version>
 
   <repositories>
+    <!--
     <repository>
       <id>CARET-Maven2</id>
       <name>CARET Maven 2 Repository</name>
       <url>http://www2.caret.cam.ac.uk/maven2</url>
     </repository>
+    -->
   </repositories>
   
   <scm>
@@ -157,7 +159,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
-      <version>2.5.6.SEC03</version>
+      <version>3.1.2.RELEASE</version>
       <type>jar</type>
       <scope>provided</scope>
     </dependency>

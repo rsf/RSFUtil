@@ -5,7 +5,8 @@ package uk.org.ponder.rsf.uitype;
 
 public class BooleanUIType implements UIType {
   public static final BooleanUIType instance = new BooleanUIType();
-  public Boolean PLACEHOLDER = Boolean.FALSE;
+  // This value is compared by reference equality in UITypes.java - this is not a bad constant (Findbugs)
+  public Boolean PLACEHOLDER = new Boolean(false);
 
   public Object getPlaceholder() {
     return PLACEHOLDER;
