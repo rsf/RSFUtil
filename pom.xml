@@ -4,7 +4,7 @@
   <parent>
     <groupId>uk.org.ponder.pure-poms</groupId>
     <artifactId>standard-jar</artifactId>
-    <version>POM-3</version>
+    <version>POM-4-SNAPSHOT</version>
   </parent>
   <artifactId>rsfutil</artifactId>
   <packaging>jar</packaging>
@@ -42,25 +42,6 @@
     <developerConnection> scm:git:git://github.com/rsf/RSFUtil.git</developerConnection>
     <url>https://github.com/rsf/RSFUtil.git</url>
   </scm>
-
-  <distributionManagement>
-    <downloadUrl>http://source.sakaiproject.org/maven2/</downloadUrl>
-    <snapshotRepository>
-      <uniqueVersion>false</uniqueVersion>
-      <id>sakai-maven-snapshots-scp</id>
-      <name>Sakai snapshot Repo</name>
-      <url>scpexe://source.sakaiproject.org/var/www/html/maven2-snapshots</url>
-      <layout>default</layout>
-    </snapshotRepository>
-    <repository>
-      <uniqueVersion>false</uniqueVersion>
-      <id>sakai-maven2-scp</id>
-      <name>Sakai maven2 repository</name>
-      <url>scpexe://source.sakaiproject.org/var/www/html/maven2</url>
-      <layout>default</layout>
-    </repository>
-  </distributionManagement>
-
 
   <!-- project developers -->
   <developers>
