@@ -35,11 +35,11 @@ public class RESTfulViewExceptionStrategy implements ViewExceptionStrategy {
       try {
         if (e instanceof SecurityException || e instanceof PermissionException) {
           Logger.log.info("Sending HTTP status 401 for exception ", e);
-          httpServletResponse.sendError(401, e.getLocalizedMessage());
+          httpServletResponse.sendError(401, e.toString());
         }
         else {
-          Logger.log.info("Sending HTTP status 500 for exception ", e);
-          httpServletResponse.sendError(500, e.getLocalizedMessage());
+          Logger.log.error("Sending HTTP status 500 for exception ", e);
+          httpServletResponse.sendError(500, e.toString());
         }
         try { // Jetty will refuse to allow access to Writer after sendError 
           e.printStackTrace(httpServletResponse.getWriter());

@@ -72,6 +72,9 @@ public class DataViewHandlerHook implements RedirectingHandlerHook {
             public void run() {
               DataInputHandler handler = dataViewCollector.getHandler(viewparams.viewID);
               dataViewHandler.handleInput(handler, viewparams);
+              if (handler instanceof DataView) {
+                  dataViewHandler.handleView((DataView) handler, viewparams);
+              }
             }
           });
           return NoViewParameters.instance;

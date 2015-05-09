@@ -60,7 +60,7 @@ public class ServletRootHandlerBean extends RootHandlerBeanBase {
 
     Logger.log.info("Redirecting to " + path);
     try {
-      if (contenttypeinfo.directRedirects && viewparamso instanceof ViewParameters)  {
+      if (contenttypeinfo.get().directRedirects && viewparamso instanceof ViewParameters)  {
         ViewParameters viewparams = (ViewParameters) viewparamso;
         lazarusRedirector.lazarusRedirect(viewparams);
       }
@@ -104,7 +104,7 @@ public class ServletRootHandlerBean extends RootHandlerBeanBase {
   }
 
   public PrintOutputStream setupResponseWriter() {
-    return setupResponseWriter(request, response, contenttypeinfo.contentTypeHeader);
+    return setupResponseWriter(request, response, contenttypeinfo.get().contentTypeHeader);
   }
 
 }
